@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume - Justin Bishop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style type="text/tailwindcss">
+        @layer base {
+            body {
+                font-family: 'Inter', sans-serif;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+        @media print {
+            body {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .no-print {
+                display: none;
+            }
+        }
+        @import url('https://rsms.me/inter/inter.css');
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <div class="max-w-4xl mx-auto bg-white shadow-lg my-8 p-12 print:my-0 print:p-8 print:shadow-none">
+
+        <!-- Header Section -->
+        <header class="flex items-center justify-between mb-10">
+            <div>
+                <h1 class="text-5xl font-extrabold text-gray-800">Justin Bishop</h1>
+                <p class="text-2xl text-sky-600 font-medium mt-1">{{job_title_for_application}}</p>
+            </div>
+            <div class="text-right text-sm text-gray-600">
+                <!-- Contact info is static -->
+                <div class="flex items-center justify-end mt-2">
+                    <span>justin@126colby.com</span>
+                    <i class="fas fa-envelope ml-3 text-sky-600"></i>
+                </div>
+                <div class="flex items-center justify-end mt-2">
+                    <span>415-658-2389</span>
+                    <i class="fas fa-phone ml-3 text-sky-600"></i>
+                </div>
+                <div class="flex items-center justify-end mt-2">
+                    <a href="https://linkedin.com/in/jmbishop04" class="hover:text-sky-600">linkedin.com/in/jmbishop04</a>
+                    <i class="fab fa-linkedin ml-3 text-sky-600"></i>
+                </div>
+                <!-- Worker can uncomment and fill these if needed -->
+                <!--
+                <div class="flex items-center justify-end mt-2">
+                    <a href="{{github_url}}" class="hover:text-sky-600">{{github_url}}</a>
+                    <i class="fab fa-github ml-3 text-sky-600"></i>
+                </div>
+                 <div class="flex items-center justify-end mt-2">
+                    <a href="{{portfolio_url}}" class="hover:text-sky-600">{{portfolio_url}}</a>
+                    <i class="fas fa-globe ml-3 text-sky-600"></i>
+                </div>
+                -->
+            </div>
+        </header>
+
+        <main class="grid grid-cols-12 gap-12">
+
+            <!-- Left Column -->
+            <div class="col-span-12 md:col-span-4 print:col-span-4">
+
+                <!-- Summary Section -->
+                <section>
+                    <h2 class="text-xl font-bold border-b-2 border-gray-200 pb-2 mb-4 text-gray-700">PROFESSIONAL SUMMARY</h2>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        {{summary_md}}
+                    </p>
+                </section>
+
+                <!-- Skills Section -->
+                <section class="mt-8">
+                    <h2 class="text-xl font-bold border-b-2 border-gray-200 pb-2 mb-4 text-gray-700">SKILLS</h2>
+                    <!-- Your worker can dynamically build the inner divs here to toggle skills on/off -->
+                    <div class="mt-4">
+                        <h3 class="font-semibold text-sky-700">Product & Program Management</h3>
+                        <div class="flex flex-wrap gap-2 mt-2">
+                            <span class="bg-sky-100 text-sky-800 text-xs font-semibold px-3 py-1 rounded-full">Product Vision & Strategy</span>
+                            <span class="bg-sky-100 text-sky-800 text-xs font-semibold px-3 py-1 rounded-full">Technical Roadmapping</span>
+                            <span class="bg-sky-100 text-sky-800 text-xs font-semibold px-3 py-1 rounded-full">User Advocacy & Trust</span>
+                            <span class="bg-sky-100 text-sky-800 text-xs font-semibold px-3 py-1 rounded-full">Agile Methodologies</span>
+                            <span class="bg-sky-100 text-sky-800 text-xs font-semibold px-3 py-1 rounded-full">MVP Development</span>
+                            <span class="bg-sky-100 text-sky-800 text-xs font-semibold px-3 py-1 rounded-full">Data-Driven Decisions</span>
+                            <span class="bg-sky-100 text-sky-800 text-xs font-semibold px-3 py-1 rounded-full">Cross-Functional Leadership</span>
+                            <span class="bg-sky-100 text-sky-800 text-xs font-semibold px-3 py-1 rounded-full">Strategic Influence</span>
+                            <span class="bg-sky-100 text-sky-800 text-xs font-semibold px-3 py-1 rounded-full">Scalable Automation</span>
+                            <span class="bg-sky-100 text-sky-800 text-xs font-semibold px-3 py-1 rounded-full">Rapid Iterative Development</span>
+                        </div>
+                    </div>
+                     <div class="mt-4">
+                        <h3 class="font-semibold text-sky-700">Strategic Operations & Analytics</h3>
+                        <div class="flex flex-wrap gap-2 mt-2">
+                            <span class="bg-sky-100 text-sky-800 text-xs font-semibold px-3 py-1 rounded-full">KPI Architecture</span>
+                            <span class="bg-sky-100 text-sky-800 text-xs font-semibold px-3 py-1 rounded-full">Predictive Analytics</span>
+                            <span class="bg-sky-100 text-sky-800 text-xs font-semibold px-3 py-1 rounded-full">Vertex AI</span>
+                            <span class="bg-sky-100 text-sky-800 text-xs font-semibold px-3 py-1 rounded-full">BigQuery ML</span>
+                            <span class="bg-sky-100 text-sky-800 text-xs font-semibold px-3 py-1 rounded-full">ETL Pipelines</span>
+                            <span class="bg-sky-100 text-sky-800 text-xs font-semibold px-3 py-1 rounded-full">Workflow Automation</span>
+                            <span class="bg-sky-100 text-sky-800 text-xs font-semibold px-3 py-1 rounded-full">Business Intelligence</span>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <h3 class="font-semibold text-sky-700">Technical Proficiencies</h3>
+                        <div class="flex flex-wrap gap-2 mt-2">
+                            <span class="bg-sky-100 text-sky-800 text-xs font-semibold px-3 py-1 rounded-full">SQL</span>
+                            <span class="bg-sky-100 text-sky-800 text-xs font-semibold px-3 py-1 rounded-full">Python</span>
+                            <span class="bg-sky-100 text-sky-800 text-xs font-semibold px-3 py-1 rounded-full">JavaScript / TypeScript</span>
+                             <span class="bg-sky-100 text-sky-800 text-xs font-semibold px-3 py-1 rounded-full">Apps Script</span>
+                            <span class="bg-sky-100 text-sky-800 text-xs font-semibold px-3 py-1 rounded-full">GCP</span>
+                            <span class="bg-sky-100 text-sky-800 text-xs font-semibold px-3 py-1 rounded-full">Cloudflare Workers</span>
+                            <span class="bg-sky-100 text-sky-800 text-xs font-semibold px-3 py-1 rounded-full">Tableau</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Education Section -->
+                 <section class="mt-8">
+                    <h2 class="text-xl font-bold border-b-2 border-gray-200 pb-2 mb-4 text-gray-700">EDUCATION</h2>
+                    <div class="mb-4">
+                        <h3 class="font-bold text-gray-800">Product Management &amp; Business Analysis</h3>
+                        <p class="text-sm text-gray-600">UC Berkeley, Executive Education</p>
+                    </div>
+                     <div class="mb-4">
+                        <h3 class="font-bold text-gray-800">B.S. Business Administration</h3>
+                        <p class="text-sm text-gray-600">University of Louisville</p>
+                        <p class="text-xs text-gray-500">CIS, Information Security & Entrepreneurship</p>
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- Right Column -->
+            <div class="col-span-12 md:col-span-8 print:col-span-8">
+
+                <!-- Experience Section -->
+                <section>
+                    <h2 class="text-2xl font-bold text-gray-800 tracking-wide">WORK EXPERIENCE</h2>
+                    <div class="border-l-2 border-sky-200 mt-6">
+                        <!-- Your worker should loop through experiences here -->
+                        <div class="relative pl-8 mb-8">
+                            <div class="absolute -left-1.5 top-1 h-3 w-3 rounded-full bg-sky-600"></div>
+                            <p class="text-xs text-gray-500 uppercase font-semibold">January 2013 - Present</p>
+                            <h3 class="text-lg font-bold text-gray-900">{{job_title}}</h3>
+                            <p class="text-md font-semibold text-gray-700">Google - San Francisco, CA</p>
+                            <ul class="list-disc pl-5 mt-2 space-y-1 text-sm text-gray-600">
+                                <!-- The AI agent will generate these bullet points for each job application -->
+                                <li>{{achievement_1}}</li>
+                                <li>{{achievement_2}}</li>
+                                <li>{{achievement_3}}</li>
+                            </ul>
+                        </div>
+
+                        <!-- Add other roles here as needed by the worker -->
+                        <!-- {{#each other_experiences}} -->
+                         <div class="relative pl-8 mb-8">
+                            <div class="absolute -left-1.5 top-1 h-3 w-3 rounded-full bg-sky-600"></div>
+                            <p class="text-xs text-gray-500 uppercase font-semibold">{{start_date}} - {{end_date}}</p>
+                            <h3 class="text-lg font-bold text-gray-900">{{job_title}}</h3>
+                            <p class="text-md font-semibold text-gray-700">{{company_name}} - {{location}}</p>
+                            <ul class="list-disc pl-5 mt-2 space-y-1 text-sm text-gray-600">
+                                <li>{{achievement_1}}</li>
+                            </ul>
+                        </div>
+                        <!-- {{/each}} -->
+                    </div>
+                </section>
+
+                <!-- Projects Section -->
+                <section class="mt-8">
+                    <h2 class="text-2xl font-bold text-gray-800 tracking-wide">PROJECTS</h2>
+                     <div class="border-l-2 border-sky-200 mt-6">
+                        <!-- Your worker should loop through projects here -->
+                        <!-- {{#each projects}} -->
+                        <div class="relative pl-8 mb-8">
+                            <div class="absolute -left-1.5 top-1 h-3 w-3 rounded-full bg-sky-600"></div>
+                            <h3 class="text-lg font-bold text-gray-900">{{project_name}}</h3>
+                            <p class="mt-2 text-sm text-gray-600">
+                                {{description_md}}
+                            </p>
+                            <!-- Worker can uncomment this if a URL is available -->
+                            <!--
+                            <div class="mt-3">
+                                <a href="{{repository_url}}" class="text-sky-600 hover:underline text-sm font-semibold">View on GitHub &rarr;</a>
+                            </div>
+                            -->
+                        </div>
+                        <!-- {{/each}} -->
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+</body>
+</html>
+

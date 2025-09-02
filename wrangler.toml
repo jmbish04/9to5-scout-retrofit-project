@@ -1,0 +1,78 @@
+name = "9to5-scraper"
+main = "dist/index.js"
+compatibility_date = "2024-05-01"
+compatibility_flags = ["nodejs_compat"]
+
+[observability.logs]
+enabled = true
+
+
+[browser]
+binding = "MYBROWSER"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "JOB_SCRAPER_DB"
+database_id = "11092798-a3d9-44b8-be5f-1835c0027887"
+
+[[kv_namespaces]]
+binding = "KV"
+id = "5e60b00818e9448b8f965af0fc96d39a"
+
+[[r2_buckets]]
+binding = "R2"
+bucket_name = "job-scraper"
+
+# Note: Vectorize binding would need to be created through the Cloudflare dashboard
+# as it's not available via the current API tools
+[[vectorize]]
+binding = "VECTORIZE_INDEX"
+index_name = "jobs"
+
+[ai]
+binding = "AI"
+
+# Service binding for internal API calls
+[[services]]
+binding = "SERVICE"
+service = "9to5-scraper"
+
+# Durable Objects for stateful crawling coordination
+[durable_objects]
+bindings = [
+  { name = "SITE_CRAWLER", class_name = "SiteCrawler" },
+  { name = "JOB_MONITOR", class_name = "JobMonitor" }
+]
+
+# Workflows for long-running job processing
+[[workflows]]
+name = "discovery-workflow"
+binding = "DISCOVERY_WORKFLOW"
+class_name = "DiscoveryWorkflow"
+
+[[workflows]]
+name = "job-monitor-workflow"
+binding = "JOB_MONITOR_WORKFLOW"
+class_name = "JobMonitorWorkflow"
+
+[[workflows]]
+name = "change-analysis-workflow"
+binding = "CHANGE_ANALYSIS_WORKFLOW"
+class_name = "ChangeAnalysisWorkflow"
+
+# Migrations for Durable Objects
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["SiteCrawler", "JobMonitor"]
+
+[vars]
+API_AUTH_TOKEN = "test-token"
+BROWSER_RENDERING_TOKEN = "browser-token"
+SLACK_WEBHOOK_URL = ""
+
+# Optimized cron trigger for job scraping
+# Runs every 2 hours: 00:00, 02:00, 04:00, 06:00, 08:00, 10:00, 12:00, 14:00, 16:00, 18:00, 20:00, 22:00
+[[triggers.crons]]
+cron = "0 */2 * * *"
+
+[env.preview]

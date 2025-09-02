@@ -1,0 +1,723 @@
+{
+    "project": "Job Scraper Backend Service",
+    "version": "1.0.0",
+    "tasks": [
+        {
+            "id": "setup",
+            "title": "Project Setup and Configuration",
+            "description": "Initialize the Cloudflare Workers project with proper structure and dependencies, leveraging Cloudflare's ecosystem including Workers, Durable Objects, Workflows, D1, Vectorize, and Workers AI",
+            "priority": "high",
+            "status": "pending",
+            "subtasks": [
+                {
+                    "id": "setup-1",
+                    "title": "Create monorepo structure with workspaces",
+                    "description": "Set up pnpm workspaces with packages for shared utilities (@job-scraper/shared), AI helpers (@job-scraper/cf-ai), and worker application, following Cloudflare's recommended project structure",
+                    "estimated_hours": 2
+                },
+                {
+                    "id": "setup-2",
+                    "title": "Configure Wrangler with comprehensive bindings",
+                    "description": "Set up wrangler.toml with D1 database, KV namespace, R2 bucket, Vectorize index, Workers AI binding, Browser Rendering, Durable Objects (SiteCrawler, JobMonitor), Workflows (Discovery, JobMonitor, ChangeAnalysis), and service bindings for internal API calls. Enable observability features including analytics, logging, and tracing with verbose logging configuration for development and debugging.",
+                    "estimated_hours": 3
+                },
+                {
+                    "id": "setup-3",
+                    "title": "Set up TypeScript + Wrangler-generated types for Cloudflare Workers",
+                    "description": "Enable strict, runtime-accurate types for Cloudflare Workers by generating types from wrangler.toml instead of importing @cloudflare/workers-types in app code. Ensure Env matches bindings (D1, KV, R2, Vectorize, Durable Objects, Workflows, Workers AI), avoid DOM/Node conflicts, and lock CI to regenerate types before build.",
+                    "estimated_hours": 1,
+                    "success_criteria": [
+                        "Running `pnpm typecheck` succeeds with no missing globals (Request, Response, DurableObjectNamespace, etc.).",
+                        "A generated `worker-configuration.d.ts` (or configured path) exists and includes an `Env` interface with all bindings from wrangler.toml.",
+                        "No direct imports of `@cloudflare/workers-types` in application/runtime code.",
+                        "`pnpm build` regenerates types first, then compiles without TS lib conflicts (DOM vs Node).",
+                        "If `nodejs_compat` is ON, Node types are available; if OFF, they are not."
+                    ],
+                    "deliverables": [
+                        "tsconfig.json with correct libs and `types` pointing to the generated declaration file.",
+                        "package.json scripts that generate types before typecheck/build.",
+                        "A committed `worker-configuration.d.ts` (generated) or a documented rule to commit it.",
+                        "README section: how/when to regenerate types, and common fixes."
+                    ],
+                    "steps": [
+                        {
+                            "title": "Install deps",
+                            "run": [
+                                "pnpm add -D typescript wrangler",
+                                "pnpm add -D @types/node  # ONLY if nodejs_compat=true in wrangler.toml OR a shared lib truly needs Node types"
+                            ],
+                            "notes": [
+                                "Do NOT add `@cloudflare/workers-types` to the Worker app itself; prefer Wrangler-generated types.",
+                                "Use `@cloudflare/workers-types` only in shared libraries published independently of any single Worker’s config."
+                            ]
+                        },
+                        {
+                            "title": "Generate Worker types from wrangler.toml",
+                            "run": [
+                                "pnpm wrangler types  # emits ./worker-configuration.d.ts by default"
+                            ],
+                            "verify": [
+                                "Open worker-configuration.d.ts and confirm it contains an `Env` interface and runtime APIs matching your compatibility_date and bindings."
+                            ],
+                            "notes": [
+                                "Re-run after any change to wrangler.toml (bindings, compatibility_date, flags)."
+                            ]
+                        },
+                        {
+                            "title": "Configure tsconfig for Workers",
+                            "create_or_update": {
+                                "path": "tsconfig.json",
+                                "contents": {
+                                    "compilerOptions": {
+                                        "target": "ES2022",
+                                        "module": "ESNext",
+                                        "moduleResolution": "Bundler",
+                                        "strict": true,
+                                        "noUncheckedIndexedAccess": true,
+                                        "isolatedModules": true,
+                                        "skipLibCheck": true,
+                                        "types": [
+                                            "worker-configuration.d.ts"
+                                        ],
+                                        "lib": [
+                                            "ES2023"
+                                        ]
+                                    },
+                                    "include": [
+                                        "**/*.ts",
+                                        "**/*.tsx",
+                                        "worker-configuration.d.ts"
+                                    ]
+                                }
+                            },
+                            "conditional_edits": [
+                                {
+                                    "when": "wrangler.toml has nodejs_compat = true",
+                                    "edit": "Add \"node\" to compilerOptions.types and add \"DOM\" only if you explicitly need browser DOM types. Otherwise, keep lib as [\"ES2023\"]."
+                                }
+                            ],
+                            "notes": [
+                                "Avoid adding the generic \"DOM\" lib unless you truly need it; Workers already provide the web platform APIs.",
+                                "Adding DOM + Node together often causes `Headers`/`ReadableStream` conflicts. Keep it lean."
+                            ]
+                        },
+                        {
+                            "title": "Wire scripts for deterministic CI",
+                            "create_or_update": {
+                                "path": "package.json",
+                                "merge": {
+                                    "scripts": {
+                                        "generate-types": "wrangler types",
+                                        "typecheck": "pnpm generate-types && tsc -p tsconfig.json",
+                                        "build": "pnpm generate-types && wrangler build",
+                                        "dev": "wrangler dev"
+                                    }
+                                }
+                            },
+                            "verify": [
+                                "Run `pnpm typecheck` and confirm TS completes.",
+                                "Run `pnpm build` and confirm it regenerates types first."
+                            ]
+                        },
+                        {
+                            "title": "Implement Env in entrypoint(s)",
+                            "edit_code_examples": [
+                                {
+                                    "path": "src/index.ts",
+                                    "example": "// Example Worker export using generated Env\ nexport default {\n  async fetch(request: Request, env: Env, ctx: ExecutionContext) {\n    // env.DB (D1), env.KV (KV), env.AI (Workers AI), etc. all typed from wrangler.toml\n    return new Response('ok');\n  }\n};"
+                                },
+                                {
+                                    "path": "src/do.ts",
+                                    "example": "// Durable Object example with typed state + env\nexport class SessionDO {\n  constructor(state: DurableObjectState, env: Env) {}\n  async fetch(req: Request): Promise<Response> { return new Response('do'); }\n}\nexport default { SessionDO };"
+                                }
+                            ],
+                            "verify": [
+                                "Hover over `env` in your editor; you should see a fully-typed Env interface with your bindings."
+                            ]
+                        },
+                        {
+                            "title": "Monorepo support (if applicable)",
+                            "actions": [
+                                "Run `wrangler types` inside each Worker package that has its own wrangler.toml.",
+                                "Commit each package’s generated file next to its tsconfig.json (or set a custom out path and reference it in `types`).",
+                                "For shared libraries (packages/shared), you MAY depend on `@cloudflare/workers-types` so the lib compiles standalone. Do not import it from app/runtime packages."
+                            ]
+                        },
+                        {
+                            "title": "README updates",
+                            "append_to_readme": [
+                                "## Types: Wrangler-generated\n- Run `pnpm wrangler types` after altering wrangler.toml (bindings, compat date/flags).\n- CI runs `pnpm generate-types` before typecheck/build.\n- Do NOT import `@cloudflare/workers-types` in app/runtime code; rely on the generated declaration file.\n- If `nodejs_compat` is enabled, also include `@types/node` and add `\"node\"` to `compilerOptions.types`."
+                            ]
+                        }
+                    ],
+                    "reference_snippets": {
+                        "wrangler.toml_example": "name = \"my-worker\"\\ncompatibility_date = \"2025-08-15\"\\n\\n[[d1_databases]]\\nbinding = \"DB\"\\ndatabase_name = \"app-db\"\\ndatabase_id = \"xxxx\"\\n\\n[[kv_namespaces]]\\nbinding = \"KV\"\\nid = \"xxxx\"\\n\\n[r2_buckets]\\nbinding = \"BUCKET\"\\nbucket_name = \"assets\"\\n\\n[ai]\\nbinding = \"AI\"\\n\\n# nodejs_compat = true   # uncomment if you truly need node polyfills",
+                        "tsconfig_base": "{\\n  \"compilerOptions\": {\\n    \"target\": \"ES2022\",\\n    \"module\": \"ESNext\",\\n    \"moduleResolution\": \"Bundler\",\\n    \"strict\": true,\\n    \"noUncheckedIndexedAccess\": true,\\n    \"isolatedModules\": true,\\n    \"skipLibCheck\": true,\\n    \"types\": [\"worker-configuration.d.ts\"],\\n    \"lib\": [\"ES2023\"]\\n  },\\n  \"include\": [\"**/*.ts\", \"**/*.tsx\", \"worker-configuration.d.ts\"]\\n}",
+                        "package_json_scripts": "{\\n  \"scripts\": {\\n    \"generate-types\": \"wrangler types\",\\n    \"typecheck\": \"pnpm generate-types && tsc -p tsconfig.json\",\\n    \"build\": \"pnpm generate-types && wrangler build\",\\n    \"dev\": \"wrangler dev\"\\n  }\\n}"
+                    },
+                    "common_pitfalls_and_fixes": [
+                        {
+                            "pitfall": "Adding both DOM and Node libs unconditionally causes conflicting globals (e.g., Headers, ReadableStream).",
+                            "fix": "Keep `lib` minimal: [\"ES2023\"]. Only add `\"node\"` to `types` when `nodejs_compat` is ON. Add `\"DOM\"` only if you truly need it."
+                        },
+                        {
+                            "pitfall": "Types drift from runtime after editing wrangler.toml.",
+                            "fix": "Always run `pnpm wrangler types` (or `pnpm generate-types`) after any binding/compat change. CI should run generation before typecheck/build."
+                        },
+                        {
+                            "pitfall": "Importing `@cloudflare/workers-types` inside the Worker app creates duplicate/conflicting types.",
+                            "fix": "Remove the import. Rely on the generated `worker-configuration.d.ts`. Reserve workers-types for shared libs only."
+                        },
+                        {
+                            "pitfall": "Node types leaking into non-compat Workers.",
+                            "fix": "Remove `@types/node` and the `\"node\"` entry from `compilerOptions.types` unless `nodejs_compat` is set."
+                        }
+                    ]
+                },
+                {
+                    "id": "setup-4",
+                    "title": "Configure build and deployment scripts",
+                    "description": "Set up package.json scripts for build, test, and multi-environment deployment (preview/staging/production) with D1 migrations and Vectorize setup",
+                    "estimated_hours": 2
+                },
+                {
+                    "id": "setup-5",
+                    "title": "Set up wrangler types and observability",
+                    "description": "Configure wrangler types generation for full TypeScript support, enable observability features (analytics, logging, tracing), and set up verbose logging configuration for development, debugging, and production monitoring",
+                    "estimated_hours": 1
+                }
+            ]
+        },
+        {
+            "id": "database",
+            "title": "Database Schema and Migrations",
+            "description": "Design and implement the database schema for sites, jobs, and changes using Cloudflare D1 - a serverless SQL database that provides transactional, strongly consistent storage with global read replication and automatic scaling",
+            "priority": "high",
+            "status": "pending",
+            "subtasks": [
+                {
+                    "id": "db-1",
+                    "title": "Design database schema",
+                    "description": "Create SQL migrations for sites, jobs, job_changes, and related tables with proper indexing, foreign keys, and constraints optimized for D1's query patterns and global read replication",
+                    "estimated_hours": 4
+                },
+                {
+                    "id": "db-2",
+                    "title": "Implement D1 migrations",
+                    "description": "Create migration files using wrangler d1 commands and setup scripts for local development with D1's local SQLite database and remote production deployment with global read replication",
+                    "estimated_hours": 2
+                },
+                {
+                    "id": "db-3",
+                    "title": "Set up database utilities",
+                    "description": "Create helper functions for D1 database operations with prepared statements, connection pooling, and error handling optimized for serverless SQL queries and global distribution",
+                    "estimated_hours": 3
+                },
+                {
+                    "id": "db-4",
+                    "title": "Implement data validation",
+                    "description": "Add Zod schemas for data validation and type safety with D1 integration, ensuring data consistency across global read replicas and transactional operations",
+                    "estimated_hours": 2
+                }
+            ]
+        },
+        {
+            "id": "types",
+            "title": "Core Types and Interfaces",
+            "description": "Define TypeScript interfaces and types for the entire system",
+            "priority": "high",
+            "status": "pending",
+            "subtasks": [
+                {
+                    "id": "types-1",
+                    "title": "Define site and job interfaces",
+                    "description": "Create TypeScript interfaces for Site, Job, JobChange, and related entities",
+                    "estimated_hours": 2
+                },
+                {
+                    "id": "types-2",
+                    "title": "Define API request/response types",
+                    "description": "Create types for all API endpoints including request bodies and responses",
+                    "estimated_hours": 3
+                },
+                {
+                    "id": "types-3",
+                    "title": "Define workflow and Durable Object types",
+                    "description": "Create types for workflow parameters, Durable Object state, and internal communications",
+                    "estimated_hours": 2
+                },
+                {
+                    "id": "types-4",
+                    "title": "Set up environment configuration types",
+                    "description": "Define Env interface with all Cloudflare bindings and configuration variables",
+                    "estimated_hours": 1
+                }
+            ]
+        },
+        {
+            "id": "durable-objects",
+            "title": "Durable Objects Implementation",
+            "description": "Implement SiteCrawler and JobMonitor Durable Objects - globally-unique, stateful serverless applications combining compute with storage. Each Durable Object has SQLite-backed storage for strongly consistent, fast access and globally-unique names for coordinating between multiple clients and events.",
+            "priority": "high",
+            "status": "pending",
+            "subtasks": [
+                {
+                    "id": "do-1",
+                    "title": "Implement SiteCrawler Durable Object",
+                    "description": "Create SiteCrawler class extending DurableObject with SQLite storage for queue management, rate limiting state, and discovery coordination using globally-unique naming for distributed crawling across multiple sites",
+                    "estimated_hours": 8
+                },
+                {
+                    "id": "do-2",
+                    "title": "Implement JobMonitor Durable Object",
+                    "description": "Create JobMonitor class for individual job tracking with strongly consistent storage for lifecycle state, change history, and metadata using Durable Object alarms for scheduled monitoring intervals",
+                    "estimated_hours": 6
+                },
+                {
+                    "id": "do-3",
+                    "title": "Add WebSocket support",
+                    "description": "Implement real-time status updates via WebSocket connections with hibernation support for managing multiple client connections at scale, enabling live monitoring dashboards",
+                    "estimated_hours": 4
+                },
+                {
+                    "id": "do-4",
+                    "title": "Implement storage persistence",
+                    "description": "Add Durable Object storage using SQLite-backed storage API (sql.exec, sql.prepare) for transactional, strongly consistent persistence of queue state, rate limits, and metadata",
+                    "estimated_hours": 3
+                }
+            ]
+        },
+        {
+            "id": "workflows",
+            "title": "Workflow Implementation",
+            "description": "Implement Discovery, JobMonitor, and ChangeAnalysis workflows using Cloudflare Workflows - a durable execution engine built on Cloudflare Workers that enables building multi-step applications with automatic retry, state persistence, and execution for minutes, hours, days, or weeks. Workflows provide a programming model for reliable, long-running tasks that can be triggered programmatically via events across services.",
+            "priority": "high",
+            "status": "pending",
+            "subtasks": [
+                {
+                    "id": "wf-1",
+                    "title": "Implement DiscoveryWorkflow",
+                    "description": "Create DiscoveryWorkflow extending WorkflowEntrypoint with multi-step job discovery process using step.do() for batch processing, rate limiting coordination with Durable Objects, and automatic retry configuration with custom delay/backoff strategies",
+                    "estimated_hours": 10
+                },
+                {
+                    "id": "wf-2",
+                    "title": "Implement JobMonitorWorkflow",
+                    "description": "Create JobMonitorWorkflow for individual job monitoring lifecycle with step.sleep() for scheduling intervals, change detection steps, and state persistence across workflow instances that can run for extended periods",
+                    "estimated_hours": 8
+                },
+                {
+                    "id": "wf-3",
+                    "title": "Implement ChangeAnalysisWorkflow",
+                    "description": "Create ChangeAnalysisWorkflow leveraging Workers AI integration for AI-powered change significance assessment, with configurable retry policies and multi-step analysis pipeline triggered by monitoring events",
+                    "estimated_hours": 6
+                },
+                {
+                    "id": "wf-4",
+                    "title": "Add workflow error handling and retries",
+                    "description": "Implement comprehensive error handling with custom retry configurations (limit, delay, exponential backoff), failure recovery mechanisms, and workflow status monitoring via REST API and CLI triggers",
+                    "estimated_hours": 4
+                }
+            ]
+        },
+        {
+            "id": "api-routes",
+            "title": "API Routes Implementation",
+            "description": "Implement all REST API endpoints with proper validation and error handling",
+            "priority": "high",
+            "status": "pending",
+            "subtasks": [
+                {
+                    "id": "api-1",
+                    "title": "Implement sites management routes",
+                    "description": "Create CRUD endpoints for site management (/api/sites/*)",
+                    "estimated_hours": 4
+                },
+                {
+                    "id": "api-2",
+                    "title": "Implement jobs management routes",
+                    "description": "Create CRUD endpoints for job management (/api/jobs/*)",
+                    "estimated_hours": 5
+                },
+                {
+                    "id": "api-3",
+                    "title": "Implement discovery and monitoring routes",
+                    "description": "Create endpoints for triggering discovery and monitoring (/api/discovery/*, /api/monitor/*)",
+                    "estimated_hours": 4
+                },
+                {
+                    "id": "api-4",
+                    "title": "Implement orchestration routes",
+                    "description": "Create endpoints for system-wide operations (/api/orchestration/*)",
+                    "estimated_hours": 3
+                },
+                {
+                    "id": "api-5",
+                    "title": "Add authentication and validation middleware",
+                    "description": "Implement bearer token authentication and request validation",
+                    "estimated_hours": 3
+                }
+            ]
+        },
+        {
+            "id": "discovery",
+            "title": "Discovery System",
+            "description": "Implement job discovery strategies and data extraction using Cloudflare Browser Rendering for headless browser automation and Workers AI with 50+ open-source models running on serverless GPUs for intelligent data extraction from web pages",
+            "priority": "medium",
+            "status": "pending",
+            "subtasks": [
+                {
+                    "id": "disc-1",
+                    "title": "Implement sitemap discovery",
+                    "description": "Create sitemap parsing and URL extraction using Browser Rendering REST API for fetching HTML content and Workers AI for intelligent URL pattern recognition and job page identification",
+                    "estimated_hours": 4
+                },
+                {
+                    "id": "disc-2",
+                    "title": "Implement search-based discovery",
+                    "description": "Create search query generation using Workers AI models and Browser Rendering for automated form filling, search execution, and result page parsing with screenshot/PDF capabilities for debugging",
+                    "estimated_hours": 4
+                },
+                {
+                    "id": "disc-3",
+                    "title": "Implement AI-powered data extraction",
+                    "description": "Use Workers AI with serverless GPUs and Browser Rendering Workers bindings for complex web scraping, HTML element extraction, structured data parsing, and content classification from job postings",
+                    "estimated_hours": 6
+                },
+                {
+                    "id": "disc-4",
+                    "title": "Add duplicate detection",
+                    "description": "Implement job deduplication using content hashing with Workers AI for semantic similarity detection and Vectorize integration for embedding-based duplicate identification",
+                    "estimated_hours": 3
+                }
+            ]
+        },
+        {
+            "id": "monitoring",
+            "title": "Monitoring System",
+            "description": "Implement job monitoring with change detection using Durable Objects with SQLite-backed storage for strongly consistent state management and alarms for scheduled monitoring intervals",
+            "priority": "medium",
+            "status": "pending",
+            "subtasks": [
+                {
+                    "id": "mon-1",
+                    "title": "Implement content change detection",
+                    "description": "Create content hashing and comparison using Durable Object storage API for strongly consistent persistence of job states and change history across distributed monitoring instances",
+                    "estimated_hours": 4
+                },
+                {
+                    "id": "mon-2",
+                    "title": "Implement smart scheduling",
+                    "description": "Create adaptive monitoring intervals using Durable Object alarms for customizable scheduling that triggers compute in the future, adjusting frequency based on job activity patterns",
+                    "estimated_hours": 3
+                },
+                {
+                    "id": "mon-3",
+                    "title": "Add job lifecycle management",
+                    "description": "Implement automatic detection of job closures using Durable Objects' globally-unique naming for coordinating lifecycle state across multiple monitoring clients and events",
+                    "estimated_hours": 3
+                },
+                {
+                    "id": "mon-4",
+                    "title": "Implement notification system",
+                    "description": "Add webhook and Slack notifications with WebSocket hibernation for managing multiple client connections at scale, enabling real-time alerts for significant job changes",
+                    "estimated_hours": 4
+                }
+            ]
+        },
+        {
+            "id": "change-analysis",
+            "title": "Change Analysis System",
+            "description": "Implement AI-powered change analysis and significance assessment using Workers AI with 50+ open-source models running on serverless GPUs for intelligent evaluation of job posting changes and automated summarization",
+            "priority": "medium",
+            "status": "pending",
+            "subtasks": [
+                {
+                    "id": "ca-1",
+                    "title": "Implement structural diffing",
+                    "description": "Create field-by-field comparison of job postings with intelligent parsing using Workers AI models for understanding context and extracting structured information from HTML/diff content",
+                    "estimated_hours": 3
+                },
+                {
+                    "id": "ca-2",
+                    "title": "Add AI significance assessment",
+                    "description": "Use Workers AI with pay-for-what-you-use pricing to assess the importance of detected changes, leveraging models like Llama 3.1/3.2 for natural language understanding and change impact analysis",
+                    "estimated_hours": 4
+                },
+                {
+                    "id": "ca-3",
+                    "title": "Generate semantic summaries",
+                    "description": "Create human-readable summaries of job changes using Workers AI text generation models with function calling support for structured output and automated content classification",
+                    "estimated_hours": 3
+                },
+                {
+                    "id": "ca-4",
+                    "title": "Implement change storage",
+                    "description": "Store change history and analysis results in D1 database with Workers AI-generated embeddings stored in Vectorize for semantic search and similarity matching of change patterns",
+                    "estimated_hours": 2
+                }
+            ]
+        },
+        {
+            "id": "search-analytics",
+            "title": "Search and Analytics",
+            "description": "Implement search functionality and analytics endpoints using Vectorize - Cloudflare's globally distributed vector database for embeddings, enabling semantic search, similarity detection, recommendations, and anomaly detection on job data",
+            "priority": "low",
+            "status": "pending",
+            "subtasks": [
+                {
+                    "id": "sa-1",
+                    "title": "Implement vector search",
+                    "description": "Create job search using Vectorize for semantic similarity with embeddings generated by Workers AI, enabling natural language queries and relevance ranking based on job content and metadata",
+                    "estimated_hours": 5
+                },
+                {
+                    "id": "sa-2",
+                    "title": "Add filtering and sorting",
+                    "description": "Implement advanced filtering by location, salary, company with Vectorize-powered semantic matching and hybrid search combining traditional filters with vector similarity scores",
+                    "estimated_hours": 3
+                },
+                {
+                    "id": "sa-3",
+                    "title": "Create analytics endpoints",
+                    "description": "Build endpoints for job market trends using Vectorize for clustering similar jobs, anomaly detection for unusual patterns, and recommendation systems based on embedding similarity",
+                    "estimated_hours": 4
+                },
+                {
+                    "id": "sa-4",
+                    "title": "Implement data export",
+                    "description": "Add CSV/JSON export functionality with Vectorize integration for generating embeddings of exported data and Workers AI for automated report generation and insights",
+                    "estimated_hours": 2
+                }
+            ]
+        },
+        {
+            "id": "config-deployment",
+            "title": "Configuration and Deployment",
+            "description": "Set up configuration management and deployment pipelines with AI Gateway for observability and control over AI applications, including caching, rate limiting, request retries, model fallback, analytics, and logging",
+            "priority": "medium",
+            "status": "pending",
+            "subtasks": [
+                {
+                    "id": "cd-1",
+                    "title": "Set up environment configurations",
+                    "description": "Configure preview, staging, and production environments with AI Gateway bindings for monitoring Workers AI usage, caching responses, and implementing rate limiting across different deployment stages. Set up wrangler observability with analytics, logging, and tracing enabled for each environment.",
+                    "estimated_hours": 2
+                },
+                {
+                    "id": "cd-2",
+                    "title": "Implement cron triggers",
+                    "description": "Set up automated discovery and monitoring triggers using Durable Object alarms and Workflow scheduling, with AI Gateway analytics to monitor execution patterns and optimize resource usage. Configure verbose logging for cron job execution and error tracking.",
+                    "estimated_hours": 2
+                },
+                {
+                    "id": "cd-3",
+                    "title": "Configure monitoring and alerts",
+                    "description": "Set up health checks, metrics, and alerting using AI Gateway logging and analytics to track request patterns, errors, token usage, and costs across the job scraping system. Enable wrangler tail command for real-time log streaming and debugging.",
+                    "estimated_hours": 3
+                },
+                {
+                    "id": "cd-4",
+                    "title": "Create deployment scripts",
+                    "description": "Automate build, migration, and deployment processes with wrangler commands for D1 migrations, Vectorize setup, and multi-environment deployment with AI Gateway fallback configurations. Include verbose logging flags and observability setup in deployment pipelines.",
+                    "estimated_hours": 3
+                }
+            ]
+        },
+        {
+            "id": "testing",
+            "title": "Testing Implementation",
+            "description": "Implement comprehensive testing strategy using Vitest with Workers testing utilities for unit testing Durable Objects, Workflows, and API endpoints with local D1 and Vectorize simulation",
+            "priority": "medium",
+            "status": "pending",
+            "subtasks": [
+                {
+                    "id": "test-1",
+                    "title": "Set up testing framework",
+                    "description": "Configure Vitest with @cloudflare/workers-types and testing utilities for mocking Durable Objects, Workflows, D1 databases, and Vectorize indexes in isolated test environments. Set up wrangler types generation for test environments with verbose logging enabled.",
+                    "estimated_hours": 2
+                },
+                {
+                    "id": "test-2",
+                    "title": "Write unit tests",
+                    "description": "Create unit tests for utilities, Durable Objects with SQLite storage simulation, Workflows with step mocking, and Workers AI model interactions using local test environments. Enable detailed logging and observability for test execution and debugging.",
+                    "estimated_hours": 8
+                },
+                {
+                    "id": "test-3",
+                    "title": "Write integration tests",
+                    "description": "Create tests for API endpoints with local D1 database, Vectorize index mocking, and Browser Rendering simulation to validate complete data flows and error handling. Use wrangler dev with observability flags for integration testing.",
+                    "estimated_hours": 6
+                },
+                {
+                    "id": "test-4",
+                    "title": "Implement end-to-end tests",
+                    "description": "Create E2E tests for complete discovery and monitoring cycles using wrangler dev for local Workers environment with D1 migrations and Vectorize setup validation. Configure verbose logging and real-time observability for E2E test execution.",
+                    "estimated_hours": 4
+                }
+            ]
+        },
+        {
+            "id": "documentation",
+            "title": "Documentation and Finalization",
+            "description": "Create comprehensive documentation and finalize the project using the full Cloudflare Developer Platform including Workers, Durable Objects, Workflows, D1, Vectorize, Workers AI, Browser Rendering, and AI Gateway",
+            "priority": "low",
+            "status": "pending",
+            "subtasks": [
+                {
+                    "id": "doc-1",
+                    "title": "Create API documentation",
+                    "description": "Document all API endpoints with examples and schemas, including integration patterns for Durable Objects coordination, Workflow triggers, and Vectorize semantic search capabilities. Include wrangler types documentation for proper TypeScript integration.",
+                    "estimated_hours": 4
+                },
+                {
+                    "id": "doc-2",
+                    "title": "Write deployment guide",
+                    "description": "Create step-by-step deployment and configuration guides covering wrangler commands for D1 migrations, Vectorize setup, Workers AI binding configuration, and multi-environment deployment. Include wrangler observability setup, verbose logging configuration, and troubleshooting with wrangler tail and logs commands.",
+                    "estimated_hours": 3
+                },
+                {
+                    "id": "doc-3",
+                    "title": "Create troubleshooting guide",
+                    "description": "Document common issues and their solutions for Durable Objects storage limits, Workflow execution timeouts, Browser Rendering rate limits, and AI Gateway caching strategies. Include wrangler debugging commands, log analysis, and observability troubleshooting steps.",
+                    "estimated_hours": 2
+                },
+                {
+                    "id": "doc-4",
+                    "title": "Add performance optimization",
+                    "description": "Implement caching with AI Gateway, optimize D1 queries with global read replication, leverage Vectorize for fast semantic search, and use Durable Object alarms for efficient scheduling. Configure wrangler analytics and monitoring for performance tracking and optimization.",
+                    "estimated_hours": 4
+                }
+            ]
+        },
+        {
+            "id": "email-routing",
+            "title": "Email Routing and Notifications",
+            "description": "Implement comprehensive email routing system using Cloudflare Email Routing and Email Workers to receive job notifications from LinkedIn and other sources, extract URLs for crawling, and send daily digest emails with job statistics and changes. Leverage Email Workers for custom processing logic, custom email addresses for different notification types, and Email Routing analytics for monitoring email traffic and success rates.",
+            "priority": "medium",
+            "status": "pending",
+            "subtasks": [
+                {
+                    "id": "er-1",
+                    "title": "Set up Email Routing infrastructure",
+                    "description": "Configure Cloudflare Email Routing with custom email addresses for job notifications (@jobs.example.com), enable Email Workers with Workers runtime API access, and set up DNS records for email routing functionality. Ensure domain is using Cloudflare as authoritative nameserver for Email Routing availability.",
+                    "estimated_hours": 3
+                },
+                {
+                    "id": "er-2",
+                    "title": "Implement Email Worker for job notifications",
+                    "description": "Create Email Worker using Cloudflare Workers runtime to process incoming job notification emails from LinkedIn and other sources, extract job URLs using Workers AI for intelligent parsing with 50+ available models, and trigger crawling workflows. Implement custom logic for allowlist/blocklist filtering and forward emails to processing queues.",
+                    "estimated_hours": 6
+                },
+                {
+                    "id": "er-3",
+                    "title": "Add manual URL submission endpoint",
+                    "description": "Create API endpoint (/api/jobs/submit-urls) for manually adding single or multiple job URLs to the crawling queue, with validation and duplicate detection using D1 database queries. Implement rate limiting and authentication using Workers patterns.",
+                    "estimated_hours": 3
+                },
+                {
+                    "id": "er-4",
+                    "title": "Implement daily digest email system",
+                    "description": "Create automated daily digest emails using Email Workers to send summaries of new jobs discovered, jobs that have closed, significant changes detected, and statistics like average salary, RTO policies, and common requirements. Use Durable Object alarms for scheduling and Workers AI for generating digest content.",
+                    "estimated_hours": 5
+                },
+                {
+                    "id": "er-5",
+                    "title": "Add email analytics and monitoring",
+                    "description": "Set up Email Routing analytics to track email processing metrics, success rates, and error handling with wrangler observability for debugging email worker performance. Monitor for 25 MiB message size limits and CPU allocation errors, with verbose logging configuration for troubleshooting.",
+                    "estimated_hours": 2
+                }
+            ]
+        }
+    ],
+    "total_estimated_hours": 150,
+    "milestones": [
+        {
+            "name": "Foundation",
+            "tasks": [
+                "setup",
+                "database",
+                "types"
+            ],
+            "estimated_hours": 25
+        },
+        {
+            "name": "Core Implementation",
+            "tasks": [
+                "durable-objects",
+                "workflows",
+                "api-routes"
+            ],
+            "estimated_hours": 50
+        },
+        {
+            "name": "Feature Implementation",
+            "tasks": [
+                "discovery",
+                "monitoring",
+                "change-analysis"
+            ],
+            "estimated_hours": 35
+        },
+        {
+            "name": "Polish and Production",
+            "tasks": [
+                "search-analytics",
+                "config-deployment",
+                "testing",
+                "documentation"
+            ],
+            "estimated_hours": 40
+        }
+    ],
+    "dependencies": [
+        {
+            "task": "durable-objects",
+            "depends_on": [
+                "types",
+                "database"
+            ]
+        },
+        {
+            "task": "workflows",
+            "depends_on": [
+                "types",
+                "durable-objects"
+            ]
+        },
+        {
+            "task": "api-routes",
+            "depends_on": [
+                "types",
+                "database"
+            ]
+        },
+        {
+            "task": "discovery",
+            "depends_on": [
+                "workflows",
+                "api-routes"
+            ]
+        },
+        {
+            "task": "monitoring",
+            "depends_on": [
+                "workflows",
+                "api-routes"
+            ]
+        },
+        {
+            "task": "change-analysis",
+            "depends_on": [
+                "monitoring"
+            ]
+        },
+        {
+            "task": "search-analytics",
+            "depends_on": [
+                "database",
+                "api-routes"
+            ]
+        }
+    ]
+}

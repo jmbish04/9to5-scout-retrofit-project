@@ -1,0 +1,169 @@
+# MUST start with 'tasks:'
+tasks:
+  analyze_job_task:
+    description: >
+      Analyze the provided job description TEXT: {job_description_text}.
+      Extract key requirements, skills, experience levels, cultural cues,
+      and hidden requirements that will inform multiple resume writing approaches.
+      Provide detailed analysis for ATS optimization, human appeal, executive
+      positioning, and industry alignment.
+    expected_output: >
+      Comprehensive job analysis including: explicit requirements, implicit needs,
+      keyword priorities, cultural fit indicators, and strategic recommendations
+      for different resume approaches.
+    agent: job_analyzer
+
+  research_company_task:
+    description: >
+      Research {company_name} to understand company culture, values, recent news,
+      market position, and hiring preferences. This intelligence will inform how
+      resumes should be positioned for this specific organization.
+    expected_output: >
+      Company intelligence report including culture insights, recent developments,
+      market positioning, and strategic recommendations for resume positioning.
+    agent: company_researcher
+
+  extract_career_highlights_task:
+    description: >
+      Your task is to extract and synthesize career achievements, impact metrics, and compelling
+      stories from the candidate's career documents. You have access to these documents
+      and also to a job description.
+      Use the information in the job description to guide your extraction process by
+      formulating targeted STRING QUERIES for the Resume Query Tool. For example, if the job
+      description mentions 'project management', your query might be 'detail projects managed and their outcomes'.
+      Do NOT pass the job description itself or any part of it as a raw dictionary to the tool's query parameter.
+      The query MUST be a single string.
+      The goal is to create a comprehensive inventory of accomplishments relevant to the job.
+    expected_output: >
+      Detailed career highlights inventory with quantified achievements, impact
+      stories, and strategic accomplishments, clearly demonstrating how they were
+      extracted in relevance to the job description by using targeted string queries.
+    agent: career_historian
+
+  create_ats_resume_task:
+    description: >
+      Create an ATS-optimized resume version that maximizes keyword compatibility,
+      format compliance, and algorithmic ranking potential. Focus on technical
+      optimization while maintaining readability and impact. Use insights from job
+      analysis and career highlights to create a version that will consistently
+      pass ATS screening.
+    expected_output: >
+      Complete ATS-optimized resume in Markdown format with strategic keyword
+      placement, optimized formatting, and detailed documentation of ATS
+      optimization strategies used.
+    agent: ats_resume_writer
+
+  create_human_resume_task:
+    description: >
+      Craft a human-centric resume version that prioritizes storytelling, emotional
+      connection, and authentic voice. Focus on creating compelling narratives that
+      hiring managers will remember and connect with. Emphasize personality, passion,
+      and unique value proposition while maintaining professional standards.
+    expected_output: >
+      Human-optimized resume in Markdown format with compelling storytelling,
+      authentic voice, and emotional resonance while maintaining professional impact.
+    agent: human_resume_writer
+
+  create_executive_resume_task:
+    description: >
+      Develop an executive-level resume that positions the candidate as a strategic
+      leader capable of driving organizational transformation. Focus on high-level
+      achievements, strategic initiatives, and leadership impact. Emphasize business
+      results and executive presence.
+    expected_output: >
+      Executive-positioned resume in Markdown format emphasizing strategic leadership,
+      organizational impact, and high-level business results with executive tone
+      and positioning.
+    agent: executive_resume_writer
+
+  create_industry_resume_task:
+    description: >
+      Create a tech industry-specific resume that speaks the language of technology
+      companies and demonstrates deep understanding of tech culture, terminology,
+      and expectations. Balance technical depth with business acumen and cultural fit.
+    expected_output: >
+      Tech industry-optimized resume in Markdown format with appropriate technical
+      terminology, industry-specific positioning, and cultural alignment for
+      technology companies.
+    agent: industry_resume_writer
+
+  peer_review_resumes_task:
+    description: >
+      Conduct comprehensive peer review of all four resume versions (ATS, Human,
+      Executive, Industry). Analyze strengths and weaknesses of each approach,
+      identify best practices that could be cross-applied, and provide specific
+      improvement recommendations for each version.
+
+      For each resume version, evaluate:
+      - Effectiveness for intended purpose
+      - Clarity and impact of messaging
+      - Authenticity and voice consistency
+      - Competitive positioning strength
+      - Areas for improvement
+      - Cross-pollination opportunities
+    expected_output: >
+      Detailed peer review report analyzing each resume version with specific
+      strengths, weaknesses, improvement recommendations, and suggestions for
+      combining best practices across versions.
+    agent: resume_peer_reviewer
+
+  synthesize_best_resume_task:
+    description: >
+      Analyze all four resume versions and peer review feedback to create optimized
+      hybrid versions that combine the best elements from each approach. Create:
+
+      1. Balanced Hybrid: Combines ATS optimization with human readability
+      2. Executive Hybrid: Merges executive positioning with industry specificity
+      3. Optimized Master: Incorporates best practices from all versions
+
+      For each synthesis, document which elements were selected from which versions
+      and why, ensuring the final products maintain coherence and authenticity.
+    expected_output: >
+      Three synthesized resume versions with detailed documentation of design
+      decisions, element sources, and strategic rationale for each hybrid approach.
+    agent: resume_synthesizer
+
+  quality_assurance_task:
+    description: >
+      Conduct final quality assurance on all synthesized resume versions to ensure:
+      - Authenticity and voice consistency
+      - Optimization effectiveness without over-engineering
+      - Professional polish and error-free content
+      - Alignment with candidate's personal brand
+      - Confidence-building presentation
+
+      Validate that each version serves its intended purpose while maintaining
+      the candidate's unique value proposition and professional identity.
+    expected_output: >
+      Quality assurance report with final recommendations, any necessary revisions,
+      and confidence ratings for each resume version with usage recommendations.
+    agent: quality_assurance_agent
+
+  generate_final_recommendations_task:
+    description: >
+      Create comprehensive strategic recommendations that include:
+
+      1. Analysis of all resume versions and their optimal use cases
+      2. Strategic guidance on when to use each version
+      3. Job search strategy recommendations
+      4. Interview preparation insights based on resume positioning
+      5. Personal branding consistency recommendations
+      6. Future iteration and customization guidance
+
+      Provide the candidate with battle-tested advice and clear strategic direction
+      for their job search success.
+    expected_output: >
+      Comprehensive strategic report with resume usage guidelines, job search
+      strategy, interview preparation insights, and long-term career positioning
+      recommendations with actionable next steps.
+    agent: final_report_generator
+
+  integrate_user_feedback_task:
+    description: >
+      Integrate user feedback on resume versions and recommendations. Address
+      specific concerns, preferences, and modification requests while maintaining
+      optimization effectiveness and strategic positioning.
+    expected_output: >
+      Updated resume versions and recommendations incorporating user feedback
+      with explanation of changes and maintained optimization strategies.
+    agent: user_feedback_integrator

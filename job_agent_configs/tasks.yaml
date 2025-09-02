@@ -1,0 +1,73 @@
+analyze_job_task:
+  description: >
+    Analyze the job description from the provided URL: {job_url}
+    Extract the key requirements, skills, experience levels, and company culture cues.
+    This analysis will be used to tailor the resume and preparation.
+  expected_output: >
+    A structured JSON file (job_analysis.json) containing the extracted job requirements,
+    conforming to the JobRequirements Pydantic model.
+  agent: job_analyzer
+
+extract_achievements_task:
+  description: >
+    Review and synthesize the candidate's career history from knowledge sources
+    (Performance Reviews, Role Profiles, Assignments, GRAD Expectations).
+    Extract key achievements, skills demonstrated, and career highlights.
+  expected_output: >
+    A markdown file (career_highlights.md) summarizing the most significant
+    career achievements and highlights relevant for resume building.
+  agent: career_historian
+
+optimize_resume_task:
+  description: >
+    Analyze the candidate's base resume against the extracted job requirements and
+    career highlights. Identify areas for improvement, keyword optimization,
+    and alignment with the target role.
+  expected_output: >
+    A structured JSON file (resume_optimization.json) providing specific,
+    actionable suggestions for optimizing the resume, conforming to the
+    ResumeOptimization Pydantic model.
+  agent: resume_analyzer
+  context:
+    - analyze_job_task
+    - extract_achievements_task
+
+research_company_task:
+  description: >
+    Conduct research on the target company (e.g., {company_name}).
+    Gather information on its culture, recent news, market position, and
+    potential interview focus areas.
+  expected_output: >
+    A structured JSON file (company_research.json) containing key findings
+    about the company, conforming to the CompanyResearch Pydantic model.
+  agent: company_researcher
+
+generate_resume_task:
+  description: >
+    Create a new, optimized resume draft in Markdown format.
+    Incorporate the suggestions from the optimization task and tailor the content
+    using insights from the company research to best fit the target role.
+  expected_output: >
+    A markdown file (optimized_resume.md) containing the newly drafted,
+    optimized resume.
+  agent: resume_writer
+  context:
+    - optimize_resume_task
+    - research_company_task
+
+generate_report_task:
+  description: >
+    Compile all the findings from the previous tasks into a single,
+    comprehensive report. This report should summarize the job analysis,
+    career highlights, resume optimizations, company research, and include
+    the final resume.
+  expected_output: >
+    A final markdown file (final_report.md) presenting a cohesive summary
+    of the entire process and its outcomes.
+  agent: report_generator
+  context:
+    - analyze_job_task
+    - extract_achievements_task
+    - optimize_resume_task
+    - research_company_task
+    - generate_resume_task
