@@ -1,6 +1,16 @@
 {
-  "name": "9to5-scout",
-  "private": true,
+  "name": "@job-scraper/worker",
   "version": "0.0.0",
-  "workspaces": ["apps/*", "packages/*"]
+  "private": true,
+  "scripts": {
+    "generate-types": "wrangler types",
+    "typecheck": "pnpm generate-types && tsc -p tsconfig.json",
+    "build": "pnpm generate-types && wrangler build",
+    "dev": "wrangler dev"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0",
+    "wrangler": "^3.61.0",
+    "@types/node": "^20.11.0"
+  }
 }
