@@ -7,25 +7,28 @@
             "title": "Project Setup and Configuration",
             "description": "Initialize the Cloudflare Workers project with proper structure and dependencies, leveraging Cloudflare's ecosystem including Workers, Durable Objects, Workflows, D1, Vectorize, and Workers AI",
             "priority": "high",
-            "status": "pending",
+            "status": "in-progress",
             "subtasks": [
                 {
                     "id": "setup-1",
                     "title": "Create monorepo structure with workspaces",
                     "description": "Set up pnpm workspaces with packages for shared utilities (@job-scraper/shared), AI helpers (@job-scraper/cf-ai), and worker application, following Cloudflare's recommended project structure",
-                    "estimated_hours": 2
+                    "estimated_hours": 2,
+                    "status": "done"
                 },
                 {
                     "id": "setup-2",
                     "title": "Configure Wrangler with comprehensive bindings",
                     "description": "Set up wrangler.toml with D1 database, KV namespace, R2 bucket, Vectorize index, Workers AI binding, Browser Rendering, Durable Objects (SiteCrawler, JobMonitor), Workflows (Discovery, JobMonitor, ChangeAnalysis), and service bindings for internal API calls. Enable observability features including analytics, logging, and tracing with verbose logging configuration for development and debugging.",
-                    "estimated_hours": 3
+                    "estimated_hours": 3,
+                    "status": "done"
                 },
                 {
                     "id": "setup-3",
                     "title": "Set up TypeScript + Wrangler-generated types for Cloudflare Workers",
                     "description": "Enable strict, runtime-accurate types for Cloudflare Workers by generating types from wrangler.toml instead of importing @cloudflare/workers-types in app code. Ensure Env matches bindings (D1, KV, R2, Vectorize, Durable Objects, Workflows, Workers AI), avoid DOM/Node conflicts, and lock CI to regenerate types before build.",
                     "estimated_hours": 1,
+                    "status": "done",
                     "success_criteria": [
                         "Running `pnpm typecheck` succeeds with no missing globals (Request, Response, DurableObjectNamespace, etc.).",
                         "A generated `worker-configuration.d.ts` (or configured path) exists and includes an `Env` interface with all bindings from wrangler.toml.",
@@ -124,7 +127,7 @@
                             "edit_code_examples": [
                                 {
                                     "path": "src/index.ts",
-                                    "example": "// Example Worker export using generated Env\ nexport default {\n  async fetch(request: Request, env: Env, ctx: ExecutionContext) {\n    // env.DB (D1), env.KV (KV), env.AI (Workers AI), etc. all typed from wrangler.toml\n    return new Response('ok');\n  }\n};"
+                                    "example": "// Example Worker export using generated Env\nexport default {\n  async fetch(request: Request, env: Env, ctx: ExecutionContext) {\n    // env.DB (D1), env.KV (KV), env.AI (Workers AI), etc. all typed from wrangler.toml\n    return new Response('ok');\n  }\n};"
                                 },
                                 {
                                     "path": "src/do.ts",
@@ -178,13 +181,15 @@
                     "id": "setup-4",
                     "title": "Configure build and deployment scripts",
                     "description": "Set up package.json scripts for build, test, and multi-environment deployment (preview/staging/production) with D1 migrations and Vectorize setup",
-                    "estimated_hours": 2
+                    "estimated_hours": 2,
+                    "status": "pending"
                 },
                 {
                     "id": "setup-5",
                     "title": "Set up wrangler types and observability",
                     "description": "Configure wrangler types generation for full TypeScript support, enable observability features (analytics, logging, tracing), and set up verbose logging configuration for development, debugging, and production monitoring",
-                    "estimated_hours": 1
+                    "estimated_hours": 1,
+                    "status": "pending"
                 }
             ]
         },
