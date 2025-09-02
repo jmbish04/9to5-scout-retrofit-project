@@ -229,10 +229,10 @@ export default {
       }
 
       return new Response('Not Found', { status: 404 });
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error processing request:', error);
       return new Response(
-        JSON.stringify({ error: 'Failed to process request', details: error.message }),
+        JSON.stringify({ error: 'An internal server error occurred.' }),
         {
           status: 500,
           headers: { 'Content-Type': 'application/json' },
