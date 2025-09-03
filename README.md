@@ -225,6 +225,48 @@ curl -H "Authorization: Bearer <token>" \
      "https://your-worker.workers.dev/api/email/configs"
 ```
 
+### Job History Management
+The platform includes comprehensive job history management with AI-powered analysis:
+
+#### Submit Job History for Processing
+```bash
+# Submit job history in any format (plaintext, markdown, JSON)
+curl -H "Authorization: Bearer <token>" \
+     -H "Content-Type: application/json" \
+     -X POST https://your-worker.workers.dev/api/applicant/history \
+     -d '{
+       "user_id": "user-123",
+       "raw_content": "Senior Software Engineer at TechCorp (2020-2023)\n- Led development of microservices architecture\n- Managed team of 5 developers\n- Increased system performance by 40%\n\nSoftware Developer at StartupXYZ (2018-2020)\n- Full-stack development with React and Node.js\n- Built CI/CD pipelines\n- Contributed to 200% user growth",
+       "content_type": "text/plain"
+     }'
+```
+
+#### Get Applicant Profile and Job History
+```bash
+# Retrieve structured job history and profile
+curl -H "Authorization: Bearer <token>" \
+     "https://your-worker.workers.dev/api/applicant/user-123/history"
+```
+
+#### Generate Job Fit Rating
+```bash
+# Get AI-powered job fit analysis
+curl -H "Authorization: Bearer <token>" \
+     -H "Content-Type: application/json" \
+     -X POST https://your-worker.workers.dev/api/applicant/job-rating \
+     -d '{
+       "user_id": "user-123",
+       "job_id": "job-456"
+     }'
+```
+
+#### View All Job Ratings
+```bash
+# Get all job ratings for an applicant
+curl -H "Authorization: Bearer <token>" \
+     "https://your-worker.workers.dev/api/applicant/user-123/job-ratings"
+```
+
 ### Manual Job Crawling
 ```bash
 # Crawl a specific job URL

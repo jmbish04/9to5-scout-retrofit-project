@@ -182,6 +182,18 @@
                     <li>Automated reporting & notifications</li>
                 </ul>
             </div>
+
+            <div class="feature-card">
+                <h3>📚 Job History Management</h3>
+                <ul>
+                    <li>AI-powered resume parsing & structuring</li>
+                    <li>Flexible input formats (text, markdown, JSON)</li>
+                    <li>Comprehensive career profile tracking</li>
+                    <li>Intelligent job fit scoring (1-100)</li>
+                    <li>Skills gap analysis & improvement suggestions</li>
+                    <li>Automated job rating based on background</li>
+                </ul>
+            </div>
         </div>
 
         <div class="setup-section">
@@ -274,6 +286,22 @@ curl -H "Authorization: Bearer &lt;token&gt;" \
             </div>
             <div class="endpoint">
                 <span class="method">POST</span><code>/api/email/insights/send</code> - Send job insights manually
+            </div>
+        </div>
+
+        <div class="endpoint-group">
+            <h3>📚 Job History Management</h3>
+            <div class="endpoint">
+                <span class="method">POST</span><code>/api/applicant/history</code> - Submit job history for AI processing
+            </div>
+            <div class="endpoint">
+                <span class="method">GET</span><code>/api/applicant/{user_id}/history</code> - Get applicant profile & job history
+            </div>
+            <div class="endpoint">
+                <span class="method">POST</span><code>/api/applicant/job-rating</code> - Generate AI-powered job fit rating
+            </div>
+            <div class="endpoint">
+                <span class="method">GET</span><code>/api/applicant/{user_id}/job-ratings</code> - View all job ratings for applicant
             </div>
         </div>
 

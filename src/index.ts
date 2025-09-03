@@ -11,6 +11,7 @@ import { handleEmailReceived, handleEmailLogsGet, handleEmailConfigsGet, handleE
 import { handleAgentsGet, handleAgentsPost, handleAgentGet, handleAgentPut, handleAgentDelete } from './routes/agents';
 import { handleTasksGet, handleTasksPost, handleTaskGet, handleTaskPut, handleTaskDelete } from './routes/tasks';
 import { handleWorkflowsGet, handleWorkflowsPost, handleWorkflowGet, handleWorkflowPut, handleWorkflowDelete, handleWorkflowExecute } from './routes/workflows';
+import { handleJobHistoryPost, handleJobHistoryGet, handleJobRatingPost, handleJobRatingsGet } from './routes/job-history';
 import { crawlJob } from './lib/crawl';
 
 /**
@@ -893,6 +894,37 @@ export default {
           });
         }
         return handleWorkflowDelete(request, env, params.id);
+      }
+
+      // Job History Management endpoints
+      if (url.pathname === '/api/applicant/history' && request.method === 'POST') {
+        return handleJobHistoryPost(request, env);
+      }
+
+      if (url.pathname.startsWith('/api/applicant/') && url.pathname.endsWith('/history') && request.method === 'GET') {
+        const params = parsePathParams(url.pathname, '/api/applicant/:user_id/history');
+        if (!params || !params.user_id) {
+          return new Response(JSON.stringify({ error: 'User ID is required' }), {
+            status: 400,
+            headers: { 'Content-Type': 'application/json' },
+          });
+        }
+        return handleJobHistoryGet(request, env, params);
+      }
+
+      if (url.pathname === '/api/applicant/job-rating' && request.method === 'POST') {
+        return handleJobRatingPost(request, env);
+      }
+
+      if (url.pathname.startsWith('/api/applicant/') && url.pathname.endsWith('/job-ratings') && request.method === 'GET') {
+        const params = parsePathParams(url.pathname, '/api/applicant/:user_id/job-ratings');
+        if (!params || !params.user_id) {
+          return new Response(JSON.stringify({ error: 'User ID is required' }), {
+            status: 400,
+            headers: { 'Content-Type': 'application/json' },
+          });
+        }
+        return handleJobRatingsGet(request, env, params);
       }
 
       // Manual crawl endpoint

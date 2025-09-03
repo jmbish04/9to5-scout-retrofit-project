@@ -967,6 +967,362 @@
           }
         }
       }
+    },
+    "/api/applicant/history": {
+      "post": {
+        "summary": "Submit job history for AI processing",
+        "operationId": "submitJobHistory",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["user_id", "raw_content"],
+                "properties": {
+                  "user_id": {
+                    "type": "string",
+                    "description": "Unique identifier for the applicant"
+                  },
+                  "raw_content": {
+                    "type": "string",
+                    "description": "Job history content in any format (plaintext, markdown, JSON, etc.)"
+                  },
+                  "content_type": {
+                    "type": "string",
+                    "enum": ["text/plain", "text/markdown", "application/json"],
+                    "default": "text/plain",
+                    "description": "Hint about the content format"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Job history processed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "submission_id": { "type": "string" },
+                    "applicant_id": { "type": "string" },
+                    "entries_processed": { "type": "integer" },
+                    "entries": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/JobHistoryEntry" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/applicant/{user_id}/history": {
+      "get": {
+        "summary": "Get applicant's job history and profile",
+        "operationId": "getJobHistory",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "Unique identifier for the applicant"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Applicant profile and job history",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "applicant": { "$ref": "#/components/schemas/ApplicantProfile" },
+                    "job_history": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/JobHistoryEntry" }
+                    },
+                    "submissions": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/JobHistorySubmission" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/applicant/job-rating": {
+      "post": {
+        "summary": "Generate AI-powered job fit rating",
+        "operationId": "generateJobRating",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["user_id", "job_id"],
+                "properties": {
+                  "user_id": {
+                    "type": "string",
+                    "description": "Unique identifier for the applicant"
+                  },
+                  "job_id": {
+                    "type": "string",
+                    "description": "Job ID to rate fit against"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Job fit rating generated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/JobRating" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/applicant/{user_id}/job-ratings": {
+      "get": {
+        "summary": "Get all job ratings for an applicant",
+        "operationId": "getJobRatings",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "Unique identifier for the applicant"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of job ratings",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/JobRating" }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "Job": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "site_id": { "type": "string" },
+          "url": { "type": "string", "format": "uri" },
+          "canonical_url": { "type": "string", "format": "uri" },
+          "title": { "type": "string" },
+          "company": { "type": "string" },
+          "location": { "type": "string" },
+          "employment_type": { "type": "string" },
+          "department": { "type": "string" },
+          "salary_min": { "type": "integer" },
+          "salary_max": { "type": "integer" },
+          "salary_currency": { "type": "string" },
+          "source": { 
+            "type": "string", 
+            "enum": ["SCRAPED", "EMAIL", "MANUAL"],
+            "description": "Source of job discovery"
+          },
+          "status": { "type": "string" },
+          "posted_at": { "type": "string", "format": "date-time" },
+          "first_seen_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "ApplicantProfile": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "user_id": { "type": "string" },
+          "name": { "type": "string" },
+          "email": { "type": "string", "format": "email" },
+          "phone": { "type": "string" },
+          "current_title": { "type": "string" },
+          "target_roles": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Array of target job titles"
+          },
+          "years_experience": { "type": "integer" },
+          "education_level": { "type": "string" },
+          "skills": {
+            "type": "array", 
+            "items": { "type": "string" },
+            "description": "Array of skills"
+          },
+          "preferences": {
+            "type": "object",
+            "properties": {
+              "locations": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "salary_min": { "type": "integer" },
+              "salary_max": { "type": "integer" },
+              "employment_types": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "remote_preference": {
+                "type": "string",
+                "enum": ["required", "preferred", "no_preference"]
+              }
+            }
+          },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "JobHistoryEntry": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "applicant_id": { "type": "string" },
+          "company_name": { "type": "string" },
+          "job_title": { "type": "string" },
+          "department": { "type": "string" },
+          "employment_type": { "type": "string" },
+          "start_date": { "type": "string", "format": "date" },
+          "end_date": { "type": "string", "format": "date" },
+          "is_current": { "type": "boolean" },
+          "location": { "type": "string" },
+          "salary_min": { "type": "integer" },
+          "salary_max": { "type": "integer" },
+          "salary_currency": { "type": "string", "default": "USD" },
+          "responsibilities": { "type": "string", "description": "Markdown formatted" },
+          "achievements": { "type": "string", "description": "Markdown formatted" },
+          "skills_used": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "technologies": {
+            "type": "array", 
+            "items": { "type": "string" }
+          },
+          "keywords": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "JobHistorySubmission": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "applicant_id": { "type": "string" },
+          "raw_content": { "type": "string" },
+          "content_type": { "type": "string" },
+          "processing_status": {
+            "type": "string",
+            "enum": ["pending", "processing", "completed", "failed"]
+          },
+          "processing_error": { "type": "string" },
+          "processed_entries": { "type": "integer" },
+          "submitted_at": { "type": "string", "format": "date-time" },
+          "processed_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "JobRating": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "applicant_id": { "type": "string" },
+          "job_id": { "type": "string" },
+          "overall_score": { 
+            "type": "integer", 
+            "minimum": 1, 
+            "maximum": 100,
+            "description": "Overall fit score (1-100)"
+          },
+          "skill_match_score": { 
+            "type": "integer", 
+            "minimum": 1, 
+            "maximum": 100 
+          },
+          "experience_match_score": { 
+            "type": "integer", 
+            "minimum": 1, 
+            "maximum": 100 
+          },
+          "compensation_fit_score": { 
+            "type": "integer", 
+            "minimum": 1, 
+            "maximum": 100 
+          },
+          "location_fit_score": { 
+            "type": "integer", 
+            "minimum": 1, 
+            "maximum": 100 
+          },
+          "company_culture_score": { 
+            "type": "integer", 
+            "minimum": 1, 
+            "maximum": 100 
+          },
+          "growth_potential_score": { 
+            "type": "integer", 
+            "minimum": 1, 
+            "maximum": 100 
+          },
+          "rating_summary": { "type": "string" },
+          "recommendation": {
+            "type": "string",
+            "enum": ["Strong Match", "Good Fit", "Consider", "Pass"]
+          },
+          "strengths": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "gaps": {
+            "type": "array", 
+            "items": { "type": "string" }
+          },
+          "improvement_suggestions": { "type": "string" },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": { "type": "string" },
+          "message": { "type": "string" }
+        }
+      }
     }
   }
 }

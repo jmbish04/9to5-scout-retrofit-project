@@ -110,3 +110,88 @@ export interface EmailLog {
   processed_at?: string;
   status: 'pending' | 'processed' | 'failed';
 }
+
+// Job History Management Types
+export interface ApplicantProfile {
+  id?: string;
+  user_id: string;
+  name?: string;
+  email?: string;
+  phone?: string;
+  current_title?: string;
+  target_roles?: string[]; // Array of target job titles
+  years_experience?: number;
+  education_level?: string;
+  skills?: string[]; // Array of skills
+  preferences?: {
+    locations?: string[];
+    salary_min?: number;
+    salary_max?: number;
+    employment_types?: string[];
+    remote_preference?: 'required' | 'preferred' | 'no_preference';
+  };
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface JobHistoryEntry {
+  id?: string;
+  applicant_id: string;
+  company_name: string;
+  job_title: string;
+  department?: string;
+  employment_type?: string;
+  start_date?: string; // ISO date format
+  end_date?: string; // ISO date format, null if current
+  is_current?: boolean;
+  location?: string;
+  salary_min?: number;
+  salary_max?: number;
+  salary_currency?: string;
+  responsibilities?: string; // Markdown formatted
+  achievements?: string; // Markdown formatted  
+  skills_used?: string[]; // Array of skills used in this role
+  technologies?: string[]; // Array of technologies/tools used
+  keywords?: string[]; // Array of extracted keywords for matching
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface JobHistorySubmission {
+  id?: string;
+  applicant_id: string;
+  raw_content: string;
+  content_type?: string;
+  processing_status?: 'pending' | 'processing' | 'completed' | 'failed';
+  processing_error?: string;
+  ai_response?: string;
+  processed_entries?: number;
+  submitted_at?: string;
+  processed_at?: string;
+}
+
+export interface JobRating {
+  id?: string;
+  applicant_id: string;
+  job_id: string;
+  overall_score?: number; // 1-100
+  skill_match_score?: number; // 1-100
+  experience_match_score?: number; // 1-100
+  compensation_fit_score?: number; // 1-100
+  location_fit_score?: number; // 1-100
+  company_culture_score?: number; // 1-100
+  growth_potential_score?: number; // 1-100
+  rating_summary?: string;
+  recommendation?: 'Strong Match' | 'Good Fit' | 'Consider' | 'Pass';
+  strengths?: string[]; // Array of candidate strengths
+  gaps?: string[]; // Array of skill/experience gaps
+  improvement_suggestions?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface JobHistoryRequest {
+  user_id: string;
+  raw_content: string;
+  content_type?: 'text/plain' | 'text/markdown' | 'application/json';
+}
