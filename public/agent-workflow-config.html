@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Agents & Workflows - 9to5-Scout</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔍</text></svg>">
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white border-gray-200 dark:bg-gray-900 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+            <a href="/" class="flex items-center space-x-3 rtl:space-x-reverse">
+                <span class="text-2xl">🔍</span>
+                <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">9to5-Scout</span>
+            </a>
+            <button data-collapse-toggle="navbar-default" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-default" aria-expanded="false">
+                <span class="sr-only">Open main menu</span>
+                <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/>
+                </svg>
+            </button>
+            <div class="hidden w-full md:block md:w-auto" id="navbar-default">
+                <ul class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+                    <li>
+                        <a href="/" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Home</a>
+                    </li>
+                    <li>
+                        <a href="/getting-started.html" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Getting Started</a>
+                    </li>
+                    <li>
+                        <a href="/api-reference.html" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">API Reference</a>
+                    </li>
+                    <li>
+                        <a href="/email-integration.html" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Email Integration</a>
+                    </li>
+                    <li>
+                        <a href="/job-history-management.html" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Job History</a>
+                    </li>
+                    <li>
+                        <a href="/agent-workflow-config.html" class="block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500" aria-current="page">AI Agents</a>
+                    </li>
+                    <li>
+                        <a href="/openapi.json" target="_blank" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">📋 OpenAPI</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-4xl mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">🤖 AI Agents & Workflows</h1>
+            <p class="text-xl text-gray-600 dark:text-gray-400">Configure and orchestrate specialized AI agents for comprehensive job analysis and career intelligence.</p>
+        </div>
+
+        <!-- Overview -->
+        <div class="bg-gradient-to-r from-cyan-500 to-blue-600 rounded-lg p-8 text-white mb-8">
+            <h2 class="text-2xl font-bold mb-4">🚀 Multi-Agent AI System</h2>
+            <p class="text-cyan-100 mb-4">
+                9to5-Scout's multi-agent architecture leverages specialized AI agents that work together to provide comprehensive job market intelligence and career guidance.
+            </p>
+            <div class="grid md:grid-cols-3 gap-4 text-sm">
+                <div class="bg-white bg-opacity-20 rounded p-3">
+                    <div class="font-semibold">🧠 Specialized Agents</div>
+                    <div class="text-cyan-100">Resume, Job, Company analysts</div>
+                </div>
+                <div class="bg-white bg-opacity-20 rounded p-3">
+                    <div class="font-semibold">⚙️ Task Orchestration</div>
+                    <div class="text-cyan-100">Sequential & hierarchical workflows</div>
+                </div>
+                <div class="bg-white bg-opacity-20 rounded p-3">
+                    <div class="font-semibold">🔧 Configurable Behavior</div>
+                    <div class="text-cyan-100">Custom prompts and parameters</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Agent Types -->
+        <div class="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900 mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🎭 Specialized AI Agents</h2>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Resume Analyzer -->
+                <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                    <div class="flex items-center mb-3">
+                        <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 mr-3">
+                            📄
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Resume Analyzer</h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">ATS Optimization Expert</p>
+                        </div>
+                    </div>
+                    <div class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                        <p><strong>Goal:</strong> Analyze and optimize resumes for ATS systems and recruiter preferences</p>
+                        <p><strong>Expertise:</strong> Keywords, formatting, content structure, industry standards</p>
+                        <p><strong>Output:</strong> Optimization recommendations, ATS compatibility score, formatting suggestions</p>
+                    </div>
+                </div>
+
+                <!-- Job Analyzer -->
+                <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                    <div class="flex items-center mb-3">
+                        <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-600 mr-3">
+                            🎯
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Job Analyzer</h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Requirement Extraction Specialist</p>
+                        </div>
+                    </div>
+                    <div class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                        <p><strong>Goal:</strong> Extract comprehensive requirements and analyze job postings in depth</p>
+                        <p><strong>Expertise:</strong> Skills identification, experience levels, compensation analysis</p>
+                        <p><strong>Output:</strong> Structured job requirements, skills matrix, difficulty assessment</p>
+                    </div>
+                </div>
+
+                <!-- Company Researcher -->
+                <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                    <div class="flex items-center mb-3">
+                        <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 mr-3">
+                            🏢
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Company Researcher</h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Corporate Intelligence Analyst</p>
+                        </div>
+                    </div>
+                    <div class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                        <p><strong>Goal:</strong> Gather comprehensive company intelligence and culture analysis</p>
+                        <p><strong>Expertise:</strong> Company culture, growth metrics, industry position, values</p>
+                        <p><strong>Output:</strong> Company profile, culture fit assessment, growth trajectory</p>
+                    </div>
+                </div>
+
+                <!-- Resume Writer -->
+                <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                    <div class="flex items-center mb-3">
+                        <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center text-orange-600 mr-3">
+                            ✍️
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Resume Writer</h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Strategic Content Generator</p>
+                        </div>
+                    </div>
+                    <div class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                        <p><strong>Goal:</strong> Generate compelling, targeted resume content with industry best practices</p>
+                        <p><strong>Expertise:</strong> Content strategy, achievement framing, industry-specific language</p>
+                        <p><strong>Output:</strong> Tailored resume sections, achievement bullets, skill positioning</p>
+                    </div>
+                </div>
+
+                <!-- Interview Strategist -->
+                <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                    <div class="flex items-center mb-3">
+                        <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center text-red-600 mr-3">
+                            💬
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Interview Strategist</h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Interview Preparation Expert</p>
+                        </div>
+                    </div>
+                    <div class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                        <p><strong>Goal:</strong> Develop comprehensive interview strategies and question preparation</p>
+                        <p><strong>Expertise:</strong> Behavioral questions, technical prep, company-specific strategies</p>
+                        <p><strong>Output:</strong> Interview guide, question bank, strategic talking points</p>
+                    </div>
+                </div>
+
+                <!-- Career Historian -->
+                <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                    <div class="flex items-center mb-3">
+                        <div class="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 mr-3">
+                            📚
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Career Historian</h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Career Narrative Synthesizer</p>
+                        </div>
+                    </div>
+                    <div class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                        <p><strong>Goal:</strong> Synthesize career history into compelling professional narratives</p>
+                        <p><strong>Expertise:</strong> Career progression analysis, story development, personal branding</p>
+                        <p><strong>Output:</strong> Career story, progression analysis, professional brand narrative</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Agent Configuration -->
+        <div class="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900 mb-8">
+            <div class="flex items-center mb-4">
+                <div class="flex items-center justify-center w-8 h-8 bg-cyan-100 rounded-full dark:bg-cyan-900 mr-3">
+                    <span class="text-cyan-600 dark:text-cyan-300 font-semibold">1</span>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Agent Configuration</h2>
+            </div>
+
+            <div class="space-y-6">
+                <p class="text-gray-600 dark:text-gray-400">Configure individual AI agents with custom parameters, prompts, and behavior settings.</p>
+
+                <!-- List Agents -->
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">📋 List Available Agents</h3>
+                    <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
+                        <pre class="text-green-400 text-sm"><code># List all configured agents
+curl -H "Authorization: Bearer &lt;token&gt;" \
+     "https://your-worker.workers.dev/api/agents"
+
+# Filter enabled agents only
+curl -H "Authorization: Bearer &lt;token&gt;" \
+     "https://your-worker.workers.dev/api/agents?enabled=true"</code></pre>
+                    </div>
+                </div>
+
+                <!-- Create Agent -->
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">🛠️ Create Custom Agent</h3>
+                    <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
+                        <pre class="text-green-400 text-sm"><code>curl -H "Authorization: Bearer &lt;token&gt;" \
+     -H "Content-Type: application/json" \
+     -X POST https://your-worker.workers.dev/api/agents \
+     -d '{
+       "id": "custom-job-analyzer",
+       "name": "Custom Job Requirements Analyzer",
+       "role": "Senior Job Analysis Expert",
+       "goal": "Extract comprehensive job requirements and analyze candidate fit",
+       "backstory": "Expert in parsing job descriptions with 15+ years of recruiting experience",
+       "llm": "@cf/meta/llama-3.1-8b-instruct",
+       "tools": ["web_search", "content_analysis"],
+       "max_iter": 25,
+       "max_rpm": 10,
+       "verbose": false,
+       "allow_delegation": false,
+       "memory": true,
+       "enabled": true
+     }'</code></pre>
+                    </div>
+                </div>
+
+                <!-- Configuration Parameters -->
+                <div class="bg-blue-50 border-l-4 border-blue-400 p-4">
+                    <h4 class="font-semibold text-blue-900 mb-3">⚙️ Configuration Parameters</h4>
+                    <div class="grid md:grid-cols-2 gap-4 text-sm text-blue-800">
+                        <div>
+                            <p><strong>Core Identity:</strong></p>
+                            <ul class="list-disc list-inside space-y-1">
+                                <li><code>role</code> - Agent's professional role</li>
+                                <li><code>goal</code> - Primary objective</li>
+                                <li><code>backstory</code> - Experience context</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <p><strong>Behavior Settings:</strong></p>
+                            <ul class="list-disc list-inside space-y-1">
+                                <li><code>max_iter</code> - Maximum iterations (1-100)</li>
+                                <li><code>verbose</code> - Detailed output logging</li>
+                                <li><code>memory</code> - Context retention</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <p><strong>AI Configuration:</strong></p>
+                            <ul class="list-disc list-inside space-y-1">
+                                <li><code>llm</code> - Language model selection</li>
+                                <li><code>tools</code> - Available tool integrations</li>
+                                <li><code>max_rpm</code> - Rate limiting</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <p><strong>Templates:</strong></p>
+                            <ul class="list-disc list-inside space-y-1">
+                                <li><code>system_template</code> - System prompts</li>
+                                <li><code>prompt_template</code> - User prompts</li>
+                                <li><code>response_template</code> - Output format</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Task Configuration -->
+        <div class="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900 mb-8">
+            <div class="flex items-center mb-4">
+                <div class="flex items-center justify-center w-8 h-8 bg-cyan-100 rounded-full dark:bg-cyan-900 mr-3">
+                    <span class="text-cyan-600 dark:text-cyan-300 font-semibold">2</span>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Task Configuration</h2>
+            </div>
+
+            <div class="space-y-6">
+                <p class="text-gray-600 dark:text-gray-400">Define specific tasks that agents will execute as part of workflows.</p>
+
+                <!-- Create Task -->
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">📝 Create Task</h3>
+                    <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
+                        <pre class="text-green-400 text-sm"><code>curl -H "Authorization: Bearer &lt;token&gt;" \
+     -H "Content-Type: application/json" \
+     -X POST https://your-worker.workers.dev/api/tasks \
+     -d '{
+       "id": "analyze-job-fit",
+       "description": "Analyze job posting for candidate fit and requirements breakdown",
+       "agent_id": "job-analyzer",
+       "expected_output": "Detailed job analysis with requirements matrix and fit assessment",
+       "tools": ["content_analysis", "skills_extraction"],
+       "async_execution": false,
+       "context": ["resume-analysis"],
+       "output_json": {
+         "required_skills": "array",
+         "experience_level": "string",
+         "compensation_range": "object",
+         "fit_score": "number"
+       },
+       "enabled": true
+     }'</code></pre>
+                    </div>
+                </div>
+
+                <!-- Task Types -->
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h4 class="font-semibold text-gray-900 dark:text-white mb-2">🔍 Analysis Tasks</h4>
+                        <ul class="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                            <li>• Resume analysis and optimization</li>
+                            <li>• Job requirement extraction</li>
+                            <li>• Company culture assessment</li>
+                            <li>• Skill gap identification</li>
+                        </ul>
+                    </div>
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h4 class="font-semibold text-gray-900 dark:text-white mb-2">📝 Generation Tasks</h4>
+                        <ul class="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                            <li>• Cover letter creation</li>
+                            <li>• Resume content writing</li>
+                            <li>• Interview question preparation</li>
+                            <li>• Career narrative development</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- List Tasks -->
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">📋 Manage Tasks</h3>
+                    <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
+                        <pre class="text-green-400 text-sm"><code># List all tasks
+curl -H "Authorization: Bearer &lt;token&gt;" \
+     "https://your-worker.workers.dev/api/tasks"
+
+# List tasks for specific agent
+curl -H "Authorization: Bearer &lt;token&gt;" \
+     "https://your-worker.workers.dev/api/tasks?agent_id=job-analyzer"
+
+# Get specific task details
+curl -H "Authorization: Bearer &lt;token&gt;" \
+     "https://your-worker.workers.dev/api/tasks/analyze-job-fit"</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Workflow Orchestration -->
+        <div class="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900 mb-8">
+            <div class="flex items-center mb-4">
+                <div class="flex items-center justify-center w-8 h-8 bg-cyan-100 rounded-full dark:bg-cyan-900 mr-3">
+                    <span class="text-cyan-600 dark:text-cyan-300 font-semibold">3</span>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Workflow Orchestration</h2>
+            </div>
+
+            <div class="space-y-6">
+                <p class="text-gray-600 dark:text-gray-400">Orchestrate multiple agents and tasks into comprehensive workflows for complex analysis.</p>
+
+                <!-- Workflow Types -->
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                        <h4 class="font-semibold text-green-900 mb-2">🔄 Sequential Workflows</h4>
+                        <p class="text-sm text-green-800 mb-3">Tasks execute one after another, with outputs passed between agents.</p>
+                        <div class="text-xs text-green-700">
+                            <p><strong>Example:</strong> Resume Analysis → Job Matching → Fit Scoring → Report Generation</p>
+                        </div>
+                    </div>
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <h4 class="font-semibold text-blue-900 mb-2">🏗️ Hierarchical Workflows</h4>
+                        <p class="text-sm text-blue-800 mb-3">Manager agent coordinates multiple specialist agents working in parallel.</p>
+                        <div class="text-xs text-blue-700">
+                            <p><strong>Example:</strong> Manager coordinates Resume, Job, and Company analysts simultaneously</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Create Workflow -->
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">⚙️ Create Workflow</h3>
+                    <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
+                        <pre class="text-green-400 text-sm"><code>curl -H "Authorization: Bearer &lt;token&gt;" \
+     -H "Content-Type: application/json" \
+     -X POST https://your-worker.workers.dev/api/workflows \
+     -d '{
+       "id": "comprehensive-job-analysis",
+       "name": "Comprehensive Job Analysis Workflow",
+       "description": "Full analysis of job posting with resume fit assessment",
+       "agents": [
+         "resume-analyzer",
+         "job-analyzer", 
+         "company-researcher",
+         "interview-strategist"
+       ],
+       "tasks": [
+         "analyze-resume",
+         "extract-job-requirements",
+         "research-company",
+         "generate-interview-guide"
+       ],
+       "process": "sequential",
+       "verbose": false,
+       "memory": true,
+       "cache": true,
+       "language": "en",
+       "enabled": true
+     }'</code></pre>
+                    </div>
+                </div>
+
+                <!-- Execute Workflow -->
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">🚀 Execute Workflow</h3>
+                    <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
+                        <pre class="text-green-400 text-sm"><code>curl -H "Authorization: Bearer &lt;token&gt;" \
+     -H "Content-Type: application/json" \
+     -X POST https://your-worker.workers.dev/api/workflows/comprehensive-job-analysis/execute \
+     -d '{
+       "context": {
+         "job_url": "https://company.com/careers/senior-engineer",
+         "applicant_id": "user-123",
+         "resume_text": "Senior Software Engineer with 5+ years...",
+         "target_role": "Senior Software Engineer"
+       }
+     }'</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Workflow Examples -->
+        <div class="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900 mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">📋 Common Workflow Examples</h2>
+
+            <div class="space-y-6">
+                <!-- Job Application Workflow -->
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">🎯 Job Application Analysis Workflow</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 text-sm font-bold mr-3">1</div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-900 dark:text-white">Job Analyzer</p>
+                                <p class="text-xs text-gray-600 dark:text-gray-400">Extract requirements and analyze job posting</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center text-green-600 text-sm font-bold mr-3">2</div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-900 dark:text-white">Resume Analyzer</p>
+                                <p class="text-xs text-gray-600 dark:text-gray-400">Analyze candidate resume against job requirements</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 text-sm font-bold mr-3">3</div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-900 dark:text-white">Company Researcher</p>
+                                <p class="text-xs text-gray-600 dark:text-gray-400">Research company culture and growth trajectory</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center text-orange-600 text-sm font-bold mr-3">4</div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-900 dark:text-white">Report Generator</p>
+                                <p class="text-xs text-gray-600 dark:text-gray-400">Compile comprehensive job fit report with recommendations</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resume Optimization Workflow -->
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">📄 Resume Optimization Workflow</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-red-600 text-sm font-bold mr-3">1</div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-900 dark:text-white">Resume Analyzer</p>
+                                <p class="text-xs text-gray-600 dark:text-gray-400">Analyze current resume for ATS compatibility and optimization</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 text-sm font-bold mr-3">2</div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-900 dark:text-white">Career Historian</p>
+                                <p class="text-xs text-gray-600 dark:text-gray-400">Develop compelling career narrative and achievements</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center text-orange-600 text-sm font-bold mr-3">3</div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-900 dark:text-white">Resume Writer</p>
+                                <p class="text-xs text-gray-600 dark:text-gray-400">Generate optimized resume content with industry best practices</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interview Preparation Workflow -->
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">💬 Interview Preparation Workflow</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 text-sm font-bold mr-3">1</div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-900 dark:text-white">Company Researcher</p>
+                                <p class="text-xs text-gray-600 dark:text-gray-400">Deep dive into company culture, values, and recent developments</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center text-green-600 text-sm font-bold mr-3">2</div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-900 dark:text-white">Job Analyzer</p>
+                                <p class="text-xs text-gray-600 dark:text-gray-400">Identify key technical and behavioral competencies</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-red-600 text-sm font-bold mr-3">3</div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-900 dark:text-white">Interview Strategist</p>
+                                <p class="text-xs text-gray-600 dark:text-gray-400">Create comprehensive interview guide with questions and strategies</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- API Reference -->
+        <div class="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900 mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🔧 Multi-Agent API Reference</h2>
+            
+            <div class="space-y-6">
+                <!-- Agent Endpoints -->
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">🤖 Agent Management</h3>
+                    <div class="space-y-3">
+                        <div class="border-l-4 border-green-400 bg-green-50 p-3">
+                            <div class="flex items-center mb-1">
+                                <span class="bg-green-500 text-white px-2 py-1 rounded text-xs font-bold mr-2">GET</span>
+                                <code class="text-sm font-mono">/api/agents</code>
+                            </div>
+                            <p class="text-green-700 text-sm">List all agent configurations</p>
+                        </div>
+                        <div class="border-l-4 border-orange-400 bg-orange-50 p-3">
+                            <div class="flex items-center mb-1">
+                                <span class="bg-orange-500 text-white px-2 py-1 rounded text-xs font-bold mr-2">POST</span>
+                                <code class="text-sm font-mono">/api/agents</code>
+                            </div>
+                            <p class="text-orange-700 text-sm">Create new agent configuration</p>
+                        </div>
+                        <div class="border-l-4 border-blue-400 bg-blue-50 p-3">
+                            <div class="flex items-center mb-1">
+                                <span class="bg-blue-500 text-white px-2 py-1 rounded text-xs font-bold mr-2">PUT</span>
+                                <code class="text-sm font-mono">/api/agents/{id}</code>
+                            </div>
+                            <p class="text-blue-700 text-sm">Update agent configuration</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Task Endpoints -->
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">📝 Task Management</h3>
+                    <div class="space-y-3">
+                        <div class="border-l-4 border-green-400 bg-green-50 p-3">
+                            <div class="flex items-center mb-1">
+                                <span class="bg-green-500 text-white px-2 py-1 rounded text-xs font-bold mr-2">GET</span>
+                                <code class="text-sm font-mono">/api/tasks</code>
+                            </div>
+                            <p class="text-green-700 text-sm">List all task configurations</p>
+                        </div>
+                        <div class="border-l-4 border-orange-400 bg-orange-50 p-3">
+                            <div class="flex items-center mb-1">
+                                <span class="bg-orange-500 text-white px-2 py-1 rounded text-xs font-bold mr-2">POST</span>
+                                <code class="text-sm font-mono">/api/tasks</code>
+                            </div>
+                            <p class="text-orange-700 text-sm">Create new task configuration</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Workflow Endpoints -->
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">⚙️ Workflow Orchestration</h3>
+                    <div class="space-y-3">
+                        <div class="border-l-4 border-green-400 bg-green-50 p-3">
+                            <div class="flex items-center mb-1">
+                                <span class="bg-green-500 text-white px-2 py-1 rounded text-xs font-bold mr-2">GET</span>
+                                <code class="text-sm font-mono">/api/workflows</code>
+                            </div>
+                            <p class="text-green-700 text-sm">List all workflow configurations</p>
+                        </div>
+                        <div class="border-l-4 border-orange-400 bg-orange-50 p-3">
+                            <div class="flex items-center mb-1">
+                                <span class="bg-orange-500 text-white px-2 py-1 rounded text-xs font-bold mr-2">POST</span>
+                                <code class="text-sm font-mono">/api/workflows/{id}/execute</code>
+                            </div>
+                            <p class="text-orange-700 text-sm">Execute multi-agent workflow</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Best Practices -->
+        <div class="bg-gradient-to-r from-green-500 to-teal-600 rounded-lg p-8 text-white mb-8">
+            <h2 class="text-2xl font-bold mb-4">💡 Best Practices</h2>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="text-lg font-semibold mb-3">🎯 Agent Design</h3>
+                    <ul class="text-green-100 text-sm space-y-1">
+                        <li>• Keep agent roles focused and specific</li>
+                        <li>• Write clear, detailed backstories</li>
+                        <li>• Use appropriate LLM models for tasks</li>
+                        <li>• Set reasonable iteration limits</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-3">⚙️ Workflow Optimization</h3>
+                    <ul class="text-green-100 text-sm space-y-1">
+                        <li>• Chain related tasks in logical sequence</li>
+                        <li>• Use caching for repeated operations</li>
+                        <li>• Enable memory for context retention</li>
+                        <li>• Monitor performance and adjust</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Next Steps -->
+        <div class="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">📚 Next Steps</h2>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">🚀 Implementation</h3>
+                    <ul class="space-y-2 text-gray-600 dark:text-gray-400">
+                        <li><a href="/job-history-management.html" class="text-blue-600 hover:text-blue-800">Set up job history for better agent context</a></li>
+                        <li><a href="/email-integration.html" class="text-blue-600 hover:text-blue-800">Enable email integration for job alerts</a></li>
+                        <li><a href="/api-reference.html" class="text-blue-600 hover:text-blue-800">Explore complete API documentation</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">🔧 Advanced Features</h3>
+                    <ul class="space-y-2 text-gray-600 dark:text-gray-400">
+                        <li>• Create custom agent templates</li>
+                        <li>• Build complex hierarchical workflows</li>
+                        <li>• Integrate external tools and APIs</li>
+                        <li>• Monitor agent performance metrics</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-gray-900 mt-16">
+        <div class="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
+            <div class="md:flex md:justify-between">
+                <div class="mb-6 md:mb-0">
+                    <a href="/" class="flex items-center">
+                        <span class="text-2xl mr-3">🔍</span>
+                        <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">9to5-Scout</span>
+                    </a>
+                </div>
+                <div class="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
+                    <div>
+                        <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Documentation</h2>
+                        <ul class="text-gray-500 dark:text-gray-400 font-medium">
+                            <li class="mb-4">
+                                <a href="/getting-started.html" class="hover:underline">Getting Started</a>
+                            </li>
+                            <li class="mb-4">
+                                <a href="/api-reference.html" class="hover:underline">API Reference</a>
+                            </li>
+                            <li>
+                                <a href="/openapi.json" target="_blank" class="hover:underline">OpenAPI Spec</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Features</h2>
+                        <ul class="text-gray-500 dark:text-gray-400 font-medium">
+                            <li class="mb-4">
+                                <a href="/email-integration.html" class="hover:underline">Email Integration</a>
+                            </li>
+                            <li class="mb-4">
+                                <a href="/job-history-management.html" class="hover:underline">Job History</a>
+                            </li>
+                            <li>
+                                <a href="/agent-workflow-config.html" class="hover:underline">AI Agents</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Platform</h2>
+                        <ul class="text-gray-500 dark:text-gray-400 font-medium">
+                            <li class="mb-4">
+                                <a href="https://workers.cloudflare.com/" target="_blank" class="hover:underline">Cloudflare Workers</a>
+                            </li>
+                            <li class="mb-4">
+                                <a href="https://ai.cloudflare.com/" target="_blank" class="hover:underline">Workers AI</a>
+                            </li>
+                            <li>
+                                <a href="https://developers.cloudflare.com/" target="_blank" class="hover:underline">Developer Docs</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <hr class="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
+            <div class="sm:flex sm:items-center sm:justify-between">
+                <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">Built with ❤️ using Cloudflare Workers & AI</span>
+                <div class="flex mt-4 sm:justify-center sm:mt-0">
+                    <a href="/openapi.json" target="_blank" class="text-gray-500 hover:text-gray-900 dark:hover:text-white">
+                        <span class="sr-only">OpenAPI Specification</span>
+                        📋
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Integration - 9to5-Scout</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔍</text></svg>">
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white border-gray-200 dark:bg-gray-900 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+            <a href="/" class="flex items-center space-x-3 rtl:space-x-reverse">
+                <span class="text-2xl">🔍</span>
+                <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">9to5-Scout</span>
+            </a>
+            <button data-collapse-toggle="navbar-default" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-default" aria-expanded="false">
+                <span class="sr-only">Open main menu</span>
+                <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/>
+                </svg>
+            </button>
+            <div class="hidden w-full md:block md:w-auto" id="navbar-default">
+                <ul class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+                    <li>
+                        <a href="/" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Home</a>
+                    </li>
+                    <li>
+                        <a href="/getting-started.html" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Getting Started</a>
+                    </li>
+                    <li>
+                        <a href="/api-reference.html" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">API Reference</a>
+                    </li>
+                    <li>
+                        <a href="/email-integration.html" class="block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500" aria-current="page">Email Integration</a>
+                    </li>
+                    <li>
+                        <a href="/job-history-management.html" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Job History</a>
+                    </li>
+                    <li>
+                        <a href="/agent-workflow-config.html" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">AI Agents</a>
+                    </li>
+                    <li>
+                        <a href="/openapi.json" target="_blank" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">📋 OpenAPI</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-4xl mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">📧 Email Integration</h1>
+            <p class="text-xl text-gray-600 dark:text-gray-400">Set up automated job alert processing and email insights delivery system.</p>
+        </div>
+
+        <!-- Overview -->
+        <div class="bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg p-8 text-white mb-8">
+            <h2 class="text-2xl font-bold mb-4">🚀 Email Integration Overview</h2>
+            <p class="text-blue-100 mb-4">
+                9to5-Scout's email integration system automatically processes job alerts from major platforms and delivers intelligent insights directly to your inbox.
+            </p>
+            <div class="grid md:grid-cols-3 gap-4 text-sm">
+                <div class="bg-white bg-opacity-20 rounded p-3">
+                    <div class="font-semibold">📥 Job Alert Processing</div>
+                    <div class="text-blue-100">Automatic link extraction and crawling</div>
+                </div>
+                <div class="bg-white bg-opacity-20 rounded p-3">
+                    <div class="font-semibold">📊 Insights Delivery</div>
+                    <div class="text-blue-100">Scheduled reports with analytics</div>
+                </div>
+                <div class="bg-white bg-opacity-20 rounded p-3">
+                    <div class="font-semibold">🎯 Source Attribution</div>
+                    <div class="text-blue-100">Track email vs. scraped job sources</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 1: Cloudflare Email Routing Setup -->
+        <div class="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900 mb-8">
+            <div class="flex items-center mb-4">
+                <div class="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full dark:bg-blue-900 mr-3">
+                    <span class="text-blue-600 dark:text-blue-300 font-semibold">1</span>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Cloudflare Email Routing Setup</h2>
+            </div>
+            
+            <div class="space-y-4">
+                <p class="text-gray-600 dark:text-gray-400">Configure Cloudflare Email Routing to receive job alerts from major platforms.</p>
+                
+                <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
+                    <pre class="text-green-400 text-sm"><code># Add to wrangler.toml
+[[email]]
+name = "job-alerts"
+destination_addresses = ["*@9to5scout.dev"]</code></pre>
+                </div>
+
+                <div class="bg-blue-50 border-l-4 border-blue-400 p-4">
+                    <h4 class="font-semibold text-blue-900 mb-3">📧 Supported Email Addresses</h4>
+                    <div class="grid md:grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <div class="font-medium text-blue-800">General & LinkedIn</div>
+                            <code class="text-blue-700 bg-blue-100 px-2 py-1 rounded">alerts@9to5scout.dev</code>
+                        </div>
+                        <div>
+                            <div class="font-medium text-blue-800">Indeed & Monster</div>
+                            <code class="text-blue-700 bg-blue-100 px-2 py-1 rounded">jobs@9to5scout.dev</code>
+                        </div>
+                        <div>
+                            <div class="font-medium text-blue-800">Glassdoor & ZipRecruiter</div>
+                            <code class="text-blue-700 bg-blue-100 px-2 py-1 rounded">notifications@9to5scout.dev</code>
+                        </div>
+                        <div>
+                            <div class="font-medium text-blue-800">System Insights</div>
+                            <code class="text-blue-700 bg-blue-100 px-2 py-1 rounded">insights@9to5scout.dev</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 2: Platform Configuration -->
+        <div class="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900 mb-8">
+            <div class="flex items-center mb-4">
+                <div class="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full dark:bg-blue-900 mr-3">
+                    <span class="text-blue-600 dark:text-blue-300 font-semibold">2</span>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Job Platform Configuration</h2>
+            </div>
+
+            <div class="space-y-6">
+                <p class="text-gray-600 dark:text-gray-400">Set up job alerts on major platforms to send to your 9to5-Scout email addresses.</p>
+
+                <!-- LinkedIn -->
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <div class="flex items-center mb-3">
+                        <div class="w-8 h-8 bg-blue-600 rounded flex items-center justify-center text-white font-bold text-sm mr-3">Li</div>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">LinkedIn Job Alerts</h3>
+                    </div>
+                    <div class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                        <p><strong>Email:</strong> <code class="bg-gray-100 px-2 py-1 rounded">alerts@9to5scout.dev</code></p>
+                        <p><strong>Setup:</strong> LinkedIn → Settings → Notifications → Job alerts → Email frequency</p>
+                        <p><strong>Features:</strong> Company updates, new postings, application deadlines</p>
+                    </div>
+                </div>
+
+                <!-- Indeed -->
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <div class="flex items-center mb-3">
+                        <div class="w-8 h-8 bg-green-600 rounded flex items-center justify-center text-white font-bold text-sm mr-3">In</div>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Indeed Job Alerts</h3>
+                    </div>
+                    <div class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                        <p><strong>Email:</strong> <code class="bg-gray-100 px-2 py-1 rounded">jobs@9to5scout.dev</code></p>
+                        <p><strong>Setup:</strong> Indeed → Create job alert → Email delivery settings</p>
+                        <p><strong>Features:</strong> Daily/weekly digests, similar job suggestions</p>
+                    </div>
+                </div>
+
+                <!-- Glassdoor -->
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <div class="flex items-center mb-3">
+                        <div class="w-8 h-8 bg-green-500 rounded flex items-center justify-center text-white font-bold text-sm mr-3">Gd</div>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Glassdoor Alerts</h3>
+                    </div>
+                    <div class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                        <p><strong>Email:</strong> <code class="bg-gray-100 px-2 py-1 rounded">notifications@9to5scout.dev</code></p>
+                        <p><strong>Setup:</strong> Glassdoor → Account → Email preferences → Job alerts</p>
+                        <p><strong>Features:</strong> Salary insights, company reviews, culture fit</p>
+                    </div>
+                </div>
+
+                <!-- Other Platforms -->
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <div class="flex items-center mb-3">
+                        <div class="w-8 h-8 bg-purple-600 rounded flex items-center justify-center text-white font-bold text-sm mr-3">+</div>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Other Platforms</h3>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-4 text-sm text-gray-600 dark:text-gray-400">
+                        <div>
+                            <p><strong>Monster:</strong> <code class="bg-gray-100 px-1 rounded">jobs@9to5scout.dev</code></p>
+                            <p><strong>ZipRecruiter:</strong> <code class="bg-gray-100 px-1 rounded">notifications@9to5scout.dev</code></p>
+                        </div>
+                        <div>
+                            <p><strong>AngelList:</strong> <code class="bg-gray-100 px-1 rounded">alerts@9to5scout.dev</code></p>
+                            <p><strong>Stack Overflow:</strong> <code class="bg-gray-100 px-1 rounded">alerts@9to5scout.dev</code></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 3: Email Processing -->
+        <div class="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900 mb-8">
+            <div class="flex items-center mb-4">
+                <div class="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full dark:bg-blue-900 mr-3">
+                    <span class="text-blue-600 dark:text-blue-300 font-semibold">3</span>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Automatic Email Processing</h2>
+            </div>
+
+            <div class="space-y-4">
+                <p class="text-gray-600 dark:text-gray-400">Once configured, 9to5-Scout automatically processes incoming job alert emails:</p>
+
+                <div class="space-y-4">
+                    <div class="flex items-start space-x-3">
+                        <div class="flex-shrink-0 w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
+                            <svg class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-gray-900 dark:text-white">Email Reception</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Receives emails via Cloudflare Email Routing</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start space-x-3">
+                        <div class="flex-shrink-0 w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
+                            <svg class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-gray-900 dark:text-white">Link Extraction</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Automatically extracts job URLs from email content</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start space-x-3">
+                        <div class="flex-shrink-0 w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
+                            <svg class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-gray-900 dark:text-white">Job Crawling</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Crawls extracted URLs to get full job details</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start space-x-3">
+                        <div class="flex-shrink-0 w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
+                            <svg class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-gray-900 dark:text-white">Source Attribution</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Marks jobs as <code class="bg-gray-100 px-1 rounded text-xs">source: "EMAIL"</code></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 4: Configure Email Insights -->
+        <div class="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900 mb-8">
+            <div class="flex items-center mb-4">
+                <div class="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full dark:bg-blue-900 mr-3">
+                    <span class="text-blue-600 dark:text-blue-300 font-semibold">4</span>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Configure Email Insights</h2>
+            </div>
+
+            <div class="space-y-4">
+                <p class="text-gray-600 dark:text-gray-400">Set up automated job market insights and reports delivered to your inbox.</p>
+
+                <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
+                    <pre class="text-green-400 text-sm"><code># Configure email insights
+curl -H "Authorization: Bearer &lt;token&gt;" \
+     -H "Content-Type: application/json" \
+     -X PUT https://your-worker.workers.dev/api/email/configs \
+     -d '{
+       "id": "default",
+       "enabled": true,
+       "frequency_hours": 24,
+       "recipient_email": "user@example.com",
+       "include_new_jobs": true,
+       "include_job_changes": true,
+       "include_statistics": true
+     }'</code></pre>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <h4 class="font-semibold text-blue-900 mb-2">📊 What's Included</h4>
+                        <ul class="text-sm text-blue-800 space-y-1">
+                            <li>• New jobs discovered</li>
+                            <li>• Job status changes</li>
+                            <li>• Market statistics</li>
+                            <li>• Salary trend analysis</li>
+                            <li>• Skills demand insights</li>
+                        </ul>
+                    </div>
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                        <h4 class="font-semibold text-green-900 mb-2">⚙️ Configuration Options</h4>
+                        <ul class="text-sm text-green-800 space-y-1">
+                            <li>• Frequency: 1-168 hours</li>
+                            <li>• Content filtering</li>
+                            <li>• Custom recipients</li>
+                            <li>• HTML formatting</li>
+                            <li>• Analytics tracking</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- API Reference -->
+        <div class="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900 mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🔧 Email API Reference</h2>
+            
+            <div class="space-y-6">
+                <!-- Get Email Configs -->
+                <div class="border-l-4 border-green-400 bg-green-50 p-4">
+                    <div class="flex items-center mb-2">
+                        <span class="bg-green-500 text-white px-2 py-1 rounded text-xs font-bold mr-3">GET</span>
+                        <code class="text-lg font-mono">/api/email/configs</code>
+                    </div>
+                    <p class="text-green-700 mb-2">Get current email notification settings</p>
+                    <div class="bg-gray-900 rounded p-2 text-green-400 text-sm">
+                        <code>curl -H "Authorization: Bearer &lt;token&gt;" /api/email/configs</code>
+                    </div>
+                </div>
+
+                <!-- Update Email Configs -->
+                <div class="border-l-4 border-blue-400 bg-blue-50 p-4">
+                    <div class="flex items-center mb-2">
+                        <span class="bg-blue-500 text-white px-2 py-1 rounded text-xs font-bold mr-3">PUT</span>
+                        <code class="text-lg font-mono">/api/email/configs</code>
+                    </div>
+                    <p class="text-blue-700 mb-2">Update email preferences and settings</p>
+                </div>
+
+                <!-- Send Manual Insights -->
+                <div class="border-l-4 border-orange-400 bg-orange-50 p-4">
+                    <div class="flex items-center mb-2">
+                        <span class="bg-orange-500 text-white px-2 py-1 rounded text-xs font-bold mr-3">POST</span>
+                        <code class="text-lg font-mono">/api/email/insights/send</code>
+                    </div>
+                    <p class="text-orange-700 mb-2">Send job insights email manually</p>
+                    <div class="bg-gray-900 rounded p-2 text-green-400 text-sm">
+                        <code>curl -H "Authorization: Bearer &lt;token&gt;" -X POST /api/email/insights/send</code>
+                    </div>
+                </div>
+
+                <!-- View Email Logs -->
+                <div class="border-l-4 border-green-400 bg-green-50 p-4">
+                    <div class="flex items-center mb-2">
+                        <span class="bg-green-500 text-white px-2 py-1 rounded text-xs font-bold mr-3">GET</span>
+                        <code class="text-lg font-mono">/api/email/logs</code>
+                    </div>
+                    <p class="text-green-700 mb-2">View email processing history and analytics</p>
+                    <div class="bg-gray-900 rounded p-2 text-green-400 text-sm">
+                        <code>curl -H "Authorization: Bearer &lt;token&gt;" "/api/email/logs?limit=20"</code>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Email Template Customization -->
+        <div class="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900 mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🎨 Email Template Features</h2>
+            
+            <div class="space-y-4">
+                <p class="text-gray-600 dark:text-gray-400">9to5-Scout generates professional HTML email templates with rich content and analytics.</p>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">📧 Email Content</h3>
+                        <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                            <li class="flex items-center">
+                                <svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                Executive summary of job market activity
+                            </li>
+                            <li class="flex items-center">
+                                <svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                Detailed job listings with direct links
+                            </li>
+                            <li class="flex items-center">
+                                <svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                Salary trends and market analytics
+                            </li>
+                            <li class="flex items-center">
+                                <svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                Skills demand analysis
+                            </li>
+                            <li class="flex items-center">
+                                <svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                Company intelligence insights
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">🔧 Technical Features</h3>
+                        <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                            <li class="flex items-center">
+                                <svg class="w-4 h-4 text-blue-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                Professional HTML formatting
+                            </li>
+                            <li class="flex items-center">
+                                <svg class="w-4 h-4 text-blue-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                Mobile-responsive design
+                            </li>
+                            <li class="flex items-center">
+                                <svg class="w-4 h-4 text-blue-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                Tracking and analytics
+                            </li>
+                            <li class="flex items-center">
+                                <svg class="w-4 h-4 text-blue-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                Customizable branding
+                            </li>
+                            <li class="flex items-center">
+                                <svg class="w-4 h-4 text-blue-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                SMTP delivery optimization
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Troubleshooting -->
+        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-6 mb-8">
+            <h3 class="text-lg font-semibold text-yellow-800 mb-4">🔧 Troubleshooting</h3>
+            <div class="space-y-3 text-yellow-700">
+                <div>
+                    <h4 class="font-medium">Emails not being processed</h4>
+                    <p class="text-sm">Check Cloudflare Email Routing configuration and worker logs</p>
+                </div>
+                <div>
+                    <h4 class="font-medium">Job links not extracted</h4>
+                    <p class="text-sm">Verify email format matches supported platforms</p>
+                </div>
+                <div>
+                    <h4 class="font-medium">Insights not delivering</h4>
+                    <p class="text-sm">Check SMTP configuration and recipient email validity</p>
+                </div>
+                <div>
+                    <h4 class="font-medium">Missing job sources</h4>
+                    <p class="text-sm">Ensure job alerts are configured with correct email addresses</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Next Steps -->
+        <div class="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">📚 Next Steps</h2>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">📊 Enhance Insights</h3>
+                    <ul class="space-y-2 text-gray-600 dark:text-gray-400">
+                        <li><a href="/job-history-management.html" class="text-blue-600 hover:text-blue-800">Set up job history management</a></li>
+                        <li><a href="/agent-workflow-config.html" class="text-blue-600 hover:text-blue-800">Configure AI agents for better analysis</a></li>
+                        <li><a href="/api-reference.html" class="text-blue-600 hover:text-blue-800">Explore advanced API features</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">🔧 Advanced Configuration</h3>
+                    <ul class="space-y-2 text-gray-600 dark:text-gray-400">
+                        <li>• Set up custom SMTP providers</li>
+                        <li>• Configure advanced email filtering</li>
+                        <li>• Integrate with external analytics</li>
+                        <li>• Set up webhook notifications</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-gray-900 mt-16">
+        <div class="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
+            <div class="md:flex md:justify-between">
+                <div class="mb-6 md:mb-0">
+                    <a href="/" class="flex items-center">
+                        <span class="text-2xl mr-3">🔍</span>
+                        <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">9to5-Scout</span>
+                    </a>
+                </div>
+                <div class="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
+                    <div>
+                        <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Documentation</h2>
+                        <ul class="text-gray-500 dark:text-gray-400 font-medium">
+                            <li class="mb-4">
+                                <a href="/getting-started.html" class="hover:underline">Getting Started</a>
+                            </li>
+                            <li class="mb-4">
+                                <a href="/api-reference.html" class="hover:underline">API Reference</a>
+                            </li>
+                            <li>
+                                <a href="/openapi.json" target="_blank" class="hover:underline">OpenAPI Spec</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Features</h2>
+                        <ul class="text-gray-500 dark:text-gray-400 font-medium">
+                            <li class="mb-4">
+                                <a href="/email-integration.html" class="hover:underline">Email Integration</a>
+                            </li>
+                            <li class="mb-4">
+                                <a href="/job-history-management.html" class="hover:underline">Job History</a>
+                            </li>
+                            <li>
+                                <a href="/agent-workflow-config.html" class="hover:underline">AI Agents</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Platform</h2>
+                        <ul class="text-gray-500 dark:text-gray-400 font-medium">
+                            <li class="mb-4">
+                                <a href="https://workers.cloudflare.com/" target="_blank" class="hover:underline">Cloudflare Workers</a>
+                            </li>
+                            <li class="mb-4">
+                                <a href="https://ai.cloudflare.com/" target="_blank" class="hover:underline">Workers AI</a>
+                            </li>
+                            <li>
+                                <a href="https://developers.cloudflare.com/" target="_blank" class="hover:underline">Developer Docs</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <hr class="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
+            <div class="sm:flex sm:items-center sm:justify-between">
+                <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">Built with ❤️ using Cloudflare Workers & AI</span>
+                <div class="flex mt-4 sm:justify-center sm:mt-0">
+                    <a href="/openapi.json" target="_blank" class="text-gray-500 hover:text-gray-900 dark:hover:text-white">
+                        <span class="sr-only">OpenAPI Specification</span>
+                        📋
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

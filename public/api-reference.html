@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Reference - 9to5-Scout</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔍</text></svg>">
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white border-gray-200 dark:bg-gray-900 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+            <a href="/" class="flex items-center space-x-3 rtl:space-x-reverse">
+                <span class="text-2xl">🔍</span>
+                <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">9to5-Scout</span>
+            </a>
+            <button data-collapse-toggle="navbar-default" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-default" aria-expanded="false">
+                <span class="sr-only">Open main menu</span>
+                <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/>
+                </svg>
+            </button>
+            <div class="hidden w-full md:block md:w-auto" id="navbar-default">
+                <ul class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+                    <li>
+                        <a href="/" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Home</a>
+                    </li>
+                    <li>
+                        <a href="/getting-started.html" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Getting Started</a>
+                    </li>
+                    <li>
+                        <a href="/api-reference.html" class="block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500" aria-current="page">API Reference</a>
+                    </li>
+                    <li>
+                        <a href="/email-integration.html" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Email Integration</a>
+                    </li>
+                    <li>
+                        <a href="/job-history-management.html" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Job History</a>
+                    </li>
+                    <li>
+                        <a href="/agent-workflow-config.html" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">AI Agents</a>
+                    </li>
+                    <li>
+                        <a href="/openapi.json" target="_blank" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">📋 OpenAPI</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-6xl mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">API Reference</h1>
+            <p class="text-xl text-gray-600 dark:text-gray-400 mb-4">Comprehensive documentation for all 9to5-Scout API endpoints.</p>
+            <div class="flex items-center space-x-4">
+                <a href="/openapi.json" target="_blank" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                    📋 View OpenAPI Specification
+                </a>
+                <span class="text-sm text-gray-500">Version 1.0.0 | OpenAPI 3.1.0</span>
+            </div>
+        </div>
+
+        <!-- Authentication -->
+        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-6 mb-8">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <svg class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <div class="ml-3">
+                    <h3 class="text-lg font-medium text-yellow-800">🔐 Authentication Required</h3>
+                    <div class="mt-2 text-sm text-yellow-700">
+                        <p>All API endpoints (except <code>/api/health</code>) require Bearer token authentication:</p>
+                        <div class="mt-2 bg-yellow-100 rounded p-2">
+                            <code>Authorization: Bearer your-api-token</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- API Endpoints -->
+        <div class="space-y-8">
+            <!-- Core Job Discovery & Management -->
+            <section class="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900">
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
+                    <span class="text-2xl mr-3">🎯</span>
+                    Core Job Discovery & Management
+                </h2>
+                <div class="space-y-4">
+                    <div class="border-l-4 border-green-400 bg-green-50 p-4">
+                        <div class="flex items-center">
+                            <span class="bg-green-500 text-white px-2 py-1 rounded text-xs font-bold mr-3">GET</span>
+                            <code class="text-lg font-mono">/api/health</code>
+                        </div>
+                        <p class="mt-2 text-green-700">Health check endpoint (no authentication required)</p>
+                    </div>
+                    
+                    <div class="border-l-4 border-green-400 bg-green-50 p-4">
+                        <div class="flex items-center">
+                            <span class="bg-green-500 text-white px-2 py-1 rounded text-xs font-bold mr-3">GET</span>
+                            <code class="text-lg font-mono">/api/jobs</code>
+                        </div>
+                        <p class="mt-2 text-green-700">List jobs with filtering (status, source, limit)</p>
+                        <div class="mt-2 text-sm text-green-600">
+                            <strong>Query Parameters:</strong> status, source, limit, offset
+                        </div>
+                    </div>
+
+                    <div class="border-l-4 border-green-400 bg-green-50 p-4">
+                        <div class="flex items-center">
+                            <span class="bg-green-500 text-white px-2 py-1 rounded text-xs font-bold mr-3">GET</span>
+                            <code class="text-lg font-mono">/api/jobs/{id}</code>
+                        </div>
+                        <p class="mt-2 text-green-700">Get single job with complete details</p>
+                    </div>
+
+                    <div class="border-l-4 border-orange-400 bg-orange-50 p-4">
+                        <div class="flex items-center">
+                            <span class="bg-orange-500 text-white px-2 py-1 rounded text-xs font-bold mr-3">POST</span>
+                            <code class="text-lg font-mono">/api/runs/discovery</code>
+                        </div>
+                        <p class="mt-2 text-orange-700">Start discovery run</p>
+                        <div class="mt-2 bg-gray-900 rounded p-2 text-green-400 text-sm">
+                            <code>curl -H "Authorization: Bearer &lt;token&gt;" -X POST /api/runs/discovery</code>
+                        </div>
+                    </div>
+
+                    <div class="border-l-4 border-green-400 bg-green-50 p-4">
+                        <div class="flex items-center">
+                            <span class="bg-green-500 text-white px-2 py-1 rounded text-xs font-bold mr-3">GET</span>
+                            <code class="text-lg font-mono">/api/agent/query</code>
+                        </div>
+                        <p class="mt-2 text-green-700">Semantic job search using AI</p>
+                        <div class="mt-2 text-sm text-green-600">
+                            <strong>Query Parameter:</strong> q (search query)
+                        </div>
+                        <div class="mt-2 bg-gray-900 rounded p-2 text-green-400 text-sm">
+                            <code>curl -H "Authorization: Bearer &lt;token&gt;" "/api/agent/query?q=senior%20python%20developer"</code>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Job Monitoring & Analytics -->
+            <section class="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900">
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
+                    <span class="text-2xl mr-3">📈</span>
+                    Job Monitoring & Analytics
+                </h2>
+                <div class="space-y-4">
+                    <div class="border-l-4 border-green-400 bg-green-50 p-4">
+                        <div class="flex items-center">
+                            <span class="bg-green-500 text-white px-2 py-1 rounded text-xs font-bold mr-3">GET</span>
+                            <code class="text-lg font-mono">/api/jobs/{id}/tracking</code>
+                        </div>
+                        <p class="mt-2 text-green-700">Get complete job tracking timeline with snapshots and changes</p>
+                    </div>
+
+                    <div class="border-l-4 border-green-400 bg-green-50 p-4">
+                        <div class="flex items-center">
+                            <span class="bg-green-500 text-white px-2 py-1 rounded text-xs font-bold mr-3">GET</span>
+                            <code class="text-lg font-mono">/api/jobs/{id}/snapshots/{snapshotId}/content</code>
+                        </div>
+                        <p class="mt-2 text-green-700">Download job snapshots (HTML, PDF, Markdown, Screenshots)</p>
+                        <div class="mt-2 text-sm text-green-600">
+                            <strong>Query Parameter:</strong> type (html, pdf, markdown, json, screenshot)
+                        </div>
+                    </div>
+
+                    <div class="border-l-4 border-orange-400 bg-orange-50 p-4">
+                        <div class="flex items-center">
+                            <span class="bg-orange-500 text-white px-2 py-1 rounded text-xs font-bold mr-3">POST</span>
+                            <code class="text-lg font-mono">/api/monitoring/daily-run</code>
+                        </div>
+                        <p class="mt-2 text-orange-700">Manually trigger daily monitoring workflow</p>
+                    </div>
+
+                    <div class="border-l-4 border-green-400 bg-green-50 p-4">
+                        <div class="flex items-center">
+                            <span class="bg-green-500 text-white px-2 py-1 rounded text-xs font-bold mr-3">GET</span>
+                            <code class="text-lg font-mono">/api/monitoring/status</code>
+                        </div>
+                        <p class="mt-2 text-green-700">Get monitoring status and market analytics</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Multi-Agent System Configuration -->
+            <section class="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900">
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
+                    <span class="text-2xl mr-3">🤖</span>
+                    Multi-Agent System Configuration
+                </h2>
+                <div class="space-y-4">
+                    <div class="border-l-4 border-green-400 bg-green-50 p-4">
+                        <div class="flex items-center">
+                            <span class="bg-green-500 text-white px-2 py-1 rounded text-xs font-bold mr-3">GET</span>
+                            <code class="text-lg font-mono">/api/agents</code>
+                        </div>
+                        <p class="mt-2 text-green-700">List all AI agent configurations</p>
+                        <div class="mt-2 text-sm text-green-600">
+                            <strong>Query Parameters:</strong> enabled (boolean filter)
+                        </div>
+                    </div>
+
+                    <div class="border-l-4 border-orange-400 bg-orange-50 p-4">
+                        <div class="flex items-center">
+                            <span class="bg-orange-500 text-white px-2 py-1 rounded text-xs font-bold mr-3">POST</span>
+                            <code class="text-lg font-mono">/api/agents</code>
+                        </div>
+                        <p class="mt-2 text-orange-700">Create new agent configuration</p>
+                        <div class="mt-2 bg-gray-900 rounded p-2 text-green-400 text-xs overflow-x-auto">
+                            <pre><code>{
+  "id": "custom-agent",
+  "name": "Custom Job Analyzer",
+  "role": "Senior Job Requirements Analyst",
+  "goal": "Extract comprehensive job requirements",
+  "backstory": "Expert in job analysis with 15+ years experience",
+  "llm": "@cf/meta/llama-3.1-8b-instruct"
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="border-l-4 border-blue-400 bg-blue-50 p-4">
+                        <div class="flex items-center">
+                            <span class="bg-blue-500 text-white px-2 py-1 rounded text-xs font-bold mr-3">PUT</span>
+                            <code class="text-lg font-mono">/api/agents/{id}</code>
+                        </div>
+                        <p class="mt-2 text-blue-700">Update agent configuration</p>
+                    </div>
+
+                    <div class="border-l-4 border-orange-400 bg-orange-50 p-4">
+                        <div class="flex items-center">
+                            <span class="bg-orange-500 text-white px-2 py-1 rounded text-xs font-bold mr-3">POST</span>
+                            <code class="text-lg font-mono">/api/workflows/{id}/execute</code>
+                        </div>
+                        <p class="mt-2 text-orange-700">Execute multi-agent workflows</p>
+                        <div class="mt-2 bg-gray-900 rounded p-2 text-green-400 text-xs">
+                            <code>{"context": {"job_url": "https://...", "applicant_id": "user-123"}}</code>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Job History & Applicant Management -->
+            <section class="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900">
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
+                    <span class="text-2xl mr-3">📚</span>
+                    Job History & Applicant Management
+                </h2>
+                <div class="space-y-4">
+                    <div class="border-l-4 border-orange-400 bg-orange-50 p-4">
+                        <div class="flex items-center">
+                            <span class="bg-orange-500 text-white px-2 py-1 rounded text-xs font-bold mr-3">POST</span>
+                            <code class="text-lg font-mono">/api/applicant/history</code>
+                        </div>
+                        <p class="mt-2 text-orange-700">Submit job history for AI processing</p>
+                        <div class="mt-2 bg-gray-900 rounded p-2 text-green-400 text-xs overflow-x-auto">
+                            <pre><code>{
+  "user_id": "user-123",
+  "raw_content": "Senior Software Engineer at TechCorp (2020-2023)...",
+  "content_type": "text/plain"
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="border-l-4 border-green-400 bg-green-50 p-4">
+                        <div class="flex items-center">
+                            <span class="bg-green-500 text-white px-2 py-1 rounded text-xs font-bold mr-3">GET</span>
+                            <code class="text-lg font-mono">/api/applicant/{user_id}/history</code>
+                        </div>
+                        <p class="mt-2 text-green-700">Get applicant profile and structured job history</p>
+                    </div>
+
+                    <div class="border-l-4 border-orange-400 bg-orange-50 p-4">
+                        <div class="flex items-center">
+                            <span class="bg-orange-500 text-white px-2 py-1 rounded text-xs font-bold mr-3">POST</span>
+                            <code class="text-lg font-mono">/api/applicant/job-rating</code>
+                        </div>
+                        <p class="mt-2 text-orange-700">Generate AI-powered job fit rating (1-100 scale)</p>
+                        <div class="mt-2 bg-gray-900 rounded p-2 text-green-400 text-xs">
+                            <code>{"user_id": "user-123", "job_id": "job-456"}</code>
+                        </div>
+                    </div>
+
+                    <div class="border-l-4 border-green-400 bg-green-50 p-4">
+                        <div class="flex items-center">
+                            <span class="bg-green-500 text-white px-2 py-1 rounded text-xs font-bold mr-3">GET</span>
+                            <code class="text-lg font-mono">/api/applicant/{user_id}/job-ratings</code>
+                        </div>
+                        <p class="mt-2 text-green-700">View all job ratings for an applicant</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- AI-Powered Career Tools -->
+            <section class="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900">
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
+                    <span class="text-2xl mr-3">📄</span>
+                    AI-Powered Career Tools
+                </h2>
+                <div class="space-y-4">
+                    <div class="border-l-4 border-orange-400 bg-orange-50 p-4">
+                        <div class="flex items-center">
+                            <span class="bg-orange-500 text-white px-2 py-1 rounded text-xs font-bold mr-3">POST</span>
+                            <code class="text-lg font-mono">/api/cover-letter</code>
+                        </div>
+                        <p class="mt-2 text-orange-700">Generate personalized cover letters</p>
+                        <div class="mt-2 bg-gray-900 rounded p-2 text-green-400 text-xs overflow-x-auto">
+                            <pre><code>{
+  "job_title": "Senior Software Engineer",
+  "company_name": "TechCorp Inc",
+  "job_description_text": "We are seeking a senior software engineer...",
+  "candidate_career_summary": "Experienced full-stack developer..."
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="border-l-4 border-orange-400 bg-orange-50 p-4">
+                        <div class="flex items-center">
+                            <span class="bg-orange-500 text-white px-2 py-1 rounded text-xs font-bold mr-3">POST</span>
+                            <code class="text-lg font-mono">/api/resume</code>
+                        </div>
+                        <p class="mt-2 text-orange-700">Generate ATS-optimized resume content</p>
+                        <div class="mt-2 text-sm text-orange-600">Uses same request structure as cover letter endpoint</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Email Integration & Insights -->
+            <section class="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900">
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
+                    <span class="text-2xl mr-3">📧</span>
+                    Email Integration & Insights
+                </h2>
+                <div class="space-y-4">
+                    <div class="border-l-4 border-green-400 bg-green-50 p-4">
+                        <div class="flex items-center">
+                            <span class="bg-green-500 text-white px-2 py-1 rounded text-xs font-bold mr-3">GET</span>
+                            <code class="text-lg font-mono">/api/email/configs</code>
+                        </div>
+                        <p class="mt-2 text-green-700">Get email notification settings</p>
+                    </div>
+
+                    <div class="border-l-4 border-blue-400 bg-blue-50 p-4">
+                        <div class="flex items-center">
+                            <span class="bg-blue-500 text-white px-2 py-1 rounded text-xs font-bold mr-3">PUT</span>
+                            <code class="text-lg font-mono">/api/email/configs</code>
+                        </div>
+                        <p class="mt-2 text-blue-700">Update email preferences</p>
+                        <div class="mt-2 bg-gray-900 rounded p-2 text-green-400 text-xs overflow-x-auto">
+                            <pre><code>{
+  "id": "default",
+  "enabled": true,
+  "frequency_hours": 24,
+  "recipient_email": "user@example.com",
+  "include_new_jobs": true,
+  "include_statistics": true
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="border-l-4 border-orange-400 bg-orange-50 p-4">
+                        <div class="flex items-center">
+                            <span class="bg-orange-500 text-white px-2 py-1 rounded text-xs font-bold mr-3">POST</span>
+                            <code class="text-lg font-mono">/api/email/insights/send</code>
+                        </div>
+                        <p class="mt-2 text-orange-700">Send job insights email manually</p>
+                    </div>
+
+                    <div class="border-l-4 border-green-400 bg-green-50 p-4">
+                        <div class="flex items-center">
+                            <span class="bg-green-500 text-white px-2 py-1 rounded text-xs font-bold mr-3">GET</span>
+                            <code class="text-lg font-mono">/api/email/logs</code>
+                        </div>
+                        <p class="mt-2 text-green-700">View email processing history and analytics</p>
+                        <div class="mt-2 text-sm text-green-600">
+                            <strong>Query Parameters:</strong> limit (default: 50)
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Response Examples -->
+        <div class="mt-12 bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">📊 Response Examples</h2>
+            
+            <div class="space-y-6">
+                <!-- Job Object Example -->
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">Job Object</h3>
+                    <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
+                        <pre class="text-green-400 text-sm"><code>{
+  "id": "job-123",
+  "title": "Senior Software Engineer",
+  "company": "TechCorp Inc",
+  "location": "San Francisco, CA",
+  "employment_type": "Full-time",
+  "salary_min": 150000,
+  "salary_max": 200000,
+  "salary_currency": "USD",
+  "source": "EMAIL",
+  "status": "open",
+  "url": "https://company.com/jobs/123",
+  "posted_at": "2024-01-15T09:00:00Z",
+  "first_seen_at": "2024-01-15T09:15:00Z"
+}</code></pre>
+                    </div>
+                </div>
+
+                <!-- Job Rating Example -->
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">Job Fit Rating</h3>
+                    <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
+                        <pre class="text-green-400 text-sm"><code>{
+  "id": "rating-456",
+  "applicant_id": "user-123",
+  "job_id": "job-123",
+  "overall_score": 87,
+  "skill_match_score": 92,
+  "experience_match_score": 85,
+  "compensation_fit_score": 88,
+  "location_fit_score": 95,
+  "recommendation": "Strong Match",
+  "strengths": [
+    "Strong Python and React experience",
+    "Team leadership background",
+    "Microservices architecture expertise"
+  ],
+  "gaps": [
+    "Limited experience with Kubernetes",
+    "No previous fintech industry experience"
+  ],
+  "improvement_suggestions": "Consider gaining Kubernetes certification..."
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error Handling -->
+        <div class="mt-8 bg-red-50 border-l-4 border-red-400 p-6">
+            <h3 class="text-lg font-semibold text-red-800 mb-3">⚠️ Error Handling</h3>
+            <div class="text-red-700 space-y-2">
+                <p><strong>401 Unauthorized:</strong> Invalid or missing API token</p>
+                <p><strong>404 Not Found:</strong> Resource not found (job, user, agent, etc.)</p>
+                <p><strong>400 Bad Request:</strong> Invalid request data or missing required fields</p>
+                <p><strong>500 Internal Server Error:</strong> Server-side processing error</p>
+            </div>
+            <div class="mt-4 bg-red-100 rounded p-3">
+                <h4 class="font-medium text-red-800">Error Response Format:</h4>
+                <pre class="text-red-700 text-sm mt-2"><code>{
+  "error": "validation_error",
+  "message": "Missing required field: user_id"
+}</code></pre>
+            </div>
+        </div>
+
+        <!-- Rate Limits -->
+        <div class="mt-8 bg-blue-50 border-l-4 border-blue-400 p-6">
+            <h3 class="text-lg font-semibold text-blue-800 mb-3">⏱️ Rate Limits</h3>
+            <div class="text-blue-700 space-y-2">
+                <p><strong>General API:</strong> 1000 requests per hour per API token</p>
+                <p><strong>AI Generation:</strong> 100 requests per hour (cover letters, resumes, job ratings)</p>
+                <p><strong>Job Discovery:</strong> 10 discovery runs per hour</p>
+                <p><strong>Email Insights:</strong> 24 manual sends per day</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-gray-900 mt-16">
+        <div class="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
+            <div class="md:flex md:justify-between">
+                <div class="mb-6 md:mb-0">
+                    <a href="/" class="flex items-center">
+                        <span class="text-2xl mr-3">🔍</span>
+                        <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">9to5-Scout</span>
+                    </a>
+                </div>
+                <div class="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
+                    <div>
+                        <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Documentation</h2>
+                        <ul class="text-gray-500 dark:text-gray-400 font-medium">
+                            <li class="mb-4">
+                                <a href="/getting-started.html" class="hover:underline">Getting Started</a>
+                            </li>
+                            <li class="mb-4">
+                                <a href="/api-reference.html" class="hover:underline">API Reference</a>
+                            </li>
+                            <li>
+                                <a href="/openapi.json" target="_blank" class="hover:underline">OpenAPI Spec</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Features</h2>
+                        <ul class="text-gray-500 dark:text-gray-400 font-medium">
+                            <li class="mb-4">
+                                <a href="/email-integration.html" class="hover:underline">Email Integration</a>
+                            </li>
+                            <li class="mb-4">
+                                <a href="/job-history-management.html" class="hover:underline">Job History</a>
+                            </li>
+                            <li>
+                                <a href="/agent-workflow-config.html" class="hover:underline">AI Agents</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Platform</h2>
+                        <ul class="text-gray-500 dark:text-gray-400 font-medium">
+                            <li class="mb-4">
+                                <a href="https://workers.cloudflare.com/" target="_blank" class="hover:underline">Cloudflare Workers</a>
+                            </li>
+                            <li class="mb-4">
+                                <a href="https://ai.cloudflare.com/" target="_blank" class="hover:underline">Workers AI</a>
+                            </li>
+                            <li>
+                                <a href="https://developers.cloudflare.com/" target="_blank" class="hover:underline">Developer Docs</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <hr class="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
+            <div class="sm:flex sm:items-center sm:justify-between">
+                <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">Built with ❤️ using Cloudflare Workers & AI</span>
+                <div class="flex mt-4 sm:justify-center sm:mt-0">
+                    <a href="/openapi.json" target="_blank" class="text-gray-500 hover:text-gray-900 dark:hover:text-white">
+                        <span class="sr-only">OpenAPI Specification</span>
+                        📋
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
