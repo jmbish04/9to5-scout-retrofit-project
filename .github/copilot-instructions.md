@@ -171,7 +171,7 @@ The worker has access to these Cloudflare bindings (configured in `wrangler.toml
 - **R2**: Object storage
 - **VECTORIZE_INDEX**: Vector database for embeddings
 - **Durable Objects**: SITE_CRAWLER, JOB_MONITOR
-- **Workflows**: Discovery, JobMonitor, ChangeAnalysis
+- **Workflows**: DISCOVERY_WORKFLOW, JOB_MONITOR_WORKFLOW, CHANGE_ANALYSIS_WORKFLOW
 
 ### API Endpoints
 
