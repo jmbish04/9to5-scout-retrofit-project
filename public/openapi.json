@@ -1,0 +1,972 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "9to5-Scout API",
+    "description": "AI-powered job discovery and career assistance platform with comprehensive job scraping, agent-based resume optimization, and email routing capabilities.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "9to5-Scout Support",
+      "email": "support@9to5scout.dev"
+    }
+  },
+  "servers": [
+    {
+      "url": "/",
+      "description": "Current worker deployment"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "Job": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "site_id": { "type": "string" },
+          "url": { "type": "string", "format": "uri" },
+          "canonical_url": { "type": "string", "format": "uri" },
+          "title": { "type": "string" },
+          "company": { "type": "string" },
+          "location": { "type": "string" },
+          "employment_type": { "type": "string" },
+          "department": { "type": "string" },
+          "salary_min": { "type": "integer" },
+          "salary_max": { "type": "integer" },
+          "salary_currency": { "type": "string" },
+          "source": { 
+            "type": "string", 
+            "enum": ["SCRAPED", "EMAIL", "MANUAL"],
+            "description": "Source of job discovery"
+          },
+          "status": { "type": "string", "enum": ["open", "closed"] },
+          "posted_at": { "type": "string", "format": "date-time" },
+          "first_seen_at": { "type": "string", "format": "date-time" },
+          "last_crawled_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "AgentConfig": {
+        "type": "object",
+        "required": ["id", "name", "role", "goal", "backstory", "llm"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "role": { "type": "string" },
+          "goal": { "type": "string" },
+          "backstory": { "type": "string" },
+          "llm": { "type": "string" },
+          "system_prompt": { "type": "string" },
+          "max_tokens": { "type": "integer", "default": 4000 },
+          "temperature": { "type": "number", "default": 0.7 },
+          "enabled": { "type": "boolean", "default": true },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "TaskConfig": {
+        "type": "object",
+        "required": ["id", "name", "description", "expected_output", "agent_id"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "expected_output": { "type": "string" },
+          "agent_id": { "type": "string" },
+          "context_tasks": { 
+            "type": "array", 
+            "items": { "type": "string" },
+            "description": "Array of task IDs this task depends on"
+          },
+          "output_schema": { "type": "object" },
+          "enabled": { "type": "boolean", "default": true },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "WorkflowConfig": {
+        "type": "object",
+        "required": ["id", "name", "description", "task_sequence"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "task_sequence": { 
+            "type": "array", 
+            "items": { "type": "string" },
+            "description": "Array of task IDs in execution order"
+          },
+          "enabled": { "type": "boolean", "default": true },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "EmailConfig": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "enabled": { "type": "boolean" },
+          "frequency_hours": { "type": "integer" },
+          "recipient_email": { "type": "string", "format": "email" },
+          "include_new_jobs": { "type": "boolean" },
+          "include_job_changes": { "type": "boolean" },
+          "include_statistics": { "type": "boolean" }
+        }
+      },
+      "CoverLetterRequest": {
+        "type": "object",
+        "required": ["job_title", "company_name", "job_description_text", "candidate_career_summary"],
+        "properties": {
+          "job_title": { "type": "string" },
+          "company_name": { "type": "string" },
+          "hiring_manager_name": { "type": "string" },
+          "job_description_text": { "type": "string" },
+          "candidate_career_summary": { "type": "string" }
+        }
+      },
+      "ResumeRequest": {
+        "type": "object",
+        "required": ["job_title", "company_name", "job_description_text", "candidate_career_summary"],
+        "properties": {
+          "job_title": { "type": "string" },
+          "company_name": { "type": "string" },
+          "job_description_text": { "type": "string" },
+          "candidate_career_summary": { "type": "string" }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": { "type": "string" },
+          "message": { "type": "string" }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/": {
+      "get": {
+        "summary": "Landing page with platform documentation",
+        "operationId": "getLandingPage",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "HTML documentation page",
+            "content": {
+              "text/html": {
+                "schema": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/openapi.json": {
+      "get": {
+        "summary": "OpenAPI specification",
+        "operationId": "getOpenAPISpec",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "OpenAPI 3.1.0 specification",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health": {
+      "get": {
+        "summary": "Health check endpoint",
+        "operationId": "healthCheck",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Service health status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string" },
+                    "timestamp": { "type": "string", "format": "date-time" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/jobs": {
+      "get": {
+        "summary": "List all jobs",
+        "operationId": "listJobs",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": { "type": "integer", "default": 50 }
+          },
+          {
+            "name": "offset",
+            "in": "query", 
+            "schema": { "type": "integer", "default": 0 }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": { "type": "string", "enum": ["open", "closed"] }
+          },
+          {
+            "name": "source",
+            "in": "query",
+            "schema": { "type": "string", "enum": ["SCRAPED", "EMAIL", "MANUAL"] }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of jobs",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Job" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/jobs/{id}": {
+      "get": {
+        "summary": "Get job by ID",
+        "operationId": "getJob",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Job details",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Job" }
+              }
+            }
+          },
+          "404": {
+            "description": "Job not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/runs/discovery": {
+      "post": {
+        "summary": "Start job discovery run",
+        "operationId": "startDiscoveryRun",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "config_id": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Discovery run started",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "run_id": { "type": "string" },
+                    "status": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/runs/monitor": {
+      "post": {
+        "summary": "Start job monitoring run",
+        "operationId": "startMonitorRun",
+        "responses": {
+          "200": {
+            "description": "Monitor run started",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "run_id": { "type": "string" },
+                    "status": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/agent/query": {
+      "get": {
+        "summary": "Semantic job search using AI",
+        "operationId": "semanticJobSearch",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "description": "Search query for semantic job matching",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Matching jobs with relevance scores",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "allOf": [
+                      { "$ref": "#/components/schemas/Job" },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "relevance_score": { "type": "number" }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/cover-letter": {
+      "post": {
+        "summary": "Generate AI-powered cover letter",
+        "operationId": "generateCoverLetter",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CoverLetterRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Generated cover letter",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "cover_letter": { "type": "string" },
+                    "html": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/resume": {
+      "post": {
+        "summary": "Generate AI-optimized resume content",
+        "operationId": "generateResume",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ResumeRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Generated resume content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "summary": { "type": "string" },
+                    "experience_bullets": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "skills": {
+                      "type": "array", 
+                      "items": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/email/insights/send": {
+      "post": {
+        "summary": "Send job insights email manually",
+        "operationId": "sendEmailInsights",
+        "responses": {
+          "200": {
+            "description": "Email sent successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string" },
+                    "sent_at": { "type": "string", "format": "date-time" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/email/logs": {
+      "get": {
+        "summary": "Get email processing logs",
+        "operationId": "getEmailLogs",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": { "type": "integer", "default": 50 }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Email processing logs",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": { "type": "string" },
+                      "from_email": { "type": "string" },
+                      "subject": { "type": "string" },
+                      "job_links_extracted": { "type": "integer" },
+                      "jobs_processed": { "type": "integer" },
+                      "status": { "type": "string" },
+                      "received_at": { "type": "string", "format": "date-time" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/email/configs": {
+      "get": {
+        "summary": "Get email configuration",
+        "operationId": "getEmailConfigs",
+        "responses": {
+          "200": {
+            "description": "Email configurations",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/EmailConfig" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update email configuration",
+        "operationId": "updateEmailConfigs",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/EmailConfig" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Configuration updated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/EmailConfig" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/agents": {
+      "get": {
+        "summary": "List all agent configurations",
+        "operationId": "listAgents",
+        "parameters": [
+          {
+            "name": "enabled",
+            "in": "query",
+            "schema": { "type": "boolean" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of agent configurations",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/AgentConfig" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create new agent configuration",
+        "operationId": "createAgent",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AgentConfig" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Agent created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AgentConfig" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/agents/{id}": {
+      "get": {
+        "summary": "Get agent configuration by ID",
+        "operationId": "getAgent", 
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Agent configuration",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AgentConfig" }
+              }
+            }
+          },
+          "404": {
+            "description": "Agent not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update agent configuration",
+        "operationId": "updateAgent",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AgentConfig" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Agent updated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AgentConfig" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete agent configuration",
+        "operationId": "deleteAgent",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Agent deleted"
+          },
+          "404": {
+            "description": "Agent not found"
+          }
+        }
+      }
+    },
+    "/api/tasks": {
+      "get": {
+        "summary": "List all task configurations",
+        "operationId": "listTasks",
+        "parameters": [
+          {
+            "name": "enabled",
+            "in": "query",
+            "schema": { "type": "boolean" }
+          },
+          {
+            "name": "agent_id",
+            "in": "query",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of task configurations",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/TaskConfig" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create new task configuration",
+        "operationId": "createTask",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/TaskConfig" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Task created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/TaskConfig" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tasks/{id}": {
+      "get": {
+        "summary": "Get task configuration by ID",
+        "operationId": "getTask",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Task configuration",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/TaskConfig" }
+              }
+            }
+          },
+          "404": {
+            "description": "Task not found"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update task configuration",
+        "operationId": "updateTask",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/TaskConfig" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task updated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/TaskConfig" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete task configuration",
+        "operationId": "deleteTask",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Task deleted"
+          }
+        }
+      }
+    },
+    "/api/workflows": {
+      "get": {
+        "summary": "List all workflow configurations",
+        "operationId": "listWorkflows",
+        "parameters": [
+          {
+            "name": "enabled",
+            "in": "query",
+            "schema": { "type": "boolean" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of workflow configurations",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/WorkflowConfig" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create new workflow configuration",
+        "operationId": "createWorkflow",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/WorkflowConfig" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Workflow created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/WorkflowConfig" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/workflows/{id}": {
+      "get": {
+        "summary": "Get workflow configuration by ID",
+        "operationId": "getWorkflow",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Workflow configuration",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/WorkflowConfig" }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update workflow configuration",
+        "operationId": "updateWorkflow",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/WorkflowConfig" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Workflow updated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/WorkflowConfig" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete workflow configuration",
+        "operationId": "deleteWorkflow",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Workflow deleted"
+          }
+        }
+      }
+    },
+    "/api/workflows/{id}/execute": {
+      "post": {
+        "summary": "Execute a workflow",
+        "operationId": "executeWorkflow",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "context": {
+                    "type": "object",
+                    "description": "Input context for workflow execution"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Workflow execution started",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "execution_id": { "type": "string" },
+                    "status": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

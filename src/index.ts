@@ -8,6 +8,9 @@ import { handleConfigsGet, handleConfigsPost } from './routes/configs';
 import { handleAgentQuery } from './routes/agent';
 import { handleWebhookTest } from './routes/webhooks';
 import { handleEmailReceived, handleEmailLogsGet, handleEmailConfigsGet, handleEmailConfigsPut, handleEmailInsightsSend } from './routes/email';
+import { handleAgentsGet, handleAgentsPost, handleAgentGet, handleAgentPut, handleAgentDelete } from './routes/agents';
+import { handleTasksGet, handleTasksPost, handleTaskGet, handleTaskPut, handleTaskDelete } from './routes/tasks';
+import { handleWorkflowsGet, handleWorkflowsPost, handleWorkflowGet, handleWorkflowPut, handleWorkflowDelete, handleWorkflowExecute } from './routes/workflows';
 import { crawlJob } from './lib/crawl';
 
 /**
@@ -102,6 +105,7 @@ export interface Env {
   R2: any;
   VECTORIZE_INDEX: any;
   MYBROWSER: any;
+  ASSETS: any;
   API_AUTH_TOKEN: string;
   BROWSER_RENDERING_TOKEN: string;
   SLACK_WEBHOOK_URL: string;
@@ -643,9 +647,34 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
 
+    // Serve static files from ASSETS binding
+    if (url.pathname === '/' || url.pathname === '/index.html') {
+      const response = await env.ASSETS.fetch(new Request(new URL('/index.html', url.origin)));
+      return response;
+    }
+
+    if (url.pathname === '/openapi.json') {
+      const response = await env.ASSETS.fetch(request);
+      if (response.ok) {
+        return new Response(response.body, {
+          headers: {
+            ...response.headers,
+            'Content-Type': 'application/json',
+          },
+        });
+      }
+    }
+
     // Health check endpoint
     if (url.pathname === '/api/health') {
-      return new Response('OK', { status: 200 });
+      return new Response(JSON.stringify({
+        status: 'healthy',
+        timestamp: new Date().toISOString(),
+        version: '1.0.0'
+      }), { 
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      });
     }
 
     // Email routing for Cloudflare Email Routing (no auth required)
@@ -727,6 +756,143 @@ export default {
 
       if (url.pathname === '/api/email/insights/send' && request.method === 'POST') {
         return handleEmailInsightsSend(request, env);
+      }
+
+      // Agent management endpoints
+      if (url.pathname === '/api/agents' && request.method === 'GET') {
+        return handleAgentsGet(request, env);
+      }
+
+      if (url.pathname === '/api/agents' && request.method === 'POST') {
+        return handleAgentsPost(request, env);
+      }
+
+      if (url.pathname.startsWith('/api/agents/') && request.method === 'GET') {
+        const params = parsePathParams(url.pathname, '/api/agents/:id');
+        if (!params || !params.id) {
+          return new Response(JSON.stringify({ error: 'Agent ID is required' }), {
+            status: 400,
+            headers: { 'Content-Type': 'application/json' },
+          });
+        }
+        return handleAgentGet(request, env, params.id);
+      }
+
+      if (url.pathname.startsWith('/api/agents/') && request.method === 'PUT') {
+        const params = parsePathParams(url.pathname, '/api/agents/:id');
+        if (!params || !params.id) {
+          return new Response(JSON.stringify({ error: 'Agent ID is required' }), {
+            status: 400,
+            headers: { 'Content-Type': 'application/json' },
+          });
+        }
+        return handleAgentPut(request, env, params.id);
+      }
+
+      if (url.pathname.startsWith('/api/agents/') && request.method === 'DELETE') {
+        const params = parsePathParams(url.pathname, '/api/agents/:id');
+        if (!params || !params.id) {
+          return new Response(JSON.stringify({ error: 'Agent ID is required' }), {
+            status: 400,
+            headers: { 'Content-Type': 'application/json' },
+          });
+        }
+        return handleAgentDelete(request, env, params.id);
+      }
+
+      // Task management endpoints
+      if (url.pathname === '/api/tasks' && request.method === 'GET') {
+        return handleTasksGet(request, env);
+      }
+
+      if (url.pathname === '/api/tasks' && request.method === 'POST') {
+        return handleTasksPost(request, env);
+      }
+
+      if (url.pathname.startsWith('/api/tasks/') && request.method === 'GET') {
+        const params = parsePathParams(url.pathname, '/api/tasks/:id');
+        if (!params || !params.id) {
+          return new Response(JSON.stringify({ error: 'Task ID is required' }), {
+            status: 400,
+            headers: { 'Content-Type': 'application/json' },
+          });
+        }
+        return handleTaskGet(request, env, params.id);
+      }
+
+      if (url.pathname.startsWith('/api/tasks/') && request.method === 'PUT') {
+        const params = parsePathParams(url.pathname, '/api/tasks/:id');
+        if (!params || !params.id) {
+          return new Response(JSON.stringify({ error: 'Task ID is required' }), {
+            status: 400,
+            headers: { 'Content-Type': 'application/json' },
+          });
+        }
+        return handleTaskPut(request, env, params.id);
+      }
+
+      if (url.pathname.startsWith('/api/tasks/') && request.method === 'DELETE') {
+        const params = parsePathParams(url.pathname, '/api/tasks/:id');
+        if (!params || !params.id) {
+          return new Response(JSON.stringify({ error: 'Task ID is required' }), {
+            status: 400,
+            headers: { 'Content-Type': 'application/json' },
+          });
+        }
+        return handleTaskDelete(request, env, params.id);
+      }
+
+      // Workflow management endpoints
+      if (url.pathname === '/api/workflows' && request.method === 'GET') {
+        return handleWorkflowsGet(request, env);
+      }
+
+      if (url.pathname === '/api/workflows' && request.method === 'POST') {
+        return handleWorkflowsPost(request, env);
+      }
+
+      if (url.pathname.startsWith('/api/workflows/') && url.pathname.endsWith('/execute') && request.method === 'POST') {
+        const params = parsePathParams(url.pathname, '/api/workflows/:id/execute');
+        if (!params || !params.id) {
+          return new Response(JSON.stringify({ error: 'Workflow ID is required' }), {
+            status: 400,
+            headers: { 'Content-Type': 'application/json' },
+          });
+        }
+        return handleWorkflowExecute(request, env, params.id);
+      }
+
+      if (url.pathname.startsWith('/api/workflows/') && request.method === 'GET') {
+        const params = parsePathParams(url.pathname, '/api/workflows/:id');
+        if (!params || !params.id) {
+          return new Response(JSON.stringify({ error: 'Workflow ID is required' }), {
+            status: 400,
+            headers: { 'Content-Type': 'application/json' },
+          });
+        }
+        return handleWorkflowGet(request, env, params.id);
+      }
+
+      if (url.pathname.startsWith('/api/workflows/') && request.method === 'PUT') {
+        const params = parsePathParams(url.pathname, '/api/workflows/:id');
+        if (!params || !params.id) {
+          return new Response(JSON.stringify({ error: 'Workflow ID is required' }), {
+            status: 400,
+            headers: { 'Content-Type': 'application/json' },
+          });
+        }
+        return handleWorkflowPut(request, env, params.id);
+      }
+
+      if (url.pathname.startsWith('/api/workflows/') && request.method === 'DELETE') {
+        const params = parsePathParams(url.pathname, '/api/workflows/:id');
+        if (!params || !params.id) {
+          return new Response(JSON.stringify({ error: 'Workflow ID is required' }), {
+            status: 400,
+            headers: { 'Content-Type': 'application/json' },
+          });
+        }
+        return handleWorkflowDelete(request, env, params.id);
       }
 
       // Manual crawl endpoint

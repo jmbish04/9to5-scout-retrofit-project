@@ -83,4 +83,9 @@ cron = "0 */2 * * *"
 name = "job-alerts"
 destination_addresses = ["*@9to5scout.dev"]
 
+# Static assets binding for serving documentation and OpenAPI spec
+[assets]
+binding = "ASSETS"
+directory = "./public"
+
 [env.preview]
