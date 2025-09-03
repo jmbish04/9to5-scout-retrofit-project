@@ -104,7 +104,7 @@ This allows the worker to receive emails at any address ending in `@9to5scout.de
 
 Jobs extracted from emails will be marked with `source: "EMAIL"` to distinguish them from scraped jobs.
 
-### 4. Run Database Migrations
+### 5. Run Database Migrations
 ```bash
 # Local development
 npx wrangler d1 migrations apply JOB_SCRAPER_DB --local
@@ -113,7 +113,7 @@ npx wrangler d1 migrations apply JOB_SCRAPER_DB --local
 npx wrangler d1 migrations apply JOB_SCRAPER_DB --remote
 ```
 
-### 5. Deploy
+### 6. Deploy
 ```bash
 npx wrangler deploy
 ```
