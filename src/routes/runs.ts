@@ -52,8 +52,8 @@ export async function handleMonitorRunPost(request: Request, env: any): Promise<
     
     const runId = await createRun(env, 'monitor', configId);
     
-    // TODO: Trigger monitoring workflow
-    console.log(`Monitor run ${runId} queued with config ${configId}`);
+    // Trigger monitoring workflow. This can be done asynchronously.
+    env.JOB_MONITOR_WORKFLOW.run({ config_id: configId });
     
     return new Response(JSON.stringify({ id: runId, status: 'queued' }), {
       headers: { 'Content-Type': 'application/json' },
