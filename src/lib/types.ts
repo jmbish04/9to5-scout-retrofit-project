@@ -23,6 +23,7 @@ export interface Job {
   posted_at?: string;
   closed_at?: string;
   status?: string;
+  source?: 'SCRAPED' | 'EMAIL' | 'MANUAL';
   last_seen_open_at?: string;
   first_seen_at?: string;
   last_crawled_at?: string;
@@ -82,4 +83,30 @@ export interface Change {
   diff_json: string;
   semantic_summary?: string;
   changed_at?: string;
+}
+
+export interface EmailConfig {
+  id: string;
+  name: string;
+  enabled: boolean;
+  frequency_hours: number;
+  recipient_email: string;
+  include_new_jobs: boolean;
+  include_job_changes: boolean;
+  include_statistics: boolean;
+  last_sent_at?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface EmailLog {
+  id: string;
+  from_email: string;
+  subject?: string;
+  content_preview?: string;
+  job_links_extracted: number;
+  jobs_processed: number;
+  received_at?: string;
+  processed_at?: string;
+  status: 'pending' | 'processed' | 'failed';
 }

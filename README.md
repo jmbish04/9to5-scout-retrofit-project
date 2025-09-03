@@ -24,10 +24,14 @@ A comprehensive job scraping and career assistance platform built on Cloudflare 
 - Continuous monitoring of job status changes (open/closed/modified)
 - Change detection with AI-powered summaries
 
-### 🔔 Real-time Notifications
-- Slack integration for new job alerts and status changes
-- Configurable notification preferences
-- Webhook support for custom integrations
+### 🔔 Real-time Notifications & Email Integration
+- **Email Routing**: Receive job alert emails from major job sites (Google Jobs, LinkedIn, Indeed, etc.)
+- **Email Processing**: Automatically extract and crawl job links from incoming emails
+- **Insights Reports**: Send periodic email reports with new jobs, changes, and statistics
+- **Source Tracking**: Track whether jobs were discovered via scraping, email alerts, or manual entry
+- **Slack Integration**: Real-time notifications for new job alerts and status changes
+- **Configurable Notifications**: Customizable email frequency and content preferences
+- **Webhook Support**: Custom integration endpoints for external systems
 
 ## Architecture
 
@@ -76,7 +80,29 @@ index_name = "jobs"
 API_AUTH_TOKEN = "your-secure-token"
 BROWSER_RENDERING_TOKEN = "your-browser-token"  
 SLACK_WEBHOOK_URL = "your-slack-webhook-url"
+SMTP_ENDPOINT = "your-smtp-endpoint"
+SMTP_USERNAME = "your-smtp-username"
+SMTP_PASSWORD = "your-smtp-password"
 ```
+
+### 4. Configure Email Routing
+To receive job alert emails, configure Cloudflare Email Routing:
+
+```toml
+# Add to wrangler.toml
+[[email]]
+name = "job-alerts"
+destination_addresses = ["*@9to5scout.dev"]
+```
+
+This allows the worker to receive emails at any address ending in `@9to5scout.dev`. Configure job alert subscriptions on sites like:
+- Google Jobs
+- LinkedIn Job Alerts  
+- Indeed Job Alerts
+- Monster.com
+- ZipRecruiter
+
+Jobs extracted from emails will be marked with `source: "EMAIL"` to distinguish them from scraped jobs.
 
 ### 4. Run Database Migrations
 ```bash
@@ -164,6 +190,39 @@ curl -H "Authorization: Bearer <token>" \
        "job_description_text": "We are seeking a senior software engineer...",
        "candidate_career_summary": "Experienced full-stack developer with 5 years..."
      }'
+```
+
+### Email Integration
+The worker supports email routing for automated job alert processing:
+
+```bash
+# Configure email settings
+curl -H "Authorization: Bearer <token>" \
+     -H "Content-Type: application/json" \
+     -X PUT https://your-worker.workers.dev/api/email/configs \
+     -d '{
+       "id": "default",
+       "enabled": true,
+       "frequency_hours": 24,
+       "recipient_email": "user@example.com",
+       "include_new_jobs": true,
+       "include_job_changes": true,
+       "include_statistics": true
+     }'
+
+# Send email insights manually
+curl -H "Authorization: Bearer <token>" \
+     -H "Content-Type: application/json" \
+     -X POST https://your-worker.workers.dev/api/email/insights/send \
+     -d '{"config_id": "default"}'
+
+# View email processing logs
+curl -H "Authorization: Bearer <token>" \
+     "https://your-worker.workers.dev/api/email/logs?limit=20"
+
+# Get email configurations
+curl -H "Authorization: Bearer <token>" \
+     "https://your-worker.workers.dev/api/email/configs"
 ```
 
 ### Manual Job Crawling

@@ -40,8 +40,8 @@ export async function saveJob(env: StorageEnv, job: Job): Promise<string> {
       id, site_id, url, canonical_url, title, company, location, 
       employment_type, department, salary_min, salary_max, salary_currency, 
       salary_raw, compensation_raw, description_md, requirements_md, 
-      posted_at, closed_at, status, last_seen_open_at, first_seen_at, last_crawled_at
-    ) VALUES(?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12,?13,?14,?15,?16,?17,?18,?19,?20,?21,?22)`
+      posted_at, closed_at, status, source, last_seen_open_at, first_seen_at, last_crawled_at
+    ) VALUES(?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12,?13,?14,?15,?16,?17,?18,?19,?20,?21,?22,?23)`
   )
     .bind(
       id,
@@ -63,6 +63,7 @@ export async function saveJob(env: StorageEnv, job: Job): Promise<string> {
       job.posted_at,
       job.closed_at,
       job.status || 'open',
+      job.source || 'SCRAPED',
       job.last_seen_open_at,
       job.first_seen_at || new Date().toISOString(),
       new Date().toISOString()

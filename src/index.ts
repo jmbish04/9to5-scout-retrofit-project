@@ -7,6 +7,7 @@ import { handleRunsGet, handleDiscoveryRunPost, handleMonitorRunPost } from './r
 import { handleConfigsGet, handleConfigsPost } from './routes/configs';
 import { handleAgentQuery } from './routes/agent';
 import { handleWebhookTest } from './routes/webhooks';
+import { handleEmailReceived, handleEmailLogsGet, handleEmailConfigsGet, handleEmailConfigsPut, handleEmailInsightsSend } from './routes/email';
 import { crawlJob } from './lib/crawl';
 
 /**
@@ -104,6 +105,9 @@ export interface Env {
   API_AUTH_TOKEN: string;
   BROWSER_RENDERING_TOKEN: string;
   SLACK_WEBHOOK_URL: string;
+  SMTP_ENDPOINT: string;
+  SMTP_USERNAME: string;
+  SMTP_PASSWORD: string;
   SITE_CRAWLER: any;
   JOB_MONITOR: any;
   DISCOVERY_WORKFLOW: any;
@@ -644,7 +648,13 @@ export default {
       return new Response('OK', { status: 200 });
     }
 
-    // Authentication check for API routes (except health)
+    // Email routing for Cloudflare Email Routing (no auth required)
+    if (request.method === 'POST' && request.headers.get('content-type')?.includes('multipart/form-data')) {
+      // This is likely an incoming email from Cloudflare Email Routing
+      return handleEmailReceived(request, env);
+    }
+
+    // Authentication check for API routes (except health and email webhook)
     if (url.pathname.startsWith('/api/') && url.pathname !== '/api/health') {
       const authHeader = request.headers.get('Authorization');
       const expectedToken = `Bearer ${env.API_AUTH_TOKEN}`;
@@ -700,6 +710,23 @@ export default {
 
       if (url.pathname === '/api/webhooks/test' && request.method === 'POST') {
         return handleWebhookTest(request, env);
+      }
+
+      // Email management endpoints
+      if (url.pathname === '/api/email/logs' && request.method === 'GET') {
+        return handleEmailLogsGet(request, env);
+      }
+
+      if (url.pathname === '/api/email/configs' && request.method === 'GET') {
+        return handleEmailConfigsGet(request, env);
+      }
+
+      if (url.pathname === '/api/email/configs' && request.method === 'PUT') {
+        return handleEmailConfigsPut(request, env);
+      }
+
+      if (url.pathname === '/api/email/insights/send' && request.method === 'POST') {
+        return handleEmailInsightsSend(request, env);
       }
 
       // Manual crawl endpoint
@@ -848,4 +875,150 @@ export default {
       );
     }
   },
+
+  /**
+   * Scheduled handler for automated email insights.
+   * Runs on a cron schedule to send periodic job reports.
+   */
+  async scheduled(event: any, env: Env): Promise<void> {
+    console.log('Running scheduled email insights...');
+    
+    try {
+      // Get all enabled email configurations
+      const result = await env.DB.prepare(`
+        SELECT * FROM email_configs 
+        WHERE enabled = 1 
+        AND (last_sent_at IS NULL OR 
+             datetime(last_sent_at, '+' || frequency_hours || ' hours') <= datetime('now'))
+      `).all();
+
+      const configs = result.results || [];
+      console.log(`Found ${configs.length} email configs ready to send`);
+
+      for (const config of configs) {
+        try {
+          // Generate insights for this config
+          const insights = await generateEmailInsights(env, config);
+          
+          // Send the email
+          const emailSent = await sendInsightsEmail(insights, config, env);
+          
+          if (emailSent) {
+            // Update last sent timestamp
+            await env.DB.prepare(`
+              UPDATE email_configs SET last_sent_at = CURRENT_TIMESTAMP WHERE id = ?
+            `).bind(config.id).run();
+            
+            console.log(`Email insights sent successfully to ${config.recipient_email}`);
+          } else {
+            console.error(`Failed to send email insights to ${config.recipient_email}`);
+          }
+        } catch (error) {
+          console.error(`Error processing email config ${config.id}:`, error);
+        }
+      }
+    } catch (error) {
+      console.error('Error in scheduled email insights:', error);
+    }
+  },
 };
+
+/**
+ * Generate email insights data for a specific configuration.
+ */
+async function generateEmailInsights(env: Env, config: any): Promise<any> {
+  const hours = config.frequency_hours;
+  const cutoffTime = new Date(Date.now() - hours * 60 * 60 * 1000).toISOString();
+
+  // Get new jobs
+  const newJobs = config.include_new_jobs ? await env.DB.prepare(`
+    SELECT title, company, location, url, first_seen_at as posted_at
+    FROM jobs 
+    WHERE first_seen_at >= ? AND status = 'open'
+    ORDER BY first_seen_at DESC
+    LIMIT 50
+  `).bind(cutoffTime).all() : { results: [] };
+
+  // Get job changes
+  const jobChanges = config.include_job_changes ? await env.DB.prepare(`
+    SELECT j.title, j.company, j.url, c.semantic_summary as change_summary
+    FROM changes c
+    JOIN jobs j ON c.job_id = j.id
+    WHERE c.changed_at >= ?
+    ORDER BY c.changed_at DESC
+    LIMIT 20
+  `).bind(cutoffTime).all() : { results: [] };
+
+  // Get statistics
+  const totalJobsResult = await env.DB.prepare(`
+    SELECT COUNT(*) as count FROM jobs WHERE status = 'open'
+  `).first();
+
+  const newJobsCountResult = await env.DB.prepare(`
+    SELECT COUNT(*) as count FROM jobs 
+    WHERE first_seen_at >= ? AND status = 'open'
+  `).bind(cutoffTime).first();
+
+  // Get role statistics
+  const roleStatsResult = config.include_statistics ? await env.DB.prepare(`
+    SELECT 
+      CASE 
+        WHEN LOWER(title) LIKE '%engineer%' OR LOWER(title) LIKE '%developer%' THEN 'Engineer/Developer'
+        WHEN LOWER(title) LIKE '%manager%' THEN 'Manager'
+        WHEN LOWER(title) LIKE '%analyst%' THEN 'Analyst'
+        WHEN LOWER(title) LIKE '%designer%' THEN 'Designer'
+        WHEN LOWER(title) LIKE '%product%' THEN 'Product'
+        WHEN LOWER(title) LIKE '%sales%' THEN 'Sales'
+        WHEN LOWER(title) LIKE '%marketing%' THEN 'Marketing'
+        ELSE 'Other'
+      END as role,
+      COUNT(*) as count,
+      AVG(salary_min) as avgMinSalary,
+      AVG(salary_max) as avgMaxSalary
+    FROM jobs 
+    WHERE status = 'open' AND title IS NOT NULL
+    GROUP BY role
+    ORDER BY count DESC
+    LIMIT 10
+  `).all() : { results: [] };
+
+  return {
+    newJobs: newJobs.results || [],
+    jobChanges: jobChanges.results || [],
+    statistics: {
+      totalJobs: totalJobsResult?.count || 0,
+      newJobsLastPeriod: newJobsCountResult?.count || 0,
+      roleStats: roleStatsResult.results || []
+    }
+  };
+}
+
+/**
+ * Send insights email using email service.
+ */
+async function sendInsightsEmail(insights: any, config: any, env: Env): Promise<boolean> {
+  try {
+    const { formatInsightsEmail } = await import('./lib/email');
+    const htmlContent = formatInsightsEmail(insights, config.frequency_hours);
+    const subject = `9to5-Scout Job Insights - ${insights.statistics.newJobsLastPeriod} new jobs`;
+
+    // For now, log the email content (in production, integrate with email service)
+    console.log('Email would be sent to:', config.recipient_email);
+    console.log('Subject:', subject);
+    console.log('Content length:', htmlContent.length);
+
+    // Store the email in KV for demo purposes
+    const emailId = crypto.randomUUID();
+    await env.KV.put(`email:${emailId}`, JSON.stringify({
+      to: config.recipient_email,
+      subject,
+      html: htmlContent,
+      sent_at: new Date().toISOString()
+    }));
+
+    return true;
+  } catch (error) {
+    console.error('Failed to send email:', error);
+    return false;
+  }
+}

@@ -69,10 +69,18 @@ new_sqlite_classes = ["SiteCrawler", "JobMonitor"]
 API_AUTH_TOKEN = "test-token"
 BROWSER_RENDERING_TOKEN = "browser-token"
 SLACK_WEBHOOK_URL = ""
+SMTP_ENDPOINT = ""
+SMTP_USERNAME = ""
+SMTP_PASSWORD = ""
 
 # Optimized cron trigger for job scraping
 # Runs every 2 hours: 00:00, 02:00, 04:00, 06:00, 08:00, 10:00, 12:00, 14:00, 16:00, 18:00, 20:00, 22:00
 [[triggers.crons]]
 cron = "0 */2 * * *"
+
+# Email routing configuration for job alerts
+[[email]]
+name = "job-alerts"
+destination_addresses = ["*@9to5scout.dev"]
 
 [env.preview]
