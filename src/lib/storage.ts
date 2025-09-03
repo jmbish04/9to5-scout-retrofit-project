@@ -17,16 +17,18 @@ export interface StorageEnv {
  * Also generates and stores embeddings for semantic search.
  */
 export async function saveJob(env: StorageEnv, job: Job): Promise<string> {
-  // Look up existing job by URL first to preserve the ID
+  // Look up existing job by URL first to preserve the ID and first_seen_at
   let id = job.id;
+  let existingFirstSeenAt: string | undefined;
   
   if (!id && job.url) {
     const existingJob = await env.DB.prepare(
-      'SELECT id FROM jobs WHERE url = ?'
+      'SELECT id, first_seen_at FROM jobs WHERE url = ?'
     ).bind(job.url).first();
     
     if (existingJob) {
       id = existingJob.id;
+      existingFirstSeenAt = existingJob.first_seen_at;
     }
   }
   
@@ -66,7 +68,7 @@ export async function saveJob(env: StorageEnv, job: Job): Promise<string> {
       job.status || 'open',
       job.source || 'SCRAPED',
       job.last_seen_open_at,
-      job.first_seen_at || new Date().toISOString(),
+      job.first_seen_at || existingFirstSeenAt || new Date().toISOString(),
       new Date().toISOString(),
       job.daily_monitoring_enabled !== undefined ? job.daily_monitoring_enabled : true,
       job.monitoring_frequency_hours || 24,
