@@ -4,7 +4,7 @@
  */
 
 import { extractJob } from './ai';
-import { saveJob } from './storage';
+import { saveJob, createSnapshot } from './storage';
 import type { Job } from './types';
 
 /**
@@ -69,7 +69,104 @@ export interface CrawlEnv {
   MYBROWSER: any;
   AI: any;
   DB: any;
+  R2: any;
   VECTORIZE_INDEX: any;
+}
+
+/**
+ * Enhanced job crawling with comprehensive snapshot creation.
+ * Includes HTML content, PDF rendering, markdown extraction, and R2 storage.
+ */
+export async function crawlJobWithSnapshot(env: CrawlEnv, url: string, siteId?: string): Promise<{ job: Job | null; snapshotId?: string }> {
+  try {
+    console.log(`Starting enhanced crawling for ${url}`);
+    
+    // Use browser rendering service to get content
+    const response = await env.MYBROWSER.fetch('https://browser.render.cloudflare.com', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${env.BROWSER_RENDERING_TOKEN}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ 
+        url,
+        waitFor: 2000,
+        screenshot: true,
+        pdf: true
+      })
+    });
+
+    if (!response.ok) {
+      console.error(`Browser rendering failed for ${url}: ${response.status}`);
+      return { job: null };
+    }
+
+    const result = await response.json();
+    const html = result.html || result.content;
+
+    if (!html) {
+      console.error(`No HTML content received for ${url}`);
+      return { job: null };
+    }
+
+    // Extract job data using AI
+    const job = await extractJob(env, html, url, siteId || 'unknown');
+    
+    if (!job) {
+      console.log(`No job data extracted from ${url}`);
+      return { job: null };
+    }
+
+    job.site_id = siteId;
+    job.url = url;
+    job.last_crawled_at = new Date().toISOString();
+    
+    // Save the job to database
+    const jobId = await saveJob(env, job);
+    job.id = jobId;
+    
+    // Extract clean markdown from HTML for better storage
+    let markdownContent = '';
+    try {
+      // Simple HTML to markdown conversion
+      markdownContent = html
+        .replace(/<script[^>]*>.*?<\/script>/gis, '')
+        .replace(/<style[^>]*>.*?<\/style>/gis, '')
+        .replace(/<[^>]+>/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+    } catch (error) {
+      console.warn('Failed to extract markdown:', error);
+    }
+
+    // Generate content hash for change detection
+    const contentHash = await crypto.subtle.digest(
+      'SHA-256', 
+      new TextEncoder().encode(html)
+    ).then(buffer => Array.from(new Uint8Array(buffer))
+      .map(b => b.toString(16).padStart(2, '0'))
+      .join('')
+    );
+
+    // Create comprehensive snapshot
+    const snapshotId = await createSnapshot(env, {
+      job_id: jobId,
+      content_hash: contentHash,
+      html_content: html,
+      json_content: JSON.stringify(job),
+      screenshot_data: result.screenshot ? new Uint8Array(result.screenshot).buffer : undefined,
+      pdf_data: result.pdf ? new Uint8Array(result.pdf).buffer : undefined,
+      markdown_content: markdownContent,
+      http_status: 200,
+    });
+    
+    console.log(`Successfully crawled job with snapshot: ${job.title} at ${job.company}`);
+    return { job, snapshotId };
+    
+  } catch (error) {
+    console.error(`Error crawling job with snapshot ${url}:`, error);
+    return { job: null };
+  }
 }
 
 /**

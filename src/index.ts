@@ -12,7 +12,9 @@ import { handleAgentsGet, handleAgentsPost, handleAgentGet, handleAgentPut, hand
 import { handleTasksGet, handleTasksPost, handleTaskGet, handleTaskPut, handleTaskDelete } from './routes/tasks';
 import { handleWorkflowsGet, handleWorkflowsPost, handleWorkflowGet, handleWorkflowPut, handleWorkflowDelete, handleWorkflowExecute } from './routes/workflows';
 import { handleJobHistoryPost, handleJobHistoryGet, handleJobRatingPost, handleJobRatingsGet } from './routes/job-history';
+import { handleJobTrackingGet, handleSnapshotContentGet, handleDailyMonitoringPost, handleMonitoringStatusGet, handleMonitoringQueueGet, handleJobMonitoringPut } from './routes/tracking';
 import { crawlJob } from './lib/crawl';
+import { runDailyJobMonitoring } from './lib/monitoring';
 
 /**
  * Cloudflare Worker handling AI-driven cover letter, resume generation, and job scraping.
@@ -704,6 +706,17 @@ export default {
       }
 
       if (url.pathname.startsWith('/api/jobs/') && request.method === 'GET') {
+        // Check for tracking routes first
+        if (url.pathname.endsWith('/tracking')) {
+          return handleJobTrackingGet(request, env);
+        }
+        
+        // Check for snapshot content routes
+        if (url.pathname.includes('/snapshots/') && url.pathname.endsWith('/content')) {
+          return handleSnapshotContentGet(request, env);
+        }
+        
+        // Default job detail route
         const params = parsePathParams(url.pathname, '/api/jobs/:id');
         if (!params || !params.id) {
           return new Response(JSON.stringify({ error: 'Job ID is required' }), {
@@ -712,6 +725,11 @@ export default {
           });
         }
         return handleJobGet(request, env, params.id);
+      }
+
+      // Job monitoring endpoints
+      if (url.pathname.startsWith('/api/jobs/') && url.pathname.endsWith('/monitoring') && request.method === 'PUT') {
+        return handleJobMonitoringPut(request, env);
       }
 
       if (url.pathname === '/api/runs' && request.method === 'GET') {
@@ -927,6 +945,19 @@ export default {
         return handleJobRatingsGet(request, env, params);
       }
 
+      // Job Monitoring and Tracking endpoints
+      if (url.pathname === '/api/monitoring/daily-run' && request.method === 'POST') {
+        return handleDailyMonitoringPost(request, env);
+      }
+
+      if (url.pathname === '/api/monitoring/status' && request.method === 'GET') {
+        return handleMonitoringStatusGet(request, env);
+      }
+
+      if (url.pathname === '/api/jobs/monitoring-queue' && request.method === 'GET') {
+        return handleMonitoringQueueGet(request, env);
+      }
+
       // Manual crawl endpoint
       if (url.pathname === '/api/crawl' && request.method === 'POST') {
         const body = await request.json() as { url: string; site_id?: string };
@@ -1075,13 +1106,21 @@ export default {
   },
 
   /**
-   * Scheduled handler for automated email insights.
-   * Runs on a cron schedule to send periodic job reports.
+   * Scheduled handler for automated job monitoring and email insights.
+   * Runs on a cron schedule to monitor jobs and send periodic job reports.
    */
   async scheduled(event: any, env: Env): Promise<void> {
-    console.log('Running scheduled email insights...');
+    console.log('Running scheduled job monitoring and email insights...');
     
     try {
+      // Run daily job monitoring first
+      console.log('Starting daily job monitoring...');
+      const monitoringResult = await runDailyJobMonitoring(env);
+      console.log('Daily monitoring completed:', monitoringResult);
+      
+      // Then run email insights
+      console.log('Starting email insights...');
+      
       // Get all enabled email configurations
       const result = await env.DB.prepare(`
         SELECT * FROM email_configs 
@@ -1115,8 +1154,11 @@ export default {
           console.error(`Error processing email config ${config.id}:`, error);
         }
       }
+      
+      console.log('Scheduled task completed successfully');
+      
     } catch (error) {
-      console.error('Error in scheduled email insights:', error);
+      console.error('Error in scheduled task:', error);
     }
   },
 };

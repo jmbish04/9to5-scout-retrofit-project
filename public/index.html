@@ -194,6 +194,18 @@
                     <li>Automated job rating based on background</li>
                 </ul>
             </div>
+
+            <div class="feature-card">
+                <h3>📈 Comprehensive Job Tracking</h3>
+                <ul>
+                    <li>Daily automated job monitoring with change detection</li>
+                    <li>Full snapshot history with PDF & markdown storage</li>
+                    <li>Visual change tracking for manual review</li>
+                    <li>Job closure detection & status management</li>
+                    <li>Market analytics & trending insights</li>
+                    <li>Historical timeline for every job posting</li>
+                </ul>
+            </div>
         </div>
 
         <div class="setup-section">
@@ -219,6 +231,18 @@ curl -H "Authorization: Bearer &lt;token&gt;" \
        "job_description_text": "We are seeking a senior software engineer...",
        "candidate_career_summary": "Experienced full-stack developer with 5 years..."
      }'
+
+# Trigger daily job monitoring
+curl -H "Authorization: Bearer &lt;token&gt;" \
+     -X POST https://your-worker.workers.dev/api/monitoring/daily-run
+
+# Get job tracking history with PDFs and changes
+curl -H "Authorization: Bearer &lt;token&gt;" \
+     "https://your-worker.workers.dev/api/jobs/{job-id}/tracking"
+
+# Download job PDF snapshot for manual review
+curl -H "Authorization: Bearer &lt;token&gt;" \
+     "https://your-worker.workers.dev/api/jobs/{job-id}/snapshots/{snapshot-id}/content?type=pdf"
 
 # Configure email insights
 curl -H "Authorization: Bearer &lt;token&gt;" \
@@ -260,6 +284,28 @@ curl -H "Authorization: Bearer &lt;token&gt;" \
             </div>
             <div class="endpoint">
                 <span class="method">POST</span><code>/api/workflows/{id}/execute</code> - Execute multi-agent workflows
+            </div>
+        </div>
+
+        <div class="endpoint-group">
+            <h3>📈 Job Tracking & Monitoring</h3>
+            <div class="endpoint">
+                <span class="method">GET</span><code>/api/jobs/{id}/tracking</code> - Get complete job tracking timeline
+            </div>
+            <div class="endpoint">
+                <span class="method">GET</span><code>/api/jobs/{id}/snapshots/{snapshotId}/content</code> - Download job snapshots (PDF, HTML, etc.)
+            </div>
+            <div class="endpoint">
+                <span class="method">PUT</span><code>/api/jobs/{id}/monitoring</code> - Configure job monitoring settings
+            </div>
+            <div class="endpoint">
+                <span class="method">POST</span><code>/api/monitoring/daily-run</code> - Manually trigger daily monitoring
+            </div>
+            <div class="endpoint">
+                <span class="method">GET</span><code>/api/monitoring/status</code> - Get monitoring status & market analytics
+            </div>
+            <div class="endpoint">
+                <span class="method">GET</span><code>/api/jobs/monitoring-queue</code> - List jobs needing monitoring
             </div>
         </div>
 

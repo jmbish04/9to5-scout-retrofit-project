@@ -150,6 +150,85 @@
           "error": { "type": "string" },
           "message": { "type": "string" }
         }
+      },
+      "Snapshot": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "job_id": { "type": "string" },
+          "run_id": { "type": "string" },
+          "content_hash": { "type": "string" },
+          "html_r2_key": { "type": "string" },
+          "json_r2_key": { "type": "string" },
+          "screenshot_r2_key": { "type": "string" },
+          "pdf_r2_key": { "type": "string" },
+          "markdown_r2_key": { "type": "string" },
+          "fetched_at": { "type": "string", "format": "date-time" },
+          "http_status": { "type": "integer" },
+          "etag": { "type": "string" }
+        }
+      },
+      "Change": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "job_id": { "type": "string" },
+          "from_snapshot_id": { "type": "string" },
+          "to_snapshot_id": { "type": "string" },
+          "diff_json": { "type": "string" },
+          "semantic_summary": { "type": "string" },
+          "changed_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "JobTrackingHistory": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "job_id": { "type": "string" },
+          "snapshot_id": { "type": "string" },
+          "tracking_date": { "type": "string", "format": "date" },
+          "status": { 
+            "type": "string",
+            "enum": ["open", "closed", "modified", "error"]
+          },
+          "content_hash": { "type": "string" },
+          "title_changed": { "type": "boolean" },
+          "requirements_changed": { "type": "boolean" },
+          "salary_changed": { "type": "boolean" },
+          "description_changed": { "type": "boolean" },
+          "error_message": { "type": "string" },
+          "created_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "JobMarketStats": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "date": { "type": "string", "format": "date" },
+          "total_jobs_tracked": { "type": "integer" },
+          "new_jobs_found": { "type": "integer" },
+          "jobs_closed": { "type": "integer" },
+          "jobs_modified": { "type": "integer" },
+          "avg_job_duration_days": { "type": "number" },
+          "top_companies": { "type": "string", "description": "JSON array of top companies" },
+          "trending_keywords": { "type": "string", "description": "JSON array of trending keywords" },
+          "salary_stats": { "type": "string", "description": "JSON object with salary statistics" },
+          "location_stats": { "type": "string", "description": "JSON object with location statistics" },
+          "created_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "DailyMonitoringResult": {
+        "type": "object",
+        "properties": {
+          "date": { "type": "string", "format": "date" },
+          "jobs_checked": { "type": "integer" },
+          "jobs_modified": { "type": "integer" },
+          "jobs_closed": { "type": "integer" },
+          "errors": { "type": "integer" },
+          "snapshots_created": { "type": "integer" },
+          "pdfs_generated": { "type": "integer" },
+          "markdown_extracts": { "type": "integer" }
+        }
       }
     }
   },
@@ -278,6 +357,247 @@
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/jobs/{id}/tracking": {
+      "get": {
+        "summary": "Get job tracking history",
+        "operationId": "getJobTracking",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "Job ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Job tracking timeline with snapshots and changes",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "job": { "$ref": "#/components/schemas/Job" },
+                    "timeline": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/JobTrackingHistory" }
+                    },
+                    "snapshots": {
+                      "type": "array", 
+                      "items": { "$ref": "#/components/schemas/Snapshot" }
+                    },
+                    "changes": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Change" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Job not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/jobs/{id}/snapshots/{snapshotId}/content": {
+      "get": {
+        "summary": "Get snapshot content from R2 storage",
+        "operationId": "getSnapshotContent",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "Job ID"
+          },
+          {
+            "name": "snapshotId",
+            "in": "path", 
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "Snapshot ID"
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "schema": { 
+              "type": "string",
+              "enum": ["html", "pdf", "markdown", "json", "screenshot"],
+              "default": "html"
+            },
+            "description": "Content type to retrieve"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Snapshot content",
+            "content": {
+              "text/html": { "schema": { "type": "string" } },
+              "application/pdf": { "schema": { "type": "string", "format": "binary" } },
+              "text/markdown": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "object" } },
+              "image/png": { "schema": { "type": "string", "format": "binary" } }
+            }
+          },
+          "404": {
+            "description": "Snapshot or content not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/jobs/{id}/monitoring": {
+      "put": {
+        "summary": "Update job monitoring settings",
+        "operationId": "updateJobMonitoring",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "Job ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "daily_monitoring_enabled": { "type": "boolean" },
+                  "monitoring_frequency_hours": { "type": "integer", "minimum": 1 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated job with monitoring settings",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Job" }
+              }
+            }
+          },
+          "404": {
+            "description": "Job not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/monitoring/daily-run": {
+      "post": {
+        "summary": "Manually trigger daily job monitoring",
+        "operationId": "triggerDailyMonitoring",
+        "responses": {
+          "200": {
+            "description": "Daily monitoring results",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DailyMonitoringResult" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/monitoring/status": {
+      "get": {
+        "summary": "Get monitoring status and statistics",
+        "operationId": "getMonitoringStatus",
+        "responses": {
+          "200": {
+            "description": "Monitoring status and recent activity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "active_jobs_monitored": { "type": "integer" },
+                    "jobs_needing_check": { "type": "integer" },
+                    "last_updated": { "type": "string", "format": "date-time" },
+                    "recent_activity": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "tracking_date": { "type": "string" },
+                          "jobs_checked": { "type": "integer" },
+                          "jobs_modified": { "type": "integer" },
+                          "jobs_closed": { "type": "integer" },
+                          "errors": { "type": "integer" }
+                        }
+                      }
+                    },
+                    "market_statistics": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/JobMarketStats" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/jobs/monitoring-queue": {
+      "get": {
+        "summary": "Get list of jobs that need monitoring",
+        "operationId": "getMonitoringQueue",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "default": 50 },
+            "description": "Maximum number of jobs to return"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Jobs needing monitoring",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "total_jobs": { "type": "integer" },
+                    "returned_jobs": { "type": "integer" },
+                    "jobs": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Job" }
+                    }
+                  }
+                }
               }
             }
           }

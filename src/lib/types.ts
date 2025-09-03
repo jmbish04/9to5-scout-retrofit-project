@@ -27,6 +27,10 @@ export interface Job {
   last_seen_open_at?: string;
   first_seen_at?: string;
   last_crawled_at?: string;
+  daily_monitoring_enabled?: boolean;
+  monitoring_frequency_hours?: number;
+  last_status_check_at?: string;
+  closure_detected_at?: string;
 }
 
 export interface Site {
@@ -70,6 +74,8 @@ export interface Snapshot {
   html_r2_key?: string;
   json_r2_key?: string;
   screenshot_r2_key?: string;
+  pdf_r2_key?: string;
+  markdown_r2_key?: string;
   fetched_at?: string;
   http_status?: number;
   etag?: string;
@@ -194,4 +200,46 @@ export interface JobHistoryRequest {
   user_id: string;
   raw_content: string;
   content_type?: 'text/plain' | 'text/markdown' | 'application/json';
+}
+
+// Enhanced Job Tracking Types
+export interface JobTrackingHistory {
+  id?: string;
+  job_id: string;
+  snapshot_id?: string;
+  tracking_date: string; // YYYY-MM-DD format
+  status: 'open' | 'closed' | 'modified' | 'error';
+  content_hash?: string;
+  title_changed?: boolean;
+  requirements_changed?: boolean;
+  salary_changed?: boolean;
+  description_changed?: boolean;
+  error_message?: string;
+  created_at?: string;
+}
+
+export interface JobMarketStats {
+  id?: string;
+  date: string; // YYYY-MM-DD format
+  total_jobs_tracked?: number;
+  new_jobs_found?: number;
+  jobs_closed?: number;
+  jobs_modified?: number;
+  avg_job_duration_days?: number;
+  top_companies?: string; // JSON array
+  trending_keywords?: string; // JSON array
+  salary_stats?: string; // JSON object
+  location_stats?: string; // JSON object
+  created_at?: string;
+}
+
+export interface DailyMonitoringResult {
+  date: string;
+  jobs_checked: number;
+  jobs_modified: number;
+  jobs_closed: number;
+  errors: number;
+  snapshots_created: number;
+  pdfs_generated: number;
+  markdown_extracts: number;
 }

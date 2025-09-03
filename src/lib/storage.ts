@@ -40,8 +40,9 @@ export async function saveJob(env: StorageEnv, job: Job): Promise<string> {
       id, site_id, url, canonical_url, title, company, location, 
       employment_type, department, salary_min, salary_max, salary_currency, 
       salary_raw, compensation_raw, description_md, requirements_md, 
-      posted_at, closed_at, status, source, last_seen_open_at, first_seen_at, last_crawled_at
-    ) VALUES(?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12,?13,?14,?15,?16,?17,?18,?19,?20,?21,?22,?23)`
+      posted_at, closed_at, status, source, last_seen_open_at, first_seen_at, last_crawled_at,
+      daily_monitoring_enabled, monitoring_frequency_hours, last_status_check_at, closure_detected_at
+    ) VALUES(?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12,?13,?14,?15,?16,?17,?18,?19,?20,?21,?22,?23,?24,?25,?26,?27)`
   )
     .bind(
       id,
@@ -66,7 +67,11 @@ export async function saveJob(env: StorageEnv, job: Job): Promise<string> {
       job.source || 'SCRAPED',
       job.last_seen_open_at,
       job.first_seen_at || new Date().toISOString(),
-      new Date().toISOString()
+      new Date().toISOString(),
+      job.daily_monitoring_enabled !== undefined ? job.daily_monitoring_enabled : true,
+      job.monitoring_frequency_hours || 24,
+      job.last_status_check_at,
+      job.closure_detected_at
     )
     .run();
 
@@ -215,4 +220,224 @@ export async function getRuns(env: StorageEnv, limit: number = 20): Promise<Run[
   ).bind(limit).all();
   
   return result.results || [];
+}
+
+/**
+ * Create a new snapshot with enhanced storage options.
+ */
+export async function createSnapshot(env: StorageEnv, snapshot: {
+  job_id: string;
+  run_id?: string;
+  content_hash?: string;
+  html_content?: string;
+  json_content?: string;
+  screenshot_data?: ArrayBuffer;
+  pdf_data?: ArrayBuffer;
+  markdown_content?: string;
+  http_status?: number;
+  etag?: string;
+}): Promise<string> {
+  const id = crypto.randomUUID();
+  const timestamp = new Date().toISOString();
+  
+  // Store content in R2 and get keys
+  const r2Keys: {
+    html_r2_key?: string;
+    json_r2_key?: string;
+    screenshot_r2_key?: string;
+    pdf_r2_key?: string;
+    markdown_r2_key?: string;
+  } = {};
+
+  if (snapshot.html_content) {
+    const key = `snapshots/${snapshot.job_id}/${id}/page.html`;
+    await env.R2.put(key, snapshot.html_content, {
+      httpMetadata: { contentType: 'text/html' }
+    });
+    r2Keys.html_r2_key = key;
+  }
+
+  if (snapshot.json_content) {
+    const key = `snapshots/${snapshot.job_id}/${id}/data.json`;
+    await env.R2.put(key, snapshot.json_content, {
+      httpMetadata: { contentType: 'application/json' }
+    });
+    r2Keys.json_r2_key = key;
+  }
+
+  if (snapshot.screenshot_data) {
+    const key = `snapshots/${snapshot.job_id}/${id}/screenshot.png`;
+    await env.R2.put(key, snapshot.screenshot_data, {
+      httpMetadata: { contentType: 'image/png' }
+    });
+    r2Keys.screenshot_r2_key = key;
+  }
+
+  if (snapshot.pdf_data) {
+    const key = `snapshots/${snapshot.job_id}/${id}/render.pdf`;
+    await env.R2.put(key, snapshot.pdf_data, {
+      httpMetadata: { contentType: 'application/pdf' }
+    });
+    r2Keys.pdf_r2_key = key;
+  }
+
+  if (snapshot.markdown_content) {
+    const key = `snapshots/${snapshot.job_id}/${id}/extract.md`;
+    await env.R2.put(key, snapshot.markdown_content, {
+      httpMetadata: { contentType: 'text/markdown' }
+    });
+    r2Keys.markdown_r2_key = key;
+  }
+
+  // Save snapshot record to database
+  await env.DB.prepare(
+    `INSERT INTO snapshots(
+      id, job_id, run_id, content_hash, html_r2_key, json_r2_key, 
+      screenshot_r2_key, pdf_r2_key, markdown_r2_key, fetched_at, http_status, etag
+    ) VALUES(?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12)`
+  ).bind(
+    id,
+    snapshot.job_id,
+    snapshot.run_id,
+    snapshot.content_hash,
+    r2Keys.html_r2_key,
+    r2Keys.json_r2_key,
+    r2Keys.screenshot_r2_key,
+    r2Keys.pdf_r2_key,
+    r2Keys.markdown_r2_key,
+    timestamp,
+    snapshot.http_status,
+    snapshot.etag
+  ).run();
+
+  return id;
+}
+
+/**
+ * Get jobs that need daily monitoring.
+ */
+export async function getJobsForMonitoring(env: StorageEnv): Promise<Job[]> {
+  const result = await env.DB.prepare(`
+    SELECT * FROM jobs 
+    WHERE daily_monitoring_enabled = 1 
+    AND status = 'open'
+    AND (
+      last_status_check_at IS NULL 
+      OR datetime(last_status_check_at, '+' || monitoring_frequency_hours || ' hours') <= datetime('now')
+    )
+    ORDER BY last_status_check_at ASC NULLS FIRST
+  `).all();
+  
+  return result.results || [];
+}
+
+/**
+ * Update job status and monitoring timestamp.
+ */
+export async function updateJobStatus(env: StorageEnv, jobId: string, status: string, closureDetected?: boolean): Promise<void> {
+  const now = new Date().toISOString();
+  
+  if (closureDetected) {
+    await env.DB.prepare(
+      'UPDATE jobs SET status = ?, last_status_check_at = ?, closure_detected_at = ? WHERE id = ?'
+    ).bind(status, now, now, jobId).run();
+  } else {
+    await env.DB.prepare(
+      'UPDATE jobs SET status = ?, last_status_check_at = ? WHERE id = ?'
+    ).bind(status, now, jobId).run();
+  }
+}
+
+/**
+ * Create job tracking history entry.
+ */
+export async function createJobTrackingHistory(env: StorageEnv, entry: {
+  job_id: string;
+  snapshot_id?: string;
+  tracking_date: string;
+  status: string;
+  content_hash?: string;
+  title_changed?: boolean;
+  requirements_changed?: boolean;
+  salary_changed?: boolean;
+  description_changed?: boolean;
+  error_message?: string;
+}): Promise<string> {
+  const id = crypto.randomUUID();
+  
+  await env.DB.prepare(
+    `INSERT INTO job_tracking_history(
+      id, job_id, snapshot_id, tracking_date, status, content_hash,
+      title_changed, requirements_changed, salary_changed, description_changed, error_message
+    ) VALUES(?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11)`
+  ).bind(
+    id,
+    entry.job_id,
+    entry.snapshot_id,
+    entry.tracking_date,
+    entry.status,
+    entry.content_hash,
+    entry.title_changed || false,
+    entry.requirements_changed || false,
+    entry.salary_changed || false,
+    entry.description_changed || false,
+    entry.error_message
+  ).run();
+
+  return id;
+}
+
+/**
+ * Get job tracking history for a specific job.
+ */
+export async function getJobTrackingHistory(env: StorageEnv, jobId: string, limit: number = 30): Promise<any[]> {
+  const result = await env.DB.prepare(`
+    SELECT 
+      jth.*,
+      s.html_r2_key,
+      s.pdf_r2_key,
+      s.markdown_r2_key,
+      s.fetched_at as snapshot_fetched_at
+    FROM job_tracking_history jth
+    LEFT JOIN snapshots s ON jth.snapshot_id = s.id
+    WHERE jth.job_id = ?
+    ORDER BY jth.tracking_date DESC, jth.created_at DESC
+    LIMIT ?
+  `).bind(jobId, limit).all();
+  
+  return result.results || [];
+}
+
+/**
+ * Create or update daily job market statistics.
+ */
+export async function saveJobMarketStats(env: StorageEnv, date: string, stats: {
+  total_jobs_tracked: number;
+  new_jobs_found: number;
+  jobs_closed: number;
+  jobs_modified: number;
+  avg_job_duration_days?: number;
+  top_companies?: any;
+  trending_keywords?: any;
+  salary_stats?: any;
+  location_stats?: any;
+}): Promise<void> {
+  await env.DB.prepare(
+    `INSERT OR REPLACE INTO job_market_stats(
+      id, date, total_jobs_tracked, new_jobs_found, jobs_closed, jobs_modified,
+      avg_job_duration_days, top_companies, trending_keywords, salary_stats, location_stats
+    ) VALUES(?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11)`
+  ).bind(
+    crypto.randomUUID(),
+    date,
+    stats.total_jobs_tracked,
+    stats.new_jobs_found,
+    stats.jobs_closed,
+    stats.jobs_modified,
+    stats.avg_job_duration_days,
+    stats.top_companies ? JSON.stringify(stats.top_companies) : null,
+    stats.trending_keywords ? JSON.stringify(stats.trending_keywords) : null,
+    stats.salary_stats ? JSON.stringify(stats.salary_stats) : null,
+    stats.location_stats ? JSON.stringify(stats.location_stats) : null
+  ).run();
 }
