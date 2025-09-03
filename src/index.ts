@@ -1,8 +1,15 @@
 // Placeholder types for Durable Objects until full implementations are added.
 type DurableObjectState = any;
 
+// Import job scraping functionality
+import { handleJobsGet, handleJobGet } from './routes/jobs';
+import { handleRunsGet, handleDiscoveryRunPost, handleMonitorRunPost } from './routes/runs';
+import { handleConfigsGet, handleConfigsPost } from './routes/configs';
+import { handleAgentQuery } from './routes/agent';
+import { crawlJob } from './lib/crawl';
+
 /**
- * Cloudflare Worker handling AI-driven cover letter and resume generation.
+ * Cloudflare Worker handling AI-driven cover letter, resume generation, and job scraping.
  */
 
 /**
@@ -51,6 +58,19 @@ interface ResumeContent {
  */
 export interface Env {
   AI: any;
+  DB: any;
+  KV: any;
+  R2: any;
+  VECTORIZE_INDEX: any;
+  MYBROWSER: any;
+  API_AUTH_TOKEN: string;
+  BROWSER_RENDERING_TOKEN: string;
+  SLACK_WEBHOOK_URL: string;
+  SITE_CRAWLER: any;
+  JOB_MONITOR: any;
+  DISCOVERY_WORKFLOW: any;
+  JOB_MONITOR_WORKFLOW: any;
+  CHANGE_ANALYSIS_WORKFLOW: any;
 }
 
 /**
@@ -115,14 +135,92 @@ export default {
    * @param env - Worker environment bindings.
    */
   async fetch(request: Request, env: Env): Promise<Response> {
-    if (request.method !== 'POST') {
-      return new Response('Expected POST request', { status: 405 });
-    }
-
     const url = new URL(request.url);
 
+    // Health check endpoint
+    if (url.pathname === '/api/health') {
+      return new Response('OK', { status: 200 });
+    }
+
+    // Authentication check for API routes (except health)
+    if (url.pathname.startsWith('/api/') && url.pathname !== '/api/health') {
+      const authHeader = request.headers.get('Authorization');
+      const expectedToken = `Bearer ${env.API_AUTH_TOKEN}`;
+      
+      if (!authHeader || authHeader !== expectedToken) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+          status: 401,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
+    }
+
     try {
-      if (url.pathname === '/api/cover-letter') {
+      // Job scraping API routes
+      if (url.pathname === '/api/jobs' && request.method === 'GET') {
+        return handleJobsGet(request, env);
+      }
+
+      if (url.pathname.startsWith('/api/jobs/') && request.method === 'GET') {
+        const jobId = url.pathname.split('/')[3];
+        if (!jobId) {
+          return new Response(JSON.stringify({ error: 'Job ID is required' }), {
+            status: 400,
+            headers: { 'Content-Type': 'application/json' },
+          });
+        }
+        return handleJobGet(request, env, jobId);
+      }
+
+      if (url.pathname === '/api/runs' && request.method === 'GET') {
+        return handleRunsGet(request, env);
+      }
+
+      if (url.pathname === '/api/runs/discovery' && request.method === 'POST') {
+        return handleDiscoveryRunPost(request, env);
+      }
+
+      if (url.pathname === '/api/runs/monitor' && request.method === 'POST') {
+        return handleMonitorRunPost(request, env);
+      }
+
+      if (url.pathname === '/api/configs' && request.method === 'GET') {
+        return handleConfigsGet(request, env);
+      }
+
+      if (url.pathname === '/api/configs' && request.method === 'POST') {
+        return handleConfigsPost(request, env);
+      }
+
+      if (url.pathname === '/api/agent/query' && request.method === 'GET') {
+        return handleAgentQuery(request, env);
+      }
+
+      // Manual crawl endpoint
+      if (url.pathname === '/api/crawl' && request.method === 'POST') {
+        const body = await request.json() as { url: string; site_id?: string };
+        if (!body.url) {
+          return new Response(JSON.stringify({ error: 'URL is required' }), {
+            status: 400,
+            headers: { 'Content-Type': 'application/json' },
+          });
+        }
+
+        const job = await crawlJob(env, body.url, body.site_id);
+        if (job) {
+          return new Response(JSON.stringify(job), {
+            headers: { 'Content-Type': 'application/json' },
+          });
+        } else {
+          return new Response(JSON.stringify({ error: 'Failed to crawl job' }), {
+            status: 500,
+            headers: { 'Content-Type': 'application/json' },
+          });
+        }
+      }
+
+      // Existing cover letter and resume routes
+      if (url.pathname === '/api/cover-letter' && request.method === 'POST') {
         const body = (await request.json()) as CoverLetterRequestBody;
         if (!body.job_title || !body.company_name || !body.job_description_text || !body.candidate_career_summary) {
           return new Response(JSON.stringify({ error: 'Missing required fields in request body' }), {
@@ -182,7 +280,7 @@ export default {
         });
       }
 
-      if (url.pathname === '/api/resume') {
+      if (url.pathname === '/api/resume' && request.method === 'POST') {
         const body = (await request.json()) as ResumeRequestBody;
         if (!body.job_title || !body.company_name || !body.job_description_text || !body.candidate_career_summary) {
           return new Response(JSON.stringify({ error: 'Missing required fields in request body' }), {
@@ -228,7 +326,11 @@ export default {
         });
       }
 
-      return new Response('Not Found', { status: 404 });
+      // Route not found
+      return new Response(JSON.stringify({ error: 'Not Found' }), { 
+        status: 404,
+        headers: { 'Content-Type': 'application/json' },
+      });
     } catch (error: unknown) {
       console.error('Error processing request:', error);
       return new Response(
