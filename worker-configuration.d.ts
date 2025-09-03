@@ -5,6 +5,9 @@ interface Env {
 	API_AUTH_TOKEN: "test-token";
 	BROWSER_RENDERING_TOKEN: "browser-token";
 	SLACK_WEBHOOK_URL: "";
+	SMTP_ENDPOINT: "";
+	SMTP_USERNAME: "";
+	SMTP_PASSWORD: "";
 	SITE_CRAWLER: DurableObjectNamespace<import("./src/index").SiteCrawler>;
 	JOB_MONITOR: DurableObjectNamespace<import("./src/index").JobMonitor>;
 	R2: R2Bucket;
@@ -13,6 +16,7 @@ interface Env {
 	VECTORIZE_INDEX: VectorizeIndex;
 	MYBROWSER: Fetcher;
 	AI: Ai;
+	ASSETS: Fetcher;
 	DISCOVERY_WORKFLOW: Workflow;
 	JOB_MONITOR_WORKFLOW: Workflow;
 	CHANGE_ANALYSIS_WORKFLOW: Workflow;
