@@ -104,9 +104,9 @@ curl -H "Authorization: Bearer <token>" \
      -X POST https://your-worker.workers.dev/api/configs \
      -d '{
        "name": "Tech Jobs", 
-       "keywords": "[\"software engineer\", \"developer\", \"python\"]",
-       "locations": "San Francisco, Remote",
-       "include_domains": "company.com,startup.io"
+       "keywords": ["software engineer", "developer", "python"],
+       "locations": ["San Francisco", "Remote"],
+       "include_domains": ["company.com", "startup.io"]
      }'
 ```
 
