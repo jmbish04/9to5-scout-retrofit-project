@@ -30,8 +30,8 @@ export async function handleDiscoveryRunPost(request: Request, env: any): Promis
     
     const runId = await createRun(env, 'discovery', configId);
     
-    // TODO: Trigger discovery workflow
-    console.log(`Discovery run ${runId} queued with config ${configId}`);
+    // Trigger discovery workflow. This can be done asynchronously.
+    env.DISCOVERY_WORKFLOW.run({ config_id: configId });
     
     return new Response(JSON.stringify({ id: runId, status: 'queued' }), {
       headers: { 'Content-Type': 'application/json' },
