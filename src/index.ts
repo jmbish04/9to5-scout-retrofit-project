@@ -6,6 +6,7 @@ import { handleJobsGet, handleJobGet } from './routes/jobs';
 import { handleRunsGet, handleDiscoveryRunPost, handleMonitorRunPost } from './routes/runs';
 import { handleConfigsGet, handleConfigsPost } from './routes/configs';
 import { handleAgentQuery } from './routes/agent';
+import { handleWebhookTest } from './routes/webhooks';
 import { crawlJob } from './lib/crawl';
 
 /**
@@ -75,58 +76,507 @@ export interface Env {
 
 /**
  * Durable Object coordinating crawling operations for a specific site.
+ * Manages job discovery, rate limiting, and status tracking per site.
  */
 export class SiteCrawler {
+  private state: DurableObjectState;
+  private env: Env;
+
   /**
    * Creates a new SiteCrawler instance.
    * @param state - Durable Object state reference.
    * @param env - Worker environment bindings.
    */
-  constructor(state: DurableObjectState, env: Env) {}
+  constructor(state: DurableObjectState, env: Env) {
+    this.state = state;
+    this.env = env;
+  }
 
   /**
-   * Placeholder fetch handler for future SiteCrawler APIs.
+   * Handles API requests for site crawling operations.
    * @param req - Incoming request object.
    */
-  async fetch(req: Request) {
-    return new Response("Not implemented", { status: 501 });
+  async fetch(req: Request): Promise<Response> {
+    const url = new URL(req.url);
+    const path = url.pathname;
+
+    try {
+      if (path === '/start-discovery' && req.method === 'POST') {
+        return await this.startDiscovery(req);
+      }
+
+      if (path === '/status' && req.method === 'GET') {
+        return await this.getStatus();
+      }
+
+      if (path === '/crawl-urls' && req.method === 'POST') {
+        return await this.crawlUrls(req);
+      }
+
+      return new Response('Not Found', { status: 404 });
+    } catch (error) {
+      console.error('SiteCrawler error:', error);
+      return new Response(JSON.stringify({ error: 'Internal server error' }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+  }
+
+  private async startDiscovery(req: Request): Promise<Response> {
+    const { site_id, base_url, search_terms } = await req.json() as {
+      site_id: string;
+      base_url: string;
+      search_terms?: string[];
+    };
+
+    // Store crawl state
+    await this.state.storage.put('current_site_id', site_id);
+    await this.state.storage.put('base_url', base_url);
+    await this.state.storage.put('last_activity', new Date().toISOString());
+    await this.state.storage.put('status', 'discovering');
+
+    // Import discovery function dynamically to avoid circular imports
+    const { discoverJobUrls } = await import('./lib/crawl');
+    const urls = await discoverJobUrls(base_url, search_terms || []);
+
+    await this.state.storage.put('discovered_urls', urls);
+    await this.state.storage.put('total_discovered', urls.length);
+    await this.state.storage.put('crawled_count', 0);
+
+    return new Response(JSON.stringify({
+      site_id,
+      discovered_count: urls.length,
+      status: 'discovery_complete',
+    }), {
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  private async crawlUrls(req: Request): Promise<Response> {
+    const { batch_size = 5 } = await req.json() as { batch_size?: number };
+    
+    const urls = await this.state.storage.get('discovered_urls') as string[] || [];
+    const crawledCount = await this.state.storage.get('crawled_count') as number || 0;
+    const siteId = await this.state.storage.get('current_site_id') as string;
+
+    if (crawledCount >= urls.length) {
+      await this.state.storage.put('status', 'completed');
+      return new Response(JSON.stringify({ status: 'completed', message: 'All URLs crawled' }), {
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Get next batch of URLs
+    const batchUrls = urls.slice(crawledCount, crawledCount + batch_size);
+    
+    // Import crawl function
+    const { crawlJobs } = await import('./lib/crawl');
+    const jobs = await crawlJobs(this.env, batchUrls, siteId);
+
+    const newCrawledCount = crawledCount + batchUrls.length;
+    await this.state.storage.put('crawled_count', newCrawledCount);
+    await this.state.storage.put('last_activity', new Date().toISOString());
+
+    const isComplete = newCrawledCount >= urls.length;
+    if (isComplete) {
+      await this.state.storage.put('status', 'completed');
+    }
+
+    return new Response(JSON.stringify({
+      crawled_in_batch: jobs.length,
+      total_crawled: newCrawledCount,
+      total_discovered: urls.length,
+      status: isComplete ? 'completed' : 'crawling',
+    }), {
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  private async getStatus(): Promise<Response> {
+    const status = await this.state.storage.get('status') || 'idle';
+    const totalDiscovered = await this.state.storage.get('total_discovered') || 0;
+    const crawledCount = await this.state.storage.get('crawled_count') || 0;
+    const lastActivity = await this.state.storage.get('last_activity');
+    const siteId = await this.state.storage.get('current_site_id');
+
+    return new Response(JSON.stringify({
+      site_id: siteId,
+      status,
+      total_discovered: totalDiscovered,
+      crawled_count: crawledCount,
+      last_activity: lastActivity,
+    }), {
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 }
 
 /**
  * Durable Object responsible for monitoring individual job postings.
+ * Tracks changes in job postings and detects when jobs are closed or modified.
  */
 export class JobMonitor {
+  private state: DurableObjectState;
+  private env: Env;
+
   /**
    * Creates a new JobMonitor instance.
    * @param state - Durable Object state reference.
    * @param env - Worker environment bindings.
    */
-  constructor(state: DurableObjectState, env: Env) {}
+  constructor(state: DurableObjectState, env: Env) {
+    this.state = state;
+    this.env = env;
+  }
 
   /**
-   * Placeholder fetch handler for future JobMonitor APIs.
+   * Handles API requests for job monitoring operations.
    * @param req - Incoming request object.
    */
-  async fetch(req: Request) {
-    return new Response("Not implemented", { status: 501 });
+  async fetch(req: Request): Promise<Response> {
+    const url = new URL(req.url);
+    const path = url.pathname;
+
+    try {
+      if (path === '/monitor-job' && req.method === 'POST') {
+        return await this.monitorJob(req);
+      }
+
+      if (path === '/check-job' && req.method === 'POST') {
+        return await this.checkJob(req);
+      }
+
+      if (path === '/status' && req.method === 'GET') {
+        return await this.getStatus();
+      }
+
+      return new Response('Not Found', { status: 404 });
+    } catch (error) {
+      console.error('JobMonitor error:', error);
+      return new Response(JSON.stringify({ error: 'Internal server error' }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+  }
+
+  private async monitorJob(req: Request): Promise<Response> {
+    const { job_id, url, check_interval_hours = 24 } = await req.json() as {
+      job_id: string;
+      url: string;
+      check_interval_hours?: number;
+    };
+
+    // Store job monitoring info
+    await this.state.storage.put('job_id', job_id);
+    await this.state.storage.put('job_url', url);
+    await this.state.storage.put('check_interval_hours', check_interval_hours);
+    await this.state.storage.put('last_check', new Date().toISOString());
+    await this.state.storage.put('status', 'monitoring');
+
+    // Schedule next check using alarm
+    const nextCheck = new Date(Date.now() + check_interval_hours * 60 * 60 * 1000);
+    await this.state.storage.setAlarm(nextCheck);
+
+    return new Response(JSON.stringify({
+      job_id,
+      status: 'monitoring_started',
+      next_check: nextCheck.toISOString(),
+    }), {
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  private async checkJob(req: Request): Promise<Response> {
+    const jobUrl = await this.state.storage.get('job_url') as string;
+    const jobId = await this.state.storage.get('job_id') as string;
+
+    if (!jobUrl || !jobId) {
+      return new Response(JSON.stringify({ error: 'No job configured for monitoring' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Import crawl function to check job status
+    const { crawlJob } = await import('./lib/crawl');
+    const currentJob = await crawlJob(this.env, jobUrl);
+
+    const lastCheck = new Date().toISOString();
+    await this.state.storage.put('last_check', lastCheck);
+
+    if (!currentJob) {
+      // Job might be closed or moved
+      await this.state.storage.put('status', 'job_not_found');
+      
+      // Update job status in database
+      await this.env.DB.prepare('UPDATE jobs SET status = ?, closed_at = ? WHERE id = ?')
+        .bind('closed', lastCheck, jobId)
+        .run();
+
+      return new Response(JSON.stringify({
+        job_id: jobId,
+        status: 'job_not_found',
+        last_check: lastCheck,
+      }), {
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Job is still active, update last seen
+    await this.env.DB.prepare('UPDATE jobs SET last_seen_open_at = ?, last_crawled_at = ? WHERE id = ?')
+      .bind(lastCheck, lastCheck, jobId)
+      .run();
+
+    return new Response(JSON.stringify({
+      job_id: jobId,
+      status: 'job_active',
+      last_check: lastCheck,
+      title: currentJob.title,
+      company: currentJob.company,
+    }), {
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  private async getStatus(): Promise<Response> {
+    const jobId = await this.state.storage.get('job_id');
+    const status = await this.state.storage.get('status') || 'idle';
+    const lastCheck = await this.state.storage.get('last_check');
+    const checkInterval = await this.state.storage.get('check_interval_hours') || 24;
+
+    return new Response(JSON.stringify({
+      job_id: jobId,
+      status,
+      last_check: lastCheck,
+      check_interval_hours: checkInterval,
+    }), {
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  /**
+   * Alarm handler for scheduled job checks.
+   */
+  async alarm(): Promise<void> {
+    try {
+      // Perform scheduled job check
+      const response = await this.checkJob(new Request('http://localhost/check-job', { method: 'POST' }));
+      
+      // Schedule next check if still monitoring
+      const status = await this.state.storage.get('status');
+      if (status === 'monitoring' || status === 'job_active') {
+        const checkInterval = await this.state.storage.get('check_interval_hours') as number || 24;
+        const nextCheck = new Date(Date.now() + checkInterval * 60 * 60 * 1000);
+        await this.state.storage.setAlarm(nextCheck);
+      }
+    } catch (error) {
+      console.error('JobMonitor alarm error:', error);
+    }
   }
 }
 
 /**
- * Workflow stub for job discovery.
+ * Workflow for job discovery operations.
+ * Orchestrates the discovery of new job postings across configured sites.
  */
-export class DiscoveryWorkflow {}
+export class DiscoveryWorkflow {
+  /**
+   * Main workflow execution for job discovery.
+   */
+  async run(env: Env, payload: { config_id?: string }): Promise<any> {
+    const { config_id } = payload;
+    
+    try {
+      // Get search configuration
+      const { getSearchConfigs, getSites } = await import('./lib/storage');
+      const configs = config_id 
+        ? [(await env.DB.prepare('SELECT * FROM search_configs WHERE id = ?').bind(config_id).first())]
+        : await getSearchConfigs(env);
+      
+      const sites = await getSites(env);
+      
+      const results = [];
+      
+      for (const config of configs.filter(Boolean)) {
+        for (const site of sites) {
+          // Create Durable Object instance for this site
+          const crawlerId = env.SITE_CRAWLER.idFromName(`${site.id}-${config.id}`);
+          const crawler = env.SITE_CRAWLER.get(crawlerId);
+          
+          // Start discovery
+          const discoveryResponse = await crawler.fetch('http://localhost/start-discovery', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              site_id: site.id,
+              base_url: site.base_url,
+              search_terms: JSON.parse(config.keywords || '[]'),
+            }),
+          });
+          
+          const discoveryResult = await discoveryResponse.json();
+          results.push({
+            site: site.name,
+            config: config.name,
+            ...discoveryResult,
+          });
+          
+          // Start crawling discovered URLs
+          if (discoveryResult.discovered_count > 0) {
+            await crawler.fetch('http://localhost/crawl-urls', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ batch_size: 5 }),
+            });
+          }
+        }
+      }
+      
+      return { results, total_configs: configs.length, total_sites: sites.length };
+    } catch (error) {
+      console.error('Discovery workflow error:', error);
+      throw error;
+    }
+  }
+}
 
 /**
- * Workflow stub for ongoing job monitoring.
+ * Workflow for ongoing job monitoring.
+ * Monitors existing job postings for changes and status updates.
  */
-export class JobMonitorWorkflow {}
+export class JobMonitorWorkflow {
+  /**
+   * Main workflow execution for job monitoring.
+   */
+  async run(env: Env, payload: { job_ids?: string[] }): Promise<any> {
+    const { job_ids } = payload;
+    
+    try {
+      // Get jobs to monitor
+      let jobs: any[];
+      
+      if (job_ids && job_ids.length > 0) {
+        const placeholders = job_ids.map(() => '?').join(',');
+        const result = await env.DB.prepare(
+          `SELECT * FROM jobs WHERE id IN (${placeholders}) AND status = 'open'`
+        ).bind(...job_ids).all();
+        jobs = result.results || [];
+      } else {
+        // Monitor all active jobs
+        const result = await env.DB.prepare(
+          'SELECT * FROM jobs WHERE status = ? ORDER BY last_crawled_at ASC LIMIT 50'
+        ).bind('open').all();
+        jobs = result.results || [];
+      }
+      
+      const results = [];
+      
+      for (const job of jobs) {
+        // Create JobMonitor Durable Object for this job
+        const monitorId = env.JOB_MONITOR.idFromName(job.id);
+        const monitor = env.JOB_MONITOR.get(monitorId);
+        
+        // Check job status
+        const checkResponse = await monitor.fetch('http://localhost/check-job', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+        });
+        
+        const checkResult = await checkResponse.json();
+        results.push({
+          job_id: job.id,
+          job_title: job.title,
+          company: job.company,
+          ...checkResult,
+        });
+      }
+      
+      return { results, total_monitored: jobs.length };
+    } catch (error) {
+      console.error('Job monitor workflow error:', error);
+      throw error;
+    }
+  }
+}
 
 /**
- * Workflow stub for analyzing changes in job postings.
+ * Workflow for analyzing changes in job postings.
+ * Detects and summarizes changes in job descriptions and requirements.
  */
-export class ChangeAnalysisWorkflow {}
+export class ChangeAnalysisWorkflow {
+  /**
+   * Main workflow execution for change analysis.
+   */
+  async run(env: Env, payload: { job_id: string; from_snapshot_id: string; to_snapshot_id: string }): Promise<any> {
+    const { job_id, from_snapshot_id, to_snapshot_id } = payload;
+    
+    try {
+      // Get snapshots from database
+      const fromSnapshot = await env.DB.prepare('SELECT * FROM snapshots WHERE id = ?')
+        .bind(from_snapshot_id).first();
+      const toSnapshot = await env.DB.prepare('SELECT * FROM snapshots WHERE id = ?')
+        .bind(to_snapshot_id).first();
+      
+      if (!fromSnapshot || !toSnapshot) {
+        throw new Error('Snapshots not found');
+      }
+      
+      // Compare snapshots (simplified - could use R2 content comparison)
+      const diff = {
+        content_hash_changed: fromSnapshot.content_hash !== toSnapshot.content_hash,
+        http_status_changed: fromSnapshot.http_status !== toSnapshot.http_status,
+        etag_changed: fromSnapshot.etag !== toSnapshot.etag,
+      };
+      
+      // Generate semantic summary using AI if content changed
+      let semanticSummary = 'No significant changes detected';
+      
+      if (diff.content_hash_changed) {
+        // Use AI to analyze changes
+        const analysisPrompt = `Analyze the changes between two job posting snapshots and provide a brief summary of what changed.`;
+        
+        const messages = [
+          {
+            role: 'system',
+            content: 'You are an expert at analyzing job posting changes. Provide concise summaries of what changed between job postings.',
+          },
+          {
+            role: 'user',
+            content: `${analysisPrompt}\n\nContent hash changed: ${diff.content_hash_changed}\nHTTP status changed: ${diff.http_status_changed}`,
+          },
+        ];
+        
+        const aiResponse = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', { messages });
+        semanticSummary = aiResponse.response || semanticSummary;
+      }
+      
+      // Save change record
+      const changeId = crypto.randomUUID();
+      await env.DB.prepare(
+        'INSERT INTO changes(id, job_id, from_snapshot_id, to_snapshot_id, diff_json, semantic_summary) VALUES(?,?,?,?,?,?)'
+      ).bind(
+        changeId,
+        job_id,
+        from_snapshot_id,
+        to_snapshot_id,
+        JSON.stringify(diff),
+        semanticSummary
+      ).run();
+      
+      return {
+        change_id: changeId,
+        job_id,
+        diff,
+        semantic_summary: semanticSummary,
+      };
+    } catch (error) {
+      console.error('Change analysis workflow error:', error);
+      throw error;
+    }
+  }
+}
 
 export default {
   /**
@@ -194,6 +644,10 @@ export default {
 
       if (url.pathname === '/api/agent/query' && request.method === 'GET') {
         return handleAgentQuery(request, env);
+      }
+
+      if (url.pathname === '/api/webhooks/test' && request.method === 'POST') {
+        return handleWebhookTest(request, env);
       }
 
       // Manual crawl endpoint
