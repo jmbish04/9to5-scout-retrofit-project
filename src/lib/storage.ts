@@ -17,7 +17,23 @@ export interface StorageEnv {
  * Also generates and stores embeddings for semantic search.
  */
 export async function saveJob(env: StorageEnv, job: Job): Promise<string> {
-  const id = job.id || crypto.randomUUID();
+  // Look up existing job by URL first to preserve the ID
+  let id = job.id;
+  
+  if (!id && job.url) {
+    const existingJob = await env.DB.prepare(
+      'SELECT id FROM jobs WHERE url = ?'
+    ).bind(job.url).first();
+    
+    if (existingJob) {
+      id = existingJob.id;
+    }
+  }
+  
+  // Generate new ID only if no existing job found and no ID provided
+  if (!id) {
+    id = crypto.randomUUID();
+  }
   
   await env.DB.prepare(
     `INSERT OR REPLACE INTO jobs(

@@ -14,6 +14,43 @@ import { crawlJob } from './lib/crawl';
  */
 
 /**
+ * Parse URL path parameters robustly.
+ * Examples:
+ *   parsePathParams('/api/jobs/123', '/api/jobs/:id') => { id: '123' }
+ *   parsePathParams('/api/users/456/posts/789', '/api/users/:userId/posts/:postId') => { userId: '456', postId: '789' }
+ */
+function parsePathParams(pathname: string, pattern: string): Record<string, string> | null {
+  const pathParts = pathname.split('/').filter(Boolean);
+  const patternParts = pattern.split('/').filter(Boolean);
+  
+  if (pathParts.length !== patternParts.length) {
+    return null;
+  }
+  
+  const params: Record<string, string> = {};
+  
+  for (let i = 0; i < patternParts.length; i++) {
+    const patternPart = patternParts[i];
+    const pathPart = pathParts[i];
+    
+    if (!patternPart || !pathPart) {
+      return null;
+    }
+    
+    if (patternPart.startsWith(':')) {
+      // Parameter segment
+      const paramName = patternPart.slice(1);
+      params[paramName] = decodeURIComponent(pathPart);
+    } else if (patternPart !== pathPart) {
+      // Literal segment doesn't match
+      return null;
+    }
+  }
+  
+  return params;
+}
+
+/**
  * Describes the request payload expected for cover letter generation.
  */
 interface CoverLetterRequestBody {
@@ -478,7 +515,22 @@ export class JobMonitorWorkflow {
         const monitorId = env.JOB_MONITOR.idFromName(job.id);
         const monitor = env.JOB_MONITOR.get(monitorId);
         
-        // Check job status
+        // First, configure the monitor with job details
+        const configResponse = await monitor.fetch('http://localhost/monitor-job', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            job_id: job.id,
+            job_url: job.url,
+          }),
+        });
+        
+        if (!configResponse.ok) {
+          console.error(`Failed to configure monitor for job ${job.id}`);
+          continue;
+        }
+        
+        // Then check job status
         const checkResponse = await monitor.fetch('http://localhost/check-job', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -612,14 +664,14 @@ export default {
       }
 
       if (url.pathname.startsWith('/api/jobs/') && request.method === 'GET') {
-        const jobId = url.pathname.split('/')[3];
-        if (!jobId) {
+        const params = parsePathParams(url.pathname, '/api/jobs/:id');
+        if (!params || !params.id) {
           return new Response(JSON.stringify({ error: 'Job ID is required' }), {
             status: 400,
             headers: { 'Content-Type': 'application/json' },
           });
         }
-        return handleJobGet(request, env, jobId);
+        return handleJobGet(request, env, params.id);
       }
 
       if (url.pathname === '/api/runs' && request.method === 'GET') {

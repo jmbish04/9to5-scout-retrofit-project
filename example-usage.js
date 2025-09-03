@@ -88,10 +88,33 @@ async function main() {
         console.log('   Opening paragraph:');
         console.log(`   "${coverLetter.response.opening_paragraph}"\n`);
       }
+
+      // 7. Generate resume content for the same job
+      console.log('7. Generating resume content...');
+      
+      const resumeResponse = await fetch(`${BASE_URL}/api/resume`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          job_title: job.title || 'Software Engineer',
+          company_name: job.company || 'Tech Company',
+          job_description_text: job.description_md || 'Exciting software engineering opportunity',
+          candidate_career_summary: 'Experienced full-stack developer with 5+ years in Python, JavaScript, and cloud technologies. Passionate about building scalable systems and mentoring junior developers.',
+        }),
+      });
+
+      const resume = await resumeResponse.json();
+      console.log('   Resume content generated successfully!\n');
+      
+      // Display a key accomplishment if available
+      if (resume.response && resume.response.key_accomplishments && resume.response.key_accomplishments.length > 0) {
+        console.log('   Key accomplishment:');
+        console.log(`   "${resume.response.key_accomplishments[0]}"\n`);
+      }
     }
 
-    // 7. Start job monitoring
-    console.log('7. Starting job monitoring...');
+    // 8. Start job monitoring
+    console.log('8. Starting job monitoring...');
     const monitorResponse = await fetch(`${BASE_URL}/api/runs/monitor`, {
       method: 'POST',
       headers,
@@ -100,8 +123,8 @@ async function main() {
     const monitor = await monitorResponse.json();
     console.log(`   Monitoring run started: ${monitor.id}\n`);
 
-    // 8. Test webhook notifications
-    console.log('8. Testing webhook notifications...');
+    // 9. Test webhook notifications
+    console.log('9. Testing webhook notifications...');
     const webhookResponse = await fetch(`${BASE_URL}/api/webhooks/test`, {
       method: 'POST',
       headers,

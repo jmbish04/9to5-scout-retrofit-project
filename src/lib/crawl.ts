@@ -7,6 +7,63 @@ import { extractJob } from './ai';
 import { saveJob } from './storage';
 import type { Job } from './types';
 
+/**
+ * Parse sitemap XML to extract URLs robustly.
+ * Handles different XML formats, namespaces, and sitemap index files.
+ */
+function parseSitemapUrls(xmlText: string): string[] {
+  const urls: string[] = [];
+  
+  try {
+    // Handle both regular sitemaps and sitemap index files
+    // Look for <loc> tags while being namespace-aware
+    const locPattern = /<loc[^>]*>(.*?)<\/loc>/gi;
+    const sitemapPattern = /<sitemap[^>]*>[\s\S]*?<\/sitemap>/gi;
+    
+    let match;
+    
+    // First check if this is a sitemap index file
+    if (xmlText.includes('<sitemapindex') || xmlText.includes('<sitemap>')) {
+      // Extract URLs from sitemap entries (for sitemap index files)
+      while ((match = sitemapPattern.exec(xmlText)) !== null) {
+        const sitemapEntry = match[0];
+        const locMatch = locPattern.exec(sitemapEntry);
+        if (locMatch && locMatch[1]) {
+          const url = locMatch[1].trim();
+          if (url && url.startsWith('http')) {
+            urls.push(url);
+          }
+        }
+      }
+      // Reset regex lastIndex for next search
+      locPattern.lastIndex = 0;
+    }
+    
+    // Extract all <loc> URLs (works for both regular sitemaps and index files)
+    while ((match = locPattern.exec(xmlText)) !== null) {
+      const url = match[1]?.trim();
+      if (url && url.startsWith('http')) {
+        // Decode HTML entities
+        const decodedUrl = url
+          .replace(/&amp;/g, '&')
+          .replace(/&lt;/g, '<')
+          .replace(/&gt;/g, '>')
+          .replace(/&quot;/g, '"')
+          .replace(/&#x27;/g, "'");
+        
+        urls.push(decodedUrl);
+      }
+    }
+    
+    // Remove duplicates
+    return [...new Set(urls)];
+    
+  } catch (error) {
+    console.error('Error parsing sitemap XML:', error);
+    return [];
+  }
+}
+
 export interface CrawlEnv {
   BROWSER_RENDERING_TOKEN: string;
   MYBROWSER: any;
@@ -117,21 +174,19 @@ export async function discoverJobUrls(baseUrl: string, searchTerms: string[] = [
     if (sitemapResponse.ok) {
       const sitemapText = await sitemapResponse.text();
       
-      // Basic XML parsing to extract URLs
-      const urlMatches = sitemapText.match(/<loc>(.*?)<\/loc>/g);
-      if (urlMatches) {
-        for (const match of urlMatches) {
-          const url = match.replace(/<\/?loc>/g, '');
-          
-          // Filter URLs that might contain job-related keywords
-          const jobKeywords = ['job', 'career', 'position', 'opening', 'opportunity', ...searchTerms];
-          const containsJobKeyword = jobKeywords.some(keyword => 
-            url.toLowerCase().includes(keyword.toLowerCase())
-          );
-          
-          if (containsJobKeyword) {
-            urls.push(url);
-          }
+      // Robust XML parsing to extract URLs from sitemap
+      const extractedUrls = parseSitemapUrls(sitemapText);
+      
+      // Filter URLs that might contain job-related keywords
+      const jobKeywords = ['job', 'career', 'position', 'opening', 'opportunity', ...searchTerms];
+      
+      for (const url of extractedUrls) {
+        const containsJobKeyword = jobKeywords.some(keyword => 
+          url.toLowerCase().includes(keyword.toLowerCase())
+        );
+        
+        if (containsJobKeyword) {
+          urls.push(url);
         }
       }
     }

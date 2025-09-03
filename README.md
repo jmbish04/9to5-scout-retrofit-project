@@ -141,7 +141,8 @@ curl -H "Authorization: Bearer <token>" \
 
 #### Generate Cover Letter
 ```bash
-curl -H "Content-Type: application/json" \
+curl -H "Authorization: Bearer <token>" \
+     -H "Content-Type: application/json" \
      -X POST https://your-worker.workers.dev/api/cover-letter \
      -d '{
        "job_title": "Senior Software Engineer",
@@ -154,7 +155,8 @@ curl -H "Content-Type: application/json" \
 
 #### Generate Resume Content  
 ```bash
-curl -H "Content-Type: application/json" \
+curl -H "Authorization: Bearer <token>" \
+     -H "Content-Type: application/json" \
      -X POST https://your-worker.workers.dev/api/resume \
      -d '{
        "job_title": "Senior Software Engineer", 
