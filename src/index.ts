@@ -1107,6 +1107,41 @@ export default {
   },
 
   /**
+   * Email handler for Cloudflare Email Routing.
+   * This function will be triggered for incoming emails.
+   */
+  async email(message: ForwardableEmailMessage, env: Env, ctx: ExecutionContext): Promise<void> {
+    try {
+      console.log(`Email received from: ${message.from}, to: ${message.to}`);
+      
+      // The handleEmailReceived function expects a Request object.
+      // We can create a mock request to pass the necessary email data.
+      // A more direct integration would refactor the logic from handleEmailReceived
+      // to accept the 'message' object directly.
+      
+      const request = new Request('http://localhost/email-ingestion', {
+        method: 'POST',
+        headers: message.headers,
+        body: message.raw,
+      });
+
+      // Call your existing email processing logic
+      const response = await handleEmailReceived(request, env);
+
+      if (!response.ok) {
+        // If processing fails, reject the email to notify the sender.
+        const errorBody = await response.text();
+        message.setReject(`Email processing failed: ${errorBody}`);
+        console.error(`Failed to process email: ${errorBody}`);
+      }
+      
+    } catch (error) {
+      console.error('Error in email handler:', error);
+      message.setReject('An internal error occurred during email processing.');
+    }
+  },  
+
+  /**
    * Scheduled handler for automated job monitoring and email insights.
    * Runs on a cron schedule to monitor jobs and send periodic job reports.
    */
