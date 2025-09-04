@@ -6,7 +6,10 @@
     "generate-types": "wrangler types",
     "typecheck": "pnpm generate-types && tsc -p tsconfig.json",
     "build": "pnpm generate-types && wrangler build",
-    "dev": "wrangler dev"
+    "dev": "pnpm migrate:local && wrangler dev",
+    "migrate:local": "pnpm wrangler d1 migrations apply DB --local",
+    "migrate:remote": "pnpm wrangler d1 migrations apply DB --remote",
+    "deploy": "pnpm build && pnpm migrate:remote && npx wrangler deploy"
   },
   "devDependencies": {
     "typescript": "^5.4.0",
