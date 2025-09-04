@@ -115,12 +115,15 @@
         "properties": {
           "id": { "type": "string" },
           "name": { "type": "string" },
-          "enabled": { "type": "boolean" },
-          "frequency_hours": { "type": "integer" },
+          "enabled": { "type": "boolean", "default": true },
+          "frequency_hours": { "type": "integer", "minimum": 1, "default": 24 },
           "recipient_email": { "type": "string", "format": "email" },
-          "include_new_jobs": { "type": "boolean" },
-          "include_job_changes": { "type": "boolean" },
-          "include_statistics": { "type": "boolean" }
+          "include_new_jobs": { "type": "boolean", "default": true },
+          "include_job_changes": { "type": "boolean", "default": true },
+          "include_statistics": { "type": "boolean", "default": true },
+          "last_sent_at": { "type": "string", "format": "date-time" },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time" }
         }
       },
       "CoverLetterRequest": {
@@ -778,8 +781,8 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "status": { "type": "string" },
-                    "sent_at": { "type": "string", "format": "date-time" }
+                    "success": { "type": "boolean" },
+                    "message": { "type": "string" }
                   }
                 }
               }
@@ -805,17 +808,30 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": { "type": "string" },
-                      "from_email": { "type": "string" },
-                      "subject": { "type": "string" },
-                      "job_links_extracted": { "type": "integer" },
-                      "jobs_processed": { "type": "integer" },
-                      "status": { "type": "string" },
-                      "received_at": { "type": "string", "format": "date-time" }
+                  "type": "object",
+                  "properties": {
+                    "logs": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "string" },
+                          "from_email": { "type": "string" },
+                          "subject": { "type": "string" },
+                          "job_links_extracted": { "type": "integer" },
+                          "jobs_processed": { "type": "integer" },
+                          "status": { "type": "string" },
+                          "received_at": { "type": "string", "format": "date-time" }
+                        }
+                      }
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "properties": {
+                        "limit": { "type": "integer" },
+                        "offset": { "type": "integer" },
+                        "total": { "type": "integer" }
+                      }
                     }
                   }
                 }
@@ -835,8 +851,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": { "$ref": "#/components/schemas/EmailConfig" }
+                  "type": "object",
+                  "properties": {
+                    "configs": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/EmailConfig" }
+                    }
+                  }
                 }
               }
             }
@@ -859,7 +880,12 @@
             "description": "Configuration updated",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/EmailConfig" }
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" }
+                  }
+                }
               }
             }
           }
@@ -1634,6 +1660,243 @@
           "improvement_suggestions": { "type": "string" },
           "created_at": { "type": "string", "format": "date-time" },
           "updated_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "CoverLetterRequest": {
+        "type": "object",
+        "required": ["job_title", "company_name", "job_description_text", "candidate_career_summary"],
+        "properties": {
+          "job_title": { "type": "string" },
+          "company_name": { "type": "string" },
+          "hiring_manager_name": { "type": "string" },
+          "job_description_text": { "type": "string" },
+          "candidate_career_summary": { "type": "string" }
+        }
+      },
+      "ResumeRequest": {
+        "type": "object",
+        "required": ["job_title", "company_name", "job_description_text", "candidate_career_summary"],
+        "properties": {
+          "job_title": { "type": "string" },
+          "company_name": { "type": "string" },
+          "job_description_text": { "type": "string" },
+          "candidate_career_summary": { "type": "string" }
+        }
+      },
+      "AgentConfig": {
+        "type": "object",
+        "required": ["id", "name", "role", "goal", "backstory", "llm"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "role": { "type": "string" },
+          "goal": { "type": "string" },
+          "backstory": { "type": "string" },
+          "llm": { "type": "string" },
+          "tools": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "max_iter": { "type": "integer", "minimum": 1, "default": 25 },
+          "max_rpm": { "type": "integer", "minimum": 1 },
+          "verbose": { "type": "boolean", "default": false },
+          "allow_delegation": { "type": "boolean", "default": false },
+          "system_template": { "type": "string" },
+          "prompt_template": { "type": "string" },
+          "response_template": { "type": "string" },
+          "memory": { "type": "boolean", "default": true },
+          "step_callback": { "type": "string" },
+          "enabled": { "type": "boolean", "default": true },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "TaskConfig": {
+        "type": "object",
+        "required": ["id", "description", "agent_id"],
+        "properties": {
+          "id": { "type": "string" },
+          "description": { "type": "string" },
+          "agent_id": { "type": "string" },
+          "expected_output": { "type": "string" },
+          "tools": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "async_execution": { "type": "boolean", "default": false },
+          "context": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "config": { "type": "object" },
+          "output_json": { "type": "object" },
+          "output_pydantic": { "type": "object" },
+          "output_file": { "type": "string" },
+          "callback": { "type": "string" },
+          "human_input": { "type": "boolean", "default": false },
+          "enabled": { "type": "boolean", "default": true },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "WorkflowConfig": {
+        "type": "object",
+        "required": ["id", "name", "description"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "agents": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Array of agent IDs"
+          },
+          "tasks": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Array of task IDs"
+          },
+          "process": { 
+            "type": "string",
+            "enum": ["sequential", "hierarchical"],
+            "default": "sequential"
+          },
+          "verbose": { "type": "boolean", "default": false },
+          "memory": { "type": "boolean", "default": true },
+          "cache": { "type": "boolean", "default": true },
+          "max_rpm": { "type": "integer", "minimum": 1 },
+          "language": { "type": "string", "default": "en" },
+          "enabled": { "type": "boolean", "default": true },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "JobTrackingHistory": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "job_id": { "type": "string" },
+          "tracking_date": { "type": "string", "format": "date" },
+          "status": { 
+            "type": "string",
+            "enum": ["checked", "changed", "closed", "error"]
+          },
+          "change_summary": { "type": "string" },
+          "snapshot_id": { "type": "string" },
+          "content_hash": { "type": "string" },
+          "r2_keys": {
+            "type": "object",
+            "properties": {
+              "html_key": { "type": "string" },
+              "pdf_key": { "type": "string" },
+              "markdown_key": { "type": "string" },
+              "screenshot_key": { "type": "string" }
+            }
+          },
+          "created_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "Snapshot": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "job_id": { "type": "string" },
+          "content_hash": { "type": "string" },
+          "title": { "type": "string" },
+          "description_html": { "type": "string" },
+          "description_md": { "type": "string" },
+          "company": { "type": "string" },
+          "location": { "type": "string" },
+          "employment_type": { "type": "string" },
+          "salary_min": { "type": "integer" },
+          "salary_max": { "type": "integer" },
+          "status": { "type": "string" },
+          "r2_storage_keys": {
+            "type": "object",
+            "properties": {
+              "html_key": { "type": "string" },
+              "pdf_key": { "type": "string" },
+              "markdown_key": { "type": "string" },
+              "screenshot_key": { "type": "string" }
+            }
+          },
+          "created_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "Change": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "job_id": { "type": "string" },
+          "change_type": {
+            "type": "string",
+            "enum": ["content", "status", "closed", "salary"]
+          },
+          "field_changed": { "type": "string" },
+          "old_value": { "type": "string" },
+          "new_value": { "type": "string" },
+          "ai_summary": { "type": "string" },
+          "change_severity": {
+            "type": "string",
+            "enum": ["low", "medium", "high", "critical"]
+          },
+          "detected_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "JobMarketStats": {
+        "type": "object",
+        "properties": {
+          "date": { "type": "string", "format": "date" },
+          "role": { "type": "string" },
+          "company": { "type": "string" },
+          "location": { "type": "string" },
+          "total_jobs": { "type": "integer" },
+          "new_jobs": { "type": "integer" },
+          "closed_jobs": { "type": "integer" },
+          "avg_salary_min": { "type": "number" },
+          "avg_salary_max": { "type": "number" },
+          "salary_trend": { "type": "string" },
+          "top_skills": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "employment_types": {
+            "type": "object",
+            "additionalProperties": { "type": "integer" }
+          }
+        }
+      },
+      "DailyMonitoringResult": {
+        "type": "object",
+        "properties": {
+          "date": { "type": "string", "format": "date" },
+          "jobs_monitored": { "type": "integer" },
+          "jobs_changed": { "type": "integer" },
+          "jobs_closed": { "type": "integer" },
+          "new_snapshots": { "type": "integer" },
+          "errors": { "type": "integer" },
+          "processing_time_ms": { "type": "integer" },
+          "market_insights": {
+            "type": "object",
+            "properties": {
+              "trending_skills": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "salary_movements": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "role": { "type": "string" },
+                    "trend": { "type": "string" },
+                    "change_percent": { "type": "number" }
+                  }
+                }
+              }
+            }
+          },
+          "summary": { "type": "string" }
         }
       },
       "Error": {
