@@ -171,7 +171,7 @@ export class ContentUtils {
 
     Text extracted from the webpage: ${renderedText}`;
 
-    return this.getLLMResult(env, prompt, outputSchema);
+    return this.getLLMResult(env, prompt);
   }
 
   private static async getLLMResult(env: Env, prompt: string) {
