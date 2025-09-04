@@ -302,7 +302,7 @@ export async function generateEmailInsights(env: any, config: EmailConfig): Prom
  * Send insights email using email service.
  * Currently stores emails in KV for demo purposes.
  */
-export async function sendInsightsEmail(insights: EmailInsights, config: any, env: any): Promise<boolean> {
+export async function sendInsightsEmail(insights: EmailInsights, config: EmailConfig, env: any): Promise<boolean> {
   try {
     const htmlContent = formatInsightsEmail(insights, config.frequency_hours);
     const subject = `9to5-Scout Job Insights - ${insights.statistics.newJobsLastPeriod} new jobs`;
