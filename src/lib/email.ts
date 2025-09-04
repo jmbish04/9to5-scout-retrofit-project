@@ -231,7 +231,7 @@ export interface EmailInsights {
  * Generate email insights data for a specific configuration.
  * Aggregates new jobs, job changes, and statistics for email reporting.
  */
-export async function generateEmailInsights(env: any, config: any): Promise<EmailInsights> {
+export async function generateEmailInsights(env: any, config: EmailConfig): Promise<EmailInsights> {
   const hours = config.frequency_hours;
   const cutoffTime = new Date(Date.now() - hours * 60 * 60 * 1000).toISOString();
 
