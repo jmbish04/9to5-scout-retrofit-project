@@ -47,7 +47,8 @@ service = "9to5-scout"
 [durable_objects]
 bindings = [
   { name = "SITE_CRAWLER", class_name = "SiteCrawler" },
-  { name = "JOB_MONITOR", class_name = "JobMonitor" }
+  { name = "JOB_MONITOR", class_name = "JobMonitor" },
+  { name = "SCRAPE_SOCKET", class_name = "ScrapeSocket" }
 ]
 
 [[workflows]]
@@ -68,6 +69,10 @@ class_name = "ChangeAnalysisWorkflow"
 [[migrations]]
 tag = "v1"
 new_sqlite_classes = ["SiteCrawler", "JobMonitor"]
+
+[[migrations]]
+tag = "v2"
+new_classes = ["ScrapeSocket"]
 
 
 [triggers]

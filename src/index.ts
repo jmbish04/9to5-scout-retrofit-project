@@ -16,6 +16,7 @@ import { handleJobHistoryPost, handleJobHistoryGet, handleJobRatingPost, handleJ
 import { handleJobTrackingGet, handleSnapshotContentGet, handleDailyMonitoringPost, handleMonitoringStatusGet, handleMonitoringQueueGet, handleJobMonitoringPut } from './routes/tracking';
 import { crawlJob } from './lib/crawl';
 import { runDailyJobMonitoring } from './lib/monitoring';
+import { handleScrapeSocket, handleScrapeDispatch } from './routes/socket';
 
 /**
  * Cloudflare Worker handling AI-driven cover letter, resume generation, and job scraping.
@@ -121,6 +122,7 @@ export interface Env {
   DISCOVERY_WORKFLOW: any;
   JOB_MONITOR_WORKFLOW: any;
   CHANGE_ANALYSIS_WORKFLOW: any;
+  SCRAPE_SOCKET: any;
 }
 
 /**
@@ -642,6 +644,54 @@ export class ChangeAnalysisWorkflow {
   }
 }
 
+/**
+ * Durable Object managing persistent WebSocket connections with local scrapers.
+ */
+export class ScrapeSocket {
+  private state: DurableObjectState;
+  private sockets: Set<WebSocket> = new Set();
+
+  constructor(state: DurableObjectState) {
+    this.state = state;
+  }
+
+  async fetch(req: Request): Promise<Response> {
+    const url = new URL(req.url);
+
+    if (url.pathname === '/ws' && req.headers.get('Upgrade') === 'websocket') {
+      const pair = new WebSocketPair();
+      const client = pair[0];
+      const server = pair[1];
+      server.accept();
+      this.sockets.add(server);
+      server.addEventListener('close', () => {
+        this.sockets.delete(server);
+      });
+      server.addEventListener('message', (evt) => {
+        // simple heartbeat support
+        if (evt.data === 'ping') {
+          server.send('pong');
+        }
+      });
+      return new Response(null, { status: 101, webSocket: client });
+    }
+
+    if (url.pathname === '/dispatch' && req.method === 'POST') {
+      const message = await req.text();
+      for (const ws of this.sockets) {
+        try {
+          ws.send(message);
+        } catch (err) {
+          this.sockets.delete(ws);
+        }
+      }
+      return new Response('sent', { status: 200 });
+    }
+
+    return new Response('Not Found', { status: 404 });
+  }
+}
+
 export default {
   /**
    * Main fetch handler routing API requests.
@@ -687,6 +737,10 @@ export default {
       return handleEmailReceived(request, env);
     }
 
+    if (url.pathname === '/ws' && request.headers.get('Upgrade') === 'websocket') {
+      return handleScrapeSocket(request, env);
+    }
+
     // Authentication check for API routes (except health and email webhook)
     if (url.pathname.startsWith('/api/') && url.pathname !== '/api/health') {
       const authHeader = request.headers.get('Authorization');
@@ -701,6 +755,10 @@ export default {
     }
 
     try {
+      if (url.pathname === '/api/scrape/dispatch' && request.method === 'POST') {
+        return handleScrapeDispatch(request, env);
+      }
+
       // Job scraping API routes
       if (url.pathname === '/api/jobs' && request.method === 'GET') {
         return handleJobsGet(request, env);
