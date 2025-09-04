@@ -31,7 +31,7 @@ binding = "AI"
 
 [[services]]
 binding = "SERVICE"
-service = "9to5-scraper"
+service = "9to5-scout"
 
 [durable_objects]
 bindings = [
