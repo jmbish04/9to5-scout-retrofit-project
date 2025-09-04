@@ -600,13 +600,28 @@ export async function getJobHistoryByApplicant(env: StorageEnv, applicantId: str
     'SELECT * FROM job_history WHERE applicant_id = ? ORDER BY start_date DESC'
   ).bind(applicantId).all();
   
-  return results.results.map((row: any) => ({
-    ...row,
+  return results.results.map((row: any): JobHistoryEntry => ({
+    id: row.id,
+    applicant_id: row.applicant_id,
+    company_name: row.company_name,
+    job_title: row.job_title,
+    department: row.department,
+    employment_type: row.employment_type,
+    start_date: row.start_date,
+    end_date: row.end_date,
+    location: row.location,
+    salary_min: row.salary_min,
+    salary_max: row.salary_max,
+    salary_currency: row.salary_currency,
+    responsibilities: row.responsibilities,
+    achievements: row.achievements,
+    created_at: row.created_at,
+    updated_at: row.updated_at,
     is_current: Boolean(row.is_current),
     skills_used: row.skills_used ? JSON.parse(row.skills_used) : [],
     technologies: row.technologies ? JSON.parse(row.technologies) : [],
     keywords: row.keywords ? JSON.parse(row.keywords) : []
-  })) as JobHistoryEntry[];
+  }));
 }
 
 /**
