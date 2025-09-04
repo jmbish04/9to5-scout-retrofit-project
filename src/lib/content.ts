@@ -43,8 +43,8 @@ export class ContentUtils {
    * Convert an HTML string to markdown using Cloudflare's browser rendering API.
    */
   static async htmlToMarkdown(env: Env, html: string): Promise<string> {
-    const data = await this.proxyRequest<any>(env, 'markdown', { html });
-    return data.result || data.markdown || '';
+    const data = await this.proxyRequest<{ result?: string; markdown?: string }>(env, 'markdown', { html });
+    return data.result ?? data.markdown ?? '';
   }
 
   /**
