@@ -1,0 +1,189 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>9to5-Scout Daily Job Digest</title>
+  <style type="text/css">
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f2f4f6;
+      font-family: Arial, sans-serif;
+    }
+    table {
+      border-spacing: 0;
+    }
+    td {
+      padding: 0;
+    }
+    img {
+      border: 0;
+    }
+  </style>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f2f4f6; font-family: Arial, sans-serif;">
+  <center class="wrapper" style="width: 100%; table-layout: fixed; background-color: #f2f4f6; padding-bottom: 60px;">
+    <table class="main" width="100%" style="background-color: #ffffff; margin: 0 auto; width: 100%; max-width: 600px; border-spacing: 0; color: #4a4a4a;">
+
+      <!-- HEADER -->
+      <tr>
+        <td style="padding: 32px 32px 24px 32px; background-color: #000000; color: #ffffff; text-align: center;">
+          <h1 style="font-size: 36px; font-weight: bold; margin: 0;">9to5-Scout</h1>
+          <p style="font-size: 18px; margin: 8px 0 0 0;">Your Daily Job Market Digest</p>
+          <p style="font-size: 14px; color: #bbbbbb; margin: 4px 0 0 0;">{{current_date}}</p>
+          <p style="font-size: 14px; color: #bbbbbb; margin: 4px 0 0 0;">{{last_scrape_run}}</p>
+        </td>
+      </tr>
+
+      <!-- SCORECARD SECTION -->
+      <tr>
+        <td style="padding: 24px 28px 12px 28px;">
+          <table width="100%" style="border-spacing: 0;">
+            <tr>
+              <!-- New Roles Card -->
+              <td align="center" width="50%" style="padding: 4px;">
+                <table width="100%" style="border-spacing: 0; background-color: lightgrey; border-radius: 8px; text-align: center;">
+                  <tr>
+                    <td style="padding: 16px 8px;">
+                      <h3 style="font-size: 24px; font-weight: bold; margin: 0; color: #1f2937;">{{new_roles_count}}</h3>
+                      <p style="font-size: 11px; color: #6b7280; margin: 4px 0 0 0;">New Roles</p>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+              <!-- Interesting Roles Card -->
+              <td align="center" width="50%" style="padding: 4px;">
+                <table width="100%" style="border-spacing: 0; background-color: lightgrey; border-radius: 8px; text-align: center;">
+                  <tr>
+                    <td style="padding: 16px 8px;">
+                      <h3 style="font-size: 24px; font-weight: bold; margin: 0; color: #1f2937;">{{recommended_roles_count}}</h3>
+                      <p style="font-size: 11px; color: #6b7280; margin: 4px 0 0 0;">Interesting Roles</p>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <!-- Changes Card -->
+              <td align="center" width="50%" style="padding: 4px;">
+                <table width="100%" style="border-spacing: 0; background-color: lightgrey; border-radius: 8px; text-align: center;">
+                  <tr>
+                    <td style="padding: 16px 8px;">
+                      <h3 style="font-size: 24px; font-weight: bold; margin: 0; color: #1f2937;">{{updated_roles_count}}</h3>
+                      <p style="font-size: 11px; color: #6b7280; margin: 4px 0 0 0;">Changes</p>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+              <!-- Recently Closed Card -->
+              <td align="center" width="50%" style="padding: 4px;">
+                <table width="100%" style="border-spacing: 0; background-color: lightgrey; border-radius: 8px; text-align: center;">
+                  <tr>
+                    <td style="padding: 16px 8px;">
+                      <h3 style="font-size: 24px; font-weight: bold; margin: 0; color: #1f2937;">{{closed_roles_count}}</h3>
+                      <p style="font-size: 11px; color: #6b7280; margin: 4px 0 0 0;">Recently Closed</p>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <!-- SECTION: New Open Roles -->
+      <tr>
+        <td style="padding: 16px 32px; background-color: #1f2937;">
+            <h2 style="font-size: 22px; font-weight: bold; margin: 0; color: #f9fafb;">New Open Roles</h2>
+            <p style="font-size: 14px; color: #f9fafb; margin-top: 8px; margin-bottom: 0;">{{description_new_open_roles}}</p>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding: 24px 32px;">
+          <!-- Worker will inject HTML for new roles here -->
+          {{new_roles_html}}
+          <!-- End of new roles injection -->
+        </td>
+      </tr>
+
+      <!-- SECTION: Roles You Might Have Missed -->
+      <tr>
+        <td style="padding: 16px 32px; background-color: #1f2937;">
+            <h2 style="font-size: 22px; font-weight: bold; margin: 0; color: #f9fafb;">Roles You Might Have Missed</h2>
+            <p style="font-size: 14px; color: #f9fafb; margin-top: 8px; margin-bottom: 0;">{{description_roles_you_may_have_missed}}</p>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding: 24px 32px;">
+            <!-- Worker will inject HTML for recommended roles here -->
+            {{recommended_roles_html}}
+            <!-- End of recommended roles injection -->
+        </td>
+      </tr>
+
+      <!-- SECTION: Changes on Tracked Roles -->
+      <tr>
+        <td style="padding: 16px 32px; background-color: #1f2937;">
+            <h2 style="font-size: 22px; font-weight: bold; margin: 0; color: #f9fafb;">Changes on Tracked Roles</h2>
+            <p style="font-size: 14px; color: #f9fafb; margin-top: 8px; margin-bottom: 0;">{{description_changes_on_tracked_roles}}</p>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding: 24px 32px;">
+          <!-- Worker will inject HTML for updated roles here -->
+          {{updated_roles_html}}
+          <!-- End of updated roles injection -->
+        </td>
+      </tr>
+
+      <!-- SECTION: Recently Closed Roles -->
+      <tr>
+        <td style="padding: 16px 32px; background-color: #1f2937;">
+            <h2 style="font-size: 22px; font-weight: bold; margin: 0; color: #f9fafb;">Recently Closed Roles</h2>
+            <p style="font-size: 14px; color: #f9fafb; margin-top: 8px; margin-bottom: 0;">{{description_recently_closed_roles}}</p>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding: 24px 32px;">
+          <!-- Worker will inject HTML for closed roles here -->
+          {{closed_roles_html}}
+          <!-- End of closed roles injection -->
+        </td>
+      </tr>
+      
+      <!-- DIVIDER -->
+      <tr>
+        <td style="padding: 16px 32px;">
+          <div style="height: 1px; background-color: #e2e8f0;"></div>
+        </td>
+      </tr>
+
+      <!-- SECTION: Market Insights & Stats -->
+       <tr>
+        <td style="padding: 16px 32px; background-color: #1f2937;">
+            <h2 style="font-size: 22px; font-weight: bold; margin: 0; color: #f9fafb;">Market Insights & Stats</h2>
+             <p style="font-size: 14px; color: #f9fafb; margin-top: 8px; margin-bottom: 0;">AI-generated statistics based on today's findings.</p>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding: 24px 32px;">
+          <!-- Worker will inject HTML for stats by role here -->
+          {{stats_by_role_html}}
+          <!-- End of stats injection -->
+        </td>
+      </tr>
+
+      <!-- FOOTER -->
+      <tr>
+        <td style="padding: 24px 32px; background-color: #1f2937; color: #9ca3af; text-align: center; font-size: 12px;">
+          <p style="margin: 0;">Generated by 9to5-Scout</p>
+          <p style="margin: 4px 0 0 0;">This is an automated report. <a href="{{unsubscribe_link}}" style="color: #60a5fa;">Unsubscribe</a></p>
+        </td>
+      </tr>
+
+    </table>
+  </center>
+</body>
+</html>
+
