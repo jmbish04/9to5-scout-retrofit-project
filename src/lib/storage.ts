@@ -642,14 +642,28 @@ export async function saveJobRating(env: StorageEnv, rating: JobRating): Promise
   const id = rating.id || crypto.randomUUID();
   const now = new Date().toISOString();
   
-  // Use INSERT OR REPLACE to handle duplicates
+  // Use INSERT ... ON CONFLICT for a safe upsert
   await env.DB.prepare(`
-    INSERT OR REPLACE INTO job_ratings 
+    INSERT INTO job_ratings 
     (id, applicant_id, job_id, overall_score, skill_match_score, experience_match_score,
      compensation_fit_score, location_fit_score, company_culture_score, growth_potential_score,
      rating_summary, recommendation, strengths, gaps, improvement_suggestions,
      created_at, updated_at)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ON CONFLICT(applicant_id, job_id) DO UPDATE SET
+      overall_score = excluded.overall_score,
+      skill_match_score = excluded.skill_match_score,
+      experience_match_score = excluded.experience_match_score,
+      compensation_fit_score = excluded.compensation_fit_score,
+      location_fit_score = excluded.location_fit_score,
+      company_culture_score = excluded.company_culture_score,
+      growth_potential_score = excluded.growth_potential_score,
+      rating_summary = excluded.rating_summary,
+      recommendation = excluded.recommendation,
+      strengths = excluded.strengths,
+      gaps = excluded.gaps,
+      improvement_suggestions = excluded.improvement_suggestions,
+      updated_at = excluded.updated_at
   `).bind(
     id, rating.applicant_id, rating.job_id, rating.overall_score, rating.skill_match_score,
     rating.experience_match_score, rating.compensation_fit_score, rating.location_fit_score,
