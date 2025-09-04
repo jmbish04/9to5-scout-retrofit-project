@@ -165,7 +165,7 @@ destination_addresses = ["*@9to5scout.dev"]
 
 **Supported Email Addresses for Job Alerts:**
 - `alerts@9to5scout.dev` - LinkedIn and general job alerts
-- `jobs@9to5scout.dev` - Indeed and Monster job notifications  
+- `jobs@9to5scout.dev` - Indeed and Monster job notifications
 - `notifications@9to5scout.dev` - Glassdoor and ZipRecruiter alerts
 - `insights@9to5scout.dev` - System-generated insights and reports
 
