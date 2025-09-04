@@ -51,9 +51,18 @@ export class ContentUtils {
    * Fetch a URL and convert its HTML content to markdown.
    */
   static async urlToMarkdown(env: Env, targetUrl: string): Promise<string> {
-    const res = await fetch(targetUrl);
-    const html = await res.text();
-    return this.htmlToMarkdown(env, html);
+    try {
+      const res = await fetch(targetUrl);
+      if (!res.ok) {
+        throw new Error(`Failed to fetch ${targetUrl}: ${res.status}`);
+      }
+      const html = await res.text();
+      return this.htmlToMarkdown(env, html);
+    } catch (error) {
+      console.error(`Error in urlToMarkdown for ${targetUrl}:`, error);
+      return '';
+    }
+  }
   }
 
   /**
