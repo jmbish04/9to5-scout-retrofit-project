@@ -147,7 +147,7 @@ export async function searchJobWithTalentApi(env: TalentEnv, jobTitle: string, c
       url: matched.applicationInfo?.uris?.[0] || '',
       location: matched.addresses?.[0],
       description_md: matched.description,
-      source: 'SCRAPED',
+      source: 'TALENT_API',
     };
     return job;
   } catch (err) {
