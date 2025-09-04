@@ -29,6 +29,17 @@ index_name = "jobs"
 [ai]
 binding = "AI"
 
+# Configuration for receiving emails sent to your domain
+[[email]]
+name = "job-alerts"
+destination_addresses = ["job-alerts@hacolby.app"]
+
+# Configuration for sending emails from your worker
+[[send_email]]
+name = "EMAIL_SENDER"
+# This must be a verified sender address in your Cloudflare account
+destination_address = "justin@126colby.com"
+
 [[services]]
 binding = "SERVICE"
 service = "9to5-scout"
