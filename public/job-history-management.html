@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job History Management - 9to5-Scout</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔍</text></svg>">
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white border-gray-200 dark:bg-gray-900 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+            <a href="/" class="flex items-center space-x-3 rtl:space-x-reverse">
+                <span class="text-2xl">🔍</span>
+                <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">9to5-Scout</span>
+            </a>
+            <button data-collapse-toggle="navbar-default" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-default" aria-expanded="false">
+                <span class="sr-only">Open main menu</span>
+                <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/>
+                </svg>
+            </button>
+            <div class="hidden w-full md:block md:w-auto" id="navbar-default">
+                <ul class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+                    <li>
+                        <a href="/" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Home</a>
+                    </li>
+                    <li>
+                        <a href="/getting-started.html" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Getting Started</a>
+                    </li>
+                    <li>
+                        <a href="/api-reference.html" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">API Reference</a>
+                    </li>
+                    <li>
+                        <a href="/email-integration.html" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Email Integration</a>
+                    </li>
+                    <li>
+                        <a href="/job-history-management.html" class="block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500" aria-current="page">Job History</a>
+                    </li>
+                    <li>
+                        <a href="/agent-workflow-config.html" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">AI Agents</a>
+                    </li>
+                    <li>
+                        <a href="/openapi.json" target="_blank" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">📋 OpenAPI</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-4xl mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">📚 Job History Management</h1>
+            <p class="text-xl text-gray-600 dark:text-gray-400">AI-powered resume parsing, applicant profile management, and intelligent job fit analysis.</p>
+        </div>
+
+        <!-- Overview -->
+        <div class="bg-gradient-to-r from-purple-500 to-pink-600 rounded-lg p-8 text-white mb-8">
+            <h2 class="text-2xl font-bold mb-4">🎯 Smart Career Management</h2>
+            <p class="text-purple-100 mb-4">
+                Transform your career history into actionable insights with AI-powered analysis, intelligent job matching, and comprehensive fit scoring.
+            </p>
+            <div class="grid md:grid-cols-3 gap-4 text-sm">
+                <div class="bg-white bg-opacity-20 rounded p-3">
+                    <div class="font-semibold">🧠 AI Resume Parsing</div>
+                    <div class="text-purple-100">Any format to structured data</div>
+                </div>
+                <div class="bg-white bg-opacity-20 rounded p-3">
+                    <div class="font-semibold">📊 Job Fit Scoring</div>
+                    <div class="text-purple-100">1-100 scale with detailed analysis</div>
+                </div>
+                <div class="bg-white bg-opacity-20 rounded p-3">
+                    <div class="font-semibold">🎯 Career Insights</div>
+                    <div class="text-purple-100">Skills gaps and recommendations</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 1: Submit Job History -->
+        <div class="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900 mb-8">
+            <div class="flex items-center mb-4">
+                <div class="flex items-center justify-center w-8 h-8 bg-purple-100 rounded-full dark:bg-purple-900 mr-3">
+                    <span class="text-purple-600 dark:text-purple-300 font-semibold">1</span>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Submit Job History for AI Processing</h2>
+            </div>
+            
+            <div class="space-y-6">
+                <p class="text-gray-600 dark:text-gray-400">9to5-Scout's AI can process job history in multiple formats and extract structured career data automatically.</p>
+
+                <!-- Supported Formats -->
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <h4 class="font-semibold text-blue-900 mb-2">📄 Plain Text</h4>
+                        <p class="text-sm text-blue-800">Free-form text descriptions of your work experience</p>
+                        <code class="text-xs bg-blue-100 px-1 rounded">content_type: "text/plain"</code>
+                    </div>
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                        <h4 class="font-semibold text-green-900 mb-2">📝 Markdown</h4>
+                        <p class="text-sm text-green-800">Structured markdown with headers and formatting</p>
+                        <code class="text-xs bg-green-100 px-1 rounded">content_type: "text/markdown"</code>
+                    </div>
+                    <div class="bg-orange-50 border border-orange-200 rounded-lg p-4">
+                        <h4 class="font-semibold text-orange-900 mb-2">🔧 JSON</h4>
+                        <p class="text-sm text-orange-800">Structured data with predefined schema</p>
+                        <code class="text-xs bg-orange-100 px-1 rounded">content_type: "application/json"</code>
+                    </div>
+                </div>
+
+                <!-- API Examples -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">📡 API Examples</h3>
+                    
+                    <!-- Plain Text Example -->
+                    <div>
+                        <h4 class="font-medium text-gray-900 dark:text-white mb-2">Plain Text Submission</h4>
+                        <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
+                            <pre class="text-green-400 text-sm"><code>curl -H "Authorization: Bearer &lt;token&gt;" \
+     -H "Content-Type: application/json" \
+     -X POST /api/applicant/history \
+     -d '{
+       "user_id": "user-123",
+       "raw_content": "Senior Software Engineer at TechCorp (2020-2023)\n- Led development of microservices architecture\n- Managed team of 5 developers\n- Increased system performance by 40%\n\nSoftware Developer at StartupXYZ (2018-2020)\n- Full-stack development with React and Node.js\n- Built CI/CD pipelines\n- Contributed to 200% user growth",
+       "content_type": "text/plain"
+     }'</code></pre>
+                        </div>
+                    </div>
+
+                    <!-- Markdown Example -->
+                    <div>
+                        <h4 class="font-medium text-gray-900 dark:text-white mb-2">Markdown Submission</h4>
+                        <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
+                            <pre class="text-green-400 text-sm"><code>curl -H "Authorization: Bearer &lt;token&gt;" \
+     -H "Content-Type: application/json" \
+     -X POST /api/applicant/history \
+     -d '{
+       "user_id": "user-123",
+       "raw_content": "## Senior Software Engineer - TechCorp\n**Duration:** 2020-2023\n\n### Key Achievements\n- Led development of microservices architecture\n- Managed team of 5 developers\n- Increased system performance by 40%",
+       "content_type": "text/markdown"
+     }'</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 2: AI Processing Results -->
+        <div class="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900 mb-8">
+            <div class="flex items-center mb-4">
+                <div class="flex items-center justify-center w-8 h-8 bg-purple-100 rounded-full dark:bg-purple-900 mr-3">
+                    <span class="text-purple-600 dark:text-purple-300 font-semibold">2</span>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white">AI Processing & Structured Data</h2>
+            </div>
+
+            <div class="space-y-4">
+                <p class="text-gray-600 dark:text-gray-400">Once submitted, 9to5-Scout's AI extracts and structures your career data into a comprehensive profile.</p>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">🔍 Data Extraction</h3>
+                        <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                            <li class="flex items-center">
+                                <svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                Company names and job titles
+                            </li>
+                            <li class="flex items-center">
+                                <svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                Employment dates and duration
+                            </li>
+                            <li class="flex items-center">
+                                <svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                Skills and technologies used
+                            </li>
+                            <li class="flex items-center">
+                                <svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                Key achievements and responsibilities
+                            </li>
+                            <li class="flex items-center">
+                                <svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                Salary ranges and compensation
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">👤 Profile Creation</h3>
+                        <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                            <li class="flex items-center">
+                                <svg class="w-4 h-4 text-blue-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                Comprehensive applicant profile
+                            </li>
+                            <li class="flex items-center">
+                                <svg class="w-4 h-4 text-blue-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                Years of experience calculation
+                            </li>
+                            <li class="flex items-center">
+                                <svg class="w-4 h-4 text-blue-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                Skills taxonomy and categorization
+                            </li>
+                            <li class="flex items-center">
+                                <svg class="w-4 h-4 text-blue-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                Career progression analysis
+                            </li>
+                            <li class="flex items-center">
+                                <svg class="w-4 h-4 text-blue-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                Target role recommendations
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- View Profile API -->
+                <div class="bg-blue-50 border-l-4 border-blue-400 p-4">
+                    <h4 class="font-semibold text-blue-900 mb-2">📊 Retrieve Processed Profile</h4>
+                    <div class="bg-gray-900 rounded p-2 text-green-400 text-sm">
+                        <code>curl -H "Authorization: Bearer &lt;token&gt;" /api/applicant/user-123/history</code>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 3: Job Fit Analysis -->
+        <div class="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900 mb-8">
+            <div class="flex items-center mb-4">
+                <div class="flex items-center justify-center w-8 h-8 bg-purple-100 rounded-full dark:bg-purple-900 mr-3">
+                    <span class="text-purple-600 dark:text-purple-300 font-semibold">3</span>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Intelligent Job Fit Analysis</h2>
+            </div>
+
+            <div class="space-y-6">
+                <p class="text-gray-600 dark:text-gray-400">Generate comprehensive job fit ratings that analyze multiple dimensions of compatibility between your background and job requirements.</p>
+
+                <!-- Job Fit Scoring -->
+                <div class="bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">🎯 Multi-Dimensional Scoring (1-100 Scale)</h3>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm font-medium text-gray-700">Overall Score</span>
+                                <div class="w-24 bg-gray-200 rounded-full h-2">
+                                    <div class="bg-green-500 h-2 rounded-full" style="width: 87%"></div>
+                                </div>
+                                <span class="text-sm font-bold text-green-600">87/100</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm font-medium text-gray-700">Skill Match</span>
+                                <div class="w-24 bg-gray-200 rounded-full h-2">
+                                    <div class="bg-blue-500 h-2 rounded-full" style="width: 92%"></div>
+                                </div>
+                                <span class="text-sm font-bold text-blue-600">92/100</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm font-medium text-gray-700">Experience Match</span>
+                                <div class="w-24 bg-gray-200 rounded-full h-2">
+                                    <div class="bg-purple-500 h-2 rounded-full" style="width: 85%"></div>
+                                </div>
+                                <span class="text-sm font-bold text-purple-600">85/100</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm font-medium text-gray-700">Compensation Fit</span>
+                                <div class="w-24 bg-gray-200 rounded-full h-2">
+                                    <div class="bg-yellow-500 h-2 rounded-full" style="width: 88%"></div>
+                                </div>
+                                <span class="text-sm font-bold text-yellow-600">88/100</span>
+                            </div>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm font-medium text-gray-700">Location Fit</span>
+                                <div class="w-24 bg-gray-200 rounded-full h-2">
+                                    <div class="bg-indigo-500 h-2 rounded-full" style="width: 95%"></div>
+                                </div>
+                                <span class="text-sm font-bold text-indigo-600">95/100</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm font-medium text-gray-700">Company Culture</span>
+                                <div class="w-24 bg-gray-200 rounded-full h-2">
+                                    <div class="bg-pink-500 h-2 rounded-full" style="width: 80%"></div>
+                                </div>
+                                <span class="text-sm font-bold text-pink-600">80/100</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm font-medium text-gray-700">Growth Potential</span>
+                                <div class="w-24 bg-gray-200 rounded-full h-2">
+                                    <div class="bg-teal-500 h-2 rounded-full" style="width: 90%"></div>
+                                </div>
+                                <span class="text-sm font-bold text-teal-600">90/100</span>
+                            </div>
+                            <div class="bg-green-100 rounded p-2 text-center">
+                                <span class="text-sm font-bold text-green-800">Recommendation: Strong Match</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Generate Rating API -->
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">📡 Generate Job Fit Rating</h3>
+                    <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
+                        <pre class="text-green-400 text-sm"><code>curl -H "Authorization: Bearer &lt;token&gt;" \
+     -H "Content-Type: application/json" \
+     -X POST /api/applicant/job-rating \
+     -d '{
+       "user_id": "user-123",
+       "job_id": "job-456"
+     }'</code></pre>
+                    </div>
+                </div>
+
+                <!-- Rating Response -->
+                <div>
+                    <h4 class="font-medium text-gray-900 dark:text-white mb-2">📊 Sample Rating Response</h4>
+                    <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
+                        <pre class="text-green-400 text-xs"><code>{
+  "id": "rating-789",
+  "overall_score": 87,
+  "skill_match_score": 92,
+  "experience_match_score": 85,
+  "recommendation": "Strong Match",
+  "strengths": [
+    "Strong Python and React experience",
+    "Team leadership background",
+    "Microservices architecture expertise"
+  ],
+  "gaps": [
+    "Limited experience with Kubernetes",
+    "No previous fintech industry experience"
+  ],
+  "improvement_suggestions": "Consider gaining Kubernetes certification and exploring fintech domain knowledge through online courses."
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 4: Career Insights & Recommendations -->
+        <div class="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900 mb-8">
+            <div class="flex items-center mb-4">
+                <div class="flex items-center justify-center w-8 h-8 bg-purple-100 rounded-full dark:bg-purple-900 mr-3">
+                    <span class="text-purple-600 dark:text-purple-300 font-semibold">4</span>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Career Insights & Recommendations</h2>
+            </div>
+
+            <div class="space-y-6">
+                <p class="text-gray-600 dark:text-gray-400">Get actionable insights to improve your career trajectory and job search success.</p>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <!-- Strengths Analysis -->
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-green-900 mb-3">💪 Your Strengths</h3>
+                        <div class="space-y-2">
+                            <div class="flex items-center">
+                                <svg class="w-4 h-4 text-green-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                <span class="text-sm text-green-800">Strong technical leadership experience</span>
+                            </div>
+                            <div class="flex items-center">
+                                <svg class="w-4 h-4 text-green-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                <span class="text-sm text-green-800">Proven track record with Python & React</span>
+                            </div>
+                            <div class="flex items-center">
+                                <svg class="w-4 h-4 text-green-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                <span class="text-sm text-green-800">Microservices architecture expertise</span>
+                            </div>
+                            <div class="flex items-center">
+                                <svg class="w-4 h-4 text-green-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                <span class="text-sm text-green-800">Cross-functional team management</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Skills Gaps -->
+                    <div class="bg-orange-50 border border-orange-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-orange-900 mb-3">🎯 Skills Gaps to Address</h3>
+                        <div class="space-y-2">
+                            <div class="flex items-center">
+                                <svg class="w-4 h-4 text-orange-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                </svg>
+                                <span class="text-sm text-orange-800">Limited Kubernetes experience</span>
+                            </div>
+                            <div class="flex items-center">
+                                <svg class="w-4 h-4 text-orange-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                </svg>
+                                <span class="text-sm text-orange-800">No fintech industry background</span>
+                            </div>
+                            <div class="flex items-center">
+                                <svg class="w-4 h-4 text-orange-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                </svg>
+                                <span class="text-sm text-orange-800">Limited cloud security expertise</span>
+                            </div>
+                            <div class="flex items-center">
+                                <svg class="w-4 h-4 text-orange-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                </svg>
+                                <span class="text-sm text-orange-800">Need machine learning fundamentals</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Improvement Recommendations -->
+                <div class="bg-blue-50 border-l-4 border-blue-400 p-4">
+                    <h3 class="font-semibold text-blue-900 mb-2">💡 AI-Generated Improvement Suggestions</h3>
+                    <div class="text-sm text-blue-800 space-y-2">
+                        <p><strong>1. Kubernetes Certification:</strong> Consider pursuing CKA (Certified Kubernetes Administrator) certification to strengthen container orchestration skills.</p>
+                        <p><strong>2. Fintech Domain Knowledge:</strong> Explore online courses in financial technology, blockchain, and regulatory compliance.</p>
+                        <p><strong>3. Cloud Security:</strong> Obtain AWS Security Specialty or similar cloud security certification.</p>
+                        <p><strong>4. Machine Learning:</strong> Complete foundational ML courses to stay competitive in modern software development.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- API Reference -->
+        <div class="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900 mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🔧 Job History API Reference</h2>
+            
+            <div class="space-y-6">
+                <!-- Submit History -->
+                <div class="border-l-4 border-orange-400 bg-orange-50 p-4">
+                    <div class="flex items-center mb-2">
+                        <span class="bg-orange-500 text-white px-2 py-1 rounded text-xs font-bold mr-3">POST</span>
+                        <code class="text-lg font-mono">/api/applicant/history</code>
+                    </div>
+                    <p class="text-orange-700 mb-2">Submit job history for AI processing and structuring</p>
+                    <div class="text-sm text-orange-600">
+                        <strong>Required:</strong> user_id, raw_content
+                        <br><strong>Optional:</strong> content_type (text/plain, text/markdown, application/json)
+                    </div>
+                </div>
+
+                <!-- Get Profile -->
+                <div class="border-l-4 border-green-400 bg-green-50 p-4">
+                    <div class="flex items-center mb-2">
+                        <span class="bg-green-500 text-white px-2 py-1 rounded text-xs font-bold mr-3">GET</span>
+                        <code class="text-lg font-mono">/api/applicant/{user_id}/history</code>
+                    </div>
+                    <p class="text-green-700 mb-2">Get complete applicant profile with structured job history</p>
+                </div>
+
+                <!-- Generate Rating -->
+                <div class="border-l-4 border-purple-400 bg-purple-50 p-4">
+                    <div class="flex items-center mb-2">
+                        <span class="bg-purple-500 text-white px-2 py-1 rounded text-xs font-bold mr-3">POST</span>
+                        <code class="text-lg font-mono">/api/applicant/job-rating</code>
+                    </div>
+                    <p class="text-purple-700 mb-2">Generate AI-powered job fit rating with detailed analysis</p>
+                    <div class="text-sm text-purple-600">
+                        <strong>Required:</strong> user_id, job_id
+                    </div>
+                </div>
+
+                <!-- View Ratings -->
+                <div class="border-l-4 border-blue-400 bg-blue-50 p-4">
+                    <div class="flex items-center mb-2">
+                        <span class="bg-blue-500 text-white px-2 py-1 rounded text-xs font-bold mr-3">GET</span>
+                        <code class="text-lg font-mono">/api/applicant/{user_id}/job-ratings</code>
+                    </div>
+                    <p class="text-blue-700 mb-2">View all job ratings and analysis history for applicant</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Use Cases -->
+        <div class="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg p-8 text-white mb-8">
+            <h2 class="text-2xl font-bold mb-4">🎯 Common Use Cases</h2>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="text-lg font-semibold mb-3">📊 Career Optimization</h3>
+                    <ul class="text-indigo-100 text-sm space-y-1">
+                        <li>• Identify skills gaps for target roles</li>
+                        <li>• Track career progression over time</li>
+                        <li>• Get personalized learning recommendations</li>
+                        <li>• Optimize resume for ATS systems</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-3">🔍 Job Search Enhancement</h3>
+                    <ul class="text-indigo-100 text-sm space-y-1">
+                        <li>• Score job compatibility before applying</li>
+                        <li>• Focus on highest-fit opportunities</li>
+                        <li>• Understand compensation alignment</li>
+                        <li>• Prepare targeted interview strategies</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Next Steps -->
+        <div class="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">📚 Next Steps</h2>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">🚀 Platform Features</h3>
+                    <ul class="space-y-2 text-gray-600 dark:text-gray-400">
+                        <li><a href="/agent-workflow-config.html" class="text-blue-600 hover:text-blue-800">Configure AI agents for enhanced analysis</a></li>
+                        <li><a href="/email-integration.html" class="text-blue-600 hover:text-blue-800">Set up email job alerts integration</a></li>
+                        <li><a href="/api-reference.html" class="text-blue-600 hover:text-blue-800">Explore full API capabilities</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">💡 Best Practices</h3>
+                    <ul class="space-y-2 text-gray-600 dark:text-gray-400">
+                        <li>• Keep job history updated regularly</li>
+                        <li>• Include quantifiable achievements</li>
+                        <li>• Review job ratings for insights</li>
+                        <li>• Act on improvement suggestions</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-gray-900 mt-16">
+        <div class="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
+            <div class="md:flex md:justify-between">
+                <div class="mb-6 md:mb-0">
+                    <a href="/" class="flex items-center">
+                        <span class="text-2xl mr-3">🔍</span>
+                        <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">9to5-Scout</span>
+                    </a>
+                </div>
+                <div class="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
+                    <div>
+                        <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Documentation</h2>
+                        <ul class="text-gray-500 dark:text-gray-400 font-medium">
+                            <li class="mb-4">
+                                <a href="/getting-started.html" class="hover:underline">Getting Started</a>
+                            </li>
+                            <li class="mb-4">
+                                <a href="/api-reference.html" class="hover:underline">API Reference</a>
+                            </li>
+                            <li>
+                                <a href="/openapi.json" target="_blank" class="hover:underline">OpenAPI Spec</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Features</h2>
+                        <ul class="text-gray-500 dark:text-gray-400 font-medium">
+                            <li class="mb-4">
+                                <a href="/email-integration.html" class="hover:underline">Email Integration</a>
+                            </li>
+                            <li class="mb-4">
+                                <a href="/job-history-management.html" class="hover:underline">Job History</a>
+                            </li>
+                            <li>
+                                <a href="/agent-workflow-config.html" class="hover:underline">AI Agents</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Platform</h2>
+                        <ul class="text-gray-500 dark:text-gray-400 font-medium">
+                            <li class="mb-4">
+                                <a href="https://workers.cloudflare.com/" target="_blank" class="hover:underline">Cloudflare Workers</a>
+                            </li>
+                            <li class="mb-4">
+                                <a href="https://ai.cloudflare.com/" target="_blank" class="hover:underline">Workers AI</a>
+                            </li>
+                            <li>
+                                <a href="https://developers.cloudflare.com/" target="_blank" class="hover:underline">Developer Docs</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <hr class="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
+            <div class="sm:flex sm:items-center sm:justify-between">
+                <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">Built with ❤️ using Cloudflare Workers & AI</span>
+                <div class="flex mt-4 sm:justify-center sm:mt-0">
+                    <a href="/openapi.json" target="_blank" class="text-gray-500 hover:text-gray-900 dark:hover:text-white">
+                        <span class="sr-only">OpenAPI Specification</span>
+                        📋
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

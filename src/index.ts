@@ -8,6 +8,7 @@ import { handleConfigsGet, handleConfigsPost } from './routes/configs';
 import { handleAgentQuery } from './routes/agent';
 import { handleWebhookTest } from './routes/webhooks';
 import { handleEmailReceived, handleEmailLogsGet, handleEmailConfigsGet, handleEmailConfigsPut, handleEmailInsightsSend } from './routes/email';
+import { generateEmailInsights, sendInsightsEmail } from './lib/email';
 import { handleAgentsGet, handleAgentsPost, handleAgentGet, handleAgentPut, handleAgentDelete } from './routes/agents';
 import { handleTasksGet, handleTasksPost, handleTaskGet, handleTaskPut, handleTaskDelete } from './routes/tasks';
 import { handleWorkflowsGet, handleWorkflowsPost, handleWorkflowGet, handleWorkflowPut, handleWorkflowDelete, handleWorkflowExecute } from './routes/workflows';
@@ -1163,102 +1164,3 @@ export default {
   },
 };
 
-/**
- * Generate email insights data for a specific configuration.
- */
-async function generateEmailInsights(env: Env, config: any): Promise<any> {
-  const hours = config.frequency_hours;
-  const cutoffTime = new Date(Date.now() - hours * 60 * 60 * 1000).toISOString();
-
-  // Get new jobs
-  const newJobs = config.include_new_jobs ? await env.DB.prepare(`
-    SELECT title, company, location, url, first_seen_at as posted_at
-    FROM jobs 
-    WHERE first_seen_at >= ? AND status = 'open'
-    ORDER BY first_seen_at DESC
-    LIMIT 50
-  `).bind(cutoffTime).all() : { results: [] };
-
-  // Get job changes
-  const jobChanges = config.include_job_changes ? await env.DB.prepare(`
-    SELECT j.title, j.company, j.url, c.semantic_summary as change_summary
-    FROM changes c
-    JOIN jobs j ON c.job_id = j.id
-    WHERE c.changed_at >= ?
-    ORDER BY c.changed_at DESC
-    LIMIT 20
-  `).bind(cutoffTime).all() : { results: [] };
-
-  // Get statistics
-  const totalJobsResult = await env.DB.prepare(`
-    SELECT COUNT(*) as count FROM jobs WHERE status = 'open'
-  `).first();
-
-  const newJobsCountResult = await env.DB.prepare(`
-    SELECT COUNT(*) as count FROM jobs 
-    WHERE first_seen_at >= ? AND status = 'open'
-  `).bind(cutoffTime).first();
-
-  // Get role statistics
-  const roleStatsResult = config.include_statistics ? await env.DB.prepare(`
-    SELECT 
-      CASE 
-        WHEN LOWER(title) LIKE '%engineer%' OR LOWER(title) LIKE '%developer%' THEN 'Engineer/Developer'
-        WHEN LOWER(title) LIKE '%manager%' THEN 'Manager'
-        WHEN LOWER(title) LIKE '%analyst%' THEN 'Analyst'
-        WHEN LOWER(title) LIKE '%designer%' THEN 'Designer'
-        WHEN LOWER(title) LIKE '%product%' THEN 'Product'
-        WHEN LOWER(title) LIKE '%sales%' THEN 'Sales'
-        WHEN LOWER(title) LIKE '%marketing%' THEN 'Marketing'
-        ELSE 'Other'
-      END as role,
-      COUNT(*) as count,
-      AVG(salary_min) as avgMinSalary,
-      AVG(salary_max) as avgMaxSalary
-    FROM jobs 
-    WHERE status = 'open' AND title IS NOT NULL
-    GROUP BY role
-    ORDER BY count DESC
-    LIMIT 10
-  `).all() : { results: [] };
-
-  return {
-    newJobs: newJobs.results || [],
-    jobChanges: jobChanges.results || [],
-    statistics: {
-      totalJobs: totalJobsResult?.count || 0,
-      newJobsLastPeriod: newJobsCountResult?.count || 0,
-      roleStats: roleStatsResult.results || []
-    }
-  };
-}
-
-/**
- * Send insights email using email service.
- */
-async function sendInsightsEmail(insights: any, config: any, env: Env): Promise<boolean> {
-  try {
-    const { formatInsightsEmail } = await import('./lib/email');
-    const htmlContent = formatInsightsEmail(insights, config.frequency_hours);
-    const subject = `9to5-Scout Job Insights - ${insights.statistics.newJobsLastPeriod} new jobs`;
-
-    // For now, log the email content (in production, integrate with email service)
-    console.log('Email would be sent to:', config.recipient_email);
-    console.log('Subject:', subject);
-    console.log('Content length:', htmlContent.length);
-
-    // Store the email in KV for demo purposes
-    const emailId = crypto.randomUUID();
-    await env.KV.put(`email:${emailId}`, JSON.stringify({
-      to: config.recipient_email,
-      subject,
-      html: htmlContent,
-      sent_at: new Date().toISOString()
-    }));
-
-    return true;
-  } catch (error) {
-    console.error('Failed to send email:', error);
-    return false;
-  }
-}
