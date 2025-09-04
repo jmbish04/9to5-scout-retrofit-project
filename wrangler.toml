@@ -69,13 +69,6 @@ class_name = "ChangeAnalysisWorkflow"
 tag = "v1"
 new_sqlite_classes = ["SiteCrawler", "JobMonitor"]
 
-[vars]
-API_AUTH_TOKEN = "test-token"
-BROWSER_RENDERING_TOKEN = "browser-token"
-SLACK_WEBHOOK_URL = ""
-SMTP_ENDPOINT = ""
-SMTP_USERNAME = ""
-SMTP_PASSWORD = ""
 
 [triggers]
 crons = [
