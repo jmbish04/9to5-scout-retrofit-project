@@ -1,11 +1,10 @@
-name = "9to5-scraper"
+name = "9to5-scout"
 main = "src/index.ts"
 compatibility_date = "2024-05-01"
 compatibility_flags = ["nodejs_compat"]
 
 [observability.logs]
 enabled = true
-
 
 [browser]
 binding = "MYBROWSER"
@@ -23,8 +22,6 @@ id = "5e60b00818e9448b8f965af0fc96d39a"
 binding = "R2"
 bucket_name = "job-scraper"
 
-# Note: Vectorize binding would need to be created through the Cloudflare dashboard
-# as it's not available via the current API tools
 [[vectorize]]
 binding = "VECTORIZE_INDEX"
 index_name = "jobs"
@@ -32,19 +29,16 @@ index_name = "jobs"
 [ai]
 binding = "AI"
 
-# Service binding for internal API calls
 [[services]]
 binding = "SERVICE"
 service = "9to5-scraper"
 
-# Durable Objects for stateful crawling coordination
 [durable_objects]
 bindings = [
   { name = "SITE_CRAWLER", class_name = "SiteCrawler" },
   { name = "JOB_MONITOR", class_name = "JobMonitor" }
 ]
 
-# Workflows for long-running job processing
 [[workflows]]
 name = "discovery-workflow"
 binding = "DISCOVERY_WORKFLOW"
@@ -60,7 +54,6 @@ name = "change-analysis-workflow"
 binding = "CHANGE_ANALYSIS_WORKFLOW"
 class_name = "ChangeAnalysisWorkflow"
 
-# Migrations for Durable Objects
 [[migrations]]
 tag = "v1"
 new_sqlite_classes = ["SiteCrawler", "JobMonitor"]
@@ -73,19 +66,15 @@ SMTP_ENDPOINT = ""
 SMTP_USERNAME = ""
 SMTP_PASSWORD = ""
 
-# Optimized cron trigger for job scraping
-# Runs every 2 hours: 00:00, 02:00, 04:00, 06:00, 08:00, 10:00, 12:00, 14:00, 16:00, 18:00, 20:00, 22:00
-[[triggers.crons]]
-cron = "0 */2 * * *"
+[triggers]
+crons = [
+  "*/15 * * * *", # every 15 minutes
+  "0 6 * * *"     # daily 06:00
+]
 
-# Email routing configuration for job alerts
-[[email]]
-name = "job-alerts"
-destination_addresses = ["*@9to5scout.dev"]
-
-# Static assets binding for serving documentation and OpenAPI spec
 [assets]
 binding = "ASSETS"
 directory = "./public"
 
 [env.preview]
+
