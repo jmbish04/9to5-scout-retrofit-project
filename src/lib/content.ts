@@ -7,7 +7,7 @@ import puppeteer from '@cloudflare/puppeteer';
 export interface Env {
   API_AUTH_TOKEN: string;
   ACCOUNT_ID: string;
-  MYBROWSER: any;
+  MYBROWSER: Fetcher;
   DEFAULT_MODEL_WEB_BROWSER?: string;
 }
 
