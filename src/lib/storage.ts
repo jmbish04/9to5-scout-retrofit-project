@@ -24,7 +24,7 @@ export async function saveJob(env: StorageEnv, job: Job): Promise<string> {
   if (!id && job.url) {
     const existingJob = await env.DB.prepare(
       'SELECT id, first_seen_at FROM jobs WHERE url = ?'
-    ).bind(job.url).first();
+    ).bind(job.url).first<{ id: string; first_seen_at: string | null }>();
     
     if (existingJob) {
       id = existingJob.id;
