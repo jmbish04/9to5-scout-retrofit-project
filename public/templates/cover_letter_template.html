@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cover Letter - Justin Bishop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style type="text/tailwindcss">
+        @layer base {
+            body {
+                font-family: 'Inter', sans-serif;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+        @media print {
+            body {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+        @import url('https://rsms.me/inter/inter.css');
+    </style>
+</head>
+
+<body class="bg-gray-100">
+
+    <div class="max-w-4xl mx-auto bg-white shadow-lg my-8 p-12 print:my-0 print:p-8 print:shadow-none">
+
+        <!-- Header Section -->
+        <header class="flex items-start justify-between mb-12 border-b-2 border-gray-200 pb-8">
+            <div>
+                <h1 class="text-5xl font-extrabold text-gray-800">Justin Bishop</h1>
+                <p class="text-2xl text-sky-600 font-medium mt-1">{{job_title_for_application}}</p>
+            </div>
+            <div class="text-right text-sm text-gray-600">
+                <div class="flex items-center justify-end">
+                    <span>justin@126colby.com</span>
+                    <i class="fas fa-envelope ml-3 text-sky-600 w-4 text-center"></i>
+                </div>
+                <div class="flex items-center justify-end mt-2">
+                    <span>415-658-2389</span>
+                    <i class="fas fa-phone ml-3 text-sky-600 w-4 text-center"></i>
+                </div>
+                <div class="flex items-center justify-end mt-2">
+                    <a href="https://linkedin.com/in/jmbishop04"
+                        class="hover:text-sky-600">linkedin.com/in/jmbishop04</a>
+                    <i class="fab fa-linkedin ml-3 text-sky-600 w-4 text-center"></i>
+                </div>
+            </div>
+        </header>
+
+        <main class="text-gray-700 leading-relaxed">
+
+            <!-- Recipient Info -->
+            <div class="mb-8">
+                <p class="font-semibold">{{hiring_manager_name}}</p>
+                <p>{{hiring_manager_title}}</p>
+                <p class="font-bold">{{company_name}}</p>
+                <p>{{company_address}}</p>
+                <p class="mt-4">{{current_date}}</p>
+            </div>
+
+            <!-- Salutation -->
+            <p class="mb-6 font-semibold">Dear {{hiring_manager_name}},</p>
+
+            <!-- Body Paragraphs -->
+            <!-- The AI agent will generate these paragraphs for each job application -->
+            <div class="space-y-4 text-sm">
+                <p>
+                    {{opening_paragraph_md}}
+                </p>
+                <p>
+                    {{body_paragraph_1_md}}
+                </p>
+                <p>
+                    {{body_paragraph_2_md}}
+                </p>
+                <p>
+                    {{closing_paragraph_md}}
+                </p>
+            </div>
+
+            <!-- Closing -->
+            <div class="mt-10">
+                <p>Sincerely,</p>
+                <p class="mt-4 font-bold">Justin Bishop</p>
+            </div>
+        </main>
+    </div>
+
+</body>
+
+</html>
