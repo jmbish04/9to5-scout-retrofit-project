@@ -4,7 +4,7 @@ compatibility_date = "2024-05-01"
 compatibility_flags = ["nodejs_compat"]
 
 [vars]
-ACCOUNT_ID = ""
+ACCOUNT_ID = "" # Must be set as a secret in production
 DEFAULT_MODEL_WEB_BROWSER = "@cf/meta/llama-4-scout-17b-16e-instruct"
 
 [observability.logs]
