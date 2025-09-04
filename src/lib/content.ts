@@ -121,8 +121,10 @@ export class ContentUtils {
   static async generatePdf(env: Env, html: string, css?: string): Promise<ArrayBuffer> {
     const browser = await puppeteer.launch(env.BROWSER);
     const page = await browser.newPage();
-    const document = css ? html.replace('</head>', `<style>${css}</style></head>`) : html;
-    await page.setContent(document);
+    await page.setContent(html);
+    if (css) {
+      await page.addStyleTag({ content: css });
+    }
     const pdf = await page.pdf({ printBackground: true });
     await browser.close();
     return pdf;
