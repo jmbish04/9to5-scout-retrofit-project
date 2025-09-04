@@ -137,7 +137,7 @@ export async function searchJobWithTalentApi(env: TalentEnv, jobTitle: string, c
 
     const data = await res.json();
     const matched = data.jobs?.[0]?.job;
-    if (!matched) {
+    if (!matched || !matched.applicationInfo?.uris?.[0]) {
       return null;
     }
 
