@@ -115,12 +115,15 @@
         "properties": {
           "id": { "type": "string" },
           "name": { "type": "string" },
-          "enabled": { "type": "boolean" },
-          "frequency_hours": { "type": "integer" },
+          "enabled": { "type": "boolean", "default": true },
+          "frequency_hours": { "type": "integer", "minimum": 1, "default": 24 },
           "recipient_email": { "type": "string", "format": "email" },
-          "include_new_jobs": { "type": "boolean" },
-          "include_job_changes": { "type": "boolean" },
-          "include_statistics": { "type": "boolean" }
+          "include_new_jobs": { "type": "boolean", "default": true },
+          "include_job_changes": { "type": "boolean", "default": true },
+          "include_statistics": { "type": "boolean", "default": true },
+          "last_sent_at": { "type": "string", "format": "date-time" },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time" }
         }
       },
       "CoverLetterRequest": {
@@ -778,8 +781,8 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "status": { "type": "string" },
-                    "sent_at": { "type": "string", "format": "date-time" }
+                    "success": { "type": "boolean" },
+                    "message": { "type": "string" }
                   }
                 }
               }
@@ -805,17 +808,30 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": { "type": "string" },
-                      "from_email": { "type": "string" },
-                      "subject": { "type": "string" },
-                      "job_links_extracted": { "type": "integer" },
-                      "jobs_processed": { "type": "integer" },
-                      "status": { "type": "string" },
-                      "received_at": { "type": "string", "format": "date-time" }
+                  "type": "object",
+                  "properties": {
+                    "logs": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "string" },
+                          "from_email": { "type": "string" },
+                          "subject": { "type": "string" },
+                          "job_links_extracted": { "type": "integer" },
+                          "jobs_processed": { "type": "integer" },
+                          "status": { "type": "string" },
+                          "received_at": { "type": "string", "format": "date-time" }
+                        }
+                      }
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "properties": {
+                        "limit": { "type": "integer" },
+                        "offset": { "type": "integer" },
+                        "total": { "type": "integer" }
+                      }
                     }
                   }
                 }
@@ -835,8 +851,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": { "$ref": "#/components/schemas/EmailConfig" }
+                  "type": "object",
+                  "properties": {
+                    "configs": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/EmailConfig" }
+                    }
+                  }
                 }
               }
             }
@@ -859,7 +880,12 @@
             "description": "Configuration updated",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/EmailConfig" }
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" }
+                  }
+                }
               }
             }
           }
@@ -1655,20 +1681,6 @@
           "company_name": { "type": "string" },
           "job_description_text": { "type": "string" },
           "candidate_career_summary": { "type": "string" }
-        }
-      },
-      "EmailConfig": {
-        "type": "object",
-        "properties": {
-          "id": { "type": "string" },
-          "enabled": { "type": "boolean", "default": true },
-          "frequency_hours": { "type": "integer", "minimum": 1, "default": 24 },
-          "recipient_email": { "type": "string", "format": "email" },
-          "include_new_jobs": { "type": "boolean", "default": true },
-          "include_job_changes": { "type": "boolean", "default": true },
-          "include_statistics": { "type": "boolean", "default": true },
-          "created_at": { "type": "string", "format": "date-time" },
-          "updated_at": { "type": "string", "format": "date-time" }
         }
       },
       "AgentConfig": {

@@ -331,7 +331,7 @@ Software Engineer - StartupXYZ (2018-2020)
     const emailLogsResponse = await fetch(`${BASE_URL}/api/email/logs?limit=5`, { headers });
     if (emailLogsResponse.ok) {
       const emailLogs = await emailLogsResponse.json();
-      console.log(`   📬 Recent email processing events: ${emailLogs.length}`);
+      console.log(`   📬 Recent email processing events: ${emailLogs.logs?.length || 0}`);
     }
 
     console.log('\n✨ Comprehensive demo completed successfully!\n');
