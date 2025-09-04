@@ -2,6 +2,9 @@
   "name": "@job-scraper/worker",
   "version": "0.0.0",
   "private": true,
+  "dependencies": {
+    "@cloudflare/puppeteer": "^0.1.0"
+  },
   "scripts": {
     "generate-types": "wrangler types",
     "typecheck": "pnpm generate-types && tsc -p tsconfig.json",
