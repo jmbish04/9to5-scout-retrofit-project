@@ -76,5 +76,3 @@ crons = [
 binding = "ASSETS"
 directory = "./public"
 
-[env.preview]
-
