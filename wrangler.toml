@@ -31,13 +31,13 @@ binding = "AI"
 
 # Configuration for receiving emails sent to your domain
 [[email]]
-name = "job-alerts"
+name = "EMAIL_INBOX"
 destination_addresses = ["job-alerts@hacolby.app"]
 
 # Configuration for sending emails from your worker
+# This must be a verified sender address in your Cloudflare account
 [[send_email]]
 name = "EMAIL_SENDER"
-# This must be a verified sender address in your Cloudflare account
 destination_address = "justin@126colby.com"
 
 [[services]]
