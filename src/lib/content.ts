@@ -1,5 +1,16 @@
 import puppeteer from '@cloudflare/puppeteer';
 
+// Minimal type for response_format json_schema
+export type JsonSchemaSpec = {
+  name?: string;
+  strict?: boolean;
+  schema: Record<string, unknown>;
+};
+
+const DEFAULT_RESPONSE_SCHEMA: JsonSchemaSpec = {
+  schema: { type: 'object' },
+};
+
 /**
  * Utility class for working with Cloudflare's Browser Rendering API.
  * Provides helpers for converting HTML to Markdown, generating PDFs,
@@ -10,6 +21,8 @@ export interface Env {
   API_TOKEN: string;
   ACCOUNT_ID: string;
   BROWSER: any;
+  AI: any;
+  DEFAULT_MODEL_WEB_BROWSER?: string;
 }
 
 export class ContentUtils {
@@ -62,7 +75,6 @@ export class ContentUtils {
       console.error(`Error in urlToMarkdown for ${targetUrl}:`, error);
       return '';
     }
-  }
   }
 
   /**
@@ -160,10 +172,8 @@ export class ContentUtils {
     await browser.close();
 
     const prompt = `
-    You are a sophisticated web scraper. You are given the user data extraction goal and the JSON schema for the output data format.
-    Your task is to extract the requested information from the text and output it in the specified JSON schema format:
-
-        ${JSON.stringify(outputSchema)}
+    You are a sophisticated web scraper. You are given the user data extraction goal.
+    Your task is to extract the requested information from the text and output it in the specified JSON schema format.
 
     DO NOT include anything else besides the JSON output, no markdown, no plaintext, just JSON.
 
@@ -171,40 +181,38 @@ export class ContentUtils {
 
     Text extracted from the webpage: ${renderedText}`;
 
-    return this.getLLMResult(env, prompt);
+    return this.getLLMResult(env, prompt, { schema: outputSchema });
   }
 
-  private static async getLLMResult(env: Env, prompt: string) {
-    const model = '@hf/thebloke/deepseek-coder-6.7b-instruct-awq';
-    const requestBody = {
-      messages: [{
-        role: 'user',
-        content: prompt,
-      }],
-    };
-    const aiUrl = `https://api.cloudflare.com/client/v4/accounts/${env.ACCOUNT_ID}/ai/run/${model}`;
+  private static async getLLMResult<T>(
+    env: Env,
+    prompt: string,
+    jsonSchema: JsonSchemaSpec = DEFAULT_RESPONSE_SCHEMA
+  ): Promise<T> {
+    const model = env.DEFAULT_MODEL_WEB_BROWSER ?? '@cf/meta/llama-3.1-8b-instruct';
 
-    const response = await fetch(aiUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${env.API_TOKEN}`,
-      },
-      body: JSON.stringify(requestBody),
-    });
-
-    if (!response.ok) {
-      throw new Error(`LLM call failed ${aiUrl} ${response.status}`);
-    }
-
-    const data = (await response.json()) as { result: { response: string } };
-    const text = data.result.response || '';
-    const value = (text.match(/```(?:json)?\s*([\s\S]*?)\s*```/) || [null, text])[1];
     try {
-      return JSON.parse(value);
-    } catch (e) {
-      console.error(`${e} . Response: ${value}`);
-      return undefined;
+      const aiResult = await env.AI.run(model, {
+        messages: [{ role: 'user', content: prompt }],
+        response_format: { type: 'json_schema', json_schema: jsonSchema },
+      });
+
+      const raw = (aiResult as any)?.response ?? aiResult;
+      const parsed: unknown = typeof raw === 'string' ? JSON.parse(raw) : raw;
+      return parsed as T;
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err);
+      const cause =
+        err && typeof err === 'object' && 'cause' in err
+          ? // @ts-expect-error loose introspection
+            (err.cause?.message ?? JSON.stringify(err.cause))
+          : undefined;
+
+      throw new Error(
+        `AI.run failed for model "${model}": ${message}${
+          cause ? ` | cause: ${cause}` : ''
+        }`
+      );
     }
   }
 }
