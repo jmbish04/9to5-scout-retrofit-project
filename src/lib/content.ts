@@ -174,7 +174,7 @@ export class ContentUtils {
     return this.getLLMResult(env, prompt, outputSchema);
   }
 
-  private static async getLLMResult(env: Env, prompt: string, schema?: any) {
+  private static async getLLMResult(env: Env, prompt: string) {
     const model = '@hf/thebloke/deepseek-coder-6.7b-instruct-awq';
     const requestBody = {
       messages: [{
