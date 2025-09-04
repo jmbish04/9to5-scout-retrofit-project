@@ -7,10 +7,10 @@ import type { Job, Site, SearchConfig, Run } from './types';
 import { embedText } from './ai';
 
 export interface StorageEnv {
-  DB: any;
-  AI: any;
-  VECTORIZE_INDEX: any;
-  R2: any;
+  DB: D1Database;
+  AI: Ai;
+  VECTORIZE_INDEX: VectorizeIndex;
+  R2: R2Bucket;
 }
 
 /**
