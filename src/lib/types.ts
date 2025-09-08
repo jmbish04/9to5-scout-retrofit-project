@@ -117,6 +117,32 @@ export interface EmailLog {
   status: 'pending' | 'processed' | 'failed';
 }
 
+export interface EmailInsights {
+  newJobs: Array<{
+    title: string;
+    company: string;
+    location?: string;
+    url: string;
+    posted_at: string;
+  }>;
+  jobChanges: Array<{
+    title: string;
+    company: string;
+    change_summary: string;
+    url: string;
+  }>;
+  statistics: {
+    totalJobs: number;
+    newJobsLastPeriod: number;
+    roleStats: Array<{
+      role: string;
+      count: number;
+      avgMinSalary?: number;
+      avgMaxSalary?: number;
+    }>;
+  };
+}
+
 // Job History Management Types
 export interface ApplicantProfile {
   id?: string;

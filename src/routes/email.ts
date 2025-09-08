@@ -2,8 +2,8 @@
  * Email route handlers for job alert processing and insights reporting.
  */
 
-import { parseEmailFromRequest, extractJobInfo, formatInsightsEmail, EmailInsights, generateEmailInsights, sendInsightsEmail } from '../lib/email';
-import { Job, EmailLog, EmailConfig } from '../lib/types';
+import { parseEmailFromRequest, extractJobInfo, formatInsightsEmail, generateEmailInsights, sendInsightsEmail } from '../lib/email';
+import type { Job, EmailLog, EmailConfig, EmailInsights } from '../lib/types';
 import { crawlJob } from '../lib/crawl';
 import { saveJob } from '../lib/storage';
 
@@ -25,7 +25,7 @@ export async function handleEmailReceived(request: Request, env: any): Promise<R
 
     // Extract job information from email content
     const content = email.html || email.text || '';
-    const jobInfo = extractJobInfo(content);
+    const jobInfo = await extractJobInfo(env, content);
     
     console.log(`Extracted ${jobInfo.length} job links from email`);
 
@@ -45,8 +45,8 @@ export async function handleEmailReceived(request: Request, env: any): Promise<R
       try {
         console.log(`Processing job URL: ${job.url}`);
         
-        // Crawl and extract job data
-        const jobData = await crawlJob(env, job.url);
+        // Pass job title and company to the crawler for the fallback mechanism
+        const jobData = await crawlJob(env, job.url, undefined, job.title, job.company);
         
         if (jobData) {
           // Merge extracted info with crawled data

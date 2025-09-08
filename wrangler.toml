@@ -3,6 +3,10 @@ main = "src/index.ts"
 compatibility_date = "2024-05-01"
 compatibility_flags = ["nodejs_compat"]
 
+[vars]
+ACCOUNT_ID = "" # Must be set as a secret in production
+DEFAULT_MODEL_WEB_BROWSER = "@cf/meta/llama-4-scout-17b-16e-instruct"
+
 [observability.logs]
 enabled = true
 
@@ -17,6 +21,11 @@ database_id = "11092798-a3d9-44b8-be5f-1835c0027887"
 [[kv_namespaces]]
 binding = "KV"
 id = "5e60b00818e9448b8f965af0fc96d39a"
+
+[[kv_namespaces]]
+binding = "USAGE_TRACKER"
+id = "d78887786a634316a921a869c2e406e8"
+preview_id = "0900decc2f2043f4a5591eda43562065"
 
 [[r2_buckets]]
 binding = "R2"
@@ -47,7 +56,8 @@ service = "9to5-scout"
 [durable_objects]
 bindings = [
   { name = "SITE_CRAWLER", class_name = "SiteCrawler" },
-  { name = "JOB_MONITOR", class_name = "JobMonitor" }
+  { name = "JOB_MONITOR", class_name = "JobMonitor" },
+  { name = "SCRAPE_SOCKET", class_name = "ScrapeSocket" }
 ]
 
 [[workflows]]
@@ -68,6 +78,10 @@ class_name = "ChangeAnalysisWorkflow"
 [[migrations]]
 tag = "v1"
 new_sqlite_classes = ["SiteCrawler", "JobMonitor"]
+
+[[migrations]]
+tag = "v2"
+new_classes = ["ScrapeSocket"]
 
 
 [triggers]
