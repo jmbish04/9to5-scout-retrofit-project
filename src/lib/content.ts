@@ -1,135 +1,155 @@
 import puppeteer from '@cloudflare/puppeteer';
 
+
 /**
- * Utility class for working with Cloudflare's Browser Rendering API.
- * Provides helpers for converting HTML to Markdown, generating PDFs,
- * proxying rendering endpoints (content, screenshot, pdf, snapshot,
- * scrape, json, links, markdown) and performing AI-powered extraction.
+ * Environment bindings required for content utilities.
+ * These names align with the worker configuration.
  */
 export interface Env {
-  API_TOKEN: string;
-  ACCOUNT_ID: string;
-  BROWSER: any;
+  AI: Ai; // Use the built-in AI binding
+  MYBROWSER: Fetcher;
+  DEFAULT_MODEL_WEB_BROWSER?: string;
 }
 
+const DEFAULT_MODEL = '@cf/meta/llama-4-scout-17b-16e-instruct';
+
+// Common schema for structured LLM responses
+const COMMON_RESPONSE_SCHEMA = {
+  type: 'object',
+  properties: {
+    response: {
+      type: 'string',
+      description: 'The generated text response from the model'
+    },
+    usage: {
+      type: 'object',
+      description: 'Usage statistics for the inference request',
+      properties: {
+        prompt_tokens: {
+          type: 'number',
+          description: 'Total number of tokens in input',
+          default: 0
+        },
+        completion_tokens: {
+          type: 'number',
+          description: 'Total number of tokens in output',
+          default: 0
+        },
+        total_tokens: {
+          type: 'number',
+          description: 'Total number of input and output tokens',
+          default: 0
+        }
+      }
+    },
+    tool_calls: {
+      type: 'array',
+      description: 'An array of tool calls requests made during the response generation',
+      items: {
+        type: 'object',
+        properties: {
+          id: {
+            type: 'string',
+            description: 'The tool call id.'
+          },
+          type: {
+            type: 'string',
+            description: "Specifies the type of tool (e.g., 'function')."
+          },
+          function: {
+            type: 'object',
+            description: 'Details of the function tool.',
+            properties: {
+              name: {
+                type: 'string',
+                description: 'The name of the tool to be called'
+              },
+              arguments: {
+                type: 'object',
+                description: 'The arguments passed to be passed to the tool call request'
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  required: ['response']
+};
+
 export class ContentUtils {
-  private static apiUrl(env: Env, endpoint: string) {
-    return `https://api.cloudflare.com/client/v4/accounts/${env.ACCOUNT_ID}/browser-rendering/${endpoint}`;
+  /**
+   * Render a URL using Cloudflare's browser and return the page text.
+   */
+  static async fetchRenderedText(env: Env, targetUrl: string): Promise<string> {
+    const browser = await puppeteer.launch(env.MYBROWSER);
+    try {
+      const page = await browser.newPage();
+      await page.goto(targetUrl);
+      const renderedText = await page.evaluate(() => {
+        const body = document.querySelector('body');
+        return body ? body.innerText : '';
+      });
+      return renderedText;
+    } finally {
+      await browser.close();
+    }
   }
 
-  private static async proxyRequest<T>(env: Env, endpoint: string, payload: Record<string, any>): Promise<T> {
-    const response = await fetch(this.apiUrl(env, endpoint), {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${env.API_TOKEN}`,
-      },
-      body: JSON.stringify(payload),
+  /**
+   * Execute an LLM call using the Cloudflare Workers AI binding.
+   */
+  static async getLLMResult<T>(env: Env, prompt: string, schema: object = COMMON_RESPONSE_SCHEMA): Promise<T> {
+    const model = env.DEFAULT_MODEL_WEB_BROWSER || DEFAULT_MODEL;
+
+    const result = await env.AI.run(model as any, { // Cast to 'any' to accommodate dynamic model name
+      messages: [{ role: 'user', content: prompt }],
+      response_format: { type: 'json_schema', json_schema: schema }
     });
 
-    if (!response.ok) {
-      throw new Error(`${endpoint} request failed: ${response.status}`);
-    }
-
-    if (endpoint === 'pdf' || endpoint === 'screenshot') {
-      // Binary responses for pdf and screenshot endpoints
-      return (await response.arrayBuffer()) as unknown as T;
-    }
-
-    return (await response.json()) as T;
+    return result as T;
   }
 
   /**
-   * Convert an HTML string to markdown using Cloudflare's browser rendering API.
-   */
-  static async htmlToMarkdown(env: Env, html: string): Promise<string> {
-    const data = await this.proxyRequest<{ result?: string; markdown?: string }>(env, 'markdown', { html });
-    return data.result ?? data.markdown ?? '';
-  }
-
-  /**
-   * Fetch a URL and convert its HTML content to markdown.
+   * Convert a URL's content to markdown by rendering it and summarizing with an LLM.
    */
   static async urlToMarkdown(env: Env, targetUrl: string): Promise<string> {
-    try {
-      const res = await fetch(targetUrl);
-      if (!res.ok) {
-        throw new Error(`Failed to fetch ${targetUrl}: ${res.status}`);
-      }
-      const html = await res.text();
-      return this.htmlToMarkdown(env, html);
-    } catch (error) {
-      console.error(`Error in urlToMarkdown for ${targetUrl}:`, error);
-      return '';
-    }
-  }
-  }
-
-  /**
-   * Fetch the rendered HTML for a URL.
-   */
-  static fetchContent(env: Env, url: string) {
-    return this.proxyRequest(env, 'content', { url });
-  }
-
-  /**
-   * Capture a screenshot of a webpage.
-   */
-  static captureScreenshot(env: Env, url: string) {
-    return this.proxyRequest<ArrayBuffer>(env, 'screenshot', { url });
-  }
-
-  /**
-   * Render a PDF of a webpage via Browser Rendering API.
-   */
-  static renderPdf(env: Env, url: string) {
-    return this.proxyRequest<ArrayBuffer>(env, 'pdf', { url });
-  }
-
-  /**
-   * Take a snapshot of the page (DOM, screenshot, and metadata).
-   */
-  static captureSnapshot(env: Env, url: string) {
-    return this.proxyRequest(env, 'snapshot', { url });
-  }
-
-  /**
-   * Scrape specific selectors from a page.
-   */
-  static scrapeElements(env: Env, url: string, selectors: string[]) {
-    return this.proxyRequest(env, 'scrape', { url, elements: selectors });
-  }
-
-  /**
-   * Capture structured JSON data from a page.
-   */
-  static captureJson(env: Env, url: string) {
-    return this.proxyRequest(env, 'json', { url });
-  }
-
-  /**
-   * Retrieve all links from a webpage.
-   */
-  static retrieveLinks(env: Env, url: string) {
-    return this.proxyRequest(env, 'links', { url });
+    const textContent = await this.fetchRenderedText(env, targetUrl);
+    const prompt = `Please convert the following text content from the website ${targetUrl} into well-structured Markdown. Focus on preserving the semantic structure, including headings, lists, and code blocks.`;
+    
+    const schema = {
+      type: 'object',
+      properties: {
+        markdown: {
+          type: 'string',
+          description: 'The Markdown representation of the page content.'
+        }
+      },
+      required: ['markdown']
+    };
+    
+    const result = await this.getLLMResult<{ markdown: string }>(env, `${prompt}\n\n---\n\n${textContent.substring(0, 15000)}`, schema);
+    return result.markdown ?? '';
   }
 
   /**
    * Generate a PDF from HTML and optional CSS.
-   * Returns the PDF as an ArrayBuffer for storage or download.
    */
   static async generatePdf(env: Env, html: string, css?: string): Promise<ArrayBuffer> {
-    const browser = await puppeteer.launch(env.BROWSER);
-    const page = await browser.newPage();
-    await page.setContent(html);
-    if (css) {
-      await page.addStyleTag({ content: css });
+    const browser = await puppeteer.launch(env.MYBROWSER);
+    try {
+      const page = await browser.newPage();
+      await page.setContent(html);
+      if (css) {
+        await page.addStyleTag({ content: css });
+      }
+      const pdf = await page.pdf({ printBackground: true });
+      return pdf;
+    } finally {
+        await browser.close();
     }
-    const pdf = await page.pdf({ printBackground: true });
-    await browser.close();
-    return pdf;
   }
-
+  
   /**
    * Convenience wrapper for creating a resume PDF.
    */
@@ -147,65 +167,24 @@ export class ContentUtils {
   /**
    * Render a page with Puppeteer and extract structured data using Workers AI.
    */
-  static async aiExtract(env: Env, userPrompt: string, targetUrl: string, outputSchema: any) {
-    const browser = await puppeteer.launch(env.BROWSER);
-    const page = await browser.newPage();
-    await page.goto(targetUrl);
-
-    const renderedText = await page.evaluate(() => {
-      // @ts-ignore js code to run in the browser context
-      const body = document.querySelector('body');
-      return body ? body.innerText : '';
-    });
-    await browser.close();
+  static async aiExtract<T>(env: Env, userPrompt: string, targetUrl: string, outputSchema: any): Promise<T> {
+    const renderedText = await this.fetchRenderedText(env, targetUrl);
 
     const prompt = `
-    You are a sophisticated web scraper. You are given the user data extraction goal and the JSON schema for the output data format.
-    Your task is to extract the requested information from the text and output it in the specified JSON schema format:
+      You are a sophisticated web scraper. You are given a user's data extraction goal and the JSON schema for the output data format.
+      Your task is to extract the requested information from the provided text and output it in the specified JSON schema format.
+      DO NOT include anything else besides the JSON output.
 
-        ${JSON.stringify(outputSchema)}
+      User Data Extraction Goal: ${userPrompt}
 
-    DO NOT include anything else besides the JSON output, no markdown, no plaintext, just JSON.
+      Text extracted from the webpage at ${targetUrl}:
+      ---
+      ${renderedText.substring(0, 15000)}
+      ---
+    `;
 
-    User Data Extraction Goal: ${userPrompt}
-
-    Text extracted from the webpage: ${renderedText}`;
-
-    return this.getLLMResult(env, prompt);
-  }
-
-  private static async getLLMResult(env: Env, prompt: string) {
-    const model = '@hf/thebloke/deepseek-coder-6.7b-instruct-awq';
-    const requestBody = {
-      messages: [{
-        role: 'user',
-        content: prompt,
-      }],
-    };
-    const aiUrl = `https://api.cloudflare.com/client/v4/accounts/${env.ACCOUNT_ID}/ai/run/${model}`;
-
-    const response = await fetch(aiUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${env.API_TOKEN}`,
-      },
-      body: JSON.stringify(requestBody),
-    });
-
-    if (!response.ok) {
-      throw new Error(`LLM call failed ${aiUrl} ${response.status}`);
-    }
-
-    const data = (await response.json()) as { result: { response: string } };
-    const text = data.result.response || '';
-    const value = (text.match(/```(?:json)?\s*([\s\S]*?)\s*```/) || [null, text])[1];
-    try {
-      return JSON.parse(value);
-    } catch (e) {
-      console.error(`${e} . Response: ${value}`);
-      return undefined;
-    }
+    return this.getLLMResult<T>(env, prompt, outputSchema);
   }
 }
 
+export default ContentUtils;
