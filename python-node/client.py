@@ -24,9 +24,7 @@ def on_error(ws: websocket.WebSocketApp, error: Exception):
 
 
 def on_close(ws: websocket.WebSocketApp, close_status_code, close_msg):
-    print("Connection closed, retrying in 5 seconds...", close_status_code, close_msg)
-    time.sleep(5)
-    connect()
+    print(f"Connection closed with status {close_status_code}: {close_msg}. Will attempt to reconnect.")
 
 
 def on_open(ws: websocket.WebSocketApp):
@@ -45,8 +43,7 @@ def connect():
         on_error=on_error,
         on_close=on_close,
     )
-    ws.run_forever()
-
+    ws.run_forever(reconnect=5)  # Reconnect every 5 seconds
 
 if __name__ == "__main__":
     connect()
