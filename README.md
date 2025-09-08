@@ -51,6 +51,7 @@ A comprehensive AI-powered job discovery and career assistance platform built on
 - **Resume Optimization**: Create ATS-optimized resume content highlighting relevant experience
 - **Interview Preparation**: Generate interview questions and strategic talking points
 - **Career Reports**: Comprehensive analysis dossiers for job applications
+- **HTML Conversion Utilities**: Convert HTML or URLs to Markdown, render HTML/CSS templates into PDF resumes and cover letters, and proxy Cloudflare Browser Rendering endpoints (content, screenshot, pdf, snapshot, scrape, json, links, markdown)
 
 ### 📈 Enterprise-Grade Job Tracking & Analytics
 - **Daily Monitoring Workflows**: Automated daily job status checking with comprehensive reporting

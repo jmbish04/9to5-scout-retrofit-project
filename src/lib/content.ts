@@ -103,11 +103,87 @@ export class ContentUtils {
     const model = env.DEFAULT_MODEL_WEB_BROWSER || DEFAULT_MODEL;
 
     const result = await env.AI.run(model as any, { // Cast to 'any' to accommodate dynamic model name
-        messages: [{ role: 'user', content: prompt }],
-        response_format: { type: 'json_schema', json_schema: schema }
+      messages: [{ role: 'user', content: prompt }],
+      response_format: { type: 'json_schema', json_schema: schema }
     });
 
     return result as T;
+  }
+
+  /**
+   * Convert a URL's content to markdown by rendering it and summarizing with an LLM.
+   */
+  static async urlToMarkdown(env: Env, targetUrl: string): Promise<string> {
+    const textContent = await this.fetchRenderedText(env, targetUrl);
+    const prompt = `Please convert the following text content from the website ${targetUrl} into well-structured Markdown. Focus on preserving the semantic structure, including headings, lists, and code blocks.`;
+    
+    const schema = {
+      type: 'object',
+      properties: {
+        markdown: {
+          type: 'string',
+          description: 'The Markdown representation of the page content.'
+        }
+      },
+      required: ['markdown']
+    };
+    
+    const result = await this.getLLMResult<{ markdown: string }>(env, `${prompt}\n\n---\n\n${textContent.substring(0, 15000)}`, schema);
+    return result.markdown ?? '';
+  }
+
+  /**
+   * Generate a PDF from HTML and optional CSS.
+   */
+  static async generatePdf(env: Env, html: string, css?: string): Promise<ArrayBuffer> {
+    const browser = await puppeteer.launch(env.MYBROWSER);
+    try {
+      const page = await browser.newPage();
+      await page.setContent(html);
+      if (css) {
+        await page.addStyleTag({ content: css });
+      }
+      const pdf = await page.pdf({ printBackground: true });
+      return pdf;
+    } finally {
+        await browser.close();
+    }
+  }
+  
+  /**
+   * Convenience wrapper for creating a resume PDF.
+   */
+  static generateResumePdf(env: Env, html: string, css?: string) {
+    return this.generatePdf(env, html, css);
+  }
+
+  /**
+   * Convenience wrapper for creating a cover letter PDF.
+   */
+  static generateCoverLetterPdf(env: Env, html: string, css?: string) {
+    return this.generatePdf(env, html, css);
+  }
+
+  /**
+   * Render a page with Puppeteer and extract structured data using Workers AI.
+   */
+  static async aiExtract<T>(env: Env, userPrompt: string, targetUrl: string, outputSchema: any): Promise<T> {
+    const renderedText = await this.fetchRenderedText(env, targetUrl);
+
+    const prompt = `
+      You are a sophisticated web scraper. You are given a user's data extraction goal and the JSON schema for the output data format.
+      Your task is to extract the requested information from the provided text and output it in the specified JSON schema format.
+      DO NOT include anything else besides the JSON output.
+
+      User Data Extraction Goal: ${userPrompt}
+
+      Text extracted from the webpage at ${targetUrl}:
+      ---
+      ${renderedText.substring(0, 15000)}
+      ---
+    `;
+
+    return this.getLLMResult<T>(env, prompt, outputSchema);
   }
 }
 
