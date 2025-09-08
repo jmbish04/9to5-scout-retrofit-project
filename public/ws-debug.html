@@ -43,6 +43,9 @@
     }
 
     document.getElementById('connectBtn').onclick = () => {
+      if (ws) {
+        ws.close();
+      }
       const token = document.getElementById('token').value;
       const proto = location.protocol === 'https:' ? 'wss' : 'ws';
       ws = new WebSocket(`${proto}://${location.host}/ws?token=${encodeURIComponent(token)}&client=debug`);
