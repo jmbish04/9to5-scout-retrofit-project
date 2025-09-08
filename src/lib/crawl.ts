@@ -5,6 +5,7 @@
 
 import { extractJob } from './ai';
 import { saveJob, createSnapshot } from './storage';
+import { searchJobWithTalentApi } from './talent';
 import type { Job } from './types';
 
 /**
@@ -173,7 +174,7 @@ export async function crawlJobWithSnapshot(env: CrawlEnv, url: string, siteId?: 
  * Crawl a single job URL and extract job data.
  * Uses browser rendering service to get full HTML content.
  */
-export async function crawlJob(env: CrawlEnv, url: string, siteId?: string): Promise<Job | null> {
+export async function crawlJob(env: CrawlEnv, url: string, siteId?: string, jobTitle?: string, companyName?: string): Promise<Job | null> {
   try {
     // Use browser rendering service to get HTML content
     const response = await env.MYBROWSER.fetch('https://browser.render.cloudflare.com', {
@@ -190,7 +191,16 @@ export async function crawlJob(env: CrawlEnv, url: string, siteId?: string): Pro
     });
 
     if (!response.ok) {
-      console.error(`Browser rendering failed for ${url}:`, response.status);
+      console.error(`Browser rendering failed for ${url}: ${response.status}. This may be due to the page being removed, requiring a login, or a CAPTCHA.`);
+      if (jobTitle && companyName) {
+        console.log(`Attempting fallback search with Google Talent API for "${jobTitle}" at "${companyName}"`);
+        const talentJob = await searchJobWithTalentApi(env as any, jobTitle, companyName);
+        if (talentJob) {
+          console.log('Successfully found job via Google Talent API fallback.');
+          const jobId = await saveJob(env, talentJob);
+          return { ...talentJob, id: jobId };
+        }
+      }
       return null;
     }
 

@@ -3,6 +3,10 @@
  * Handles both HTML and plain text email formats.
  */
 
+// Import EmailMessage type for sending emails
+import { EmailMessage as CloudflareEmailMessage } from 'cloudflare:email';
+import type { EmailConfig, EmailInsights } from './types';
+
 export interface EmailMessage {
   from: string;
   to: string[];
@@ -25,7 +29,7 @@ export interface ExtractedJobInfo {
  */
 export function extractJobUrls(content: string): string[] {
   const urls: string[] = [];
-  
+
   // Common job site URL patterns
   const jobSitePatterns = [
     // LinkedIn Jobs
@@ -59,9 +63,9 @@ export function extractJobUrls(content: string): string[] {
   // Also extract any URLs that contain job-related keywords
   const urlPattern = /https?:\/\/[^\s<>"]+/gi;
   const allUrls = content.match(urlPattern) || [];
-  
+
   const jobKeywords = ['job', 'career', 'position', 'opening', 'vacancy', 'hiring', 'opportunity'];
-  
+
   for (const url of allUrls) {
     const urlLower = url.toLowerCase();
     if (jobKeywords.some(keyword => urlLower.includes(keyword))) {
@@ -79,74 +83,59 @@ export function extractJobUrls(content: string): string[] {
 
 /**
  * Extract job information from email content using AI-powered parsing.
- * This attempts to find structured job data in addition to URLs.
  */
-export function extractJobInfo(content: string): ExtractedJobInfo[] {
-  const urls = extractJobUrls(content);
-  const jobs: ExtractedJobInfo[] = [];
+export async function extractJobInfo(env: { AI: any }, content: string): Promise<ExtractedJobInfo[]> {
+  try {
+    // Limit content to avoid exceeding token limits, focusing on the body
+    const cleanContent = content.replace(/<head>[\s\S]*?<\/head>/i, '').slice(0, 12000);
 
-  // For each URL, try to extract additional context from surrounding text
-  for (const url of urls) {
-    const job: ExtractedJobInfo = { url };
-    
-    // Find the URL in the content and extract surrounding context
-    const urlIndex = content.indexOf(url);
-    if (urlIndex >= 0) {
-      // Extract 200 characters before and after the URL
-      const start = Math.max(0, urlIndex - 200);
-      const end = Math.min(content.length, urlIndex + url.length + 200);
-      const context = content.slice(start, end);
-      
-      // Try to extract job title (usually in bold, headings, or near the URL)
-      const titlePatterns = [
-        /(?:position|role|job|title):\s*([^\n\r]{5,100})/gi,
-        /<strong[^>]*>([^<]{5,100})<\/strong>/gi,
-        /<b[^>]*>([^<]{5,100})<\/b>/gi,
-        /^([A-Z][^\n\r]{10,80})$/gm // Capitalized lines that could be titles
-      ];
-      
-      for (const pattern of titlePatterns) {
-        const match = pattern.exec(context);
-        if (match && match[1]) {
-          job.title = match[1].trim();
-          break;
-        }
+    const jobSchema = {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          url: { type: 'string', description: 'The direct URL to the job posting.' },
+          title: { type: 'string', description: 'The job title.' },
+          company: { type: 'string', description: 'The name of the company.' },
+          location: { type: 'string', description: 'The location of the job.' }
+        },
+        required: ['url']
       }
-      
-      // Try to extract company name
-      const companyPatterns = [
-        /(?:company|employer|organization):\s*([^\n\r]{2,50})/gi,
-        /at\s+([A-Z][a-zA-Z\s&,-]{2,40})\s*(?:\n|\r|$)/gi
-      ];
-      
-      for (const pattern of companyPatterns) {
-        const match = pattern.exec(context);
-        if (match && match[1]) {
-          job.company = match[1].trim();
-          break;
-        }
+    };
+
+    const messages = [
+      {
+        role: 'system',
+        content: `You are an expert at parsing job alert emails. Your task is to extract all job postings from the provided email content (HTML or text). Identify each distinct job and extract its URL, title, company, and location. Return the data as a JSON array following the provided schema. Only include jobs that have a valid URL.`
+      },
+      {
+        role: 'user',
+        content: `Here is the email content:\n\n${cleanContent}`
       }
-      
-      // Try to extract location
-      const locationPatterns = [
-        /(?:location|city|state):\s*([^\n\r]{2,50})/gi,
-        /\b([A-Z][a-z]+,\s*[A-Z]{2})\b/g, // City, State format
-        /\b([A-Z][a-z\s]+,\s*[A-Z][a-z\s]+)\b/g // City, Country format
-      ];
-      
-      for (const pattern of locationPatterns) {
-        const match = pattern.exec(context);
-        if (match && match[1]) {
-          job.location = match[1].trim();
-          break;
-        }
+    ];
+
+    const response = await env.AI.run('@cf/meta/llama-4-scout-17b-16e-instruct', {
+      messages,
+      guided_json: jobSchema
+    });
+
+    if (response?.response) {
+      const jobData = typeof response.response === 'string'
+        ? JSON.parse(response.response)
+        : response.response;
+
+      if (Array.isArray(jobData)) {
+        return jobData.filter(job => job.url); // Ensure every entry has a URL
       }
     }
-    
-    jobs.push(job);
-  }
 
-  return jobs;
+    return [];
+  } catch (error) {
+    console.error('AI-powered job info extraction failed:', error);
+    // Fallback to regex if AI fails
+    const urls = extractJobUrls(content);
+    return urls.map(url => ({ url }));
+  }
 }
 
 /**
@@ -156,7 +145,7 @@ export function extractJobInfo(content: string): ExtractedJobInfo[] {
 export async function parseEmailFromRequest(request: Request): Promise<EmailMessage | null> {
   try {
     const contentType = request.headers.get('content-type') || '';
-    
+
     if (!contentType.includes('multipart/form-data')) {
       // Simple email format
       const text = await request.text();
@@ -181,11 +170,11 @@ export async function parseEmailFromRequest(request: Request): Promise<EmailMess
     // Extract text and HTML content
     const textContent = formData.get('text');
     const htmlContent = formData.get('html');
-    
+
     if (textContent) {
       email.text = textContent.toString();
     }
-    
+
     if (htmlContent) {
       email.html = htmlContent.toString();
     }
@@ -195,36 +184,6 @@ export async function parseEmailFromRequest(request: Request): Promise<EmailMess
     console.error('Failed to parse email:', error);
     return null;
   }
-}
-
-/**
- * Generate email insights content for sending reports.
- */
-export interface EmailInsights {
-  newJobs: Array<{
-    title: string;
-    company: string;
-    location?: string;
-    url: string;
-    posted_at: string;
-  }>;
-  jobChanges: Array<{
-    title: string;
-    company: string;
-    change_summary: string;
-    url: string;
-  }>;
-  statistics: {
-    totalJobs: number;
-    newJobsLastPeriod: number;
-    roleStats: Array<{
-      role: string;
-      count: number;
-      avgMinSalary?: number;
-      avgMaxSalary?: number;
-      avgTimeOpen?: number;
-    }>;
-  };
 }
 
 /**
@@ -300,27 +259,36 @@ export async function generateEmailInsights(env: any, config: EmailConfig): Prom
 
 /**
  * Send insights email using email service.
- * Currently stores emails in KV for demo purposes.
  */
 export async function sendInsightsEmail(insights: EmailInsights, config: EmailConfig, env: any): Promise<boolean> {
   try {
     const htmlContent = formatInsightsEmail(insights, config.frequency_hours);
     const subject = `9to5-Scout Job Insights - ${insights.statistics.newJobsLastPeriod} new jobs`;
 
-    // For now, log the email content (in production, integrate with email service)
-    console.log('Email would be sent to:', config.recipient_email);
-    console.log('Subject:', subject);
-    console.log('Content length:', htmlContent.length);
+    if (!env.EMAIL_SENDER) {
+      console.error("EMAIL_SENDER binding not configured. Cannot send email.");
+      // Fallback to KV for demo/testing purposes if sender is not available
+      const emailId = crypto.randomUUID();
+      await env.KV.put(`email:${emailId}`, JSON.stringify({
+        to: config.recipient_email,
+        subject,
+        html: htmlContent,
+        sent_at: new Date().toISOString()
+      }));
+      return true;
+    }
 
-    // Store the email in KV for demo purposes
-    const emailId = crypto.randomUUID();
-    await env.KV.put(`email:${emailId}`, JSON.stringify({
-      to: config.recipient_email,
-      subject,
-      html: htmlContent,
-      sent_at: new Date().toISOString()
-    }));
+    // Construct the email message
+    const message = new CloudflareEmailMessage(
+      `digest@${env.EMAIL_ROUTING_DOMAIN}`, // From
+      config.recipient_email,               // To
+      `Subject: ${subject}\r\nContent-Type: text/html; charset=utf-8\r\n\r\n${htmlContent}` // Raw content
+    );
 
+    // Send the email
+    await env.EMAIL_SENDER.send(message);
+
+    console.log(`Email insights sent successfully to ${config.recipient_email}`);
     return true;
   } catch (error) {
     console.error('Failed to send email:', error);
@@ -351,13 +319,13 @@ export function formatInsightsEmail(insights: EmailInsights, periodHours: number
 </head>
 <body>
     <div class="header">
-        <h1>🎯 9to5-Scout Job Insights</h1>
+        <h1>9to5-Scout Job Insights</h1>
         <p>Your ${period} job market update</p>
     </div>
 
     ${insights.newJobs.length > 0 ? `
     <div class="section">
-        <h2>🆕 New Job Openings (${insights.newJobs.length})</h2>
+        <h2>New Job Openings (${insights.newJobs.length})</h2>
         ${insights.newJobs.map(job => `
         <div class="job-item">
             <strong><a href="${job.url}">${job.title}</a></strong><br>
@@ -370,7 +338,7 @@ export function formatInsightsEmail(insights: EmailInsights, periodHours: number
 
     ${insights.jobChanges.length > 0 ? `
     <div class="section">
-        <h2>🔄 Job Updates (${insights.jobChanges.length})</h2>
+        <h2>Job Updates (${insights.jobChanges.length})</h2>
         ${insights.jobChanges.map(change => `
         <div class="job-item">
             <strong><a href="${change.url}">${change.title}</a></strong><br>
@@ -382,7 +350,7 @@ export function formatInsightsEmail(insights: EmailInsights, periodHours: number
     ` : ''}
 
     <div class="section">
-        <h2>📊 Market Statistics</h2>
+        <h2>Market Statistics</h2>
         <p><strong>Total Active Jobs:</strong> ${insights.statistics.totalJobs}</p>
         <p><strong>New Jobs in Last ${periodHours}h:</strong> ${insights.statistics.newJobsLastPeriod}</p>
         
