@@ -650,6 +650,7 @@ export class ChangeAnalysisWorkflow {
 export class ScrapeSocket {
   private state: DurableObjectState;
   private sockets: Set<WebSocket> = new Set();
+  private clients: Map<WebSocket, { type: string; lastPing: number }> = new Map();
 
   constructor(state: DurableObjectState) {
     this.state = state;
@@ -663,14 +664,32 @@ export class ScrapeSocket {
       const client = pair[0];
       const server = pair[1];
       server.accept();
+      const clientType = url.searchParams.get('client') || 'unknown';
       this.sockets.add(server);
+      this.clients.set(server, { type: clientType, lastPing: Date.now() });
       server.addEventListener('close', () => {
         this.sockets.delete(server);
+        this.clients.delete(server);
       });
       server.addEventListener('message', (evt) => {
-        // simple heartbeat support
         if (evt.data === 'ping') {
           server.send('pong');
+          const info = this.clients.get(server);
+          if (info) {
+            info.lastPing = Date.now();
+          }
+          return;
+        }
+        // Broadcast any other messages to all connected clients
+        for (const ws of this.sockets) {
+          if (ws !== server) {
+            try {
+              ws.send(evt.data);
+            } catch {
+              this.sockets.delete(ws);
+              this.clients.delete(ws);
+            }
+          }
         }
       });
       return new Response(null, { status: 101, webSocket: client });
@@ -681,11 +700,26 @@ export class ScrapeSocket {
       for (const ws of this.sockets) {
         try {
           ws.send(message);
-        } catch (err) {
+        } catch {
           this.sockets.delete(ws);
+          this.clients.delete(ws);
         }
       }
       return new Response('sent', { status: 200 });
+    }
+
+    if (url.pathname === '/status' && req.method === 'GET') {
+      const now = Date.now();
+      const pythonConnected = Array.from(this.clients.entries()).some(([, info]) =>
+        info.type === 'python' && now - info.lastPing < 60_000,
+      );
+      return new Response(
+        JSON.stringify({
+          pythonConnected,
+          connections: this.clients.size,
+        }),
+        { headers: { 'Content-Type': 'application/json' } },
+      );
     }
 
     return new Response('Not Found', { status: 404 });
@@ -717,6 +751,12 @@ export default {
           },
         });
       }
+    }
+
+    // WebSocket troubleshooting page
+    if (url.pathname === '/ws-debug' || url.pathname === '/ws-debug.html') {
+      const response = await env.ASSETS.fetch(new Request(new URL('/ws-debug.html', url.origin)));
+      return response;
     }
 
     // Health check endpoint
@@ -752,6 +792,12 @@ export default {
           headers: { 'Content-Type': 'application/json' },
         });
       }
+    }
+
+    if (url.pathname === '/api/socket/status' && request.method === 'GET') {
+      const id = env.SCRAPE_SOCKET.idFromName('default');
+      const stub = env.SCRAPE_SOCKET.get(id);
+      return stub.fetch('https://dummy/status');
     }
 
     try {
