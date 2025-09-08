@@ -2,9 +2,6 @@
   "name": "@job-scraper/worker",
   "version": "0.0.0",
   "private": true,
-  "dependencies": {
-    "@cloudflare/puppeteer": "^0.1.0"
-  },
   "scripts": {
     "generate-types": "wrangler types",
     "typecheck": "pnpm generate-types && tsc -p tsconfig.json",
@@ -15,7 +12,7 @@
     "deploy": "pnpm build && pnpm migrate:remote && npx wrangler deploy"
   },
   "devDependencies": {
-    "@cloudflare/puppeteer": "^1.0.0",
+    "@cloudflare/puppeteer": "^1.0.4",
     "@types/node": "^20.11.0",
     "typescript": "^5.4.0",
     "wrangler": "^4.0.0"

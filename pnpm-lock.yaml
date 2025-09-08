@@ -9,7 +9,7 @@ importers:
   .:
     devDependencies:
       '@cloudflare/puppeteer':
-        specifier: ^1.0.0
+        specifier: ^1.0.4
         version: 1.0.4
       '@types/node':
         specifier: ^20.11.0
