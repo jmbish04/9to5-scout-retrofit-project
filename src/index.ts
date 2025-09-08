@@ -710,8 +710,9 @@ export class ScrapeSocket {
 
     if (url.pathname === '/status' && req.method === 'GET') {
       const now = Date.now();
+      const CLIENT_TIMEOUT_MS = 60_000;
       const pythonConnected = Array.from(this.clients.entries()).some(([, info]) =>
-        info.type === 'python' && now - info.lastPing < 60_000,
+        info.type === 'python' && now - info.lastPing < CLIENT_TIMEOUT_MS,
       );
       return new Response(
         JSON.stringify({
