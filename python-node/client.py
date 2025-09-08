@@ -1,5 +1,6 @@
 import json
 import os
+import threading
 import time
 import websocket
 
@@ -29,6 +30,16 @@ def on_close(ws: websocket.WebSocketApp, close_status_code, close_msg):
 
 def on_open(ws: websocket.WebSocketApp):
     print("Connected to worker")
+
+    def send_heartbeat():
+        while True:
+            try:
+                ws.send("ping")
+            except Exception:
+                break
+            time.sleep(30)
+
+    threading.Thread(target=send_heartbeat, daemon=True).start()
 
 
 def connect():

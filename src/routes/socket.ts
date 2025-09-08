@@ -1,7 +1,16 @@
 import type { Env } from '../index';
 
 export async function handleScrapeSocket(request: Request, env: Env): Promise<Response> {
-  const auth = request.headers.get('Authorization') || '';
+  const url = new URL(request.url);
+
+  // Support auth via header or `?token=` query param for browser-based debugging
+  let auth = request.headers.get('Authorization') || '';
+  if (!auth) {
+    const token = url.searchParams.get('token');
+    if (token) {
+      auth = `Bearer ${token}`;
+    }
+  }
   const expected = `Bearer ${env.API_AUTH_TOKEN}`;
 
   let diff = auth.length ^ expected.length;
@@ -12,6 +21,7 @@ export async function handleScrapeSocket(request: Request, env: Env): Promise<Re
   if (diff !== 0) {
     return new Response('Unauthorized', { status: 401 });
   }
+
   const id = env.SCRAPE_SOCKET.idFromName('default');
   const stub = env.SCRAPE_SOCKET.get(id);
   return stub.fetch(request);

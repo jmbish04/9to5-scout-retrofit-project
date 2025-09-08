@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>WebSocket Troubleshooter</title>
+  <style>
+    body { font-family: sans-serif; margin: 20px; }
+    #log { width: 100%; height: 200px; }
+  </style>
+</head>
+<body>
+  <h1>WebSocket Troubleshooter</h1>
+  <div>
+    <label>API Token: <input id="token" type="text" size="40" /></label>
+    <button id="connectBtn">Connect</button>
+  </div>
+  <p>Worker connection: <span id="ws-status">disconnected</span></p>
+  <p>Python client connected: <span id="py-status">unknown</span></p>
+  <textarea id="log" readonly></textarea>
+  <div>
+    <input id="command" type="text" placeholder="Command" />
+    <button id="sendBtn">Send</button>
+  </div>
+  <script>
+    let ws;
+    let pingInterval;
+    async function updatePythonStatus() {
+      const token = document.getElementById('token').value;
+      if (!token) return;
+      try {
+        const res = await fetch('/api/socket/status', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          document.getElementById('py-status').textContent = data.pythonConnected ? 'yes' : 'no';
+        } else {
+          document.getElementById('py-status').textContent = 'error';
+        }
+      } catch (err) {
+        document.getElementById('py-status').textContent = 'error';
+      }
+    }
+
+    document.getElementById('connectBtn').onclick = () => {
+      if (ws) {
+        ws.close();
+      }
+      const token = document.getElementById('token').value;
+      const proto = location.protocol === 'https:' ? 'wss' : 'ws';
+      ws = new WebSocket(`${proto}://${location.host}/ws?token=${encodeURIComponent(token)}&client=debug`);
+      ws.onopen = () => {
+        document.getElementById('ws-status').textContent = 'connected';
+        pingInterval = setInterval(() => ws.send('ping'), 30000);
+        updatePythonStatus();
+      };
+      ws.onclose = () => {
+        document.getElementById('ws-status').textContent = 'disconnected';
+        clearInterval(pingInterval);
+      };
+      ws.onmessage = (evt) => {
+        const log = document.getElementById('log');
+        log.value += `\n${evt.data}`;
+        log.scrollTop = log.scrollHeight;
+      };
+    };
+
+    document.getElementById('sendBtn').onclick = () => {
+      const input = document.getElementById('command');
+      if (ws && input.value) {
+        ws.send(input.value);
+        input.value = '';
+      }
+    };
+
+    setInterval(updatePythonStatus, 10000);
+  </script>
+</body>
+</html>
