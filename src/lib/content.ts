@@ -1,12 +1,12 @@
 import puppeteer from '@cloudflare/puppeteer';
 
+
 /**
  * Environment bindings required for content utilities.
  * These names align with the worker configuration.
  */
 export interface Env {
-  API_AUTH_TOKEN: string;
-  ACCOUNT_ID: string;
+  AI: Ai; // Use the built-in AI binding
   MYBROWSER: Fetcher;
   DEFAULT_MODEL_WEB_BROWSER?: string;
 }
@@ -97,32 +97,17 @@ export class ContentUtils {
   }
 
   /**
-   * Execute an LLM call using Cloudflare Workers AI.
+   * Execute an LLM call using the Cloudflare Workers AI binding.
    */
-  static async getLLMResult(env: Env, prompt: string, schema: any = COMMON_RESPONSE_SCHEMA) {
+  static async getLLMResult<T>(env: Env, prompt: string, schema: object = COMMON_RESPONSE_SCHEMA): Promise<T> {
     const model = env.DEFAULT_MODEL_WEB_BROWSER || DEFAULT_MODEL;
-    const response = await fetch(
-      `https://api.cloudflare.com/client/v4/accounts/${env.ACCOUNT_ID}/ai/run/${model}`,
-      {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${env.API_AUTH_TOKEN}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          messages: [{ role: 'user', content: prompt }],
-          response_format: { type: 'json_schema', json_schema: schema },
-          guided_json: schema
-        })
-      }
-    );
 
-    if (!response.ok) {
-      throw new Error(`LLM request failed: ${response.status}`);
-    }
+    const result = await env.AI.run(model as any, { // Cast to 'any' to accommodate dynamic model name
+        messages: [{ role: 'user', content: prompt }],
+        response_format: { type: 'json_schema', json_schema: schema }
+    });
 
-    const result = await response.json();
-    return result.result;
+    return result as T;
   }
 }
 
