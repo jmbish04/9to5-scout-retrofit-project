@@ -8,6 +8,7 @@ declare namespace Cloudflare {
 		DEFAULT_MODEL_WEB_BROWSER: "@cf/meta/llama-4-scout-17b-16e-instruct";
 		SITE_CRAWLER: DurableObjectNamespace<import("./src/index").SiteCrawler>;
 		JOB_MONITOR: DurableObjectNamespace<import("./src/index").JobMonitor>;
+		SCRAPE_SOCKET: DurableObjectNamespace<import("./src/index").ScrapeSocket>;
 		R2: R2Bucket;
 		DB: D1Database;
 		SERVICE: Service<typeof import("./src/index").default>;
