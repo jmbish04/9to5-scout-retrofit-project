@@ -670,7 +670,7 @@ export class ScrapeSocket {
       });
       server.addEventListener('message', (evt) => {
         if (evt.data === 'ping') {
-          server.send('pong');
+          server.send(JSON.stringify({ type: 'pong' }));
           const info = this.clients.get(server);
           if (info) {
             info.lastPing = Date.now();

@@ -13,17 +13,30 @@
   <div>
     <label>API Token: <input id="token" type="text" size="40" /></label>
     <button id="connectBtn">Connect</button>
+    <button id="statusBtn">Check Status</button>
   </div>
   <p>Worker connection: <span id="ws-status">disconnected</span></p>
   <p>Python client connected: <span id="py-status">unknown</span></p>
+  <p>Total connections: <span id="connection-count">0</span></p>
   <textarea id="log" readonly></textarea>
   <div>
     <input id="command" type="text" placeholder="Command" />
     <button id="sendBtn">Send</button>
   </div>
+  <div>
+    <input id="scrapeUrl" type="text" size="40" placeholder="https://example.com" />
+    <button id="scrapeBtn">Scrape URL</button>
+  </div>
   <script>
     let ws;
     let pingInterval;
+
+    function log(msg) {
+      const logEl = document.getElementById('log');
+      logEl.value += `\n${msg}`;
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+
     async function updatePythonStatus() {
       const token = document.getElementById('token').value;
       if (!token) return;
@@ -34,6 +47,7 @@
         if (res.ok) {
           const data = await res.json();
           document.getElementById('py-status').textContent = data.pythonConnected ? 'yes' : 'no';
+          document.getElementById('connection-count').textContent = data.connections;
         } else {
           document.getElementById('py-status').textContent = 'error';
         }
@@ -51,17 +65,20 @@
       ws = new WebSocket(`${proto}://${location.host}/ws?token=${encodeURIComponent(token)}&client=debug`);
       ws.onopen = () => {
         document.getElementById('ws-status').textContent = 'connected';
+        log('WebSocket connected');
         pingInterval = setInterval(() => ws.send('ping'), 30000);
         updatePythonStatus();
       };
       ws.onclose = () => {
         document.getElementById('ws-status').textContent = 'disconnected';
+        log('WebSocket disconnected');
         clearInterval(pingInterval);
       };
+      ws.onerror = (evt) => {
+        log('WebSocket error');
+      };
       ws.onmessage = (evt) => {
-        const log = document.getElementById('log');
-        log.value += `\n${evt.data}`;
-        log.scrollTop = log.scrollHeight;
+        log(evt.data);
       };
     };
 
@@ -69,9 +86,21 @@
       const input = document.getElementById('command');
       if (ws && input.value) {
         ws.send(input.value);
+        log(`sent: ${input.value}`);
         input.value = '';
       }
     };
+
+    document.getElementById('scrapeBtn').onclick = () => {
+      const url = document.getElementById('scrapeUrl').value;
+      if (ws && url) {
+        const msg = JSON.stringify({ action: 'scrape', url });
+        ws.send(msg);
+        log(`sent scrape for ${url}`);
+      }
+    };
+
+    document.getElementById('statusBtn').onclick = updatePythonStatus;
 
     setInterval(updatePythonStatus, 10000);
   </script>
