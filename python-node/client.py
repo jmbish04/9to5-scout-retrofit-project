@@ -4,15 +4,21 @@ import threading
 import time
 import websocket
 
-WS_URL = os.environ.get("WS_URL", "wss://example.com/ws")
+# Include a default client identifier so the worker can track Python connections
+WS_URL = os.environ.get("WS_URL", "wss://example.com/ws?client=python")
 API_TOKEN = os.environ.get("API_TOKEN")
 
 
 def on_message(ws: websocket.WebSocketApp, message: str):
+    """Handle incoming WebSocket messages."""
+    if message == "pong":
+        return
     try:
         data = json.loads(message)
     except json.JSONDecodeError:
         print("Received non-JSON message:", message)
+        return
+    if data.get("type") == "pong":
         return
     print("Received:", data)
     if data.get("action") == "scrape" and data.get("url"):
