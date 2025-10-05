@@ -95,9 +95,9 @@ Software Engineer - StartupXYZ (2018-2020)
       headers,
       body: JSON.stringify({
         name: 'Senior Engineering Jobs',
-        keywords: JSON.stringify(['senior software engineer', 'tech lead', 'python', 'react', 'microservices']),
-        locations: 'San Francisco, New York, Remote, Seattle',
-        include_domains: 'google.com,meta.com,microsoft.com,amazon.com,netflix.com',
+        keywords: ['senior software engineer', 'tech lead', 'python', 'react', 'microservices'],
+        locations: ['San Francisco', 'New York', 'Remote', 'Seattle'],
+        include_domains: ['google.com', 'meta.com', 'microsoft.com', 'amazon.com', 'netflix.com'],
         min_comp_total: 150000,
       }),
     });
