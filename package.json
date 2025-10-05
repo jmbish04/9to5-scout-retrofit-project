@@ -9,7 +9,7 @@
     "dev": "pnpm migrate:local && wrangler dev",
     "migrate:local": "pnpm wrangler d1 migrations apply DB --local",
     "migrate:remote": "pnpm wrangler d1 migrations apply DB --remote",
-    "deploy": "pnpm build && pnpm migrate:remote && wrangler versions upload"
+    "deploy": "pnpm build && pnpm migrate:remote && pnpm wrangler versions upload"
   },
   "devDependencies": {
     "@cloudflare/puppeteer": "^1.0.4",
