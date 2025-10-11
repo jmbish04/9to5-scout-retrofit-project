@@ -184,6 +184,35 @@ export async function handleScrapeQueuePendingGet(request: Request, env: any): P
   }
 }
 
+export async function handleScrapeQueueUnrecordedGet(request: Request, env: any): Promise<Response> {
+  try {
+    const url = new URL(request.url);
+    const limitParam = parseInt(url.searchParams.get('limit') || '25', 10);
+    const limit = Number.isFinite(limitParam) ? Math.min(Math.max(limitParam, 1), 200) : 25;
+
+    const result = await env.DB.prepare(
+      `SELECT *
+       FROM scrape_queue
+       WHERE id NOT IN (
+         SELECT queue_id
+         FROM scraped_job_details
+         WHERE queue_id IS NOT NULL
+       )
+       ORDER BY priority DESC, id ASC
+       LIMIT ?`
+    )
+      .bind(limit)
+      .all();
+
+    const jobs = (result.results || []).map(transformQueueRow);
+
+    return jsonResponse({ jobs, total: jobs.length });
+  } catch (error) {
+    console.error('Error retrieving unrecorded scrape jobs:', error);
+    return errorResponse('Failed to retrieve unrecorded scrape jobs.', 500);
+  }
+}
+
 export async function handleScrapedJobDetailsPost(request: Request, env: any): Promise<Response> {
   try {
     const body = await request.json().catch(() => null);
@@ -286,6 +315,48 @@ export async function handleScrapedJobDetailsPost(request: Request, env: any): P
   } catch (error) {
     console.error('Error recording scraped job details:', error);
     return errorResponse('Failed to record scraped job details.', 500);
+  }
+}
+
+export async function handleScraperMonitoredJobsGet(request: Request, env: any): Promise<Response> {
+  try {
+    const url = new URL(request.url);
+    const limitParam = parseInt(url.searchParams.get('limit') || '100', 10);
+    const limit = Number.isFinite(limitParam) ? Math.min(Math.max(limitParam, 1), 500) : 100;
+
+    const result = await env.DB.prepare(
+      `SELECT
+         id,
+         url,
+         title,
+         company,
+         location,
+         monitoring_frequency_hours,
+         last_status_check_at,
+         daily_monitoring_enabled
+       FROM jobs
+       WHERE daily_monitoring_enabled = 1
+         AND status = 'open'
+       ORDER BY
+         COALESCE(last_status_check_at, '1970-01-01T00:00:00Z') ASC,
+         id ASC
+       LIMIT ?`
+    )
+      .bind(limit)
+      .all();
+
+    const jobs = (result.results || []).map((row: any) => ({
+      ...row,
+      daily_monitoring_enabled: Boolean(row.daily_monitoring_enabled)
+    }));
+
+    return jsonResponse({
+      jobs,
+      total: jobs.length
+    });
+  } catch (error) {
+    console.error('Error retrieving monitored jobs:', error);
+    return errorResponse('Failed to retrieve monitored jobs.', 500);
   }
 }
 
