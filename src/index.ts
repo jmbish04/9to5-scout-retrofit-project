@@ -17,6 +17,7 @@ import { handleJobTrackingGet, handleSnapshotContentGet, handleDailyMonitoringPo
 import { crawlJob } from './lib/crawl';
 import { runDailyJobMonitoring } from './lib/monitoring';
 import { handleScrapeSocket, handleScrapeDispatch } from './routes/socket';
+import { handleScrapeQueuePost, handleScrapeQueuePendingGet, handleScrapedJobDetailsPost, handleScraperOptions } from './routes/scraper';
 
 /**
  * Cloudflare Worker handling AI-driven cover letter, resume generation, and job scraping.
@@ -777,11 +778,24 @@ export default {
       return handleScrapeSocket(request, env);
     }
 
-    // Authentication check for API routes (except health and email webhook)
-    if (url.pathname.startsWith('/api/') && url.pathname !== '/api/health') {
+    const isScraperEndpoint = url.pathname.startsWith('/api/scraper/');
+    if (request.method === 'OPTIONS' && isScraperEndpoint) {
+      return handleScraperOptions();
+    }
+
+    const unauthenticatedApiRoutes = [
+      { method: 'POST', path: '/api/scraper/job-details' },
+      { method: 'GET', path: '/api/scraper/queue/pending' }
+    ];
+
+    const requiresAuth = url.pathname.startsWith('/api/') &&
+      url.pathname !== '/api/health' &&
+      !unauthenticatedApiRoutes.some((route) => route.method === request.method && route.path === url.pathname);
+
+    if (requiresAuth) {
       const authHeader = request.headers.get('Authorization');
       const expectedToken = `Bearer ${env.API_AUTH_TOKEN}`;
-      
+
       if (!authHeader || authHeader !== expectedToken) {
         return new Response(JSON.stringify({ error: 'Unauthorized' }), {
           status: 401,
@@ -799,6 +813,18 @@ export default {
     try {
       if (url.pathname === '/api/scrape/dispatch' && request.method === 'POST') {
         return handleScrapeDispatch(request, env);
+      }
+
+      if (url.pathname === '/api/scraper/queue' && request.method === 'POST') {
+        return handleScrapeQueuePost(request, env);
+      }
+
+      if (url.pathname === '/api/scraper/queue/pending' && request.method === 'GET') {
+        return handleScrapeQueuePendingGet(request, env);
+      }
+
+      if (url.pathname === '/api/scraper/job-details' && request.method === 'POST') {
+        return handleScrapedJobDetailsPost(request, env);
       }
 
       // Job scraping API routes
