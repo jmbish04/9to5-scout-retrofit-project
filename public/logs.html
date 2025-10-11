@@ -224,7 +224,7 @@
         return '<span class="text-gray-400">—</span>';
       }
       if (typeof value === 'string') {
-        return `<pre class="whitespace-pre-wrap text-xs text-gray-700">${value.replace(/[&<>]/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}</pre>`;
+        return `<pre class="whitespace-pre-wrap text-xs text-gray-700">${value.replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}</pre>`;
       }
       try {
         return `<pre class="whitespace-pre-wrap text-xs text-gray-700">${JSON.stringify(value, null, 2)}</pre>`;
