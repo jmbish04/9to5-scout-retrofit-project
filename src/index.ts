@@ -17,7 +17,14 @@ import { handleJobTrackingGet, handleSnapshotContentGet, handleDailyMonitoringPo
 import { crawlJob } from './lib/crawl';
 import { runDailyJobMonitoring } from './lib/monitoring';
 import { handleScrapeSocket, handleScrapeDispatch } from './routes/socket';
-import { handleScrapeQueuePost, handleScrapeQueuePendingGet, handleScrapedJobDetailsPost, handleScraperOptions } from './routes/scraper';
+import {
+  handleScrapeQueuePost,
+  handleScrapeQueuePendingGet,
+  handleScrapeQueueUnrecordedGet,
+  handleScrapedJobDetailsPost,
+  handleScraperMonitoredJobsGet,
+  handleScraperOptions
+} from './routes/scraper';
 
 /**
  * Cloudflare Worker handling AI-driven cover letter, resume generation, and job scraping.
@@ -783,10 +790,12 @@ export default {
       return handleScraperOptions();
     }
 
-    const unauthenticatedApiRoutes = [
-      { method: 'POST', path: '/api/scraper/job-details' },
-      { method: 'GET', path: '/api/scraper/queue/pending' }
-    ];
+    const unauthenticatedApiRoutes = [
+      { method: 'POST', path: '/api/scraper/job-details' },
+      { method: 'GET', path: '/api/scraper/queue/pending' },
+      { method: 'GET', path: '/api/scraper/queue/unrecorded' },
+      { method: 'GET', path: '/api/scraper/monitored-jobs' }
+    ];
 
     const requiresAuth = url.pathname.startsWith('/api/') &&
       url.pathname !== '/api/health' &&
@@ -819,13 +828,21 @@ export default {
         return handleScrapeQueuePost(request, env);
       }
 
-      if (url.pathname === '/api/scraper/queue/pending' && request.method === 'GET') {
-        return handleScrapeQueuePendingGet(request, env);
-      }
+      if (url.pathname === '/api/scraper/queue/pending' && request.method === 'GET') {
+        return handleScrapeQueuePendingGet(request, env);
+      }
 
-      if (url.pathname === '/api/scraper/job-details' && request.method === 'POST') {
-        return handleScrapedJobDetailsPost(request, env);
-      }
+      if (url.pathname === '/api/scraper/queue/unrecorded' && request.method === 'GET') {
+        return handleScrapeQueueUnrecordedGet(request, env);
+      }
+
+      if (url.pathname === '/api/scraper/job-details' && request.method === 'POST') {
+        return handleScrapedJobDetailsPost(request, env);
+      }
+
+      if (url.pathname === '/api/scraper/monitored-jobs' && request.method === 'GET') {
+        return handleScraperMonitoredJobsGet(request, env);
+      }
 
       // Job scraping API routes
       if (url.pathname === '/api/jobs' && request.method === 'GET') {
