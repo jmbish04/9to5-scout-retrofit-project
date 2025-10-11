@@ -241,6 +241,7 @@
         "properties": {
           "id": { "type": "integer" },
           "queue_id": { "type": "integer", "nullable": true },
+          "monitored_job_id": { "type": "string", "nullable": true, "description": "Linked job ID when sourced from monitored jobs" },
           "job_url": { "type": "string", "format": "uri" },
           "source": { "type": "string", "nullable": true },
           "company": { "type": "string", "nullable": true },
@@ -260,6 +261,7 @@
         "required": ["job_url"],
         "properties": {
           "queue_id": { "type": "integer" },
+          "monitored_job_id": { "type": "string", "description": "ID of the monitored job that initiated this scrape" },
           "job_url": { "type": "string", "format": "uri" },
           "source": { "type": "string" },
           "company": { "type": "string" },
@@ -272,6 +274,35 @@
           "metadata": { "type": "object" },
           "status": { "type": "string" },
           "error_message": { "type": "string" }
+        }
+      },
+      "SystemLogEntry": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "timestamp": { "type": "string", "format": "date-time" },
+          "source": { "type": "string" },
+          "log_level": { "type": "string" },
+          "message": { "type": "string", "nullable": true },
+          "json_payload": { "type": ["object", "string", "null"] },
+          "context": { "type": ["object", "string", "null"] },
+          "request_id": { "type": "string", "nullable": true },
+          "expires_at": { "type": "string", "format": "date-time" },
+          "created_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "SystemLogRequest": {
+        "type": "object",
+        "required": ["source"],
+        "properties": {
+          "source": { "type": "string", "description": "Origin of the log entry (e.g. worker or python)" },
+          "log_level": { "type": "string", "default": "INFO" },
+          "message": { "type": "string" },
+          "json_payload": { "type": ["object", "string"], "nullable": true },
+          "context": { "type": ["object", "string"], "nullable": true },
+          "request_id": { "type": "string" },
+          "timestamp": { "type": "string", "format": "date-time" },
+          "expires_at": { "type": "string", "format": "date-time" }
         }
       },
       "MonitoredJob": {
@@ -894,6 +925,154 @@
                       "items": { "$ref": "#/components/schemas/MonitoredJob" }
                     },
                     "total": { "type": "integer" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/logs": {
+      "get": {
+        "summary": "Search system logs",
+        "operationId": "getSystemLogs",
+        "security": [],
+        "parameters": [
+          { "name": "search", "in": "query", "required": false, "schema": { "type": "string" }, "description": "Full-text search string applied to message and payload." },
+          { "name": "source", "in": "query", "required": false, "schema": { "type": "string" }, "description": "Comma-separated list of sources to include." },
+          { "name": "log_level", "in": "query", "required": false, "schema": { "type": "string" }, "description": "Comma-separated log levels to include (e.g. INFO,ERROR)." },
+          { "name": "request_id", "in": "query", "required": false, "schema": { "type": "string" }, "description": "Filter logs by request or trace identifier." },
+          { "name": "has_payload", "in": "query", "required": false, "schema": { "type": "boolean" }, "description": "If true, only logs with payloads are returned. If false, only logs without payloads are returned." },
+          { "name": "start", "in": "query", "required": false, "schema": { "type": "string", "format": "date-time" }, "description": "Filter logs captured after this timestamp." },
+          { "name": "end", "in": "query", "required": false, "schema": { "type": "string", "format": "date-time" }, "description": "Filter logs captured before this timestamp." },
+          { "name": "order_by", "in": "query", "required": false, "schema": { "type": "string", "enum": ["timestamp", "log_level", "source", "created_at"], "default": "timestamp" }, "description": "Column used for ordering the results." },
+          { "name": "order_direction", "in": "query", "required": false, "schema": { "type": "string", "enum": ["asc", "desc"], "default": "desc" }, "description": "Sort direction for the ordered column." },
+          { "name": "limit", "in": "query", "required": false, "schema": { "type": "integer", "default": 100, "minimum": 1, "maximum": 500 }, "description": "Maximum number of log entries to return." },
+          { "name": "offset", "in": "query", "required": false, "schema": { "type": "integer", "default": 0, "minimum": 0 }, "description": "Offset used for pagination." }
+        ],
+        "responses": {
+          "200": {
+            "description": "Filtered system logs",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "logs": { "type": "array", "items": { "$ref": "#/components/schemas/SystemLogEntry" } },
+                    "total": { "type": "integer" },
+                    "limit": { "type": "integer" },
+                    "offset": { "type": "integer" },
+                    "order_by": { "type": "string" },
+                    "order_direction": { "type": "string" },
+                    "filters": {
+                      "type": "object",
+                      "properties": {
+                        "sources": { "type": "array", "items": { "type": "string" } },
+                        "levels": { "type": "array", "items": { "type": "string" } },
+                        "request_ids": { "type": "array", "items": { "type": "string" } },
+                        "has_payload": { "type": ["boolean", "null"] },
+                        "start": { "type": ["string", "null"], "format": "date-time" },
+                        "end": { "type": ["string", "null"], "format": "date-time" },
+                        "search": { "type": ["string", "null"] }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Record system log entries",
+        "operationId": "createSystemLogs",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  { "$ref": "#/components/schemas/SystemLogRequest" },
+                  { "type": "array", "items": { "$ref": "#/components/schemas/SystemLogRequest" } }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Logs stored successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "logs": { "type": "array", "items": { "$ref": "#/components/schemas/SystemLogEntry" } },
+                    "inserted": { "type": "integer" }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid log payload",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/logs/meta": {
+      "get": {
+        "summary": "Retrieve system log metadata",
+        "operationId": "getSystemLogMetadata",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Metadata for log filtering",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "sources": { "type": "array", "items": { "type": "string" } },
+                    "levels": { "type": "array", "items": { "type": "string" } },
+                    "range": {
+                      "type": "object",
+                      "properties": {
+                        "oldest": { "type": ["string", "null"], "format": "date-time" },
+                        "newest": { "type": ["string", "null"], "format": "date-time" }
+                      }
+                    }
                   }
                 }
               }
