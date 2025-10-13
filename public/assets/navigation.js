@@ -22,9 +22,9 @@ const NAV_ITEMS = [
   { label: 'Operations Dashboard', href: '/operations-dashboard.html' },
   { label: 'Logs Explorer', href: '/logs.html' },
   { label: 'WebSocket Debugger', href: '/ws-debug.html' },
-  { label: 'Cover Letter Template', href: '/templates/cover_letter_template.html' },
-  { label: 'Resume Template', href: '/templates/resume_template.html' },
-  { label: 'Email Template', href: '/templates/email_template.html' },
+  // { label: 'Cover Letter Template', href: '/templates/cover_letter_template.html' },
+  // { label: 'Resume Template', href: '/templates/resume_template.html' },
+  // { label: 'Email Template', href: '/templates/email_template.html' },
   {
     label: '📋 OpenAPI',
     href: '/openapi.json',
@@ -129,12 +129,16 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!navLists.length) return;
 
   const currentPath = normalisePath(window.location.pathname.replace(/index\.html$/, '/') || '/');
+  console.log(`[NAV] Current Path: ${currentPath}`);
 
   navLists.forEach((navList) => {
     navList.replaceChildren();
+    console.log('[NAV] Processing navigation items...');
     NAV_ITEMS.forEach((item) => {
+      console.log(`[NAV]  - ${item.label}: ${item.href}`);
       const linkNode = buildNavLink(item, currentPath);
       navList.appendChild(linkNode);
     });
+    console.log('[NAV] Navigation processing complete.');
   });
 });
