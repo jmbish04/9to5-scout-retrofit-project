@@ -5,6 +5,7 @@ compatibility_flags = ["nodejs_compat"]
 
 [vars]
 DEFAULT_MODEL_WEB_BROWSER = "@cf/meta/llama-4-scout-17b-16e-instruct"
+GITHUB_REPO = "https://github.com/jmbish04/9to5-scout"
 
 [observability.logs]
 enabled = true
