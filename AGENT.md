@@ -1,275 +1,110 @@
-# Job Scraper Backend Service - Codex Prompt
+# 9to5-Scout: Multi-Agent Platform & Service API - AGENT.md
 
 ## Overview
-Build a comprehensive job scraping backend service using Cloudflare Workers ecosystem. This service will scrape job postings from various websites, store them in a database, provide AI-powered analysis, and offer REST APIs for job discovery and monitoring.
+The 9to5-Scout platform is a comprehensive AI-powered job discovery and career intelligence system built on Cloudflare's serverless primitives. This worker acts as the central API gateway and orchestration layer, exposing functionality for both **human users** (via the web app and CLI) and **AI Agents** (via CrewAI, LangGraph, or custom agent systems like the user's `colby` CLI).
 
-## Architecture
-- **Cloudflare Workers**: Serverless functions for API endpoints and orchestration
-- **Durable Objects**: Stateful coordination for site crawling and job monitoring
-- **Workflows**: Long-running processes for discovery and monitoring
-- **D1 Database**: SQLite-based storage for jobs, sites, and metadata
-- **Vectorize**: Vector search for job similarity and recommendations
-- **Workers AI**: AI-powered job analysis and change detection
-- **Browser Rendering**: Headless browser for JavaScript-heavy sites
+### Core Architecture
+| Component | Technology | Purpose |
+| :--- | :--- | :--- |
+| **Serverless Compute** | Cloudflare Worker | Request routing, scheduling, and core application logic. |
+| **Stateful Coordination** | Durable Objects (`SiteCrawler`, `JobMonitor`, `ScrapeSocket`) | Highly consistent, globally unique instances for long-running tasks like site-specific crawling, individual job monitoring, and persistent WebSocket connections. |
+| **Orchestration** | Cloudflare Workflows (`DiscoveryWorkflow`, `JobMonitorWorkflow`, `ChangeAnalysisWorkflow`) | Durable, multi-step, asynchronous execution for complex business logic (e.g., automated discovery runs, change analysis). |
+| **Data Storage** | D1 Database (SQLite), KV, R2 | Primary relational storage, caching/metadata, and object storage for content artifacts (HTML/PDF/Markdown). |
+| **Intelligent Processing** | Workers AI, Vectorize | AI-powered parsing, document generation, semantic search, and change assessment. |
+| **External Interaction** | Browser Rendering, Email Routing | Headless browser automation for web scraping and native handling of inbound job alert emails. |
 
-## Core Components
+---
 
-### 1. Site Management
-- CRUD operations for job sites (base URLs, discovery strategies)
-- Robots.txt parsing and rate limiting
-- Site-specific crawling configurations
+## Implemented API Endpoints (For Agentic Consumption)
 
-### 2. Job Discovery System
-- Multiple discovery strategies: sitemap, search, custom
-- Batch processing with rate limiting
-- Duplicate detection and deduplication
-- AI-powered job data extraction
+All endpoints, except `/api/health` and scraper/log submission routes, require a **Bearer Token** (`Authorization: Bearer <token>`).
 
-### 3. Job Monitoring
-- Individual job lifecycle tracking
-- Change detection using content hashing
-- Smart monitoring intervals
-- Automatic cleanup when jobs close
+### 1. Job Discovery, Monitoring & Tracking
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/jobs` | List jobs with filtering (`status`, `source`, `limit`). |
+| `GET` | `/api/jobs/{id}` | Get full job details by ID. |
+| `GET` | `/api/jobs/{id}/tracking` | Get full job lifecycle history (snapshots, status changes). |
+| `GET` | `/api/jobs/{id}/snapshots/{snapshotId}/content` | Retrieve preserved job content (HTML, PDF, Markdown, JSON, Screenshot) from R2 storage. |
+| `PUT` | `/api/jobs/{id}/monitoring` | Update monitoring frequency and status for a job. |
+| `GET` | `/api/jobs/monitoring-queue` | List open jobs currently due for a monitoring check. |
+| `GET` | `/api/monitoring/status` | Get overall monitoring health metrics and recent market stats. |
+| `POST` | `/api/monitoring/daily-run` | Manually trigger the core daily job monitoring process. |
+| `POST` | `/api/runs/discovery` | Trigger the discovery workflow (launches `DiscoveryWorkflow`). |
+| `POST` | `/api/runs/monitor` | Trigger the monitoring workflow (launches `JobMonitorWorkflow`). |
 
-### 4. Change Analysis
-- Structural diffing of job postings
-- AI-powered significance assessment
-- Semantic change summaries
-- Notification triggers
+### 2. Multi-Agent System (Agents, Tasks, Workflows)
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/agents` | List all available AI agent definitions (role, goal, LLM). |
+| `POST` | `/api/agents` | Create a new specialized AI agent configuration. |
+| `GET` | `/api/tasks` | List all defined tasks and their required agent/context dependencies. |
+| `POST` | `/api/tasks` | Create a new task configuration. |
+| `GET` | `/api/workflows` | List all defined multi-agent workflows (task sequences). |
+| `POST` | `/api/workflows/{id}/execute` | **Execute** a registered workflow (e.g., `resume_optimization_workflow`) with input context. |
+| `GET` | `/api/agent/query?q={query}` | Perform a semantic job search based on vector matching against job content embeddings. |
 
-### 5. Search and Analytics
-- Vector-based job search
-- Job similarity matching
-- Analytics on job market trends
-- Export capabilities
+### 3. Career Intelligence & Document Generation
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `POST` | `/api/applicant/history` | Submit raw career history (text/markdown/json) for AI parsing and profile creation. |
+| `GET` | `/api/applicant/{user_id}/history` | Get the applicant's full structured profile and history. |
+| `POST` | `/api/applicant/job-rating` | Generate an AI-powered job fit rating (1-100 score) between a user and a specific job ID. |
+| `POST` | `/api/cover-letter` | Generate personalized cover letter content tailored to a job description. |
+| `POST` | `/api/resume` | Generate ATS-optimized resume summary/bullets tailored to a job description. |
 
-## API Endpoints
+### 4. External Scraper & Logging Integration (Unauthenticated)
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/scraper/queue/pending` | Claim pending scrape jobs from the distributed queue. |
+| `POST` | `/api/scraper/job-details` | Submit results from external scrapers (records details/updates queue status). |
+| `GET` | `/api/scraper/monitored-jobs` | List open jobs that external scrapers should check for monitoring. |
+| `POST` | `/api/logs` | Submit system and client logs to the database for centralized monitoring. |
 
-### Sites Management
-```
-GET    /api/sites           # List all sites
-POST   /api/sites           # Create new site
-GET    /api/sites/:id       # Get site details
-PUT    /api/sites/:id       # Update site
-DELETE /api/sites/:id       # Delete site
-```
+---
 
-### Jobs Management
-```
-GET    /api/jobs            # List jobs with filtering
-GET    /api/jobs/:id        # Get job details
-PUT    /api/jobs/:id        # Update job
-DELETE /api/jobs/:id        # Delete job
-POST   /api/jobs/:id/monitor # Start monitoring
-DELETE /api/jobs/:id/monitor # Stop monitoring
-```
+## Multi-Agent System (D1 Configurations)
 
-### Discovery & Monitoring
-```
-POST   /api/discovery/:siteId    # Trigger discovery
-GET    /api/discovery/:siteId/status # Discovery status
-POST   /api/monitor/:jobId      # Start monitoring
-GET    /api/monitor/:jobId/status # Monitoring status
-```
+The system uses configuration stored in the D1 database to define agent behavior and task flow.
 
-### Search & Analytics
-```
-GET    /api/search?q=query      # Search jobs
-GET    /api/analytics/trends    # Job market trends
-GET    /api/analytics/sites     # Site performance
-```
+### Defined Agents (via `agent_configs` table)
+| Agent ID | Role | LLM | Purpose |
+| :--- | :--- | :--- | :--- |
+| `resume_analyzer` | Resume & ATS Optimization Expert | `openai/gpt-4o-mini` | Analyzes resumes for ATS compatibility and identifies gaps. |
+| `job_analyzer` | Deep Job Description Analyst | `openai/gpt-4o-mini` | Extracts all explicit and implicit job requirements. |
+| `company_researcher` | Corporate Intelligence Specialist | `openai/gpt-4o-mini` | Gathers contextual company intelligence for tailoring. |
+| `resume_writer` | Strategic Resume & Cover Letter Crafter | `openai/gpt-4o-mini` | Generates final, tailored resume and cover letter content. |
+| `interview_strategist` | Personalized Interview Coach | `openai/gpt-4o-mini` | Develops full interview strategies and talking points. |
+| `report_generator` | Job Application Dossier Architect | `openai/gpt-4o-mini` | Synthesizes all analysis into a final, cohesive report. |
+| `career_historian` | Career Historian | `openai/gpt-4o-mini` | Synthesizes raw career data into structured achievements. |
 
-### Orchestration
-```
-POST   /api/orchestration/trigger-all # Manual full cycle
-GET    /api/health               # Health check
-```
+### Defined Tasks (via `task_configs` table)
+| Task ID | Agent | Context Dependencies | Purpose |
+| :--- | :--- | :--- | :--- |
+| `analyze_job_task` | `job_analyzer` | None | Analyze URL to extract job requirements and role details. |
+| `extract_achievements_task` | `career_historian`| None | Synthesize career history into relevant achievements. |
+| `optimize_resume_task` | `resume_analyzer` | `analyze_job_task`, `extract_achievements_task` | Identify optimization points for the resume based on job needs. |
+| `research_company_task` | `company_researcher` | None | Gather company intelligence. |
+| `generate_resume_task` | `resume_writer` | `optimize_resume_task`, `research_company_task` | Create the final tailored resume draft. |
+| `generate_report_task` | `report_generator` | All prior tasks | Compile a final comprehensive job application report. |
 
-## Database Schema
+---
 
-### Sites Table
-```sql
-CREATE TABLE sites (
-  id TEXT PRIMARY KEY,
-  name TEXT NOT NULL,
-  base_url TEXT NOT NULL,
-  robots_txt TEXT,
-  sitemap_url TEXT,
-  discovery_strategy TEXT CHECK(discovery_strategy IN ('sitemap', 'list', 'search', 'custom')),
-  last_discovered_at DATETIME,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-);
-```
+## 2. Project Task Status Evaluation
 
-### Jobs Table
-```sql
-CREATE TABLE jobs (
-  id TEXT PRIMARY KEY,
-  site_id TEXT NOT NULL,
-  url TEXT NOT NULL,
-  title TEXT,
-  company TEXT,
-  location TEXT,
-  salary_min REAL,
-  salary_max REAL,
-  description TEXT,
-  status TEXT CHECK(status IN ('open', 'closed', 'expired')),
-  tags TEXT, -- JSON array
-  posted_at DATETIME,
-  first_seen_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  last_crawled_at DATETIME,
-  last_changed_at DATETIME,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (site_id) REFERENCES sites(id)
-);
-```
+The development project, **Job Scraper Backend Service**, is highly complete, focusing on implementing core infrastructure features using Cloudflare's platform capabilities.
 
-### Job Changes Table
-```sql
-CREATE TABLE job_changes (
-  id TEXT PRIMARY KEY,
-  job_id TEXT NOT NULL,
-  change_type TEXT,
-  old_value TEXT,
-  new_value TEXT,
-  significance_score REAL,
-  ai_summary TEXT,
-  detected_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (job_id) REFERENCES jobs(id)
-);
-```
-
-## Durable Objects
-
-### SiteCrawler
-- Manages crawl queues per site
-- Enforces rate limits and politeness
-- Coordinates discovery workflows
-- Handles WebSocket connections for real-time updates
-
-### JobMonitor
-- Tracks individual job state
-- Manages monitoring schedules
-- Detects and processes changes
-- Handles job lifecycle events
-
-## Workflows
-
-### DiscoveryWorkflow
-1. Fetch site content (sitemap/search/custom)
-2. Extract job URLs
-3. Batch process URLs with rate limiting
-4. Extract job data using AI
-5. Store in database and vectorize
-6. Trigger monitoring for new jobs
-
-### JobMonitorWorkflow
-1. Crawl job page
-2. Compare with previous version
-3. Detect changes
-4. Trigger change analysis if significant
-5. Send notifications
-6. Sleep until next check
-7. Repeat until job closes
-
-### ChangeAnalysisWorkflow
-1. Perform structural diff
-2. Use AI for semantic analysis
-3. Assess change significance
-4. Generate summary
-5. Store analysis results
-6. Trigger notifications
-
-## Configuration
-
-### Environment Variables
-- `API_AUTH_TOKEN`: Bearer token for API access
-- `BROWSER_RENDERING_TOKEN`: For browser rendering API
-- `SLACK_WEBHOOK_URL`: For notifications
-- Database and storage bindings
-
-### Cron Triggers
-- Every 2 hours for automated discovery and monitoring
-- Configurable intervals per site/job
-
-## Key Features
-
-### Rate Limiting & Politeness
-- Per-domain rate limits
-- Robots.txt compliance
-- Exponential backoff for retries
-- Minimum delays between requests
-
-### AI Integration
-- Job data extraction from HTML
-- Change significance assessment
-- Semantic summaries
-- Vector embeddings for search
-
-### Observability
-- Comprehensive logging
-- Workflow execution tracking
-- Performance metrics
-- Error monitoring
-
-### Scalability
-- Horizontal scaling via Durable Objects
-- Batch processing for efficiency
-- Smart scheduling to avoid overload
-- Automatic cleanup and optimization
-
-## Deployment
-
-### Wrangler Configuration
-- Bindings for D1, KV, R2, Vectorize, AI
-- Durable Object classes
-- Workflow definitions
-- Cron triggers
-- Environment-specific configs
-
-### Build Process
-- TypeScript compilation
-- Bundle optimization
-- Migration handling
-- Preview/production deployments
-
-## Testing Strategy
-
-### Unit Tests
-- Individual functions and classes
-- Mock external dependencies
-- Edge case handling
-
-### Integration Tests
-- API endpoint testing
-- Workflow execution
-- Database operations
-
-### E2E Tests
-- Full discovery cycle
-- Monitoring workflows
-- Change detection
-
-## Monitoring & Maintenance
-
-### Health Checks
-- Database connectivity
-- External service availability
-- Workflow queue status
-
-### Metrics
-- Jobs discovered per day
-- Success/failure rates
-- Processing times
-- Storage usage
-
-### Alerts
-- Failed discoveries
-- High error rates
-- Storage limits
-- Performance degradation
-
-This backend service provides a robust, scalable solution for job scraping with AI-powered analysis and real-time monitoring capabilities.</content>
-<parameter name="filePath">/Volumes/Projects/workers/9to5_scraper/codex_prompt.md
+| Milestone/Task ID | Title | Status in `project_tasks.json` | Implementation Status (Codebase Check) | Completion Notes |
+| :--- | :--- | :--- | :--- | :--- |
+| **`setup`** | **Project Setup and Configuration** | **In-Progress** | **Complete** | Monorepo structure, `wrangler.toml` bindings, `tsconfig.json`, and type generation are fully configured and functional for core services. |
+| **`database`** | **Database Schema and Migrations** | **Pending** | **Complete** | All core schema changes (migrations 001-008) are implemented, covering jobs, monitoring, agents, workflows, job history, and logs/queues. |
+| **`durable-objects`** | **Durable Objects Implementation** | **Pending** | **Complete** | `SiteCrawler`, `JobMonitor`, and `ScrapeSocket` are fully implemented in `src/index.ts` and configured in `wrangler.toml`. |
+| **`workflows`** | **Workflow Implementation** | **Pending** | **Mostly Complete** | All three workflows (`DiscoveryWorkflow`, `JobMonitorWorkflow`, `ChangeAnalysisWorkflow`) are implemented in `src/index.ts` and successfully bound in `wrangler.toml`. |
+| **`api-routes`** | **API Routes Implementation** | **Pending** | **Mostly Complete** | All new domain APIs (`/api/agent`, `/api/applicant`, `/api/email`, `/api/tasks`, `/api/workflows`) are implemented. **CRUD routes for `/api/sites` are still missing.** |
+| **`discovery`** | **Discovery System** | **Pending** | **Mostly Complete** | Core logic for URL parsing, AI extraction, and duplicate detection (via Vectorize) is implemented in `src/lib/crawl.ts` and `src/lib/ai.ts`. |
+| **`monitoring`** | **Monitoring System** | **Pending** | **Complete** | Change detection, smart scheduling (DO Alarms), and notification integration are fully implemented in `src/lib/monitoring.ts` and `src/routes/tracking.ts`. |
+| **`change-analysis`** | **Change Analysis System** | **Pending** | **Complete** | The `ChangeAnalysisWorkflow` class implements AI-powered semantic change detection and reporting. |
+| **`search-analytics`** | **Search and Analytics** | **Pending** | **Mostly Complete** | Vector search (`/api/agent/query`) and market stats (`/api/monitoring/status`) are implemented. **Data export (CSV/JSON) is still pending.** |
+| **`email-routing`** | **Email Routing and Notifications** | **Pending** | **Complete** | The `email` handler, link extraction, digest generation, and log tracking are implemented in `src/index.ts` and `src/routes/email.ts`. |
+| **`testing`** | **Testing Implementation** | **Pending** | **Pending** | No test files (`.test.ts`) or dedicated testing framework (`Vitest` or `jest`) found. This milestone is entirely pending implementation. |
+| **`documentation`**| **Documentation and Finalization** | **Pending** | **Mostly Complete** | The project includes comprehensive documentation files (`README.md`, `DEPLOYMENT.md`, `openapi.json`, HTML pages) covering all major features. |
