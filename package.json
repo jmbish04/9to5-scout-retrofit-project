@@ -9,12 +9,14 @@
     "dev": "pnpm migrate:local && wrangler dev",
     "migrate:local": "pnpm wrangler d1 migrations apply DB --local",
     "migrate:remote": "pnpm wrangler d1 migrations apply DB --remote",
-    "deploy": "pnpm build && pnpm migrate:remote && pnpm wrangler versions upload"
+    "deploy": "pnpm build && pnpm migrate:remote && pnpm wrangler versions upload",
+    "test": "vitest"
   },
   "devDependencies": {
     "@cloudflare/puppeteer": "^1.0.4",
     "@types/node": "^20.11.0",
     "typescript": "^5.4.0",
+    "vitest": "^1.5.0",
     "wrangler": "^4.0.0"
   }
 }

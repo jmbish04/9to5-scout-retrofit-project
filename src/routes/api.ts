@@ -1,6 +1,6 @@
 import type { Env } from '../lib/env';
 import { parsePathParams } from '../lib/routing';
-import { handleJobsGet, handleJobGet } from './jobs';
+import { handleJobsGet, handleJobGet, handleJobsExportGet } from './jobs';
 import { handleRunsGet, handleDiscoveryRunPost, handleMonitorRunPost } from './runs';
 import { handleConfigsGet, handleConfigsPost } from './configs';
 import { handleAgentQuery } from './agent';
@@ -11,6 +11,7 @@ import {
   handleEmailConfigsPut,
   handleEmailInsightsSend,
 } from './email';
+import { handleEmailsGet, handleEmailGet } from './emails';
 import {
   handleAgentsGet,
   handleAgentsPost,
@@ -64,6 +65,13 @@ import {
 import { handleScrapeDispatch } from './socket';
 import { handleManualCrawlPost } from './crawl';
 import { handleCoverLetterPost, handleResumePost } from './ai-documents';
+import {
+  handleSitesGet,
+  handleSitesPost,
+  handleSiteGet,
+  handleSitePut,
+  handleSiteDelete,
+} from './sites';
 
 export async function handleApiRequest(request: Request, env: Env): Promise<Response> {
   const url = new URL(request.url);
@@ -134,6 +142,19 @@ export async function handleApiRequest(request: Request, env: Env): Promise<Resp
   if (url.pathname === '/api/logs/meta' && request.method === 'GET') {
     return handleLogsMetaGet(request, env);
   }
+  if (url.pathname === '/api/emails' && request.method === 'GET') {
+    return handleEmailsGet(request, env);
+  }
+  if (url.pathname.startsWith('/api/emails/') && request.method === 'GET') {
+    const params = parsePathParams(url.pathname, '/api/emails/:id');
+    if (!params?.id) {
+      return new Response(JSON.stringify({ error: 'Email ID is required' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+    return handleEmailGet(request, env, params.id);
+  }
   if (url.pathname === '/api/scraper/queue' && request.method === 'POST') {
     return handleScrapeQueuePost(request, env);
   }
@@ -151,6 +172,9 @@ export async function handleApiRequest(request: Request, env: Env): Promise<Resp
   }
 
   // Job scraping & monitoring
+  if (url.pathname === '/api/jobs/export' && request.method === 'GET') {
+    return handleJobsExportGet(request, env);
+  }
   if (url.pathname === '/api/jobs' && request.method === 'GET') {
     return handleJobsGet(request, env);
   }
@@ -175,6 +199,42 @@ export async function handleApiRequest(request: Request, env: Env): Promise<Resp
   }
   if (url.pathname.startsWith('/api/jobs/') && url.pathname.endsWith('/monitoring') && request.method === 'PUT') {
     return handleJobMonitoringPut(request, env);
+  }
+  if (url.pathname === '/api/sites' && request.method === 'GET') {
+    return handleSitesGet(request, env);
+  }
+  if (url.pathname === '/api/sites' && request.method === 'POST') {
+    return handleSitesPost(request, env);
+  }
+  if (url.pathname.startsWith('/api/sites/') && request.method === 'GET') {
+    const params = parsePathParams(url.pathname, '/api/sites/:id');
+    if (!params?.id) {
+      return new Response(JSON.stringify({ error: 'Site ID is required' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+    return handleSiteGet(request, env, params.id);
+  }
+  if (url.pathname.startsWith('/api/sites/') && request.method === 'PUT') {
+    const params = parsePathParams(url.pathname, '/api/sites/:id');
+    if (!params?.id) {
+      return new Response(JSON.stringify({ error: 'Site ID is required' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+    return handleSitePut(request, env, params.id);
+  }
+  if (url.pathname.startsWith('/api/sites/') && request.method === 'DELETE') {
+    const params = parsePathParams(url.pathname, '/api/sites/:id');
+    if (!params?.id) {
+      return new Response(JSON.stringify({ error: 'Site ID is required' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+    return handleSiteDelete(request, env, params.id);
   }
   if (url.pathname === '/api/monitoring/daily-run' && request.method === 'POST') {
     return handleDailyMonitoringPost(request, env);
