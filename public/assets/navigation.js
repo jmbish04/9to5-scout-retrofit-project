@@ -8,6 +8,9 @@ const NAV_ITEMS = [
   { label: 'Operations Dashboard', href: '/operations-dashboard.html' },
   { label: 'Logs Explorer', href: '/logs.html' },
   { label: 'WebSocket Debugger', href: '/ws-debug.html' },
+  { label: 'Cover Letter Template', href: '/templates/cover_letter_template.html' },
+  { label: 'Resume Template', href: '/templates/resume_template.html' },
+  { label: 'Email Template', href: '/templates/email_template.html' },
   {
     label: '📋 OpenAPI',
     href: '/openapi.json',
