@@ -73,7 +73,7 @@
       <div class="bg-white shadow rounded-lg p-5">
         <p class="text-sm text-gray-500">Monitoring queue size</p>
         <p id="queue-total" class="text-3xl font-semibold text-gray-900">—</p>
-        <p class="text-xs text-gray-500">Total jobs returned by <code class="font-mono">/api/monitoring/queue</code>.</p>
+        <p class="text-xs text-gray-500">Total jobs returned by <code class="font-mono">/api/jobs/monitoring-queue</code>.</p>
       </div>
       <div class="bg-white shadow rounded-lg p-5">
         <p class="text-sm text-gray-500">Recent error logs (24h)</p>
@@ -482,7 +482,7 @@
         try {
           const [monitoringStatus, queueData, runs, jobs, logs] = await Promise.all([
             authorizedFetch('/api/monitoring/status'),
-            authorizedFetch('/api/monitoring/queue?limit=10'),
+            authorizedFetch('/api/jobs/monitoring-queue?limit=10'),
             authorizedFetch('/api/runs?limit=10'),
             authorizedFetch('/api/jobs?limit=10'),
             authorizedFetch('/api/logs?limit=10&order_direction=desc'),
