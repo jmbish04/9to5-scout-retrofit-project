@@ -39,9 +39,9 @@ index_name = "jobs"
 binding = "AI"
 
 # Configuration for receiving emails sent to your domain
-[[email]]
-name = "EMAIL_INBOX"
-destination_addresses = ["job-alerts@hacolby.app"]
+# [[email]]
+# name = "EMAIL_INBOX"
+# destination_addresses = ["job-alerts@hacolby.app"]
 
 # Configuration for sending emails from your worker
 # This must be a verified sender address in your Cloudflare account
