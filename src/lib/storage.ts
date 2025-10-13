@@ -223,11 +223,11 @@ export async function updateSite(env: StorageEnv, id: string, updates: Partial<S
   }
   if (updates.robots_txt !== undefined) {
     fields.push('robots_txt = ?');
-    values.push(updates.robots_txt);
+    values.push(updates.robots_txt ?? null);
   }
   if (updates.sitemap_url !== undefined) {
     fields.push('sitemap_url = ?');
-    values.push(updates.sitemap_url);
+    values.push(updates.sitemap_url ?? null);
   }
   if (updates.discovery_strategy !== undefined) {
     fields.push('discovery_strategy = ?');
