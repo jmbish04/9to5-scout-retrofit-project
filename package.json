@@ -9,7 +9,7 @@
     "dev": "pnpm migrate:local && pnpm dlx wrangler@latest dev",
     "migrate:local": "pnpm dlx wrangler@latest d1 migrations apply DB --local",
     "migrate:remote": "pnpm dlx wrangler@latest d1 migrations apply DB --remote",
-    "deploy": "pnpm dlx wrangler@latest types && pnpm dlx wrangler@latest build && pnpm migrate:remote && pnpm dlx wrangler@latest deploy",
+    "deploy": "pnpm build && pnpm migrate:remote && pnpm dlx wrangler@latest deploy",
     "test": "vitest"
   },
   "devDependencies": {
