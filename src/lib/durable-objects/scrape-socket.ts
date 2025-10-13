@@ -58,7 +58,7 @@ export class ScrapeSocket {
   }
 
   private normaliseCommand(raw: unknown): { id: string; payload: any } {
-    const commandId = `cmd_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+    const commandId = `cmd_${crypto.randomUUID()}`;
 
     if (typeof raw === 'string') {
       return { id: commandId, payload: { type: 'message', value: raw } };
