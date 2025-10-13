@@ -786,6 +786,22 @@ export default {
       return handleScrapeSocket(request, env);
     }
 
+    if (!url.pathname.startsWith('/api/')) {
+      try {
+        const response = await env.ASSETS.fetch(request);
+        if (response.ok) {
+          return response;
+        }
+      } catch (error) {
+        console.error("Error fetching from ASSETS:", error);
+      }
+
+      return new Response(JSON.stringify({ error: 'Not Found' }), {
+        status: 404,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
     const isScraperEndpoint = url.pathname.startsWith('/api/scraper/');
     if (request.method === 'OPTIONS' && isScraperEndpoint) {
       return handleScraperOptions();
