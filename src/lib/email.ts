@@ -73,7 +73,7 @@ export function buildOutlookHtml(email: EmailMessage, plainText: string): string
   const from = escapeHtml(email.from || '');
   const to = escapeHtml(email.to?.join(', ') || '');
   const bodyHtml = email.html
-    ? email.html
+    ? sanitizeHtml(email.html) // NOTE: You will need to implement or import a `sanitizeHtml` function.
     : escapeHtml(plainText).replace(/\n/g, '<br />');
 
   return `<!DOCTYPE html>
