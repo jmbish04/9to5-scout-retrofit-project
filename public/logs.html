@@ -467,21 +467,21 @@
       toggleTokenButton.textContent = nextType === 'password' ? 'Show' : 'Hide';
     });
 
-    applyTokenButton.addEventListener('click', () => {
-      updateToken(tokenInput.value);
+    function refreshAllData() {
       if (state.token) {
         fetchMeta()
           .then(() => fetchLogs())
           .catch(() => {});
       }
+    }
+
+    applyTokenButton.addEventListener('click', () => {
+      updateToken(tokenInput.value);
+      refreshAllData();
     });
 
     loadPersistedToken();
-    if (state.token) {
-      fetchMeta()
-        .then(() => fetchLogs())
-        .catch(() => {});
-    }
+    refreshAllData();
   })();
   </script>
 </body>
