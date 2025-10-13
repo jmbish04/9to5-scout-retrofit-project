@@ -34,4 +34,4 @@ CREATE TABLE email_logs (
 
 -- Insert default email configuration
 INSERT INTO email_configs (id, name, recipient_email, frequency_hours) 
-VALUES ('default', 'Daily Job Insights', 'jobs@9to5scout.com', 24);
+VALUES ('default', 'Daily Job Insights', 'justin@126colby.com', 24);
