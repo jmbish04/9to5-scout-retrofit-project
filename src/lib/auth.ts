@@ -52,7 +52,7 @@ function routeMatches(pathname: string, method: string, guard: RouteGuard): bool
     const guardPath = normalizePathname(guard.path.endsWith('*') ? guard.path.slice(0, -1) : guard.path);
 
     if (guard.path.endsWith('*')) {
-      return normalizedPath.startsWith(guardPath);
+      return normalizedPath.startsWith(guardPath) && (normalizedPath.length === guardPath.length || normalizedPath[guardPath.length] === '/');
     }
 
     return normalizedPath === guardPath;
