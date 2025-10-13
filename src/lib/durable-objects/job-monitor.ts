@@ -137,9 +137,12 @@ export class JobMonitor {
 
       await this.checkJob(new Request('http://localhost/check-job', { method: 'POST' }));
 
-      const checkInterval = await this.state.storage.get('check_interval_hours') as number || 24;
-      const nextCheck = new Date(Date.now() + checkInterval * 60 * 60 * 1000);
-      await this.state.storage.setAlarm(nextCheck);
+      const finalStatus = await this.state.storage.get('status');
+      if (finalStatus === 'monitoring' || finalStatus === 'job_active') {
+        const checkInterval = await this.state.storage.get('check_interval_hours') as number || 24;
+        const nextCheck = new Date(Date.now() + checkInterval * 60 * 60 * 1000);
+        await this.state.storage.setAlarm(nextCheck);
+      }
     } catch (error) {
       console.error('JobMonitor alarm error:', error);
     }

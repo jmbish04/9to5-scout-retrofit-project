@@ -154,6 +154,9 @@ export async function handleApiRequest(request: Request, env: Env): Promise<Resp
   if (url.pathname === '/api/jobs' && request.method === 'GET') {
     return handleJobsGet(request, env);
   }
+  if (url.pathname === '/api/jobs/monitoring-queue' && request.method === 'GET') {
+    return handleMonitoringQueueGet(request, env);
+  }
   if (url.pathname.startsWith('/api/jobs/') && request.method === 'GET') {
     if (url.pathname.endsWith('/tracking')) {
       return handleJobTrackingGet(request, env);
@@ -179,10 +182,6 @@ export async function handleApiRequest(request: Request, env: Env): Promise<Resp
   if (url.pathname === '/api/monitoring/status' && request.method === 'GET') {
     return handleMonitoringStatusGet(request, env);
   }
-  if (url.pathname === '/api/jobs/monitoring-queue' && request.method === 'GET') {
-    return handleMonitoringQueueGet(request, env);
-  }
-
   // Run & config endpoints
   if (url.pathname === '/api/runs' && request.method === 'GET') {
     return handleRunsGet(request, env);

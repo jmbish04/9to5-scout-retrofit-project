@@ -30,15 +30,9 @@ export class ScrapeSocket {
           }
           return;
         }
-        for (const ws of this.clients.keys()) {
-          if (ws !== server) {
-            try {
-              ws.send(evt.data);
-            } catch {
-              this.clients.delete(ws);
-            }
-          }
-        }
+        const info = this.clients.get(server);
+        console.log(`Received message from client with type '${info?.type}':`, evt.data);
+        // TODO: Process incoming messages from clients here instead of broadcasting.
       });
       return new Response(null, { status: 101, webSocket: client });
     }
