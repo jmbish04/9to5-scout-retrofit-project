@@ -4,8 +4,9 @@ compatibility_date = "2024-05-01"
 compatibility_flags = ["nodejs_compat"]
 
 [vars]
-ACCOUNT_ID = "" # Must be set as a secret in production
 DEFAULT_MODEL_WEB_BROWSER = "@cf/meta/llama-4-scout-17b-16e-instruct"
+GITHUB_REPO = "https://github.com/jmbish04/9to5-scout"
+BUCKET_BASE_URL = "https://pub-ec5964c07cf044798c801b9a2c72f86b.r2.dev"
 
 [observability.logs]
 enabled = true
@@ -39,9 +40,9 @@ index_name = "jobs"
 binding = "AI"
 
 # Configuration for receiving emails sent to your domain
-[[email]]
-name = "EMAIL_INBOX"
-destination_addresses = ["job-alerts@hacolby.app"]
+# [[email]]
+# name = "EMAIL_INBOX"
+# destination_addresses = ["job-alerts@hacolby.app"]
 
 # Configuration for sending emails from your worker
 # This must be a verified sender address in your Cloudflare account

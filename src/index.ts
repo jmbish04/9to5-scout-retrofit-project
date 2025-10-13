@@ -35,10 +35,10 @@ export default {
     }
 
     if (!url.pathname.startsWith('/api/')) {
-      return handlePageRequest(request, env);
+      return handleApiRequest(request, env);
     }
 
-    return handleApiRequest(request, env);
+    return handlePageRequest(request, env);
   },
 
   async email(message: ForwardableEmailMessage, env: Env, _ctx: ExecutionContext): Promise<void> {
