@@ -254,13 +254,14 @@ function inferWorkflowBinding(workflowId: string, provided?: string | null): Wor
   }
 
   const lowerId = workflowId.toLowerCase();
-  if (lowerId.includes('discovery')) {
+  const lowerId = workflowId.toLowerCase();
+  if (/\bdiscovery\b/.test(lowerId)) {
     return 'DISCOVERY_WORKFLOW';
   }
-  if (lowerId.includes('monitor')) {
+  if (/\bmonitor\b/.test(lowerId)) {
     return 'JOB_MONITOR_WORKFLOW';
   }
-  if (lowerId.includes('change')) {
+  if (/\bchange\b/.test(lowerId)) {
     return 'CHANGE_ANALYSIS_WORKFLOW';
   }
 
