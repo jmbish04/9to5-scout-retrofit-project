@@ -248,16 +248,24 @@
         const item = document.createElement('button');
         item.type = 'button';
         item.className = `w-full px-5 py-4 text-left transition hover:bg-slate-800/60 ${isActive ? 'bg-blue-600/20 text-blue-200' : ''}`;
-        item.innerHTML = `
-          <div class="flex items-start justify-between gap-3">
-            <div>
-              <p class="text-sm font-semibold ${isActive ? 'text-blue-200' : 'text-slate-100'}">${email.subject || '(no subject)'}</p>
-              <p class="text-xs text-slate-400">${email.from_email || 'Unknown sender'}</p>
-            </div>
-            <span class="text-[11px] font-medium text-slate-500">${formatTimestamp(email.received_at)}</span>
-          </div>
-          <p class="mt-2 line-clamp-2 text-xs text-slate-400">${email.email_content ? email.email_content.slice(0, 160) : (email.content_preview || '')}</p>
-        `;
+        const div1 = document.createElement('div');
+        div1.className = 'flex items-start justify-between gap-3';
+        const div2 = document.createElement('div');
+        const p1 = document.createElement('p');
+        p1.className = `text-sm font-semibold ${isActive ? 'text-blue-200' : 'text-slate-100'}`;
+        p1.textContent = email.subject || '(no subject)';
+        const p2 = document.createElement('p');
+        p2.className = 'text-xs text-slate-400';
+        p2.textContent = email.from_email || 'Unknown sender';
+        div2.append(p1, p2);
+        const span = document.createElement('span');
+        span.className = 'text-[11px] font-medium text-slate-500';
+        span.textContent = formatTimestamp(email.received_at);
+        div1.append(div2, span);
+        const p3 = document.createElement('p');
+        p3.className = 'mt-2 line-clamp-2 text-xs text-slate-400';
+        p3.textContent = email.email_content ? email.email_content.slice(0, 160) : (email.content_preview || '');
+        item.append(div1, p3);
         item.addEventListener('click', () => selectEmail(email.id));
         elements.emailList.appendChild(item);
       });
