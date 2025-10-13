@@ -254,7 +254,7 @@ function inferWorkflowBinding(workflowId: string, provided?: string | null): Wor
   }
 
   const lowerId = workflowId.toLowerCase();
-  const lowerId = workflowId.toLowerCase();
+  
   if (/\bdiscovery\b/.test(lowerId)) {
     return 'DISCOVERY_WORKFLOW';
   }
