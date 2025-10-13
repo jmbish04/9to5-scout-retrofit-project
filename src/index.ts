@@ -796,10 +796,10 @@ export default {
         console.error("Error fetching from ASSETS:", error);
       }
 
-      return new Response(JSON.stringify({ error: 'Not Found' }), {
-        status: 404,
-        headers: { 'Content-Type': 'application/json' },
-      });
+      return new Response('Not Found', {
+        status: 404,
+        headers: { 'Content-Type': 'text/html' },
+      });
     }
 
     const isScraperEndpoint = url.pathname.startsWith('/api/scraper/');
