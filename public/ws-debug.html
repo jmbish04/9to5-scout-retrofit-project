@@ -2,57 +2,132 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>WebSocket Troubleshooter</title>
-  <style>
-    body { font-family: sans-serif; margin: 20px; }
-    #log { width: 100%; height: 200px; }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WebSocket Troubleshooter - 9to5-Scout</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.css" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
+  <script src="/assets/navigation.js" defer></script>
 </head>
-<body>
-  <h1>WebSocket Troubleshooter</h1>
-  <div>
-    <label>API Token: <input id="token" type="text" size="40" /></label>
-    <button id="connectBtn">Connect</button>
-    <button id="statusBtn">Check Status</button>
-  </div>
-  <p>Worker connection: <span id="ws-status">disconnected</span></p>
-  <p>Python client connected: <span id="py-status">unknown</span></p>
-  <p>Total connections: <span id="connection-count">0</span></p>
-  <textarea id="log" readonly></textarea>
-  <div>
-    <input id="command" type="text" placeholder="Command" />
-    <button id="sendBtn">Send</button>
-  </div>
-  <div>
-    <input id="scrapeUrl" type="text" size="40" placeholder="https://example.com" />
-    <button id="scrapeBtn">Scrape URL</button>
-  </div>
+<body class="bg-gray-50 min-h-screen">
+  <nav class="bg-white border-gray-200 dark:bg-gray-900 sticky top-0 z-50 shadow-sm">
+    <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+      <a href="/" class="flex items-center space-x-3 rtl:space-x-reverse">
+        <span class="text-2xl">🔍</span>
+        <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">9to5-Scout</span>
+      </a>
+      <button data-collapse-toggle="navbar-default" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-default" aria-expanded="false">
+        <span class="sr-only">Open main menu</span>
+        <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15" />
+        </svg>
+      </button>
+      <div class="hidden w-full md:block md:w-auto" id="navbar-default">
+        <ul data-nav="primary" class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700"></ul>
+      </div>
+    </div>
+  </nav>
+
+  <main class="max-w-screen-xl mx-auto px-4 py-8 space-y-6">
+    <header class="bg-white shadow rounded-lg p-6 space-y-3">
+      <div class="flex items-center gap-3">
+        <span class="text-3xl">🛠️</span>
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900">WebSocket Troubleshooter</h1>
+          <p class="text-gray-600">Diagnose Worker WebSocket connectivity and trigger scrape commands in real time.</p>
+        </div>
+      </div>
+      <p class="text-sm text-gray-500">Provide an API token with WebSocket permissions. The token is never stored remotely.</p>
+    </header>
+
+    <section class="bg-white shadow rounded-lg p-6 space-y-6">
+      <div class="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-6">
+        <label class="space-y-2">
+          <span class="block text-sm font-medium text-gray-700">API Token</span>
+          <input id="token" type="password" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="Bearer token" autocomplete="off" />
+        </label>
+        <div class="flex items-end gap-3">
+          <button id="connectBtn" type="button" class="px-4 py-2 text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Connect</button>
+          <button id="statusBtn" type="button" class="px-4 py-2 text-sm font-medium rounded-md border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Check Status</button>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600">
+        <div class="flex items-center gap-2">
+          <span class="font-medium text-gray-700">Worker connection:</span>
+          <span id="ws-status" class="px-2 py-1 rounded-full bg-gray-100 text-gray-700">disconnected</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="font-medium text-gray-700">Python client connected:</span>
+          <span id="py-status" class="px-2 py-1 rounded-full bg-gray-100 text-gray-700">unknown</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="font-medium text-gray-700">Total connections:</span>
+          <span id="connection-count" class="px-2 py-1 rounded-full bg-gray-100 text-gray-700">0</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-white shadow rounded-lg p-6 space-y-4">
+      <div class="space-y-2">
+        <label for="log" class="block text-sm font-medium text-gray-700">Activity log</label>
+        <textarea id="log" class="w-full h-56 rounded-md border border-gray-300 p-3 font-mono text-sm bg-gray-900 text-green-200" readonly></textarea>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-4">
+        <input id="command" type="text" placeholder="Command" class="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
+        <button id="sendBtn" type="button" class="px-4 py-2 text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Send</button>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-4">
+        <input id="scrapeUrl" type="text" placeholder="https://example.com" class="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
+        <button id="scrapeBtn" type="button" class="px-4 py-2 text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Scrape URL</button>
+      </div>
+    </section>
+  </main>
+
   <script>
     let ws;
     let pingInterval;
 
     function log(msg) {
       const logEl = document.getElementById('log');
-      logEl.value += `\n${msg}`;
+      const timestamp = new Date().toLocaleTimeString();
+      logEl.value += `\n[${timestamp}] ${msg}`;
       logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    function updateStatusBadge(id, text, tone = 'neutral') {
+      const badge = document.getElementById(id);
+      if (!badge) return;
+
+      const tones = {
+        neutral: 'bg-gray-100 text-gray-700',
+        success: 'bg-green-100 text-green-700',
+        warning: 'bg-yellow-100 text-yellow-700',
+        danger: 'bg-red-100 text-red-700'
+      };
+
+      badge.className = `px-2 py-1 rounded-full text-xs font-medium ${tones[tone] ?? tones.neutral}`;
+      badge.textContent = text;
     }
 
     async function updatePythonStatus() {
       const token = document.getElementById('token').value;
-      if (!token) return;
+      if (!token) {
+        updateStatusBadge('py-status', 'missing token', 'warning');
+        return;
+      }
       try {
         const res = await fetch('/api/socket/status', {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (res.ok) {
           const data = await res.json();
-          document.getElementById('py-status').textContent = data.pythonConnected ? 'yes' : 'no';
-          document.getElementById('connection-count').textContent = data.connections;
+          updateStatusBadge('py-status', data.pythonConnected ? 'connected' : 'no', data.pythonConnected ? 'success' : 'warning');
+          updateStatusBadge('connection-count', String(data.connections ?? 0), 'neutral');
         } else {
-          document.getElementById('py-status').textContent = 'error';
+          updateStatusBadge('py-status', 'error', 'danger');
         }
       } catch (err) {
-        document.getElementById('py-status').textContent = 'error';
+        updateStatusBadge('py-status', 'error', 'danger');
       }
     }
 
@@ -61,47 +136,67 @@
         ws.close();
       }
       const token = document.getElementById('token').value;
+      if (!token) {
+        log('⚠️ Provide an API token before connecting.');
+        updateStatusBadge('ws-status', 'missing token', 'warning');
+        return;
+      }
       const proto = location.protocol === 'https:' ? 'wss' : 'ws';
       ws = new WebSocket(`${proto}://${location.host}/ws?token=${encodeURIComponent(token)}&client=debug`);
       ws.onopen = () => {
-        document.getElementById('ws-status').textContent = 'connected';
-        log('WebSocket connected');
+        updateStatusBadge('ws-status', 'connected', 'success');
+        log('✅ WebSocket connected');
         pingInterval = setInterval(() => ws.send('ping'), 30000);
         updatePythonStatus();
       };
       ws.onclose = () => {
-        document.getElementById('ws-status').textContent = 'disconnected';
-        log('WebSocket disconnected');
+        updateStatusBadge('ws-status', 'disconnected', 'danger');
+        log('ℹ️ WebSocket disconnected');
         clearInterval(pingInterval);
       };
-      ws.onerror = (evt) => {
-        log('WebSocket error');
+      ws.onerror = () => {
+        updateStatusBadge('ws-status', 'error', 'danger');
+        log('❌ WebSocket error');
       };
       ws.onmessage = (evt) => {
-        log(evt.data);
+        log(`⬇️ ${evt.data}`);
       };
+    };
+
+    document.getElementById('statusBtn').onclick = () => {
+      updatePythonStatus();
     };
 
     document.getElementById('sendBtn').onclick = () => {
-      const input = document.getElementById('command');
-      if (ws && input.value) {
-        ws.send(input.value);
-        log(`sent: ${input.value}`);
-        input.value = '';
+      if (!ws || ws.readyState !== WebSocket.OPEN) {
+        log('⚠️ Connect before sending commands.');
+        return;
       }
+      const cmd = document.getElementById('command').value;
+      if (!cmd) {
+        log('⚠️ Enter a command to send.');
+        return;
+      }
+      ws.send(cmd);
+      log(`⬆️ ${cmd}`);
+      document.getElementById('command').value = '';
     };
 
     document.getElementById('scrapeBtn').onclick = () => {
-      const url = document.getElementById('scrapeUrl').value;
-      if (ws && url) {
-        const msg = JSON.stringify({ action: 'scrape', url });
-        ws.send(msg);
-        log(`sent scrape for ${url}`);
+      if (!ws || ws.readyState !== WebSocket.OPEN) {
+        log('⚠️ Connect before requesting a scrape.');
+        return;
       }
+      const url = document.getElementById('scrapeUrl').value;
+      if (!url) {
+        log('⚠️ Provide a URL to scrape.');
+        return;
+      }
+      ws.send(JSON.stringify({ action: 'scrape', url }));
+      log(`🕷️ Requested scrape for ${url}`);
     };
 
-    document.getElementById('statusBtn').onclick = updatePythonStatus;
-
+    document.getElementById('log').value = '[Log ready]';
     setInterval(updatePythonStatus, 10000);
   </script>
 </body>
