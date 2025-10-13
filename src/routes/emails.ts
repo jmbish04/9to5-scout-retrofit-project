@@ -54,7 +54,7 @@ export async function handleEmailsGet(request: Request, env: Env): Promise<Respo
       pagination: {
         limit,
         offset,
-        total: totalRow?.count ?? (results ? results.length : 0),
+        total: totalRow?.count ?? 0,
       },
     }), {
       headers: { 'Content-Type': 'application/json' },
