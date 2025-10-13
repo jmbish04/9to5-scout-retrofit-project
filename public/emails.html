@@ -310,17 +310,22 @@
       const content = email.email_content || email.content_preview || 'No body content recorded.';
       elements.detailContent.textContent = content;
 
-      const links = [];
-      if (email.r2_eml_url) {
-        links.push(`<a href="${email.r2_eml_url}" target="_blank" rel="noopener" class="inline-flex items-center rounded-md border border-slate-700 px-3 py-1 text-xs font-medium text-slate-200 hover:border-blue-500 hover:text-white">Download .eml</a>`);
-      }
-      if (email.r2_html_url) {
-        links.push(`<a href="${email.r2_html_url}" target="_blank" rel="noopener" class="inline-flex items-center rounded-md border border-slate-700 px-3 py-1 text-xs font-medium text-slate-200 hover:border-blue-500 hover:text-white">Open HTML</a>`);
-      }
-      if (email.r2_pdf_url) {
-        links.push(`<a href="${email.r2_pdf_url}" target="_blank" rel="noopener" class="inline-flex items-center rounded-md border border-slate-700 px-3 py-1 text-xs font-medium text-slate-200 hover:border-blue-500 hover:text-white">Download PDF</a>`);
-      }
-      elements.detailLinks.innerHTML = links.join('');
+      elements.detailLinks.innerHTML = ''; // Clear existing links
+
+      const createLink = (url, text) => {
+        if (!url) return;
+        const a = document.createElement('a');
+        a.href = url;
+        a.textContent = text;
+        a.target = '_blank';
+        a.rel = 'noopener';
+        a.className = 'inline-flex items-center rounded-md border border-slate-700 px-3 py-1 text-xs font-medium text-slate-200 hover:border-blue-500 hover:text-white';
+        elements.detailLinks.appendChild(a);
+      };
+
+      createLink(email.r2_eml_url, 'Download .eml');
+      createLink(email.r2_html_url, 'Open HTML');
+      createLink(email.r2_pdf_url, 'Download PDF');
     }
 
     elements.tokenForm.addEventListener('submit', (event) => {
