@@ -247,6 +247,11 @@ export async function handleScrapedJobDetailsPost(request: Request, env: any): P
     const metadataJson = metadataValue ? JSON.stringify(metadataValue) : null;
     const rawPayloadJson = JSON.stringify(data);
 
+    const monitoredJobIdRaw = data.monitored_job_id ?? (data as any).monitoredJobId;
+    const monitoredJobId = typeof monitoredJobIdRaw === 'string' && monitoredJobIdRaw.trim().length > 0
+      ? monitoredJobIdRaw.trim()
+      : null;
+
     const statusValue = typeof data.status === 'string' ? data.status.toLowerCase() : null;
     const errorMessage = typeof data.error_message === 'string'
       ? data.error_message
@@ -257,6 +262,7 @@ export async function handleScrapedJobDetailsPost(request: Request, env: any): P
     const insertResult = await env.DB.prepare(
       `INSERT INTO scraped_job_details (
          queue_id,
+         monitored_job_id,
          job_url,
          source,
          company,
@@ -269,10 +275,11 @@ export async function handleScrapedJobDetailsPost(request: Request, env: any): P
          metadata,
          raw_payload
        )
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     )
       .bind(
         queueId,
+        monitoredJobId,
         jobUrl,
         typeof data.source === 'string' ? data.source : null,
         typeof data.company === 'string' ? data.company : null,

@@ -25,6 +25,7 @@ import {
   handleScraperMonitoredJobsGet,
   handleScraperOptions
 } from './routes/scraper';
+import { handleLogsPost, handleLogsGet, handleLogsMetaGet, handleLogsOptions } from './routes/logs';
 
 /**
  * Cloudflare Worker handling AI-driven cover letter, resume generation, and job scraping.
@@ -785,16 +786,24 @@ export default {
       return handleScrapeSocket(request, env);
     }
 
-    const isScraperEndpoint = url.pathname.startsWith('/api/scraper/');
-    if (request.method === 'OPTIONS' && isScraperEndpoint) {
-      return handleScraperOptions();
-    }
+    const isScraperEndpoint = url.pathname.startsWith('/api/scraper/');
+    if (request.method === 'OPTIONS' && isScraperEndpoint) {
+      return handleScraperOptions();
+    }
+
+    const isLogsEndpoint = url.pathname.startsWith('/api/logs');
+    if (request.method === 'OPTIONS' && isLogsEndpoint) {
+      return handleLogsOptions();
+    }
 
     const unauthenticatedApiRoutes = [
       { method: 'POST', path: '/api/scraper/job-details' },
       { method: 'GET', path: '/api/scraper/queue/pending' },
       { method: 'GET', path: '/api/scraper/queue/unrecorded' },
-      { method: 'GET', path: '/api/scraper/monitored-jobs' }
+      { method: 'GET', path: '/api/scraper/monitored-jobs' },
+      { method: 'POST', path: '/api/logs' },
+      { method: 'GET', path: '/api/logs' },
+      { method: 'GET', path: '/api/logs/meta' }
     ];
 
     const requiresAuth = url.pathname.startsWith('/api/') &&
@@ -820,13 +829,25 @@ export default {
     }
 
     try {
-      if (url.pathname === '/api/scrape/dispatch' && request.method === 'POST') {
-        return handleScrapeDispatch(request, env);
-      }
+      if (url.pathname === '/api/scrape/dispatch' && request.method === 'POST') {
+        return handleScrapeDispatch(request, env);
+      }
 
-      if (url.pathname === '/api/scraper/queue' && request.method === 'POST') {
-        return handleScrapeQueuePost(request, env);
-      }
+      if (url.pathname === '/api/logs' && request.method === 'POST') {
+        return handleLogsPost(request, env);
+      }
+
+      if (url.pathname === '/api/logs' && request.method === 'GET') {
+        return handleLogsGet(request, env);
+      }
+
+      if (url.pathname === '/api/logs/meta' && request.method === 'GET') {
+        return handleLogsMetaGet(request, env);
+      }
+
+      if (url.pathname === '/api/scraper/queue' && request.method === 'POST') {
+        return handleScrapeQueuePost(request, env);
+      }
 
       if (url.pathname === '/api/scraper/queue/pending' && request.method === 'GET') {
         return handleScrapeQueuePendingGet(request, env);
