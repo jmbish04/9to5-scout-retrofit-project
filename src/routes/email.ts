@@ -106,11 +106,11 @@ export async function handleEmailReceived(request: Request, env: any): Promise<R
       jobInfo.length,
       0,
       emlKey,
-      buildR2Url(emlKey),
+      buildR2Url(env, emlKey),
       htmlKey,
-      buildR2Url(htmlKey),
+      buildR2Url(env, htmlKey),
       pdfStored ? pdfKey : null,
-      pdfStored ? buildR2Url(pdfKey) : null,
+      pdfStored ? buildR2Url(env, pdfKey) : null,
     ).run();
 
     let processedJobs = 0;
@@ -159,9 +159,9 @@ export async function handleEmailReceived(request: Request, env: any): Promise<R
       job_links_extracted: jobInfo.length,
       jobs_processed: processedJobs,
       r2_assets: {
-        eml: buildR2Url(emlKey),
-        html: buildR2Url(htmlKey),
-        pdf: pdfStored ? buildR2Url(pdfKey) : null,
+        eml: buildR2Url(env, emlKey),
+        html: buildR2Url(env, htmlKey),
+        pdf: pdfStored ? buildR2Url(env, pdfKey) : null,
       }
     }), {
       headers: { 'Content-Type': 'application/json' }

@@ -34,7 +34,7 @@ export default {
       return handleScrapeSocket(request, env);
     }
 
-    if (!url.pathname.startsWith('/api/')) {
+    if (url.pathname.startsWith('/api/')) {
       return handleApiRequest(request, env);
     }
 
