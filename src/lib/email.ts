@@ -6,6 +6,7 @@
 // Import EmailMessage type for sending emails
 import { EmailMessage as CloudflareEmailMessage } from 'cloudflare:email';
 import type { EmailConfig, EmailInsights } from './types';
+import { assertBrowserRenderingToken } from './auth';
 
 export interface EmailMessage {
   from: string;
@@ -16,8 +17,6 @@ export interface EmailMessage {
   raw?: string;
   headers: Record<string, string>;
 }
-
-const R2_EMAIL_BASE_URL = 'https://pub-ec5964c07cf044798c801b9a2c72f86b.r2.dev/';
 
 function escapeHtml(value: string): string {
   return value
@@ -116,23 +115,28 @@ export function buildOutlookHtml(email: EmailMessage, plainText: string): string
 </html>`;
 }
 
-export function buildR2Url(env: any, key?: string | null): string | null {
+export function buildR2Url(env: { BUCKET_BASE_URL?: string }, key?: string | null): string | null {
   if (!key) {
     return null;
   }
-  const baseUrl = env.R2_PUBLIC_URL || 'https://pub-ec5964c07cf044798c801b9a2c72f86b.r2.dev/';
-  const normalizedBase = baseUrl.endsWith('/')
-    ? baseUrl
-    : `${baseUrl}/`;
+
+  const baseUrl = env.BUCKET_BASE_URL?.trim();
+  if (!baseUrl) {
+    console.warn('BUCKET_BASE_URL is not configured; unable to construct R2 URL.');
+    return null;
+  }
+
+  const normalizedBase = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
   return `${normalizedBase}${key}`;
 }
 
 export async function renderEmailPdf(env: any, html: string): Promise<ArrayBuffer | null> {
   try {
+    const browserToken = assertBrowserRenderingToken(env);
     const response = await env.MYBROWSER.fetch('https://browser.render.cloudflare.com', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${env.BROWSER_RENDERING_TOKEN}`,
+        'Authorization': `Bearer ${browserToken}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ html, pdf: true, waitFor: 0 }),

@@ -12,12 +12,12 @@ export async function handleScheduledEvent(env: Env): Promise<void> {
 
     console.log('Starting email insights...');
 
-    const result = await env.DB.prepare(`
-      SELECT * FROM email_configs
-      WHERE enabled = 1
-      AND (last_sent_at IS NULL OR
-           datetime(last_sent_at, '+' || frequency_hours || ' hours') <= datetime('now'))
-    `).all();
+    const configsQuery = `SELECT * FROM email_configs
+WHERE enabled = 1
+AND (last_sent_at IS NULL OR
+     datetime(last_sent_at, '+' || frequency_hours || ' hours') <= datetime('now'))`;
+
+    const result = await env.DB.prepare(configsQuery).all();
 
     const configs = result.results || [];
     console.log(`Found ${configs.length} email configs ready to send`);
@@ -28,9 +28,8 @@ export async function handleScheduledEvent(env: Env): Promise<void> {
         const emailSent = await sendInsightsEmail(insights, config, env);
 
         if (emailSent) {
-          await env.DB.prepare(`
-            UPDATE email_configs SET last_sent_at = CURRENT_TIMESTAMP WHERE id = ?
-          `).bind(config.id).run();
+          const updateQuery = 'UPDATE email_configs SET last_sent_at = CURRENT_TIMESTAMP WHERE id = ?';
+          await env.DB.prepare(updateQuery).bind(config.id).run();
 
           console.log(`Email insights sent successfully to ${config.recipient_email}`);
         } else {

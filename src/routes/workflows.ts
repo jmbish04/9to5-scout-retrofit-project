@@ -2,6 +2,9 @@
  * Workflow configuration management routes
  */
 
+import type { Env } from '../lib/env';
+import { createRun } from '../lib/storage';
+
 export interface WorkflowConfig {
   id: string;
   name: string;
@@ -240,45 +243,201 @@ export async function handleWorkflowDelete(request: Request, env: any, workflowI
   }
 }
 
-export async function handleWorkflowExecute(request: Request, env: any, workflowId: string): Promise<Response> {
+type WorkflowBindingKey = keyof Pick<Env, 'DISCOVERY_WORKFLOW' | 'JOB_MONITOR_WORKFLOW' | 'CHANGE_ANALYSIS_WORKFLOW'>;
+
+function inferWorkflowBinding(workflowId: string, provided?: string | null): WorkflowBindingKey | null {
+  if (provided) {
+    const normalized = provided.toUpperCase();
+    if (normalized in BINDING_NAME_MAP) {
+      return BINDING_NAME_MAP[normalized as keyof typeof BINDING_NAME_MAP];
+    }
+  }
+
+  const lowerId = workflowId.toLowerCase();
+  if (lowerId.includes('discovery')) {
+    return 'DISCOVERY_WORKFLOW';
+  }
+  if (lowerId.includes('monitor')) {
+    return 'JOB_MONITOR_WORKFLOW';
+  }
+  if (lowerId.includes('change')) {
+    return 'CHANGE_ANALYSIS_WORKFLOW';
+  }
+
+  return null;
+}
+
+const BINDING_NAME_MAP: Record<string, WorkflowBindingKey> = {
+  DISCOVERY_WORKFLOW: 'DISCOVERY_WORKFLOW',
+  DISCOVERY: 'DISCOVERY_WORKFLOW',
+  JOB_MONITOR_WORKFLOW: 'JOB_MONITOR_WORKFLOW',
+  JOB_MONITOR: 'JOB_MONITOR_WORKFLOW',
+  MONITORING: 'JOB_MONITOR_WORKFLOW',
+  CHANGE_ANALYSIS_WORKFLOW: 'CHANGE_ANALYSIS_WORKFLOW',
+  CHANGE_ANALYSIS: 'CHANGE_ANALYSIS_WORKFLOW'
+};
+
+async function stageCustomWorkflowExecution(env: Env, workflow: any, taskSequence: string[], context: Record<string, unknown>) {
+  const runId = await createRun(env, `workflow:${workflow.id}`, workflow.id);
+
+  let orderedTasks: any[] = [];
+  let missingTasks: string[] = [];
+  if (taskSequence.length > 0) {
+    const placeholders = taskSequence.map(() => '?').join(',');
+    const { results: taskRows } = await env.DB.prepare(
+      `SELECT * FROM task_configs WHERE id IN (${placeholders})`
+    ).bind(...taskSequence).all();
+
+    const taskMap = new Map<string, any>();
+    for (const row of taskRows) {
+      taskMap.set(row.id, row);
+    }
+    orderedTasks = taskSequence
+      .map((id) => taskMap.get(id))
+      .filter((task): task is any => Boolean(task));
+    missingTasks = taskSequence.filter((id) => !taskMap.has(id));
+  }
+
+  const stats = {
+    workflowId: workflow.id,
+    workflowName: workflow.name,
+    context,
+    steps: orderedTasks.map((task) => ({
+      id: task.id,
+      name: task.name,
+      agent: task.agent_id,
+      description: task.description
+    })),
+    missingTasks
+  };
+
+  await env.DB.prepare(
+    'UPDATE runs SET status = ?, stats_json = ? WHERE id = ?'
+  ).bind('queued', JSON.stringify(stats), runId).run();
+
+  return {
+    runId,
+    stats
+  };
+}
+
+async function triggerBoundWorkflow(
+  env: Env,
+  binding: WorkflowBindingKey,
+  workflowId: string,
+  workflowName: string,
+  taskSequence: string[],
+  context: Record<string, unknown>,
+  payload: any
+) {
+  const bindingRef: any = env[binding];
+  if (!bindingRef || typeof bindingRef.create !== 'function') {
+    throw new Error(`Workflow binding ${binding} is not available.`);
+  }
+
+  const runId = await createRun(env, `workflow:${workflowId}`, workflowId);
+  const instance = await bindingRef.create({
+    params: {
+      workflowId,
+      workflowName,
+      taskSequence,
+      context,
+      payload
+    }
+  });
+
+  const stats = {
+    workflowId,
+    workflowName,
+    context,
+    taskSequence,
+    binding,
+    instanceId: instance?.id ?? null
+  };
+
+  await env.DB.prepare(
+    'UPDATE runs SET status = ?, stats_json = ? WHERE id = ?'
+  ).bind('queued', JSON.stringify(stats), runId).run();
+
+  return {
+    runId,
+    instanceId: instance?.id ?? null,
+    stats
+  };
+}
+
+export async function handleWorkflowExecute(request: Request, env: Env, workflowId: string): Promise<Response> {
   try {
-    // Get workflow configuration
     const { results } = await env.DB.prepare(
       'SELECT * FROM workflow_configs WHERE id = ? AND enabled = 1'
     ).bind(workflowId).all();
-    
+
     if (results.length === 0) {
       return new Response(JSON.stringify({ error: 'Workflow not found or disabled' }), {
         status: 404,
         headers: { 'Content-Type': 'application/json' }
       });
     }
-    
+
     const workflow = results[0];
-    const taskSequence = JSON.parse(workflow.task_sequence);
-    
-    // Parse request body for context
+    const taskSequence = Array.isArray(workflow.task_sequence)
+      ? workflow.task_sequence
+      : JSON.parse(workflow.task_sequence || '[]');
+
     const requestBody = await request.json().catch(() => ({}));
-    const context = requestBody.context || {};
-    
-    // Generate unique execution ID
-    const executionId = `exec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    
-    // For now, return a placeholder response indicating the workflow would be executed
-    // In a full implementation, this would trigger a Cloudflare Workflow or similar orchestration
-    const response = {
-      execution_id: executionId,
+    const context = typeof requestBody.context === 'object' && requestBody.context !== null ? requestBody.context : {};
+    const payload = requestBody.payload ?? null;
+    const bindingOverride = typeof requestBody.binding === 'string' ? requestBody.binding : null;
+
+    const inferredBinding = inferWorkflowBinding(workflowId, bindingOverride);
+
+    if (inferredBinding) {
+      const { runId, instanceId, stats } = await triggerBoundWorkflow(
+        env,
+        inferredBinding,
+        workflowId,
+        workflow.name,
+        taskSequence,
+        context,
+        payload
+      );
+
+      const responsePayload = {
+        execution_mode: 'cloudflare_workflow',
+        workflow_id: workflowId,
+        workflow_name: workflow.name,
+        task_sequence: taskSequence,
+        status: 'queued',
+        context,
+        binding: inferredBinding,
+        run_id: runId,
+        workflow_instance_id: instanceId,
+        stats,
+        accepted_at: new Date().toISOString()
+      };
+
+      return new Response(JSON.stringify(responsePayload), {
+        status: 202,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
+    const { runId, stats } = await stageCustomWorkflowExecution(env, workflow, taskSequence, context);
+
+    const responsePayload = {
+      execution_mode: 'staged',
       workflow_id: workflowId,
       workflow_name: workflow.name,
       task_sequence: taskSequence,
       status: 'queued',
-      context: context,
-      started_at: new Date().toISOString(),
-      message: 'Workflow execution queued. This is a placeholder - full workflow orchestration would be implemented using Cloudflare Workflows.'
+      context,
+      run_id: runId,
+      stats,
+      message: 'Workflow has been staged for custom orchestration. Monitor run records for progress updates.'
     };
-    
-    return new Response(JSON.stringify(response), {
-      status: 200,
+
+    return new Response(JSON.stringify(responsePayload), {
+      status: 202,
       headers: { 'Content-Type': 'application/json' }
     });
   } catch (error) {

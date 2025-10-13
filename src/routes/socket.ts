@@ -1,25 +1,12 @@
 import type { Env } from '../lib/env';
+import { verifyWebsocketAuth } from '../lib/auth';
 
 export async function handleScrapeSocket(request: Request, env: Env): Promise<Response> {
   const url = new URL(request.url);
 
-  // Support auth via header or `?token=` query param for browser-based debugging
-  let auth = request.headers.get('Authorization') || '';
-  if (!auth) {
-    const token = url.searchParams.get('token');
-    if (token) {
-      auth = `Bearer ${token}`;
-    }
-  }
-  const expected = `Bearer ${env.API_AUTH_TOKEN}`;
-
-  let diff = auth.length ^ expected.length;
-  for (let i = 0; i < auth.length && i < expected.length; i++) {
-    diff |= auth.charCodeAt(i) ^ expected.charCodeAt(i);
-  }
-
-  if (diff !== 0) {
-    return new Response('Unauthorized', { status: 401 });
+  const authError = verifyWebsocketAuth(request, env, true);
+  if (authError) {
+    return authError;
   }
 
   const id = env.SCRAPE_SOCKET.idFromName('default');

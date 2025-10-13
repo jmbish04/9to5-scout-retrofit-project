@@ -1,5 +1,6 @@
 import type { Env } from '../lib/env';
 import { parsePathParams } from '../lib/routing';
+import { requireApiAuth, type RouteGuard } from '../lib/auth';
 import { handleJobsGet, handleJobGet, handleJobsExportGet } from './jobs';
 import { handleRunsGet, handleDiscoveryRunPost, handleMonitorRunPost } from './runs';
 import { handleConfigsGet, handleConfigsPost } from './configs';
@@ -97,7 +98,7 @@ export async function handleApiRequest(request: Request, env: Env): Promise<Resp
     return handleLogsOptions();
   }
 
-  const unauthenticatedApiRoutes = [
+  const unauthenticatedRoutes: RouteGuard[] = [
     { method: 'POST', path: '/api/scraper/job-details' },
     { method: 'GET', path: '/api/scraper/queue/pending' },
     { method: 'GET', path: '/api/scraper/queue/unrecorded' },
@@ -107,20 +108,9 @@ export async function handleApiRequest(request: Request, env: Env): Promise<Resp
     { method: 'GET', path: '/api/logs/meta' },
   ];
 
-  const requiresAuth = url.pathname.startsWith('/api/') &&
-    url.pathname !== '/api/health' &&
-    !unauthenticatedApiRoutes.some((route) => route.method === request.method && route.path === url.pathname);
-
-  if (requiresAuth) {
-    const authHeader = request.headers.get('Authorization');
-    const expectedToken = `Bearer ${env.API_AUTH_TOKEN}`;
-
-    if (!authHeader || authHeader !== expectedToken) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-        status: 401,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
+  const authError = requireApiAuth(request, env, { allowList: unauthenticatedRoutes });
+  if (authError) {
+    return authError;
   }
 
   if (url.pathname === '/api/socket/status' && request.method === 'GET') {

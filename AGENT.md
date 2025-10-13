@@ -3,6 +3,9 @@
 ## Overview
 The 9to5-Scout platform is a comprehensive AI-powered job discovery and career intelligence system built on Cloudflare's serverless primitives. This worker acts as the central API gateway and orchestration layer, exposing functionality for both **human users** (via the web app and CLI) and **AI Agents** (via CrewAI, LangGraph, or custom agent systems like the user's `colby` CLI).
 
+## Tooling Notes
+- `pnpm build` and `pnpm deploy` automatically install the latest Wrangler CLI via `pnpm dlx wrangler@latest`, ensuring `wrangler types` runs before every build.
+
 ### Core Architecture
 | Component | Technology | Purpose |
 | :--- | :--- | :--- |

@@ -3,13 +3,13 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "generate-types": "wrangler types",
+    "generate-types": "pnpm dlx wrangler@latest types",
     "typecheck": "pnpm generate-types && tsc -p tsconfig.json",
-    "build": "pnpm generate-types && wrangler build",
-    "dev": "pnpm migrate:local && wrangler dev",
-    "migrate:local": "pnpm wrangler d1 migrations apply DB --local",
-    "migrate:remote": "pnpm wrangler d1 migrations apply DB --remote",
-    "deploy": "pnpm build && pnpm migrate:remote && wrangler deploy",
+    "build": "pnpm dlx wrangler@latest types && pnpm dlx wrangler@latest build",
+    "dev": "pnpm migrate:local && pnpm dlx wrangler@latest dev",
+    "migrate:local": "pnpm dlx wrangler@latest d1 migrations apply DB --local",
+    "migrate:remote": "pnpm dlx wrangler@latest d1 migrations apply DB --remote",
+    "deploy": "pnpm dlx wrangler@latest types && pnpm dlx wrangler@latest build && pnpm migrate:remote && pnpm dlx wrangler@latest deploy",
     "test": "vitest"
   },
   "devDependencies": {
