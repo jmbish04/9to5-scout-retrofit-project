@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const currentPath = normalisePath(window.location.pathname.replace(/index\.html$/, '/') || '/');
 
   navLists.forEach((navList) => {
-    navList.innerHTML = '';
+    navList.replaceChildren();
     NAV_ITEMS.forEach((item) => {
       const linkNode = buildNavLink(item, currentPath);
       navList.appendChild(linkNode);
