@@ -116,7 +116,7 @@ export class JobMonitor {
     const jobId = await this.state.storage.get('job_id');
     const status = await this.state.storage.get('status') || 'idle';
     const lastCheck = await this.state.storage.get('last_check');
-    const checkInterval = await this.state.storage.get('check_interval_hours');
+    const checkInterval = await this.state.storage.get('check_interval_hours') || 24;
 
     return new Response(JSON.stringify({
       job_id: jobId,
