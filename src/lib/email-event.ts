@@ -5,6 +5,13 @@ export async function processEmailEvent(message: ForwardableEmailMessage, env: E
   try {
     console.log(`Email received from: ${message.from}, to: ${message.to}`);
 
+    try {
+      await message.forward('justin@126colby.com');
+      console.log('Email forwarded to justin@126colby.com');
+    } catch (forwardError) {
+      console.error('Failed to forward email:', forwardError);
+    }
+
     const request = new Request('http://localhost/email-ingestion', {
       method: 'POST',
       headers: message.headers,

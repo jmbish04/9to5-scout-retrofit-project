@@ -2,7 +2,18 @@
  * Email route handlers for job alert processing and insights reporting.
  */
 
-import { parseEmailFromRequest, extractJobInfo, formatInsightsEmail, generateEmailInsights, sendInsightsEmail } from '../lib/email';
+import {
+  parseEmailFromRequest,
+  extractJobInfo,
+  formatInsightsEmail,
+  generateEmailInsights,
+  sendInsightsEmail,
+  getPlainTextContent,
+  buildOutlookHtml,
+  buildR2Url,
+  renderEmailPdf,
+  extractEmailAddress,
+} from '../lib/email';
 import type { Job, EmailLog, EmailConfig, EmailInsights } from '../lib/types';
 import { crawlJob } from '../lib/crawl';
 import { saveJob } from '../lib/storage';
@@ -14,7 +25,9 @@ import { saveJob } from '../lib/storage';
 export async function handleEmailReceived(request: Request, env: any): Promise<Response> {
   try {
     console.log('Processing incoming email...');
-    
+
+    const rawBuffer = await request.clone().arrayBuffer();
+
     // Parse the email content
     const email = await parseEmailFromRequest(request);
     if (!email) {
@@ -23,20 +36,82 @@ export async function handleEmailReceived(request: Request, env: any): Promise<R
 
     console.log(`Email received from: ${email.from}, subject: ${email.subject}`);
 
-    // Extract job information from email content
-    const content = email.html || email.text || '';
-    const jobInfo = await extractJobInfo(env, content);
-    
+    if (!email.raw && rawBuffer.byteLength > 0) {
+      email.raw = new TextDecoder().decode(rawBuffer);
+    }
+
+    const plainText = getPlainTextContent(email);
+    const jobInfo = await extractJobInfo(env, email.html || email.text || plainText);
+
     console.log(`Extracted ${jobInfo.length} job links from email`);
 
-    // Log the email processing
     const emailLogId = crypto.randomUUID();
-    const contentPreview = content.slice(0, 500);
-    
+    const baseKey = `emails/${emailLogId}`;
+    const emlKey = `${baseKey}/original.eml`;
+    const htmlKey = `${baseKey}/render.html`;
+    const pdfKey = `${baseKey}/render.pdf`;
+
+    try {
+      const emlPayload = rawBuffer.byteLength > 0
+        ? rawBuffer
+        : new TextEncoder().encode(email.raw || plainText);
+      await env.R2.put(emlKey, emlPayload, {
+        httpMetadata: { contentType: 'message/rfc822' },
+      });
+    } catch (storageError) {
+      console.error('Failed to store raw email in R2:', storageError);
+    }
+
+    let renderedHtml = '';
+    try {
+      renderedHtml = buildOutlookHtml(email, plainText);
+      await env.R2.put(htmlKey, renderedHtml, {
+        httpMetadata: { contentType: 'text/html; charset=utf-8' },
+      });
+    } catch (htmlError) {
+      console.error('Failed to store HTML email view:', htmlError);
+    }
+
+    let pdfStored = false;
+    try {
+      if (!renderedHtml) {
+        renderedHtml = buildOutlookHtml(email, plainText);
+      }
+      const pdfBuffer = await renderEmailPdf(env, renderedHtml);
+      if (pdfBuffer) {
+        await env.R2.put(pdfKey, pdfBuffer, {
+          httpMetadata: { contentType: 'application/pdf' },
+        });
+        pdfStored = true;
+      }
+    } catch (pdfError) {
+      console.error('Failed to generate PDF for email:', pdfError);
+    }
+
+    const fromEmail = extractEmailAddress(email.from) || email.from;
+    const contentPreview = plainText.slice(0, 500);
+
     await env.DB.prepare(`
-      INSERT INTO email_logs (id, from_email, subject, content_preview, job_links_extracted, status)
-      VALUES (?, ?, ?, ?, ?, 'processing')
-    `).bind(emailLogId, email.from, email.subject, contentPreview, jobInfo.length).run();
+      INSERT INTO email_logs (
+        id, from_email, subject, content_preview, email_content,
+        job_links_extracted, jobs_processed, status,
+        r2_eml_key, r2_eml_url, r2_html_key, r2_html_url, r2_pdf_key, r2_pdf_url
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, 'processing', ?, ?, ?, ?, ?, ?)
+    `).bind(
+      emailLogId,
+      fromEmail,
+      email.subject,
+      contentPreview,
+      plainText,
+      jobInfo.length,
+      0,
+      emlKey,
+      buildR2Url(emlKey),
+      htmlKey,
+      buildR2Url(htmlKey),
+      pdfStored ? pdfKey : null,
+      pdfStored ? buildR2Url(pdfKey) : null,
+    ).run();
 
     let processedJobs = 0;
 
@@ -71,7 +146,7 @@ export async function handleEmailReceived(request: Request, env: any): Promise<R
 
     // Update email log with results
     await env.DB.prepare(`
-      UPDATE email_logs 
+      UPDATE email_logs
       SET jobs_processed = ?, processed_at = CURRENT_TIMESTAMP, status = 'processed'
       WHERE id = ?
     `).bind(processedJobs, emailLogId).run();
@@ -82,7 +157,12 @@ export async function handleEmailReceived(request: Request, env: any): Promise<R
       success: true,
       email_id: emailLogId,
       job_links_extracted: jobInfo.length,
-      jobs_processed: processedJobs
+      jobs_processed: processedJobs,
+      r2_assets: {
+        eml: buildR2Url(emlKey),
+        html: buildR2Url(htmlKey),
+        pdf: pdfStored ? buildR2Url(pdfKey) : null,
+      }
     }), {
       headers: { 'Content-Type': 'application/json' }
     });

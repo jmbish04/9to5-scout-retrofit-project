@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>9to5-Scout • Email Viewer</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .scroll-shadow::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 48px;
+      pointer-events: none;
+      background: linear-gradient(to bottom, rgba(15, 23, 42, 0) 0%, rgba(15, 23, 42, 0.85) 100%);
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100">
+  <div class="min-h-screen flex flex-col">
+    <header class="border-b border-slate-800 bg-slate-900/60 backdrop-blur">
+      <div class="mx-auto flex max-w-7xl flex-col gap-6 px-6 py-6 md:flex-row md:items-center md:justify-between">
+        <div>
+          <h1 class="text-2xl font-semibold tracking-tight">Email Command Center</h1>
+          <p class="text-sm text-slate-400">Review OTPs and high-value alerts captured by 9to5-Scout.</p>
+        </div>
+        <form id="token-form" class="flex w-full flex-col gap-3 md:w-auto md:flex-row md:items-center">
+          <label class="flex w-full flex-col text-xs font-semibold uppercase tracking-wide text-slate-400 md:w-72">
+            API Token
+            <input id="token-input" type="password" autocomplete="off" placeholder="Bearer token"
+              class="mt-1 rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 shadow-inner focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/40" />
+          </label>
+          <button type="submit"
+            class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/60">
+            Save Token
+          </button>
+        </form>
+      </div>
+    </header>
+
+    <div class="flex flex-1 overflow-hidden">
+      <aside class="relative flex w-full max-w-md flex-col border-r border-slate-800 bg-slate-900/40">
+        <form id="filter-form" class="grid gap-3 border-b border-slate-800 p-5">
+          <div>
+            <label for="search-input" class="text-xs font-semibold uppercase tracking-wide text-slate-400">Search Content</label>
+            <input id="search-input" type="text" placeholder="OTP, company, keyword" class="mt-1 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/40" />
+          </div>
+          <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <label class="text-xs font-semibold uppercase tracking-wide text-slate-400">
+              From Email
+              <input id="from-input" type="text" placeholder="sender@example.com" class="mt-1 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/40" />
+            </label>
+            <label class="text-xs font-semibold uppercase tracking-wide text-slate-400">
+              Subject Contains
+              <input id="subject-input" type="text" placeholder="Subject filter" class="mt-1 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/40" />
+            </label>
+          </div>
+          <div class="flex items-center justify-between">
+            <button type="submit" class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/60">
+              Refresh Emails
+            </button>
+            <button type="button" id="clear-filters" class="text-xs font-medium text-slate-400 hover:text-slate-200">
+              Clear Filters
+            </button>
+          </div>
+        </form>
+
+        <div class="flex-1 overflow-y-auto">
+          <div id="email-list" class="divide-y divide-slate-800"></div>
+          <div id="list-empty" class="hidden p-6 text-center text-sm text-slate-500">
+            No emails found. Adjust filters or verify your API token.
+          </div>
+        </div>
+
+        <div class="border-t border-slate-800 bg-slate-900/60 p-4 text-xs text-slate-400">
+          <div class="flex items-center justify-between">
+            <span id="pagination-info">0 results</span>
+            <div class="space-x-2">
+              <button id="prev-page" class="rounded-md border border-slate-700 px-3 py-1 font-medium text-slate-300 hover:border-blue-500 hover:text-white disabled:cursor-not-allowed disabled:border-slate-800 disabled:text-slate-600">Prev</button>
+              <button id="next-page" class="rounded-md border border-slate-700 px-3 py-1 font-medium text-slate-300 hover:border-blue-500 hover:text-white disabled:cursor-not-allowed disabled:border-slate-800 disabled:text-slate-600">Next</button>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <main class="flex flex-1 flex-col">
+        <section class="border-b border-slate-800 bg-slate-900/40 p-6">
+          <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Selected Email</p>
+          <h2 id="detail-subject" class="mt-2 text-2xl font-semibold text-white">Select an email to preview</h2>
+          <div class="mt-2 text-sm text-slate-400">
+            <span id="detail-from">—</span>
+            <span id="detail-timestamp" class="ml-2 inline-flex items-center rounded-md bg-slate-800 px-2 py-0.5 text-xs font-medium text-slate-300">—</span>
+          </div>
+          <div id="detail-links" class="mt-4 flex flex-wrap gap-3"></div>
+        </section>
+
+        <section class="relative flex-1 overflow-hidden">
+          <div class="absolute inset-0 overflow-y-auto p-6">
+            <article id="detail-content" class="rounded-xl border border-slate-800 bg-slate-950/60 p-6 text-sm leading-relaxed text-slate-200 shadow-inner">
+              <p class="text-slate-500">Use the filters to load an email. Plain-text content will appear here.</p>
+            </article>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    const state = {
+      token: '',
+      limit: 25,
+      offset: 0,
+      total: 0,
+      emails: [],
+      selected: null,
+    };
+
+    const elements = {
+      tokenForm: document.getElementById('token-form'),
+      tokenInput: document.getElementById('token-input'),
+      filterForm: document.getElementById('filter-form'),
+      searchInput: document.getElementById('search-input'),
+      fromInput: document.getElementById('from-input'),
+      subjectInput: document.getElementById('subject-input'),
+      clearFilters: document.getElementById('clear-filters'),
+      emailList: document.getElementById('email-list'),
+      listEmpty: document.getElementById('list-empty'),
+      paginationInfo: document.getElementById('pagination-info'),
+      prevPage: document.getElementById('prev-page'),
+      nextPage: document.getElementById('next-page'),
+      detailSubject: document.getElementById('detail-subject'),
+      detailFrom: document.getElementById('detail-from'),
+      detailTimestamp: document.getElementById('detail-timestamp'),
+      detailContent: document.getElementById('detail-content'),
+      detailLinks: document.getElementById('detail-links'),
+    };
+
+    function loadToken() {
+      const saved = localStorage.getItem('scout_api_token');
+      if (saved) {
+        state.token = saved;
+        elements.tokenInput.value = saved;
+      }
+    }
+
+    function saveToken(token) {
+      state.token = token;
+      if (token) {
+        localStorage.setItem('scout_api_token', token);
+      } else {
+        localStorage.removeItem('scout_api_token');
+      }
+    }
+
+    function formatTimestamp(value) {
+      if (!value) return 'Unknown time';
+      try {
+        const date = new Date(value);
+        return date.toLocaleString();
+      } catch (err) {
+        return value;
+      }
+    }
+
+    async function fetchEmails(newOffset = 0) {
+      if (!state.token) {
+        elements.listEmpty.classList.remove('hidden');
+        elements.listEmpty.textContent = 'Add an API token to start fetching emails.';
+        elements.emailList.innerHTML = '';
+        return;
+      }
+
+      state.offset = Math.max(newOffset, 0);
+      const params = new URLSearchParams({
+        limit: state.limit.toString(),
+        offset: state.offset.toString(),
+      });
+
+      if (elements.searchInput.value.trim()) {
+        params.set('search', elements.searchInput.value.trim());
+      }
+      if (elements.fromInput.value.trim()) {
+        params.set('from_email', elements.fromInput.value.trim());
+      }
+      if (elements.subjectInput.value.trim()) {
+        params.set('subject', elements.subjectInput.value.trim());
+      }
+
+      try {
+        const response = await fetch(`/api/emails?${params.toString()}`, {
+          headers: {
+            Authorization: `Bearer ${state.token}`,
+          },
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(errorText || 'Request failed');
+        }
+
+        const data = await response.json();
+        state.emails = Array.isArray(data.emails) ? data.emails : [];
+        state.total = data.pagination?.total ?? state.emails.length;
+        state.offset = data.pagination?.offset ?? state.offset;
+        state.limit = data.pagination?.limit ?? state.limit;
+
+        renderEmailList();
+
+        if (state.emails.length > 0) {
+          const previouslySelected = state.selected?.id;
+          const nextSelected = state.emails.find((email) => email.id === previouslySelected) || state.emails[0];
+          selectEmail(nextSelected.id);
+        } else {
+          state.selected = null;
+          renderDetail();
+        }
+      } catch (error) {
+        console.error('Failed to load emails:', error);
+        elements.emailList.innerHTML = '';
+        elements.listEmpty.classList.remove('hidden');
+        elements.listEmpty.textContent = 'Unable to load emails. Verify API token and try again.';
+      }
+    }
+
+    function renderEmailList() {
+      elements.emailList.innerHTML = '';
+      if (state.emails.length === 0) {
+        elements.listEmpty.classList.remove('hidden');
+      } else {
+        elements.listEmpty.classList.add('hidden');
+      }
+
+      const start = state.offset + 1;
+      const end = Math.min(state.offset + state.limit, state.total);
+      elements.paginationInfo.textContent = `${start}-${end} of ${state.total}`;
+
+      elements.prevPage.disabled = state.offset === 0;
+      elements.nextPage.disabled = state.offset + state.limit >= state.total;
+
+      state.emails.forEach((email) => {
+        const isActive = state.selected && state.selected.id === email.id;
+        const item = document.createElement('button');
+        item.type = 'button';
+        item.className = `w-full px-5 py-4 text-left transition hover:bg-slate-800/60 ${isActive ? 'bg-blue-600/20 text-blue-200' : ''}`;
+        const div1 = document.createElement('div');
+        div1.className = 'flex items-start justify-between gap-3';
+        const div2 = document.createElement('div');
+        const p1 = document.createElement('p');
+        p1.className = `text-sm font-semibold ${isActive ? 'text-blue-200' : 'text-slate-100'}`;
+        p1.textContent = email.subject || '(no subject)';
+        const p2 = document.createElement('p');
+        p2.className = 'text-xs text-slate-400';
+        p2.textContent = email.from_email || 'Unknown sender';
+        div2.append(p1, p2);
+        const span = document.createElement('span');
+        span.className = 'text-[11px] font-medium text-slate-500';
+        span.textContent = formatTimestamp(email.received_at);
+        div1.append(div2, span);
+        const p3 = document.createElement('p');
+        p3.className = 'mt-2 line-clamp-2 text-xs text-slate-400';
+        p3.textContent = email.email_content ? email.email_content.slice(0, 160) : (email.content_preview || '');
+        item.append(div1, p3);
+        item.addEventListener('click', () => selectEmail(email.id));
+        elements.emailList.appendChild(item);
+      });
+    }
+
+    async function selectEmail(id) {
+      const email = state.emails.find((item) => item.id === id);
+      if (!email) {
+        try {
+          const response = await fetch(`/api/emails/${id}`, {
+            headers: { Authorization: `Bearer ${state.token}` },
+          });
+          if (response.ok) {
+            const data = await response.json();
+            state.selected = data;
+          }
+        } catch (error) {
+          console.error('Failed to fetch email detail:', error);
+        }
+      } else {
+        state.selected = email;
+      }
+      renderEmailList();
+      renderDetail();
+    }
+
+    function renderDetail() {
+      if (!state.selected) {
+        elements.detailSubject.textContent = 'Select an email to preview';
+        elements.detailFrom.textContent = '—';
+        elements.detailTimestamp.textContent = '—';
+        elements.detailContent.innerHTML = '<p class="text-slate-500">Use the filters to load an email. Plain-text content will appear here.</p>';
+        elements.detailLinks.innerHTML = '';
+        return;
+      }
+
+      const email = state.selected;
+      elements.detailSubject.textContent = email.subject || '(no subject)';
+      elements.detailFrom.textContent = email.from_email || 'Unknown sender';
+      elements.detailTimestamp.textContent = formatTimestamp(email.received_at);
+
+      const content = email.email_content || email.content_preview || 'No body content recorded.';
+      elements.detailContent.textContent = content;
+
+      elements.detailLinks.innerHTML = ''; // Clear existing links
+
+      const createLink = (url, text) => {
+        if (!url) return;
+        const a = document.createElement('a');
+        a.href = url;
+        a.textContent = text;
+        a.target = '_blank';
+        a.rel = 'noopener';
+        a.className = 'inline-flex items-center rounded-md border border-slate-700 px-3 py-1 text-xs font-medium text-slate-200 hover:border-blue-500 hover:text-white';
+        elements.detailLinks.appendChild(a);
+      };
+
+      createLink(email.r2_eml_url, 'Download .eml');
+      createLink(email.r2_html_url, 'Open HTML');
+      createLink(email.r2_pdf_url, 'Download PDF');
+    }
+
+    elements.tokenForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      saveToken(elements.tokenInput.value.trim());
+      fetchEmails(0);
+    });
+
+    elements.filterForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      fetchEmails(0);
+    });
+
+    elements.clearFilters.addEventListener('click', () => {
+      elements.searchInput.value = '';
+      elements.fromInput.value = '';
+      elements.subjectInput.value = '';
+      fetchEmails(0);
+    });
+
+    elements.prevPage.addEventListener('click', () => {
+      if (state.offset === 0) return;
+      fetchEmails(Math.max(state.offset - state.limit, 0));
+    });
+
+    elements.nextPage.addEventListener('click', () => {
+      if (state.offset + state.limit >= state.total) return;
+      fetchEmails(state.offset + state.limit);
+    });
+
+    loadToken();
+    fetchEmails(0);
+  </script>
+</body>
+</html>

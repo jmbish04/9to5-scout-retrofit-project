@@ -34,7 +34,7 @@ export interface Job {
 }
 
 export interface Site {
-  id: string;
+  id?: string;
   name: string;
   base_url: string;
   robots_txt?: string;
@@ -110,11 +110,18 @@ export interface EmailLog {
   from_email: string;
   subject?: string;
   content_preview?: string;
+  email_content?: string;
   job_links_extracted: number;
   jobs_processed: number;
   received_at?: string;
   processed_at?: string;
   status: 'pending' | 'processed' | 'failed';
+  r2_eml_key?: string;
+  r2_eml_url?: string;
+  r2_html_key?: string;
+  r2_html_url?: string;
+  r2_pdf_key?: string;
+  r2_pdf_url?: string;
 }
 
 export interface EmailInsights {
