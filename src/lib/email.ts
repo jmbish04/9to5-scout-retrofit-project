@@ -116,13 +116,14 @@ export function buildOutlookHtml(email: EmailMessage, plainText: string): string
 </html>`;
 }
 
-export function buildR2Url(key?: string | null): string | null {
+export function buildR2Url(env: any, key?: string | null): string | null {
   if (!key) {
     return null;
   }
-  const normalizedBase = R2_EMAIL_BASE_URL.endsWith('/')
-    ? R2_EMAIL_BASE_URL
-    : `${R2_EMAIL_BASE_URL}/`;
+  const baseUrl = env.R2_PUBLIC_URL || 'https://pub-ec5964c07cf044798c801b9a2c72f86b.r2.dev/';
+  const normalizedBase = baseUrl.endsWith('/')
+    ? baseUrl
+    : `${baseUrl}/`;
   return `${normalizedBase}${key}`;
 }
 
