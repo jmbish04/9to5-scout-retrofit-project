@@ -1,4 +1,4 @@
-import type { Env } from '../index';
+import type { Env } from '../lib/env';
 
 export async function handleScrapeSocket(request: Request, env: Env): Promise<Response> {
   const url = new URL(request.url);
