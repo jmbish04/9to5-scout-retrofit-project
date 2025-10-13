@@ -482,7 +482,7 @@
         try {
           const [monitoringStatus, queueData, runs, jobs, logs] = await Promise.all([
             authorizedFetch('/api/monitoring/status'),
-            authorizedFetch('/api/monitoring/queue?limit=10'),
+            authorizedFetch('/api/jobs/monitoring-queue?limit=10'),
             authorizedFetch('/api/runs?limit=10'),
             authorizedFetch('/api/jobs?limit=10'),
             authorizedFetch('/api/logs?limit=10&order_direction=desc'),
