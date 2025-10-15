@@ -18,6 +18,22 @@ export interface EmailMessage {
   headers: Record<string, string>;
 }
 
+const DEFAULT_R2_BASE_URL = 'https://pub-ec5964c07cf044798c801b9a2c72f86b.r2.dev/';
+
+function sanitizeHtml(input: string): string {
+  if (!input) {
+    return '';
+  }
+
+  return input
+    .replace(/<script[\s\S]*?<\/script>/gi, '')
+    .replace(/<style[\s\S]*?<\/style>/gi, '')
+    .replace(/ on[a-z]+="[^"]*"/gi, '')
+    .replace(/ on[a-z]+='[^']*'/gi, '')
+    .replace(/javascript:/gi, '')
+    .replace(/data:text\/html/gi, 'data:text/plain');
+}
+
 function escapeHtml(value: string): string {
   return value
     .replace(/&/g, '&amp;')
@@ -72,7 +88,7 @@ export function buildOutlookHtml(email: EmailMessage, plainText: string): string
   const from = escapeHtml(email.from || '');
   const to = escapeHtml(email.to?.join(', ') || '');
   const bodyHtml = email.html
-    ? sanitizeHtml(email.html) // NOTE: You will need to implement or import a `sanitizeHtml` function.
+    ? sanitizeHtml(email.html)
     : escapeHtml(plainText).replace(/\n/g, '<br />');
 
   return `<!DOCTYPE html>
@@ -120,7 +136,7 @@ export function buildR2Url(env: { BUCKET_BASE_URL?: string }, key?: string | nul
     return null;
   }
 
-  const baseUrl = env.BUCKET_BASE_URL?.trim();
+  const baseUrl = (env.BUCKET_BASE_URL || DEFAULT_R2_BASE_URL).trim();
   if (!baseUrl) {
     console.warn('BUCKET_BASE_URL is not configured; unable to construct R2 URL.');
     return null;
@@ -128,6 +144,48 @@ export function buildR2Url(env: { BUCKET_BASE_URL?: string }, key?: string | nul
 
   const normalizedBase = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
   return `${normalizedBase}${key}`;
+}
+
+export async function forwardEmail(
+  env: any,
+  email: EmailMessage,
+  plainText: string,
+): Promise<void> {
+  try {
+    const forwardAddress =
+      env.FORWARD_EMAIL_ADDRESS || env.NOTIFICATION_EMAIL_ADDRESS || 'justin@126colby.com';
+
+    if (!forwardAddress) {
+      return;
+    }
+
+    const fromDomain = env.EMAIL_ROUTING_DOMAIN || 'notifications.9to5scout.dev';
+    const fromAddress = `forwarder@${fromDomain}`;
+    const raw = [
+      `Subject: Fwd: ${email.subject || '(no subject)'}`,
+      'Content-Type: text/plain; charset=utf-8',
+      '',
+      plainText || '(no body content)',
+    ].join('\r\n');
+
+    if (env.EMAIL_SENDER?.send) {
+      const message = new CloudflareEmailMessage(fromAddress, forwardAddress, raw);
+      await env.EMAIL_SENDER.send(message);
+    } else if (env.KV?.put) {
+      await env.KV.put(
+        `email-forward:${crypto.randomUUID()}`,
+        JSON.stringify({
+          to: forwardAddress,
+          from: fromAddress,
+          subject: email.subject,
+          body: plainText,
+          stored_at: new Date().toISOString(),
+        }),
+      );
+    }
+  } catch (error) {
+    console.error('Failed to forward email copy:', error);
+  }
 }
 
 export async function renderEmailPdf(env: any, html: string): Promise<ArrayBuffer | null> {

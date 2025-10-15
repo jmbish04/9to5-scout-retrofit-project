@@ -13,6 +13,7 @@ import {
   buildR2Url,
   renderEmailPdf,
   extractEmailAddress,
+  forwardEmail,
 } from '../lib/email';
 import type { Job, EmailLog, EmailConfig, EmailInsights } from '../lib/types';
 import { crawlJob } from '../lib/crawl';
@@ -41,6 +42,7 @@ export async function handleEmailReceived(request: Request, env: any): Promise<R
     }
 
     const plainText = getPlainTextContent(email);
+    await forwardEmail(env, email, plainText);
     const jobInfo = await extractJobInfo(env, email.html || email.text || plainText);
 
     console.log(`Extracted ${jobInfo.length} job links from email`);

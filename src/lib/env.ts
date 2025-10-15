@@ -10,6 +10,7 @@ export interface Env {
   API_AUTH_TOKEN: string;
   BROWSER_RENDERING_TOKEN: string;
   FORWARD_EMAIL_ADDRESS?: string;
+  NOTIFICATION_EMAIL_ADDRESS?: string;
   BUCKET_BASE_URL?: string;
   SLACK_WEBHOOK_URL: string;
   SMTP_ENDPOINT: string;

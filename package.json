@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "dependencies": {
-    "html-entities": "^2.3.3"
+    "html-entities": "^2.6.0"
   },
   "scripts": {
     "generate-types": "pnpm dlx wrangler@latest types",
