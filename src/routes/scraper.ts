@@ -167,16 +167,15 @@ function normalizeIntakePayload(raw: any): NormalizedIntakePayload | { error: st
   }
 
   const jobUrl = firstNonEmptyString(
-    (raw as any).job_url,
-    (raw as any).jobUrl,
-    (raw as any).url,
-    (raw as any).job?.url,
-    (raw as any).job?.job_url,
-    (raw as any).details?.job_url,
-    (raw as any).details?.url,
-    (raw as any).metadata?.job_url,
-    (raw as any).metadata?.url,
-  );
+    raw.job_url,
+    raw.jobUrl,
+    raw.url,
+    raw.job?.url,
+    raw.job?.job_url,
+    raw.details?.job_url,
+    raw.details?.url,
+    raw.metadata?.job_url,
+    raw.metadata?.url,
 
   if (!jobUrl) {
     return { error: 'A job_url field is required for each submission.' };
