@@ -3,7 +3,9 @@ export interface Env {
   DB: any;
   KV: any;
   R2: any;
+  RESUME_BUCKET?: any;
   VECTORIZE_INDEX: any;
+  EMBEDDING_MODEL?: string;
   MYBROWSER?: any;
   BROWSER?: any;
   ASSETS: any;
@@ -24,4 +26,5 @@ export interface Env {
   JOB_MONITOR_WORKFLOW: any;
   CHANGE_ANALYSIS_WORKFLOW: any;
   SCRAPE_SOCKET: any;
+  AGENTS?: any;
 }

@@ -160,7 +160,13 @@ SMTP_PASSWORD = "your-smtp-password"
 
 # Email Routing Configuration
 EMAIL_ROUTING_DOMAIN = "9to5scout.dev"
+
+# Document Intelligence
+EMBEDDING_MODEL = "@cf/baai/bge-large-en-v1.5"
+VECTORIZE_INDEX = "resumes_index"
 ```
+
+Make sure `wrangler.toml` binds `RESUME_BUCKET` to the R2 bucket that stores generated applicant documents alongside the existing `R2` binding.
 
 ### 4. Configure Email Routing
 To receive job alert emails, configure Cloudflare Email Routing:
@@ -609,6 +615,53 @@ Authorization: Bearer your-api-token
 | POST | `/api/cover-letter` | Generate personalized cover letters |
 | POST | `/api/resume` | Generate optimized resume content |
 
+### Applicant Documents & ATS Tools
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/docs` | Create a resume or cover letter record |
+| GET | `/api/docs/{id}` | Retrieve document metadata and sectioned content |
+| PUT | `/api/docs/{id}` | Update document content and trigger re-indexing |
+| DELETE | `/api/docs/{id}` | Delete a document and its embeddings |
+| POST | `/api/docs/search` | Semantic search across stored documents |
+| POST | `/api/docs/{id}/apply-patches` | Apply ATS recommendations to a document |
+| POST | `/api/agents/ats/evaluate` | Evaluate a document against a job posting |
+| POST | `/api/agents/docs/generate` | Generate a tailored resume or cover letter |
+
+#### Quick cURL Examples
+
+```bash
+# Create a resume document
+curl -X POST "$WORKER_URL/api/docs" \
+  -H "Authorization: Bearer $API_AUTH_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "user_id": "user-123",
+    "doc_type": "resume",
+    "title": "Staff Engineer Resume",
+    "content_md": "# Summary\n10+ years of platform engineering...",
+    "sections": {"summary": "Platform expert", "experience": "- Led migrations"}
+  }'
+
+# Semantic search scoped to a user
+curl -X POST "$WORKER_URL/api/docs/search" \
+  -H "Authorization: Bearer $API_AUTH_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"q": "graphql leadership", "user_id": "user-123", "top_k": 5}'
+
+# Run ATS evaluation against a job
+curl -X POST "$WORKER_URL/api/agents/ats/evaluate" \
+  -H "Authorization: Bearer $API_AUTH_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"document_id": 42, "job_id": "job-abc"}'
+
+# Apply accepted patch suggestions
+curl -X POST "$WORKER_URL/api/docs/42/apply-patches" \
+  -H "Authorization: Bearer $API_AUTH_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"patches": [{"target": "experience", "type": "replace", "range": {"start": {"line": 5, "col": 1}, "end": {"line": 5, "col": 80}}, "suggestion": "Led migration reducing latency by 30%"}]}'
+```
+
 ### Multi-Agent System Configuration
 
 | Method | Endpoint | Description |
@@ -718,6 +771,9 @@ The platform uses a comprehensive relational database schema with the following 
 - **applicant_profiles**: User profiles with preferences and career information
 - **job_history_entries**: Structured job history data parsed from submissions
 - **job_history_submissions**: Raw job history submissions and processing status
+- **applicant_documents**: Stored resume and cover letter metadata plus R2 keys
+- **resume_sections**: Structured resume content (summary, skills, experience, etc.)
+- **document_embeddings**: Shadow table recording Vectorize metadata and hashes
 - **job_ratings**: AI-generated job fit scores and detailed analysis
 
 ### Email & Communication
