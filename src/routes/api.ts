@@ -53,6 +53,7 @@ import {
   handleScrapeQueuePost,
   handleScrapeQueuePendingGet,
   handleScrapeQueueUnrecordedGet,
+  handleScraperIntakePost,
   handleScrapedJobDetailsPost,
   handleScraperMonitoredJobsGet,
   handleScraperOptions,
@@ -121,6 +122,7 @@ export async function handleApiRequest(request: Request, env: Env): Promise<Resp
 
   const unauthenticatedRoutes: RouteGuard[] = [
     { method: 'POST', path: '/api/scraper/job-details' },
+    { method: 'POST', path: '/api/scraper/intake' },
     { method: 'GET', path: '/api/scraper/queue/pending' },
     { method: 'GET', path: '/api/scraper/queue/unrecorded' },
     { method: 'GET', path: '/api/scraper/monitored-jobs' },
@@ -266,6 +268,9 @@ export async function handleApiRequest(request: Request, env: Env): Promise<Resp
   }
   if (url.pathname === '/api/scraper/queue' && request.method === 'POST') {
     return handleScrapeQueuePost(request, env);
+  }
+  if (url.pathname === '/api/scraper/intake' && request.method === 'POST') {
+    return handleScraperIntakePost(request, env);
   }
   if (url.pathname === '/api/scraper/queue/pending' && request.method === 'GET') {
     return handleScrapeQueuePendingGet(request, env);
