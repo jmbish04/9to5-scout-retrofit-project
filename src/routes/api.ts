@@ -82,9 +82,22 @@ import {
   handleStatsHighlightsGet,
   handleStatsValuationsGet,
 } from './company-benefits';
+import {
+  handleDocsCreate,
+  handleDocsGet,
+  handleDocsUpdate,
+  handleDocsDelete,
+  handleDocsSearch,
+  handleAtsEvaluate,
+  handleDocumentGenerate,
+  handleDocsApplyPatches,
+} from './documents';
+import { ensureAgentTools } from '../lib/agents';
 
 export async function handleApiRequest(request: Request, env: Env): Promise<Response> {
   const url = new URL(request.url);
+
+  ensureAgentTools(env);
 
   if (url.pathname === '/api/health') {
     return new Response(JSON.stringify({
@@ -135,6 +148,73 @@ export async function handleApiRequest(request: Request, env: Env): Promise<Resp
 
   if (url.pathname === '/api/companies' && request.method === 'GET') {
     return handleCompaniesGet(request, env);
+  }
+
+  if (url.pathname === '/api/docs' && request.method === 'POST') {
+    return handleDocsCreate(request, env);
+  }
+
+  if (url.pathname === '/api/docs' && request.method === 'GET') {
+    return new Response(JSON.stringify({ error: 'Document ID is required' }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  if (url.pathname === '/api/docs/search' && request.method === 'POST') {
+    return handleDocsSearch(request, env);
+  }
+
+  if (url.pathname.startsWith('/api/docs/') && url.pathname.endsWith('/apply-patches') && request.method === 'POST') {
+    const params = parsePathParams(url.pathname, '/api/docs/:id/apply-patches');
+    if (!params?.id) {
+      return new Response(JSON.stringify({ error: 'Document ID is required' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+    return handleDocsApplyPatches(request, env, Number(params.id));
+  }
+
+  if (url.pathname.startsWith('/api/docs/') && request.method === 'GET') {
+    const params = parsePathParams(url.pathname, '/api/docs/:id');
+    if (!params?.id) {
+      return new Response(JSON.stringify({ error: 'Document ID is required' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+    return handleDocsGet(request, env, Number(params.id));
+  }
+
+  if (url.pathname.startsWith('/api/docs/') && request.method === 'PUT') {
+    const params = parsePathParams(url.pathname, '/api/docs/:id');
+    if (!params?.id) {
+      return new Response(JSON.stringify({ error: 'Document ID is required' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+    return handleDocsUpdate(request, env, Number(params.id));
+  }
+
+  if (url.pathname.startsWith('/api/docs/') && request.method === 'DELETE') {
+    const params = parsePathParams(url.pathname, '/api/docs/:id');
+    if (!params?.id) {
+      return new Response(JSON.stringify({ error: 'Document ID is required' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+    return handleDocsDelete(request, env, Number(params.id));
+  }
+
+  if (url.pathname === '/api/agents/ats/evaluate' && request.method === 'POST') {
+    return handleAtsEvaluate(request, env);
+  }
+
+  if (url.pathname === '/api/agents/docs/generate' && request.method === 'POST') {
+    return handleDocumentGenerate(request, env);
   }
 
   if (url.pathname.startsWith('/api/companies/') && url.pathname.endsWith('/benefits') && request.method === 'GET') {

@@ -1,6 +1,10 @@
 import { describe, beforeEach, it, expect, vi } from 'vitest';
 import { handleApiRequest } from './api';
 
+vi.mock('html-entities', () => ({
+  decode: (value: string) => value,
+}));
+
 vi.mock('cloudflare:email', () => ({
   EmailMessage: class {
     constructor() {}
