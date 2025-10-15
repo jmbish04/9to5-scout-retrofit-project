@@ -6,7 +6,7 @@ export async function processEmailEvent(message: ForwardableEmailMessage, env: E
     console.log(`Email received from: ${message.from}, to: ${message.to}`);
 
     const forwardAddress =
-      env.FORWARD_EMAIL_ADDRESS || env.NOTIFICATION_EMAIL_ADDRESS || 'justin@126colby.com';
+      env.FORWARD_EMAIL_ADDRESS || env.NOTIFICATION_EMAIL_ADDRESS;
 
     if (forwardAddress) {
       try {
