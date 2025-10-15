@@ -2,6 +2,9 @@
   "name": "@9to5-scout",
   "version": "0.0.0",
   "private": true,
+  "dependencies": {
+    "html-entities": "^2.3.3"
+  },
   "scripts": {
     "generate-types": "pnpm dlx wrangler@latest types",
     "typecheck": "pnpm generate-types && tsc -p tsconfig.json",

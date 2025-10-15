@@ -2,6 +2,8 @@
  * API routes for coordinating localized Python scraping workers.
  */
 
+import { processJobIngestion } from '../jobs/pipeline';
+
 const JSON_HEADERS = {
   'Content-Type': 'application/json',
   'Access-Control-Allow-Origin': '*',
@@ -215,6 +217,8 @@ export async function handleScrapeQueueUnrecordedGet(request: Request, env: any)
 
 export async function handleScrapedJobDetailsPost(request: Request, env: any): Promise<Response> {
   try {
+    const url = new URL(request.url);
+    const dryRun = url.searchParams.get('DRY_RUN') === '1';
     const body = await request.json().catch(() => null);
 
     if (!body || typeof body !== 'object') {
@@ -244,6 +248,18 @@ export async function handleScrapedJobDetailsPost(request: Request, env: any): P
     }
 
     const metadataValue = data.metadata ?? data.details ?? null;
+    let metadataObject: Record<string, any> | null = null;
+
+    if (metadataValue && typeof metadataValue === 'string') {
+      try {
+        metadataObject = JSON.parse(metadataValue);
+      } catch (error) {
+        console.warn('Failed to parse metadata JSON string in scraped job details:', error);
+      }
+    } else if (metadataValue && typeof metadataValue === 'object') {
+      metadataObject = metadataValue as Record<string, any>;
+    }
+
     const metadataJson = metadataValue ? JSON.stringify(metadataValue) : null;
     const rawPayloadJson = JSON.stringify(data);
 
@@ -317,6 +333,18 @@ export async function handleScrapedJobDetailsPost(request: Request, env: any): P
     const record = await env.DB.prepare('SELECT * FROM scraped_job_details WHERE id = ?')
       .bind(insertedId)
       .first();
+
+    await processJobIngestion(env, {
+      jobUrl,
+      applyUrl: typeof data.apply_url === 'string' ? data.apply_url : (typeof (data as any).applyUrl === 'string' ? (data as any).applyUrl : null),
+      companyName: typeof data.company === 'string' ? data.company : metadataObject?.company?.name,
+      companyWebsite: typeof (data as any).company_url === 'string' ? (data as any).company_url : metadataObject?.company_url,
+      html: typeof (data as any).html === 'string' ? (data as any).html : null,
+      description: typeof data.description === 'string' ? data.description : null,
+      text: typeof data.description === 'string' ? data.description : null,
+      metadata: metadataObject,
+      dryRun,
+    });
 
     return jsonResponse({ job: record ? transformJobDetailsRow(record) : null }, 201);
   } catch (error) {

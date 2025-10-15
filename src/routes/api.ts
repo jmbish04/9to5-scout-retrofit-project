@@ -73,6 +73,14 @@ import {
   handleSitePut,
   handleSiteDelete,
 } from './sites';
+import {
+  handleCompanyScrapePost,
+  handleCompaniesGet,
+  handleCompanyBenefitsGet,
+  handleBenefitsCompareGet,
+  handleStatsHighlightsGet,
+  handleStatsValuationsGet,
+} from './company-benefits';
 
 export async function handleApiRequest(request: Request, env: Env): Promise<Response> {
   const url = new URL(request.url);
@@ -117,6 +125,37 @@ export async function handleApiRequest(request: Request, env: Env): Promise<Resp
     const id = env.SCRAPE_SOCKET.idFromName('default');
     const stub = env.SCRAPE_SOCKET.get(id);
     return stub.fetch('https://dummy/status');
+  }
+
+  if (url.pathname === '/api/companies/scrape' && request.method === 'POST') {
+    return handleCompanyScrapePost(request, env);
+  }
+
+  if (url.pathname === '/api/companies' && request.method === 'GET') {
+    return handleCompaniesGet(request, env);
+  }
+
+  if (url.pathname.startsWith('/api/companies/') && url.pathname.endsWith('/benefits') && request.method === 'GET') {
+    const params = parsePathParams(url.pathname, '/api/companies/:id/benefits');
+    if (!params?.id) {
+      return new Response(JSON.stringify({ error: 'Company ID is required' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+    return handleCompanyBenefitsGet(request, env, params.id);
+  }
+
+  if (url.pathname === '/api/benefits/compare' && request.method === 'GET') {
+    return handleBenefitsCompareGet(request, env);
+  }
+
+  if (url.pathname === '/api/stats/highlights' && request.method === 'GET') {
+    return handleStatsHighlightsGet(request, env);
+  }
+
+  if (url.pathname === '/api/stats/valuations' && request.method === 'GET') {
+    return handleStatsValuationsGet(request, env);
   }
 
   // Scraper & Logs endpoints
