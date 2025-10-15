@@ -5,10 +5,13 @@ export async function processEmailEvent(message: ForwardableEmailMessage, env: E
   try {
     console.log(`Email received from: ${message.from}, to: ${message.to}`);
 
-    if (env.FORWARD_EMAIL_ADDRESS) {
+    const forwardAddress =
+      env.FORWARD_EMAIL_ADDRESS || env.NOTIFICATION_EMAIL_ADDRESS || 'justin@126colby.com';
+
+    if (forwardAddress) {
       try {
-        await message.forward(env.FORWARD_EMAIL_ADDRESS);
-        console.log(`Email forwarded to ${env.FORWARD_EMAIL_ADDRESS}`);
+        await message.forward(forwardAddress);
+        console.log(`Email forwarded to ${forwardAddress}`);
       } catch (forwardError) {
         console.error('Failed to forward email:', forwardError);
       }

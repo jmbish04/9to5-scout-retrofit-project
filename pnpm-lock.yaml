@@ -9,7 +9,7 @@ importers:
   .:
     dependencies:
       html-entities:
-        specifier: ^2.3.3
+        specifier: ^2.6.0
         version: 2.6.0
     devDependencies:
       '@cloudflare/puppeteer':
