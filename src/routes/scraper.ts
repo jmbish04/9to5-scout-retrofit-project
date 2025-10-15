@@ -286,7 +286,7 @@ function normalizeIntakePayload(raw: any): NormalizedIntakePayload | { error: st
   };
 }
 
-async function enqueueIntakeSubmission(env: any, payload: NormalizedIntakePayload) {
+async function enqueueIntakeSubmission(env: Env, payload: NormalizedIntakePayload) {
   const payloadForStorage = {
     jobUrl: payload.jobUrl,
     jobTitle: payload.jobTitle ?? null,
