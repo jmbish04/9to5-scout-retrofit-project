@@ -87,6 +87,380 @@ function transformJobDetailsRow(row: any) {
   };
 }
 
+const INTAKE_MAX_BATCH = 6;
+const INTAKE_CLAIM_SIZE = 3;
+const INTAKE_MAX_ATTEMPTS = 3;
+
+interface NormalizedIntakePayload {
+  jobUrl: string;
+  jobTitle?: string | null;
+  companyName?: string | null;
+  companyWebsite?: string | null;
+  companyCareersUrl?: string | null;
+  jobId?: string | null;
+  applyUrl?: string | null;
+  rawHtml?: string | null;
+  rawText?: string | null;
+  rawJson?: Record<string, any> | null;
+  metadata?: Record<string, any> | null;
+  source?: string | null;
+  dryRun: boolean;
+  priority: number;
+}
+
+function toStringOrNull(value: unknown): string | null {
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    return trimmed.length > 0 ? trimmed : null;
+  }
+  return null;
+}
+
+function toBoolean(value: unknown): boolean {
+  if (typeof value === 'boolean') {
+    return value;
+  }
+  if (typeof value === 'string') {
+    const normalized = value.trim().toLowerCase();
+    return normalized === 'true' || normalized === '1' || normalized === 'yes';
+  }
+  if (typeof value === 'number') {
+    return value !== 0;
+  }
+  return false;
+}
+
+function firstNonEmptyString(...candidates: unknown[]): string | null {
+  for (const candidate of candidates) {
+    const value = toStringOrNull(candidate);
+    if (value) {
+      return value;
+    }
+  }
+  return null;
+}
+
+function normalizeRawJson(value: unknown): Record<string, any> | null {
+  if (!value) {
+    return null;
+  }
+
+  if (typeof value === 'object') {
+    return value as Record<string, any>;
+  }
+
+  if (typeof value === 'string' && value.trim().length > 0) {
+    try {
+      return JSON.parse(value);
+    } catch (error) {
+      console.warn('Failed to parse raw JSON payload from intake submission:', error);
+      return null;
+    }
+  }
+
+  return null;
+}
+
+function normalizeIntakePayload(raw: any): NormalizedIntakePayload | { error: string } {
+  if (!raw || typeof raw !== 'object') {
+    return { error: 'Each submission must be an object.' };
+  }
+
+  const jobUrl = firstNonEmptyString(
+    (raw as any).job_url,
+    (raw as any).jobUrl,
+    (raw as any).url,
+    (raw as any).job?.url,
+    (raw as any).job?.job_url,
+    (raw as any).details?.job_url,
+    (raw as any).details?.url,
+    (raw as any).metadata?.job_url,
+    (raw as any).metadata?.url,
+  );
+
+  if (!jobUrl) {
+    return { error: 'A job_url field is required for each submission.' };
+  }
+
+  const jobTitle = firstNonEmptyString(
+    (raw as any).job_title,
+    (raw as any).title,
+    (raw as any).jobTitle,
+    (raw as any).job?.title,
+    (raw as any).metadata?.title,
+  );
+
+  const companyName = firstNonEmptyString(
+    (raw as any).company,
+    (raw as any).company_name,
+    (raw as any).job_company,
+    (raw as any).employer,
+    (raw as any).organization,
+    (raw as any).job?.company,
+    (raw as any).metadata?.company,
+    (raw as any).metadata?.company_name,
+  );
+
+  const rawHtml = firstNonEmptyString(
+    (raw as any).raw_html,
+    (raw as any).rawHtml,
+    (raw as any).html,
+    (raw as any).body_html,
+    (raw as any).markup,
+  );
+
+  const rawText = firstNonEmptyString(
+    (raw as any).raw_text,
+    (raw as any).rawText,
+    (raw as any).text,
+    (raw as any).body,
+    (raw as any).description,
+    (raw as any).job?.description,
+    (raw as any).metadata?.description,
+  );
+
+  const rawJson = normalizeRawJson(
+    (raw as any).raw_json
+      ?? (raw as any).rawJson
+      ?? (raw as any).json
+      ?? (raw as any).payload
+      ?? (raw as any).data
+  );
+
+  const metadataObject = normalizeRawJson((raw as any).metadata ?? (raw as any).details ?? (raw as any).job);
+
+  const applyUrl = firstNonEmptyString(
+    (raw as any).apply_url,
+    (raw as any).applyUrl,
+    (raw as any).application_url,
+    (raw as any).job?.apply_url,
+    (raw as any).metadata?.apply_url,
+  );
+
+  const companyWebsite = firstNonEmptyString(
+    (raw as any).company_url,
+    (raw as any).companyUrl,
+    (raw as any).website,
+    (raw as any).job?.company_url,
+    (raw as any).metadata?.company_url,
+  );
+
+  const companyCareersUrl = firstNonEmptyString(
+    (raw as any).careers_url,
+    (raw as any).careersUrl,
+    (raw as any).company_careers_url,
+    (raw as any).metadata?.careers_url,
+  );
+
+  const source = firstNonEmptyString(
+    (raw as any).source,
+    (raw as any).origin,
+    (raw as any).provider,
+  );
+
+  const jobId = firstNonEmptyString(
+    (raw as any).job_id,
+    (raw as any).jobId,
+    (raw as any).id,
+  );
+
+  const priorityRaw = (raw as any).priority ?? (raw as any).job_priority;
+  const priority = Number(priorityRaw);
+
+  const dryRun = toBoolean((raw as any).dry_run ?? (raw as any).dryRun);
+
+  return {
+    jobUrl,
+    jobTitle,
+    companyName,
+    companyWebsite,
+    companyCareersUrl,
+    jobId,
+    applyUrl,
+    rawHtml,
+    rawText,
+    rawJson,
+    metadata: metadataObject,
+    source,
+    dryRun,
+    priority: Number.isFinite(priority) ? priority : 0,
+  };
+}
+
+async function enqueueIntakeSubmission(env: any, payload: NormalizedIntakePayload) {
+  const payloadForStorage = {
+    jobUrl: payload.jobUrl,
+    jobTitle: payload.jobTitle ?? null,
+    companyName: payload.companyName ?? null,
+    companyWebsite: payload.companyWebsite ?? null,
+    companyCareersUrl: payload.companyCareersUrl ?? null,
+    jobId: payload.jobId ?? null,
+    applyUrl: payload.applyUrl ?? null,
+    rawHtml: payload.rawHtml ?? null,
+    rawText: payload.rawText ?? null,
+    rawJson: payload.rawJson ?? null,
+    metadata: payload.metadata ?? null,
+    source: payload.source ?? null,
+    dryRun: payload.dryRun,
+    priority: payload.priority,
+  };
+
+  const insertResult = await env.DB.prepare(
+    `INSERT INTO job_intake_queue (job_url, job_title, company_name, source, payload_json, priority, dry_run)
+     VALUES (?, ?, ?, ?, ?, ?, ?)`
+  )
+    .bind(
+      payload.jobUrl,
+      payload.jobTitle,
+      payload.companyName,
+      payload.source,
+      JSON.stringify(payloadForStorage),
+      payload.priority,
+      payload.dryRun ? 1 : 0,
+    )
+    .run();
+
+  const insertedId = insertResult.meta?.last_row_id ?? insertResult.lastRowId;
+
+  if (!insertedId) {
+    throw new Error('Failed to enqueue intake submission.');
+  }
+
+  const record = await env.DB.prepare(
+    'SELECT id, job_url, job_title, company_name, source, status, priority, queued_at FROM job_intake_queue WHERE id = ?'
+  )
+    .bind(insertedId)
+    .first();
+
+  return record
+    ? {
+        ...record,
+        id: Number(record.id),
+        priority: Number(record.priority ?? 0),
+      }
+    : null;
+}
+
+async function claimIntakeJobs(env: any, limit: number) {
+  const nowIso = new Date().toISOString();
+  const statement = await env.DB.prepare(
+    `WITH pending AS (
+       SELECT id
+       FROM job_intake_queue
+       WHERE status = 'pending'
+       ORDER BY priority DESC, queued_at ASC, id ASC
+       LIMIT ?
+     )
+     UPDATE job_intake_queue
+     SET status = 'processing',
+         attempts = attempts + 1,
+         started_at = COALESCE(started_at, ?),
+         updated_at = CURRENT_TIMESTAMP
+     WHERE id IN (SELECT id FROM pending)
+     RETURNING *`
+  )
+    .bind(limit, nowIso)
+    .all();
+
+  return (statement.results || []).map((row: any) => ({
+    ...row,
+    payload_json: parseJsonField(row.payload_json),
+  }));
+}
+
+async function markIntakeCompleted(env: any, id: number) {
+  await env.DB.prepare(
+    `UPDATE job_intake_queue
+     SET status = 'completed',
+         completed_at = CURRENT_TIMESTAMP,
+         last_error = NULL,
+         updated_at = CURRENT_TIMESTAMP
+     WHERE id = ?`
+  )
+    .bind(id)
+    .run();
+}
+
+async function markIntakeFailed(env: any, id: number, attempts: number, errorMessage: string) {
+  const nextStatus = attempts >= INTAKE_MAX_ATTEMPTS ? 'failed' : 'pending';
+  await env.DB.prepare(
+    `UPDATE job_intake_queue
+     SET status = ?,
+         last_error = ?,
+         updated_at = CURRENT_TIMESTAMP
+     WHERE id = ?`
+  )
+    .bind(nextStatus, errorMessage.slice(0, 2000), id)
+    .run();
+}
+
+async function countPendingIntake(env: any): Promise<number> {
+  const result = await env.DB.prepare(
+    `SELECT COUNT(*) AS total FROM job_intake_queue WHERE status = 'pending'`
+  ).first();
+
+  return Number(result?.total ?? 0);
+}
+
+async function processIntakeQueue(env: any, maxToProcess = INTAKE_MAX_BATCH) {
+  let processed = 0;
+  let claimed: any[] = [];
+
+  do {
+    const remainingCapacity = Math.max(0, maxToProcess - processed);
+    if (remainingCapacity === 0) {
+      break;
+    }
+
+    claimed = await claimIntakeJobs(env, Math.min(remainingCapacity, INTAKE_CLAIM_SIZE));
+
+    if (claimed.length === 0) {
+      break;
+    }
+
+    for (const row of claimed) {
+      const payload = row.payload_json as any;
+      const rowId = Number(row.id);
+      const attempts = Number(row.attempts ?? 1);
+      const dryRunFromRow = Number(row.dry_run ?? 0) === 1;
+
+      if (!payload || typeof payload !== 'object') {
+        await markIntakeFailed(env, rowId, attempts, 'Invalid payload in queue entry.');
+        continue;
+      }
+
+      const metadata = (payload.metadata && typeof payload.metadata === 'object') ? payload.metadata : null;
+      const rawJson = (payload.rawJson && typeof payload.rawJson === 'object') ? payload.rawJson : null;
+      const mergedMetadata = metadata || rawJson || null;
+
+      try {
+        await processJobIngestion(env, {
+          jobId: toStringOrNull(payload.jobId) || undefined,
+          jobUrl: toStringOrNull(payload.jobUrl) || row.job_url,
+          applyUrl: toStringOrNull(payload.applyUrl) || undefined,
+          companyName: toStringOrNull(payload.companyName) || toStringOrNull(row.company_name) || undefined,
+          companyWebsite: toStringOrNull(payload.companyWebsite) || undefined,
+          companyCareersUrl: toStringOrNull(payload.companyCareersUrl) || undefined,
+          html: toStringOrNull(payload.rawHtml) || undefined,
+          text: toStringOrNull(payload.rawText) || undefined,
+          description: toStringOrNull(payload.rawText) || (mergedMetadata?.description ?? null),
+          metadata: mergedMetadata,
+          dryRun: Boolean(payload.dryRun) || dryRunFromRow,
+        });
+
+        await markIntakeCompleted(env, rowId);
+        processed += 1;
+      } catch (error: any) {
+        console.error('Failed processing intake queue item', row.id, error);
+        await markIntakeFailed(env, rowId, attempts, error?.message || 'Failed to process intake item.');
+      }
+    }
+  } while (processed < maxToProcess);
+
+  const pending = await countPendingIntake(env);
+  return { processed, pending };
+}
+
 export async function handleScrapeQueuePost(request: Request, env: any): Promise<Response> {
   try {
     const body = await request.json().catch(() => null);
@@ -212,6 +586,76 @@ export async function handleScrapeQueueUnrecordedGet(request: Request, env: any)
   } catch (error) {
     console.error('Error retrieving unrecorded scrape jobs:', error);
     return errorResponse('Failed to retrieve unrecorded scrape jobs.', 500);
+  }
+}
+
+export async function handleScraperIntakePost(request: Request, env: any): Promise<Response> {
+  try {
+    const bodyText = await request.text();
+
+    if (!bodyText || bodyText.trim().length === 0) {
+      return errorResponse('A JSON payload is required.');
+    }
+
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(bodyText);
+    } catch (error) {
+      console.warn('Failed to parse intake payload JSON:', error);
+      return errorResponse('Request body must be valid JSON.');
+    }
+
+    let submissions: unknown[];
+    if (Array.isArray(parsed)) {
+      submissions = parsed;
+    } else if (parsed && typeof parsed === 'object' && Array.isArray((parsed as any).items)) {
+      submissions = (parsed as any).items;
+    } else {
+      submissions = [parsed];
+    }
+
+    if (submissions.length === 0) {
+      return errorResponse('At least one submission must be provided.');
+    }
+
+    const queued: any[] = [];
+    const failed: Array<{ index: number; error: string }> = [];
+
+    for (const [index, submission] of submissions.entries()) {
+      const normalized = normalizeIntakePayload(submission);
+
+      if ('error' in normalized) {
+        failed.push({ index, error: normalized.error });
+        continue;
+      }
+
+      try {
+        const record = await enqueueIntakeSubmission(env, normalized);
+        if (!record) {
+          throw new Error('Failed to persist queued submission.');
+        }
+        queued.push(record);
+      } catch (error: any) {
+        console.error('Failed to enqueue intake submission', error);
+        failed.push({ index, error: error?.message || 'Failed to enqueue submission.' });
+      }
+    }
+
+    if (queued.length === 0) {
+      const firstFailed = failed[0];
+      return errorResponse(firstFailed ? firstFailed.error : 'No submissions were accepted.');
+    }
+
+    const queueStatus = await processIntakeQueue(env);
+
+    return jsonResponse({
+      queued,
+      failed,
+      queue_status: queueStatus,
+    }, 202);
+  } catch (error) {
+    console.error('Error processing scraper intake submissions:', error);
+    return errorResponse('Failed to process intake submissions.', 500);
   }
 }
 
