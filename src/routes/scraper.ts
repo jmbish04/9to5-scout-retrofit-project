@@ -145,7 +145,7 @@ function normalizeRawJson(value: unknown): Record<string, any> | null {
     return null;
   }
 
-  if (typeof value === 'object') {
+  if (value && typeof value === 'object') {
     return value as Record<string, any>;
   }
 
