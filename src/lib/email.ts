@@ -133,7 +133,12 @@ export function buildR2Url(env: { BUCKET_BASE_URL?: string }, key?: string | nul
 export async function renderEmailPdf(env: any, html: string): Promise<ArrayBuffer | null> {
   try {
     const browserToken = assertBrowserRenderingToken(env);
-    const response = await env.MYBROWSER.fetch('https://browser.render.cloudflare.com', {
+    const browser = env.MYBROWSER || env.BROWSER;
+    if (!browser) {
+      throw new Error('Browser binding is not configured.');
+    }
+
+    const response = await browser.fetch('https://browser.render.cloudflare.com', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${browserToken}`,

@@ -14,6 +14,7 @@ import type {
   JobRating,
 } from './types';
 import { embedText } from './ai';
+import { processJobIngestion } from '../jobs/pipeline';
 
 export interface StorageEnv {
   DB: D1Database;
@@ -49,12 +50,13 @@ export async function saveJob(env: StorageEnv, job: Job): Promise<string> {
   
   await env.DB.prepare(
     `INSERT OR REPLACE INTO jobs(
-      id, site_id, url, canonical_url, title, company, location, 
-      employment_type, department, salary_min, salary_max, salary_currency, 
-      salary_raw, compensation_raw, description_md, requirements_md, 
+      id, site_id, url, canonical_url, title, company, location,
+      employment_type, department, salary_min, salary_max, salary_currency,
+      salary_raw, compensation_raw, description_md, requirements_md,
       posted_at, closed_at, status, source, last_seen_open_at, first_seen_at, last_crawled_at,
-      daily_monitoring_enabled, monitoring_frequency_hours, last_status_check_at, closure_detected_at
-    ) VALUES(?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12,?13,?14,?15,?16,?17,?18,?19,?20,?21,?22,?23,?24,?25,?26,?27)`
+      daily_monitoring_enabled, monitoring_frequency_hours, last_status_check_at, closure_detected_at,
+      company_id
+    ) VALUES(?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12,?13,?14,?15,?16,?17,?18,?19,?20,?21,?22,?23,?24,?25,?26,?27,?28)`
   )
     .bind(
       id,
@@ -83,7 +85,8 @@ export async function saveJob(env: StorageEnv, job: Job): Promise<string> {
       job.daily_monitoring_enabled !== undefined ? job.daily_monitoring_enabled : true,
       job.monitoring_frequency_hours || 24,
       job.last_status_check_at,
-      job.closure_detected_at
+      job.closure_detected_at,
+      job.company_id || null
     )
     .run();
 
@@ -94,6 +97,24 @@ export async function saveJob(env: StorageEnv, job: Job): Promise<string> {
       await env.VECTORIZE_INDEX.upsert([{ id, values: embedding }]);
     }
   }
+
+  const combinedText = [job.description_md, job.requirements_md, job.compensation_raw]
+    .filter((value): value is string => Boolean(value && value.trim().length > 0))
+    .join('\n');
+
+  await processJobIngestion(env as any, {
+    jobId: id,
+    jobUrl: job.url,
+    applyUrl: job.canonical_url,
+    companyName: job.company,
+    companyWebsite: job.company_url,
+    companyCareersUrl: job.careers_url,
+    text: combinedText,
+    metadata: {
+      company_url: job.company_url,
+      careers_url: job.careers_url,
+    },
+  });
 
   return id;
 }

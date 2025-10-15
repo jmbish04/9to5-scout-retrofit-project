@@ -9,12 +9,13 @@ DEFAULT_MODEL_WEB_BROWSER = "@cf/meta/llama-4-scout-17b-16e-instruct"
 GITHUB_REPO = "https://github.com/jmbish04/9to5-scout"
 BUCKET_BASE_URL = "https://pub-ec5964c07cf044798c801b9a2c72f86b.r2.dev"
 NOTIFICATION_EMAIL_ADDRESS = "justin@126colby.com"
+ADMIN_TOKEN = "change-me"
 
 [observability.logs]
 enabled = true
 
 [browser]
-binding = "MYBROWSER"
+binding = "BROWSER"
 
 [[d1_databases]]
 binding = "DB"
@@ -90,7 +91,9 @@ new_classes = ["ScrapeSocket"]
 [triggers]
 crons = [
   "*/15 * * * *", # every 15 minutes
-  "0 6 * * *"     # daily 06:00
+  "0 6 * * *",    # daily 06:00 monitoring + emails
+  "0 8 * * *",    # nightly company benefits scan
+  "0 9 * * *"     # post-scan stats rollup
 ]
 
 [assets]

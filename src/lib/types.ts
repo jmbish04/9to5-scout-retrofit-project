@@ -10,6 +10,9 @@ export interface Job {
   canonical_url?: string;
   title?: string;
   company?: string;
+  company_id?: string;
+  company_url?: string;
+  careers_url?: string;
   location?: string;
   employment_type?: string;
   department?: string;

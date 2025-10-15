@@ -67,7 +67,8 @@ function parseSitemapUrls(xmlText: string): string[] {
 
 export interface CrawlEnv {
   BROWSER_RENDERING_TOKEN: string;
-  MYBROWSER: any;
+  MYBROWSER?: any;
+  BROWSER?: any;
   AI: any;
   DB: any;
   R2: any;
@@ -83,7 +84,12 @@ export async function crawlJobWithSnapshot(env: CrawlEnv, url: string, siteId?: 
     console.log(`Starting enhanced crawling for ${url}`);
     
     // Use browser rendering service to get content
-    const response = await env.MYBROWSER.fetch('https://browser.render.cloudflare.com', {
+    const browser = env.MYBROWSER || (env as any).BROWSER;
+    if (!browser) {
+      throw new Error('Browser binding is not configured.');
+    }
+
+    const response = await browser.fetch('https://browser.render.cloudflare.com', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${env.BROWSER_RENDERING_TOKEN}`,
@@ -177,7 +183,12 @@ export async function crawlJobWithSnapshot(env: CrawlEnv, url: string, siteId?: 
 export async function crawlJob(env: CrawlEnv, url: string, siteId?: string, jobTitle?: string, companyName?: string): Promise<Job | null> {
   try {
     // Use browser rendering service to get HTML content
-    const response = await env.MYBROWSER.fetch('https://browser.render.cloudflare.com', {
+    const browser2 = env.MYBROWSER || (env as any).BROWSER;
+    if (!browser2) {
+      throw new Error('Browser binding is not configured.');
+    }
+
+    const response = await browser2.fetch('https://browser.render.cloudflare.com', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${env.BROWSER_RENDERING_TOKEN}`,

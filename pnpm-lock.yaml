@@ -7,6 +7,10 @@ settings:
 importers:
 
   .:
+    dependencies:
+      html-entities:
+        specifier: ^2.3.3
+        version: 2.6.0
     devDependencies:
       '@cloudflare/puppeteer':
         specifier: ^1.0.4
@@ -901,6 +905,9 @@ packages:
 
   glob-to-regexp@0.4.1:
     resolution: {integrity: sha512-lkX1HJXwyMcprw/5YUZc2s7DrpAiHB21/V+E1rHUrVNokkvB6bqMzT0VfV6/86ZNabt1k14YOIaT7nDvOX3Iiw==}
+
+  html-entities@2.6.0:
+    resolution: {integrity: sha512-kig+rMn/QOVRvr7c86gQ8lWXq+Hkv6CbAH1hLu+RG338StTpE8Z0b44SDVaqVu7HGKf27frdmUYEs9hTUX/cLQ==}
 
   http-proxy-agent@7.0.2:
     resolution: {integrity: sha512-T1gkAiYYDWYx3V5Bmyu7HcfcvL7mUrTWiM6yOfa3PIphViJ/gFPbvidQ+veqSOHci/PxBcDabeUNCzpOODJZig==}
@@ -2030,6 +2037,8 @@ snapshots:
       - supports-color
 
   glob-to-regexp@0.4.1: {}
+
+  html-entities@2.6.0: {}
 
   http-proxy-agent@7.0.2:
     dependencies:

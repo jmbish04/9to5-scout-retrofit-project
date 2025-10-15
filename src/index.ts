@@ -45,7 +45,7 @@ export default {
     await processEmailEvent(message, env);
   },
 
-  async scheduled(_event: any, env: Env): Promise<void> {
-    await handleScheduledEvent(env);
+  async scheduled(event: any, env: Env): Promise<void> {
+    await handleScheduledEvent(env, event);
   },
 };

@@ -11,7 +11,8 @@ export interface MonitoringEnv {
   DB: any;
   R2: any;
   AI: any;
-  MYBROWSER: any;
+  MYBROWSER?: any;
+  BROWSER?: any;
   VECTORIZE_INDEX: any;
   BROWSER_RENDERING_TOKEN: string;
 }

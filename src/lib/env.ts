@@ -4,7 +4,8 @@ export interface Env {
   KV: any;
   R2: any;
   VECTORIZE_INDEX: any;
-  MYBROWSER: any;
+  MYBROWSER?: any;
+  BROWSER?: any;
   ASSETS: any;
   API_AUTH_TOKEN: string;
   BROWSER_RENDERING_TOKEN: string;
@@ -14,6 +15,8 @@ export interface Env {
   SMTP_ENDPOINT: string;
   SMTP_USERNAME: string;
   SMTP_PASSWORD: string;
+  ADMIN_TOKEN?: string;
+  ENABLE_LLM?: string;
   SITE_CRAWLER: any;
   JOB_MONITOR: any;
   DISCOVERY_WORKFLOW: any;
