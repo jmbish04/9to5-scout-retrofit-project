@@ -17,17 +17,20 @@ declare namespace Cloudflare {
 		SITE_CRAWLER: DurableObjectNamespace<import("./src/index").SiteCrawler>;
 		JOB_MONITOR: DurableObjectNamespace<import("./src/index").JobMonitor>;
 		SCRAPE_SOCKET: DurableObjectNamespace<import("./src/index").ScrapeSocket>;
-		R2: R2Bucket;
-		DB: D1Database;
-		SERVICE: Service<typeof import("./src/index").default>;
-		EMAIL_SENDER: SendEmail;
-		VECTORIZE_INDEX: VectorizeIndex;
-		BROWSER: Fetcher;
-		AI: Ai;
-		ASSETS: Fetcher;
-		DISCOVERY_WORKFLOW: Workflow;
-		JOB_MONITOR_WORKFLOW: Workflow;
-		CHANGE_ANALYSIS_WORKFLOW: Workflow;
+                R2: R2Bucket;
+                RESUME_BUCKET: R2Bucket;
+                DB: D1Database;
+                SERVICE: Service<typeof import("./src/index").default>;
+                EMAIL_SENDER: SendEmail;
+                VECTORIZE_INDEX: VectorizeIndex;
+                EMBEDDING_MODEL: "@cf/baai/bge-large-en-v1.5";
+                BROWSER: Fetcher;
+                AI: Ai;
+                ASSETS: Fetcher;
+                DISCOVERY_WORKFLOW: Workflow;
+                JOB_MONITOR_WORKFLOW: Workflow;
+                CHANGE_ANALYSIS_WORKFLOW: Workflow;
+                AGENTS: Service;
 	}
 }
 interface Env extends Cloudflare.Env {}
