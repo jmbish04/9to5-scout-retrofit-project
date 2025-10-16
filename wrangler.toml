@@ -1,47 +1,76 @@
-name = "9to5-scout"
-main = "src/index.ts"
-compatibility_date = "2024-05-01"
-compatibility_flags = ["nodejs_compat"]
+name = "9to5-scout" # 9to5-scout
+main = "src/index.ts" # src/index.ts
+compatibility_date = "2024-09-26"  # 2024-09-26
+compatibility_flags = ["nodejs_compat"] # ["nodejs_compat"] -- needed for browser rendering
 
+# Environment variables
 [vars]
-ACCOUNT_ID = "" # Must be set as a secret in production
-DEFAULT_MODEL_WEB_BROWSER = "@cf/meta/llama-4-scout-17b-16e-instruct"
+DEFAULT_MODEL_WEB_BROWSER = "@cf/meta/llama-3.1-8b-instruct"  # @cf/meta/llama-3.1-8b-instruct
+DEFAULT_MODEL_REASONING = "@cf/openai/gpt-oss-120b" # @cf/openai/gpt-oss-120b
+EMBEDDING_MODEL = "@cf/baai/bge-large-en-v1.5" # @cf/baai/bge-large-en-v1.5
 
-[observability.logs]
+
+# Secrets should be set using: wrangler secret bulk .dev.vars
+# Required secrets:
+# - WORKER_API_KEY (for ALL authentication to worker endpoints)
+# - STEEL_API_KEY (for Steel scraper)
+# - LINKEDIN_USERNAME (for LinkedIn scraping)
+# - LINKEDIN_PASSWORD (for LinkedIn scraping)
+# - BROWSER_RENDERING_TOKEN (for Cloudflare Browser Rendering REST API)
+# - CLOUDFLARE_ACCOUNT_ID (for Cloudflare Browser Rendering REST API)
+# - GITHUB_REPO (for Github repo)
+# - BUCKET_BASE_URL (for R2 bucket base url)
+# - NOTIFICATION_EMAIL_ADDRESS (for Notification email address)
+# - EMAIL_ROUTING_DOMAIN (for Email routing domain)
+# - LOCAL_SCRAPER_URL (for Local scraper url)
+# - LOCAL_SCRAPER_API_KEY (for Local scraper api key)
+# - PYTHON_SCRAPER_URL (for Python scraper Cloudflare Tunnel URL)
+# - PYTHON_SCRAPER_API_KEY (for Python scraper API key)
+
+
+# Observability Logs
+[observability]
 enabled = true
 
+# Browser Rendering binding
 [browser]
 binding = "MYBROWSER"
 
+# D1 database for job scraper
 [[d1_databases]]
 binding = "DB"
 database_name = "JOB_SCRAPER_DB"
 database_id = "11092798-a3d9-44b8-be5f-1835c0027887"
+preview_database_id = "11092798-a3d9-44b8-be5f-1835c0027887"  # Added missing preview_database_id
+migrations_dir = "migrations"  # Added migrations configuration
+migrations_table = "d1_migrations"
 
+# Configuration KV namespace
 [[kv_namespaces]]
 binding = "KV"
 id = "5e60b00818e9448b8f965af0fc96d39a"
+preview_id = "5e60b00818e9448b8f965af0fc96d39a"  # Added missing preview_id
 
+# Usage tracker
 [[kv_namespaces]]
 binding = "USAGE_TRACKER"
 id = "d78887786a634316a921a869c2e406e8"
 preview_id = "0900decc2f2043f4a5591eda43562065"
 
+# R2 bucket for job scraper
 [[r2_buckets]]
 binding = "R2"
 bucket_name = "job-scraper"
+preview_bucket_name = "job-scraper-preview"
 
+# Vectorize
 [[vectorize]]
 binding = "VECTORIZE_INDEX"
 index_name = "jobs"
 
+# AI
 [ai]
 binding = "AI"
-
-# Configuration for receiving emails sent to your domain
-[[email]]
-name = "EMAIL_INBOX"
-destination_addresses = ["job-alerts@hacolby.app"]
 
 # Configuration for sending emails from your worker
 # This must be a verified sender address in your Cloudflare account
@@ -49,48 +78,61 @@ destination_addresses = ["job-alerts@hacolby.app"]
 name = "EMAIL_SENDER"
 destination_address = "justin@126colby.com"
 
-[[services]]
-binding = "SERVICE"
-service = "9to5-scout"
+# Service bindings (for communication with OTHER workers)
+# Example: [[services]]
+# binding = "AUTH_SERVICE"
+# service = "auth-worker"
 
+# Durable Objects
 [durable_objects]
 bindings = [
   { name = "SITE_CRAWLER", class_name = "SiteCrawler" },
   { name = "JOB_MONITOR", class_name = "JobMonitor" },
-  { name = "SCRAPE_SOCKET", class_name = "ScrapeSocket" }
+  { name = "SCRAPE_SOCKET", class_name = "ScrapeSocket" },
+  { name = "GENERIC_AGENT", class_name = "GenericAgent" }
 ]
 
+# DiscoveryWorkflow
 [[workflows]]
 name = "discovery-workflow"
 binding = "DISCOVERY_WORKFLOW"
 class_name = "DiscoveryWorkflow"
 
+# JobMonitorWorkflow
 [[workflows]]
 name = "job-monitor-workflow"
 binding = "JOB_MONITOR_WORKFLOW"
 class_name = "JobMonitorWorkflow"
 
+# ChangeAnalysisWorkflow
 [[workflows]]
 name = "change-analysis-workflow"
 binding = "CHANGE_ANALYSIS_WORKFLOW"
 class_name = "ChangeAnalysisWorkflow"
 
+# SiteCrawler and JobMonitor
 [[migrations]]
 tag = "v1"
 new_sqlite_classes = ["SiteCrawler", "JobMonitor"]
 
+# ScrapeSocket
 [[migrations]]
 tag = "v2"
-new_classes = ["ScrapeSocket"]
+new_sqlite_classes = ["ScrapeSocket"]  # Changed from new_classes to new_sqlite_classes
 
+# GenericAgent for Cloudflare Agents SDK
+[[migrations]]
+tag = "v3"
+new_sqlite_classes = ["GenericAgent"]
 
+# Triggers
 [triggers]
 crons = [
-  "*/15 * * * *", # every 15 minutes
-  "0 6 * * *"     # daily 06:00
+  "*/15 * * * *",  # every 15 minutes
+  "0 6 * * *"      # daily 06:00
 ]
 
+# Static assets
 [assets]
-binding = "ASSETS"
-directory = "./public"
-
+directory = "./public" # ./public -- directory for static assets
+binding = "ASSETS" # ASSETS -- for serving static assets
