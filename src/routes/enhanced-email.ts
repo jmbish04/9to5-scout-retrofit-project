@@ -414,9 +414,11 @@ export async function handleEnhancedEmailReceived(
       .bind(emailId)
       .run();
 
+    // Get content for processing (declare once and reuse)
+    const content = email.contentHtml || email.contentText || "";
+
     // Generate embeddings for the email content
     try {
-      const content = email.contentHtml || email.contentText || "";
       const embeddingsId = await generateEmailEmbeddings(
         env,
         email.uuid!,
@@ -439,7 +441,6 @@ export async function handleEnhancedEmailReceived(
     }
 
     // AI Classification
-    const content = email.contentHtml || email.contentText || "";
     console.log("🤖 Classifying email content...");
     const classification = await classifyEmailContent(
       env,
@@ -960,8 +961,39 @@ export async function handleEmailSearch(
         results = searchResult.results || [];
       } catch (error) {
         console.error("Semantic search failed:", error);
-        // Fallback to keyword search
-        return handleEmailSearch(request, env);
+        // Fallback to keyword search directly
+        const searchQuery = `
+          SELECT 
+            e.id, e.uuid, e.from_email, e.to_email, e.subject, e.date_received,
+            e.content_text, e.content_preview, e.ai_classification,
+            e.job_links_extracted, e.jobs_processed, e.otp_detected,
+            e.received_at, e.status
+          FROM enhanced_email_logs e
+          WHERE (
+            e.subject LIKE ? OR 
+            e.content_text LIKE ? OR 
+            e.content_html LIKE ? OR
+            e.from_email LIKE ? OR
+            e.to_email LIKE ?
+          )
+          ORDER BY e.received_at DESC
+          LIMIT ? OFFSET ?
+        `;
+
+        const searchTerm = `%${query}%`;
+        const fallbackResult = await env.DB.prepare(searchQuery)
+          .bind(
+            searchTerm,
+            searchTerm,
+            searchTerm,
+            searchTerm,
+            searchTerm,
+            limit,
+            offset
+          )
+          .all();
+
+        results = fallbackResult.results || [];
       }
     } else if (searchType === "ai") {
       // AI-powered search with natural language understanding

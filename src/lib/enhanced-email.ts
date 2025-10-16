@@ -147,14 +147,30 @@ export async function parseEnhancedEmailFromRequest(
 }
 
 /**
- * Generate a UUID v4
+ * Generate a UUID v4 using Web Crypto API
  */
 function generateUUID(): string {
-  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
-    const r = (Math.random() * 16) | 0;
-    const v = c === "x" ? r : (r & 0x3) | 0x8;
-    return v.toString(16);
-  });
+  return crypto.randomUUID();
+}
+
+/**
+ * Helper function to mark a job link as failed
+ */
+async function markJobLinkAsFailed(env: Env, linkId: number | undefined): Promise<void> {
+  if (!linkId) return;
+  
+  try {
+    await env.DB.prepare(
+      `UPDATE email_job_links 
+       SET status = 'failed', 
+           updated_at = CURRENT_TIMESTAMP 
+       WHERE id = ?`
+    )
+      .bind(linkId)
+      .run();
+  } catch (error) {
+    console.error("Failed to mark job link as failed:", error);
+  }
 }
 
 /**
@@ -211,10 +227,22 @@ export async function generateEmailEmbeddings(
       text: content,
     });
 
-    // Extract embedding data
-    const embeddingData = Array.isArray(embedding)
-      ? embedding
-      : (embedding as any).data || embedding;
+    // Extract embedding data - handle different response formats
+    let embeddingVector: number[];
+    
+    if (Array.isArray(embedding)) {
+      // If it's already an array, use it directly
+      embeddingVector = embedding;
+    } else if ((embedding as any).data && Array.isArray((embedding as any).data)) {
+      // If it has a data property with an array, use that
+      embeddingVector = (embedding as any).data;
+    } else if ((embedding as any).data && Array.isArray((embedding as any).data[0])) {
+      // If it's an array of vectors, take the first vector
+      embeddingVector = (embedding as any).data[0];
+    } else {
+      // Fallback - convert to array if it's a single value
+      embeddingVector = Array.isArray(embedding) ? embedding : [embedding as number];
+    }
 
     // Save embedding to database
     await env.DB.prepare(
@@ -227,9 +255,7 @@ export async function generateEmailEmbeddings(
         emailUuid,
         "full",
         content,
-        JSON.stringify(
-          Array.isArray(embeddingData) ? embeddingData[0] : embeddingData
-        )
+        JSON.stringify(embeddingVector)
       )
       .run();
 
@@ -325,43 +351,16 @@ export function detectOTPCode(content: string): {
 } {
   console.log("🔍 OTP Detection - Content:", content);
 
-  // Common OTP patterns - simplified and more reliable
+  // Common OTP patterns - consolidated and optimized
+  const otpKeywords = ['verification\\s+code', 'code', 'otp', 'pin'];
   const otpPatterns = [
-    // 6-digit codes - simple patterns that should work
-    /verification\s+code\s+is\s*:?\s*(\d{6})/gi,
-    /code\s+is\s*:?\s*(\d{6})/gi,
-    /otp\s+is\s*:?\s*(\d{6})/gi,
-    /verification\s+code\s*:?\s*(\d{6})/gi,
-    /code\s*:?\s*(\d{6})/gi,
-    /otp\s*:?\s*(\d{6})/gi,
-    /(\d{6})[\s]*(?:is your|is the|code|otp|verification|pin)/gi,
-
-    // 4-digit codes
-    /verification\s+code\s+is\s*:?\s*(\d{4})/gi,
-    /code\s+is\s*:?\s*(\d{4})/gi,
-    /otp\s+is\s*:?\s*(\d{4})/gi,
-    /verification\s+code\s*:?\s*(\d{4})/gi,
-    /code\s*:?\s*(\d{4})/gi,
-    /otp\s*:?\s*(\d{4})/gi,
-    /(\d{4})[\s]*(?:is your|is the|code|otp|verification|pin)/gi,
-
-    // 8-digit codes
-    /verification\s+code\s+is\s*:?\s*(\d{8})/gi,
-    /code\s+is\s*:?\s*(\d{8})/gi,
-    /otp\s+is\s*:?\s*(\d{8})/gi,
-    /verification\s+code\s*:?\s*(\d{8})/gi,
-    /code\s*:?\s*(\d{8})/gi,
-    /otp\s*:?\s*(\d{8})/gi,
-    /(\d{8})[\s]*(?:is your|is the|code|otp|verification|pin)/gi,
-
-    // Alphanumeric codes
-    /verification\s+code\s+is\s*:?\s*([A-Z0-9]{6,8})/gi,
-    /code\s+is\s*:?\s*([A-Z0-9]{6,8})/gi,
-    /otp\s+is\s*:?\s*([A-Z0-9]{6,8})/gi,
-    /verification\s+code\s*:?\s*([A-Z0-9]{6,8})/gi,
-    /code\s*:?\s*([A-Z0-9]{6,8})/gi,
-    /otp\s*:?\s*([A-Z0-9]{6,8})/gi,
-    /([A-Z0-9]{6,8})[\s]*(?:is your|is the|code|otp|verification|pin)/gi,
+    // Pattern: "keyword is: 123456" or "keyword: 123456"
+    new RegExp(`(?:${otpKeywords.join('|')})(?:\\s+is)?\\s*:?\\s*([A-Z0-9]{4,8})`, 'i'),
+    // Pattern: "123456 is your code" or "123456 code"
+    new RegExp(`([A-Z0-9]{4,8})[\\s]*(?:is your|is the|${otpKeywords.join('|')})`, 'i'),
+    // Additional common patterns
+    /(?:authentication|security|access)\s+code\s*:?\s*([A-Z0-9]{4,8})/i,
+    /your\s+(?:verification|security|access|authentication)\s+code\s*:?\s*([A-Z0-9]{4,8})/i,
   ];
 
   for (let i = 0; i < otpPatterns.length; i++) {
@@ -417,8 +416,9 @@ export async function processEmailFromRouting(
     // Use AI to process the email
     const aiResult = await processEmailWithAI(env, rawEmail);
 
-    // Create email message object
+    // Create email message object with UUID
     const email: EnhancedEmailMessage = {
+      uuid: generateUUID(),
       from: from || aiResult.from,
       to: to || aiResult.to,
       subject: aiResult.subject,
@@ -523,49 +523,21 @@ export async function processEmailFromRouting(
                   );
                 } else {
                   // Update status to failed if no job info could be extracted
-                  await env.DB.prepare(
-                    `UPDATE email_job_links 
-                     SET status = 'failed', 
-                         updated_at = CURRENT_TIMESTAMP 
-                     WHERE id = ?`
-                  )
-                    .bind(linkResult.meta.last_row_id)
-                    .run();
+                  await markJobLinkAsFailed(env, linkResult.meta.last_row_id as number);
                 }
               } else {
                 // Update status to failed if no HTML could be rendered
-                await env.DB.prepare(
-                  `UPDATE email_job_links 
-                   SET status = 'failed', 
-                       updated_at = CURRENT_TIMESTAMP 
-                   WHERE id = ?`
-                )
-                  .bind(linkResult.meta.last_row_id)
-                  .run();
+                await markJobLinkAsFailed(env, linkResult.meta.last_row_id as number);
               }
             } else {
               // Update status to failed if browser rendering failed
-              await env.DB.prepare(
-                `UPDATE email_job_links 
-                 SET status = 'failed', 
-                     updated_at = CURRENT_TIMESTAMP 
-                 WHERE id = ?`
-              )
-                .bind(linkResult.meta.last_row_id)
-                .run();
+              await markJobLinkAsFailed(env, linkResult.meta.last_row_id as number);
             }
           } catch (browserError) {
             console.error(`Failed to process job URL ${jobUrl}:`, browserError);
 
             // Update status to failed
-            await env.DB.prepare(
-              `UPDATE email_job_links 
-               SET status = 'failed', 
-                   updated_at = CURRENT_TIMESTAMP 
-               WHERE id = ?`
-            )
-              .bind(linkResult.meta.last_row_id)
-              .run();
+            await markJobLinkAsFailed(env, linkResult.meta.last_row_id as number);
           }
         } catch (error) {
           console.error(`Failed to save job link ${jobUrl}:`, error);
