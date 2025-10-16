@@ -14,6 +14,7 @@ import type {
   JobRating,
 } from './types';
 import { embedText } from './ai';
+import { processJobIngestion } from '../jobs/pipeline';
 
 export interface StorageEnv {
   DB: D1Database;
@@ -49,12 +50,13 @@ export async function saveJob(env: StorageEnv, job: Job): Promise<string> {
   
   await env.DB.prepare(
     `INSERT OR REPLACE INTO jobs(
-      id, site_id, url, canonical_url, title, company, location, 
-      employment_type, department, salary_min, salary_max, salary_currency, 
-      salary_raw, compensation_raw, description_md, requirements_md, 
+      id, site_id, url, canonical_url, title, company, location,
+      employment_type, department, salary_min, salary_max, salary_currency,
+      salary_raw, compensation_raw, description_md, requirements_md,
       posted_at, closed_at, status, source, last_seen_open_at, first_seen_at, last_crawled_at,
-      daily_monitoring_enabled, monitoring_frequency_hours, last_status_check_at, closure_detected_at
-    ) VALUES(?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12,?13,?14,?15,?16,?17,?18,?19,?20,?21,?22,?23,?24,?25,?26,?27)`
+      daily_monitoring_enabled, monitoring_frequency_hours, last_status_check_at, closure_detected_at,
+      company_id
+    ) VALUES(?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12,?13,?14,?15,?16,?17,?18,?19,?20,?21,?22,?23,?24,?25,?26,?27,?28)`
   )
     .bind(
       id,
@@ -83,7 +85,8 @@ export async function saveJob(env: StorageEnv, job: Job): Promise<string> {
       job.daily_monitoring_enabled !== undefined ? job.daily_monitoring_enabled : true,
       job.monitoring_frequency_hours || 24,
       job.last_status_check_at,
-      job.closure_detected_at
+      job.closure_detected_at,
+      job.company_id || null
     )
     .run();
 
@@ -94,6 +97,24 @@ export async function saveJob(env: StorageEnv, job: Job): Promise<string> {
       await env.VECTORIZE_INDEX.upsert([{ id, values: embedding }]);
     }
   }
+
+  const combinedText = [job.description_md, job.requirements_md, job.compensation_raw]
+    .filter((value): value is string => Boolean(value && value.trim().length > 0))
+    .join('\n');
+
+  await processJobIngestion(env as any, {
+    jobId: id,
+    jobUrl: job.url,
+    applyUrl: job.canonical_url,
+    companyName: job.company,
+    companyWebsite: job.company_url,
+    companyCareersUrl: job.careers_url,
+    text: combinedText,
+    metadata: {
+      company_url: job.company_url,
+      careers_url: job.careers_url,
+    },
+  });
 
   return id;
 }
@@ -146,11 +167,48 @@ export const getJobById = getJob;
  * Save a site configuration.
  */
 export async function saveSite(env: StorageEnv, site: Site): Promise<string> {
+  if (site.id) {
+    await updateSite(env, site.id, site);
+    return site.id;
+  }
+  return createSite(env, site);
+}
+
+/**
+ * Get all sites with optional pagination.
+ */
+export async function getSites(
+  env: StorageEnv,
+  options: { limit?: number; offset?: number } = {}
+): Promise<Site[]> {
+  const { limit = 50, offset = 0 } = options;
+  const stmt = env.DB.prepare(
+    'SELECT * FROM sites ORDER BY name LIMIT ?1 OFFSET ?2'
+  );
+  const result = await stmt.bind(limit, offset).all();
+  return result.results || [];
+}
+
+/**
+ * Get a site by ID.
+ */
+export async function getSiteById(env: StorageEnv, id: string): Promise<Site | null> {
+  const result = await env.DB.prepare('SELECT * FROM sites WHERE id = ?1')
+    .bind(id)
+    .first<Site>();
+  return result || null;
+}
+
+/**
+ * Create a new site record.
+ */
+export async function createSite(env: StorageEnv, site: Site): Promise<string> {
   const id = site.id || crypto.randomUUID();
-  
+  const createdAt = site.created_at || new Date().toISOString();
+
   await env.DB.prepare(
-    `INSERT OR REPLACE INTO sites(
-      id, name, base_url, robots_txt, sitemap_url, 
+    `INSERT INTO sites(
+      id, name, base_url, robots_txt, sitemap_url,
       discovery_strategy, last_discovered_at, created_at
     ) VALUES(?1,?2,?3,?4,?5,?6,?7,?8)`
   )
@@ -158,11 +216,11 @@ export async function saveSite(env: StorageEnv, site: Site): Promise<string> {
       id,
       site.name,
       site.base_url,
-      site.robots_txt,
-      site.sitemap_url,
+      site.robots_txt ?? null,
+      site.sitemap_url ?? null,
       site.discovery_strategy,
-      site.last_discovered_at,
-      site.created_at || new Date().toISOString()
+      site.last_discovered_at ?? null,
+      createdAt
     )
     .run();
 
@@ -170,11 +228,58 @@ export async function saveSite(env: StorageEnv, site: Site): Promise<string> {
 }
 
 /**
- * Get all sites.
+ * Update an existing site.
  */
-export async function getSites(env: StorageEnv): Promise<Site[]> {
-  const result = await env.DB.prepare('SELECT * FROM sites ORDER BY name').all();
-  return result.results || [];
+export async function updateSite(env: StorageEnv, id: string, updates: Partial<Site>): Promise<void> {
+  const fields: string[] = [];
+  const values: any[] = [];
+
+  if (updates.name !== undefined) {
+    fields.push('name = ?');
+    values.push(updates.name);
+  }
+  if (updates.base_url !== undefined) {
+    fields.push('base_url = ?');
+    values.push(updates.base_url);
+  }
+  if (updates.robots_txt !== undefined) {
+    fields.push('robots_txt = ?');
+    values.push(updates.robots_txt ?? null);
+  }
+  if (updates.sitemap_url !== undefined) {
+    fields.push('sitemap_url = ?');
+    values.push(updates.sitemap_url ?? null);
+  }
+  if (updates.discovery_strategy !== undefined) {
+    fields.push('discovery_strategy = ?');
+    values.push(updates.discovery_strategy);
+  }
+  if (updates.last_discovered_at !== undefined) {
+    fields.push('last_discovered_at = ?');
+    values.push(updates.last_discovered_at);
+  }
+
+  if (fields.length === 0) {
+    return;
+  }
+
+  values.push(id);
+
+  await env.DB.prepare(
+    `UPDATE sites SET ${fields.join(', ')} WHERE id = ?`
+  )
+    .bind(...values)
+    .run();
+}
+
+/**
+ * Delete a site by ID.
+ */
+export async function deleteSite(env: StorageEnv, id: string): Promise<boolean> {
+  const result = await env.DB.prepare('DELETE FROM sites WHERE id = ?1')
+    .bind(id)
+    .run();
+  return (result as any)?.success !== false;
 }
 
 /**

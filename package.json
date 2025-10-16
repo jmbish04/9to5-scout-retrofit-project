@@ -1,20 +1,25 @@
 {
-  "name": "@job-scraper/worker",
+  "name": "@9to5-scout",
   "version": "0.0.0",
   "private": true,
+  "dependencies": {
+    "html-entities": "^2.6.0"
+  },
   "scripts": {
-    "generate-types": "wrangler types",
+    "generate-types": "pnpm dlx wrangler@latest types",
     "typecheck": "pnpm generate-types && tsc -p tsconfig.json",
-    "build": "pnpm generate-types && wrangler build",
-    "dev": "pnpm migrate:local && wrangler dev",
-    "migrate:local": "pnpm wrangler d1 migrations apply DB --local",
-    "migrate:remote": "pnpm wrangler d1 migrations apply DB --remote",
-    "deploy": "pnpm build && pnpm migrate:remote && npx wrangler deploy"
+    "build": "pnpm dlx wrangler@latest types && pnpm dlx wrangler@latest build",
+    "dev": "pnpm migrate:local && pnpm dlx wrangler@latest dev",
+    "migrate:local": "pnpm dlx wrangler@latest d1 migrations apply DB --local",
+    "migrate:remote": "pnpm dlx wrangler@latest d1 migrations apply DB --remote",
+    "deploy": "pnpm build && pnpm migrate:remote && pnpm dlx wrangler@latest deploy",
+    "test": "vitest"
   },
   "devDependencies": {
     "@cloudflare/puppeteer": "^1.0.4",
     "@types/node": "^20.11.0",
     "typescript": "^5.4.0",
+    "vitest": "^1.5.0",
     "wrangler": "^4.0.0"
   }
 }

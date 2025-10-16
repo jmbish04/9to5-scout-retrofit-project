@@ -136,3 +136,4 @@ crons = [
 [assets]
 directory = "./public" # ./public -- directory for static assets
 binding = "ASSETS" # ASSETS -- for serving static assets
+exclude = [".DS_Store", "**/.DS_Store"] # Exclude .DS_Store files from all directories

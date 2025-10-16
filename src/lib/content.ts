@@ -16,11 +16,12 @@ const DEFAULT_RESPONSE_SCHEMA: JsonSchemaSpec = {
  * These names align with the worker configuration.
  */
 export interface Env {
-  API_TOKEN: string;
-  ACCOUNT_ID: string;
-  AI: Ai; // Use the built-in AI binding
-  MYBROWSER: Fetcher;
-  DEFAULT_MODEL_WEB_BROWSER?: string;
+API_TOKEN: string;
+ACCOUNT_ID: string;
+AI: Ai; // Use the built-in AI binding
+MYBROWSER?: Fetcher;
+BROWSER?: Fetcher;
+DEFAULT_MODEL_WEB_BROWSER?: string;
 }
 
 const DEFAULT_MODEL = '@cf/meta/llama-4-scout-17b-16e-instruct';
@@ -93,14 +94,19 @@ export class ContentUtils {
   /**
    * Render a URL using Cloudflare's browser and return the page text.
    */
-  static async fetchRenderedText(env: Env, targetUrl: string): Promise<string> {
-    const browser = await puppeteer.launch(env.MYBROWSER);
+ static async fetchRenderedText(env: Env, targetUrl: string): Promise<string> {
+    const browserBinding = env.MYBROWSER || env.BROWSER;
+    if (!browserBinding) {
+      throw new Error('Browser binding is not configured.');
+    }
+    const browser = await puppeteer.launch(browserBinding);
     try {
       const page = await browser.newPage();
       await page.goto(targetUrl);
       const renderedText = await page.evaluate(() => {
-        const body = document.querySelector('body');
-        return body ? body.innerText : '';
+        const doc = (globalThis as any).document as any;
+        const body = doc?.querySelector?.('body');
+        return body ? (body as any).innerText ?? '' : '';
       });
       return renderedText;
     } finally {
@@ -133,8 +139,12 @@ export class ContentUtils {
   /**
    * Generate a PDF from HTML and optional CSS.
    */
-  static async generatePdf(env: Env, html: string, css?: string): Promise<ArrayBuffer> {
-    const browser = await puppeteer.launch(env.MYBROWSER);
+ static async generatePdf(env: Env, html: string, css?: string): Promise<ArrayBuffer> {
+    const browserBinding = env.MYBROWSER || env.BROWSER;
+    if (!browserBinding) {
+      throw new Error('Browser binding is not configured.');
+    }
+    const browser = await puppeteer.launch(browserBinding);
     try {
       const page = await browser.newPage();
       await page.setContent(html);

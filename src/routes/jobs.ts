@@ -47,3 +47,42 @@ export async function handleJobGet(request: Request, env: any, jobId: string): P
     });
   }
 }
+
+export async function handleJobsExportGet(request: Request, env: any): Promise<Response> {
+  try {
+    const url = new URL(request.url);
+    const status = url.searchParams.get('status');
+    const siteId = url.searchParams.get('site_id');
+    const limitParam = parseInt(url.searchParams.get('limit') || '1000', 10);
+    const limit = Math.max(1, Math.min(limitParam, 1000));
+
+    let sql = 'SELECT * FROM jobs WHERE 1=1';
+    const params: any[] = [];
+
+    if (status) {
+      sql += ' AND status = ?';
+      params.push(status);
+    }
+
+    if (siteId) {
+      sql += ' AND site_id = ?';
+      params.push(siteId);
+    }
+
+    sql += ' ORDER BY first_seen_at DESC LIMIT ?';
+    params.push(limit);
+
+    const stmt = env.DB.prepare(sql);
+    const { results } = await stmt.bind(...params).all();
+
+    return new Response(JSON.stringify(results || []), {
+      headers: { 'Content-Type': 'application/json' },
+    });
+  } catch (error) {
+    console.error('Error exporting jobs:', error);
+    return new Response(JSON.stringify({ error: 'Failed to export jobs' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+}

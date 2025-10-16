@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Operations Dashboard - 9to5-Scout</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.css" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
+  <script src="/assets/navigation.js" defer></script>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔍</text></svg>">
+</head>
+<body class="bg-gray-50 min-h-screen">
+  <nav class="bg-white border-gray-200 dark:bg-gray-900 sticky top-0 z-50 shadow-sm">
+    <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+      <a href="/" class="flex items-center space-x-3 rtl:space-x-reverse">
+        <span class="text-2xl">🔍</span>
+        <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">9to5-Scout</span>
+      </a>
+      <button data-collapse-toggle="navbar-default" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-default" aria-expanded="false">
+        <span class="sr-only">Open main menu</span>
+        <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15" />
+        </svg>
+      </button>
+      <div class="hidden w-full md:block md:w-auto" id="navbar-default">
+        <ul data-nav="primary" class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700"></ul>
+      </div>
+    </div>
+  </nav>
+
+  <main class="max-w-screen-xl mx-auto px-4 py-8 space-y-8">
+    <header class="bg-white shadow rounded-lg p-6 space-y-3">
+      <div class="flex items-center gap-3">
+        <span class="text-3xl">📊</span>
+        <div>
+          <h1 class="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">Operations Dashboard</h1>
+          <p class="text-gray-600">Real-time visibility into worker activity, monitoring health, and system errors.</p>
+        </div>
+      </div>
+      <div class="flex flex-wrap items-center gap-4">
+        <label class="flex-1 min-w-[240px]">
+          <span class="block text-sm font-medium text-gray-700">API Token</span>
+          <input id="api-token" type="password" placeholder="Bearer token for authenticated endpoints" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" autocomplete="off" />
+        </label>
+        <div class="flex items-end gap-3">
+          <button id="toggle-token" type="button" class="px-4 py-2 text-sm font-medium rounded-md border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Show</button>
+          <button id="load-dashboard" type="button" class="px-4 py-2 text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Refresh now</button>
+          <div id="loading-indicator" class="hidden flex items-center gap-2 text-sm text-blue-600">
+            <svg class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+            </svg>
+            <span>Loading…</span>
+          </div>
+        </div>
+      </div>
+      <div id="status-message" class="text-sm text-gray-600">Provide your API token to load data.</div>
+      <p class="text-xs text-gray-500">Token is only stored locally in your browser for automatic refreshes. Data refreshes every 60 seconds while the dashboard is open.</p>
+    </header>
+
+    <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="bg-white shadow rounded-lg p-5">
+        <p class="text-sm text-gray-500">Active jobs monitored</p>
+        <p id="active-jobs" class="text-3xl font-semibold text-gray-900">—</p>
+        <p class="text-xs text-gray-500">Jobs with monitoring enabled and currently open.</p>
+      </div>
+      <div class="bg-white shadow rounded-lg p-5">
+        <p class="text-sm text-gray-500">Jobs needing check</p>
+        <p id="jobs-needing-check" class="text-3xl font-semibold text-gray-900">—</p>
+        <p class="text-xs text-gray-500">Past SLA jobs waiting for a new monitoring run.</p>
+      </div>
+      <div class="bg-white shadow rounded-lg p-5">
+        <p class="text-sm text-gray-500">Monitoring queue size</p>
+        <p id="queue-total" class="text-3xl font-semibold text-gray-900">—</p>
+        <p class="text-xs text-gray-500">Total jobs returned by <code id="monitoring-queue-path" class="font-mono">/api/jobs/monitoring-queue</code>.</p>
+      </div>
+      <div class="bg-white shadow rounded-lg p-5">
+        <p class="text-sm text-gray-500">Recent error logs (24h)</p>
+        <p id="error-count" class="text-3xl font-semibold text-gray-900">—</p>
+        <p class="text-xs text-gray-500">Error level entries surfaced from worker and scraper clients.</p>
+      </div>
+    </section>
+
+    <section class="bg-white shadow rounded-lg p-6 space-y-4">
+      <header class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 class="text-xl font-semibold text-gray-900">Monitoring Health</h2>
+          <p class="text-sm text-gray-500">Snapshot of the worker&apos;s automated monitoring pipeline.</p>
+        </div>
+        <p class="text-sm text-gray-500">Last refreshed: <span id="last-refresh">Never</span></p>
+      </header>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div>
+          <h3 class="text-sm font-medium text-gray-700 mb-2">Recent activity (last 7 days)</h3>
+          <div class="overflow-x-auto border border-gray-100 rounded-lg">
+            <table class="min-w-full divide-y divide-gray-200 text-sm">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                  <th class="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Jobs checked</th>
+                  <th class="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Modified</th>
+                  <th class="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Closed</th>
+                  <th class="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Errors</th>
+                </tr>
+              </thead>
+              <tbody id="activity-body" class="divide-y divide-gray-200"></tbody>
+            </table>
+            <div id="activity-empty" class="hidden text-sm text-gray-500 text-center py-6">No monitoring history found.</div>
+          </div>
+        </div>
+        <div>
+          <h3 class="text-sm font-medium text-gray-700 mb-2">Market statistics (last 30 days)</h3>
+          <div class="overflow-x-auto border border-gray-100 rounded-lg">
+            <table class="min-w-full divide-y divide-gray-200 text-sm">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                  <th class="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">New jobs</th>
+                  <th class="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Closed</th>
+                  <th class="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Avg salary</th>
+                </tr>
+              </thead>
+              <tbody id="market-body" class="divide-y divide-gray-200"></tbody>
+            </table>
+            <div id="market-empty" class="hidden text-sm text-gray-500 text-center py-6">No market insights recorded.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-white shadow rounded-lg p-6 space-y-4">
+      <header class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 class="text-xl font-semibold text-gray-900">Monitoring Queue</h2>
+          <p class="text-sm text-gray-500">Jobs awaiting a status re-check.</p>
+        </div>
+        <p class="text-sm text-gray-500">Showing up to 10 jobs.</p>
+      </header>
+      <div class="overflow-x-auto border border-gray-100 rounded-lg">
+        <table class="min-w-full divide-y divide-gray-200 text-sm">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Job</th>
+              <th class="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Company</th>
+              <th class="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Location</th>
+              <th class="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Last check</th>
+              <th class="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Frequency</th>
+            </tr>
+          </thead>
+          <tbody id="queue-body" class="divide-y divide-gray-200"></tbody>
+        </table>
+        <div id="queue-empty" class="hidden text-sm text-gray-500 text-center py-6">Monitoring queue is empty.</div>
+      </div>
+    </section>
+
+    <section class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div class="bg-white shadow rounded-lg p-6 space-y-4">
+        <header>
+          <h2 class="text-xl font-semibold text-gray-900">Recent Runs</h2>
+          <p id="last-run-status" class="text-sm text-gray-500">No run data loaded.</p>
+        </header>
+        <div class="overflow-x-auto border border-gray-100 rounded-lg">
+          <table class="min-w-full divide-y divide-gray-200 text-sm">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Run ID</th>
+                <th class="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                <th class="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                <th class="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Started</th>
+                <th class="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Finished</th>
+              </tr>
+            </thead>
+            <tbody id="runs-body" class="divide-y divide-gray-200"></tbody>
+          </table>
+          <div id="runs-empty" class="hidden text-sm text-gray-500 text-center py-6">No runs recorded yet.</div>
+        </div>
+      </div>
+      <div class="bg-white shadow rounded-lg p-6 space-y-4">
+        <header>
+          <h2 class="text-xl font-semibold text-gray-900">Newest Jobs Captured</h2>
+          <p class="text-sm text-gray-500">Latest entries saved by the worker.</p>
+        </header>
+        <div class="overflow-x-auto border border-gray-100 rounded-lg">
+          <table class="min-w-full divide-y divide-gray-200 text-sm">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                <th class="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Company</th>
+                <th class="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Location</th>
+                <th class="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">First seen</th>
+              </tr>
+            </thead>
+            <tbody id="jobs-body" class="divide-y divide-gray-200"></tbody>
+          </table>
+          <div id="jobs-empty" class="hidden text-sm text-gray-500 text-center py-6">No jobs available.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-white shadow rounded-lg p-6 space-y-4">
+      <header class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 class="text-xl font-semibold text-gray-900">Latest Log Entries</h2>
+          <p class="text-sm text-gray-500">Surface worker or client issues quickly.</p>
+        </div>
+        <p class="text-sm text-gray-500">Showing up to 10 entries.</p>
+      </header>
+      <div class="overflow-x-auto border border-gray-100 rounded-lg">
+        <table class="min-w-full divide-y divide-gray-200 text-sm">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Timestamp</th>
+              <th class="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Source</th>
+              <th class="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Level</th>
+              <th class="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Message</th>
+            </tr>
+          </thead>
+          <tbody id="logs-body" class="divide-y divide-gray-200"></tbody>
+        </table>
+        <div id="logs-empty" class="hidden text-sm text-gray-500 text-center py-6">No recent logs found.</div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      const state = {
+        token: '',
+        loading: false,
+        refreshTimer: null,
+      };
+
+      const tokenInput = document.getElementById('api-token');
+      const toggleTokenButton = document.getElementById('toggle-token');
+      const loadButton = document.getElementById('load-dashboard');
+      const statusMessage = document.getElementById('status-message');
+      const loadingIndicator = document.getElementById('loading-indicator');
+      const lastRefresh = document.getElementById('last-refresh');
+
+      const summaryElements = {
+        activeJobs: document.getElementById('active-jobs'),
+        jobsNeedingCheck: document.getElementById('jobs-needing-check'),
+        queueTotal: document.getElementById('queue-total'),
+        errorCount: document.getElementById('error-count'),
+        lastRunStatus: document.getElementById('last-run-status'),
+      };
+
+      const tableElements = {
+        activity: document.getElementById('activity-body'),
+        market: document.getElementById('market-body'),
+        queue: document.getElementById('queue-body'),
+        runs: document.getElementById('runs-body'),
+        jobs: document.getElementById('jobs-body'),
+        logs: document.getElementById('logs-body'),
+      };
+
+      const emptyStates = {
+        activity: document.getElementById('activity-empty'),
+        market: document.getElementById('market-empty'),
+        queue: document.getElementById('queue-empty'),
+        runs: document.getElementById('runs-empty'),
+        jobs: document.getElementById('jobs-empty'),
+        logs: document.getElementById('logs-empty'),
+      };
+
+      const storedToken = localStorage.getItem('operationsDashboardToken');
+      if (storedToken) {
+        state.token = storedToken;
+        tokenInput.value = storedToken;
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      function formatDate(value) {
+        if (!value) {
+          return '—';
+        }
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) {
+          return '—';
+        }
+        return date.toLocaleString();
+      }
+
+      function formatNumber(value) {
+        if (value === null || value === undefined) {
+          return '—';
+        }
+        const number = Number(value);
+        if (!Number.isFinite(number)) {
+          return '—';
+        }
+        return number.toLocaleString();
+      }
+
+      function setStatus(message, type = 'info') {
+        const baseClasses = 'text-sm rounded-md px-3 py-2';
+        const classMap = {
+          info: 'bg-blue-50 text-blue-700 border border-blue-100',
+          success: 'bg-green-50 text-green-700 border border-green-100',
+          warning: 'bg-yellow-50 text-yellow-700 border border-yellow-100',
+          error: 'bg-red-50 text-red-700 border border-red-100',
+        };
+        statusMessage.className = `${baseClasses} ${classMap[type] || classMap.info}`;
+        statusMessage.textContent = message;
+      }
+
+      function setLoading(isLoading) {
+        state.loading = isLoading;
+        loadButton.disabled = isLoading;
+        loadingIndicator.classList.toggle('hidden', !isLoading);
+        loadButton.textContent = isLoading ? 'Refreshing…' : 'Refresh now';
+      }
+
+      function updateToken(newToken) {
+        state.token = newToken.trim();
+        if (state.token) {
+          localStorage.setItem('operationsDashboardToken', state.token);
+        } else {
+          localStorage.removeItem('operationsDashboardToken');
+        }
+      }
+
+      async function authorizedFetch(path) {
+        if (!state.token) {
+          throw new Error('API token missing');
+        }
+        const response = await fetch(path, {
+          headers: {
+            Authorization: `Bearer ${state.token}`,
+            Accept: 'application/json',
+          },
+        });
+        if (!response.ok) {
+          const text = await response.text();
+          throw new Error(`${response.status} ${response.statusText}: ${text}`);
+        }
+        return response.json();
+      }
+
+      function renderTable(rowsHtml, tableBody, emptyState) {
+        if (!rowsHtml || rowsHtml.trim().length === 0) {
+          tableBody.innerHTML = '';
+          emptyState.classList.remove('hidden');
+        } else {
+          tableBody.innerHTML = rowsHtml;
+          emptyState.classList.add('hidden');
+        }
+      }
+
+      function renderMonitoringStatus(status) {
+        summaryElements.activeJobs.textContent = formatNumber(status.active_jobs_monitored);
+        summaryElements.jobsNeedingCheck.textContent = formatNumber(status.jobs_needing_check);
+
+        const activityRows = (status.recent_activity || []).map((item) => `
+          <tr>
+            <td class="px-4 py-3 whitespace-nowrap text-gray-900">${escapeHtml(item.tracking_date || '—')}</td>
+            <td class="px-4 py-3 whitespace-nowrap text-gray-900">${formatNumber(item.jobs_checked)}</td>
+            <td class="px-4 py-3 whitespace-nowrap text-gray-900">${formatNumber(item.jobs_modified)}</td>
+            <td class="px-4 py-3 whitespace-nowrap text-gray-900">${formatNumber(item.jobs_closed)}</td>
+            <td class="px-4 py-3 whitespace-nowrap text-gray-900">${formatNumber(item.errors)}</td>
+          </tr>
+        `).join('');
+        renderTable(activityRows, tableElements.activity, emptyStates.activity);
+
+        const marketRows = (status.market_statistics || []).map((item) => {
+          const avgSalary = item.avg_salary ? `$${formatNumber(item.avg_salary)}` : '—';
+          return `
+            <tr>
+              <td class="px-4 py-3 whitespace-nowrap text-gray-900">${escapeHtml(item.date || '—')}</td>
+              <td class="px-4 py-3 whitespace-nowrap text-gray-900">${formatNumber(item.new_jobs)}</td>
+              <td class="px-4 py-3 whitespace-nowrap text-gray-900">${formatNumber(item.closed_jobs)}</td>
+              <td class="px-4 py-3 whitespace-nowrap text-gray-900">${avgSalary}</td>
+            </tr>
+          `;
+        }).join('');
+        renderTable(marketRows, tableElements.market, emptyStates.market);
+      }
+
+      function renderMonitoringQueue(queue) {
+        summaryElements.queueTotal.textContent = formatNumber(queue.total_jobs ?? queue.returned_jobs ?? queue.jobs?.length ?? 0);
+        const rows = (queue.jobs || []).map((job) => `
+          <tr>
+            <td class="px-4 py-3 whitespace-nowrap text-blue-600 hover:underline"><a href="${escapeHtml(job.url || '#')}" target="_blank" rel="noopener noreferrer">${escapeHtml(job.title || 'Untitled job')}</a></td>
+            <td class="px-4 py-3 whitespace-nowrap text-gray-900">${escapeHtml(job.company || '—')}</td>
+            <td class="px-4 py-3 whitespace-nowrap text-gray-900">${escapeHtml(job.location || '—')}</td>
+            <td class="px-4 py-3 whitespace-nowrap text-gray-900">${formatDate(job.last_status_check_at)}</td>
+            <td class="px-4 py-3 whitespace-nowrap text-gray-900">${job.monitoring_frequency_hours ? `${formatNumber(job.monitoring_frequency_hours)}h` : '—'}</td>
+          </tr>
+        `).join('');
+        renderTable(rows, tableElements.queue, emptyStates.queue);
+      }
+
+      function renderRuns(runs) {
+        if (Array.isArray(runs) && runs.length > 0) {
+          const latest = runs[0];
+          summaryElements.lastRunStatus.textContent = `Last run (${latest.type}) ${latest.status || 'unknown'} at ${formatDate(latest.finished_at || latest.started_at)}`;
+        } else {
+          summaryElements.lastRunStatus.textContent = 'No run data available.';
+        }
+
+        const rows = (runs || []).map((run) => `
+          <tr>
+            <td class="px-4 py-3 whitespace-nowrap text-gray-900 font-mono text-xs">${escapeHtml(run.id)}</td>
+            <td class="px-4 py-3 whitespace-nowrap text-gray-900 capitalize">${escapeHtml(run.type || '—')}</td>
+            <td class="px-4 py-3 whitespace-nowrap">
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${run.status === 'completed' ? 'bg-green-100 text-green-800' : run.status === 'failed' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'}">${escapeHtml(run.status || 'unknown')}</span>
+            </td>
+            <td class="px-4 py-3 whitespace-nowrap text-gray-900">${formatDate(run.started_at)}</td>
+            <td class="px-4 py-3 whitespace-nowrap text-gray-900">${formatDate(run.finished_at)}</td>
+          </tr>
+        `).join('');
+        renderTable(rows, tableElements.runs, emptyStates.runs);
+      }
+
+      function renderJobs(jobs) {
+        const rows = (jobs || []).map((job) => `
+          <tr>
+            <td class="px-4 py-3 whitespace-nowrap text-blue-600 hover:underline"><a href="${escapeHtml(job.url || '#')}" target="_blank" rel="noopener noreferrer">${escapeHtml(job.title || 'Untitled job')}</a></td>
+            <td class="px-4 py-3 whitespace-nowrap text-gray-900">${escapeHtml(job.company || '—')}</td>
+            <td class="px-4 py-3 whitespace-nowrap text-gray-900">${escapeHtml(job.location || '—')}</td>
+            <td class="px-4 py-3 whitespace-nowrap text-gray-900">${formatDate(job.first_seen_at)}</td>
+          </tr>
+        `).join('');
+        renderTable(rows, tableElements.jobs, emptyStates.jobs);
+      }
+
+      function renderLogs(data) {
+        const logs = data.logs || data;
+        const rows = (logs || []).map((log) => `
+          <tr>
+            <td class="px-4 py-3 whitespace-nowrap text-gray-900">${formatDate(log.timestamp || log.created_at)}</td>
+            <td class="px-4 py-3 whitespace-nowrap text-gray-900">${escapeHtml(log.source || 'unknown')}</td>
+            <td class="px-4 py-3 whitespace-nowrap">
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${log.log_level === 'ERROR' ? 'bg-red-100 text-red-800' : log.log_level === 'WARN' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800'}">${escapeHtml(log.log_level || 'INFO')}</span>
+            </td>
+            <td class="px-4 py-3 text-gray-900 max-w-xs whitespace-normal">${escapeHtml(log.message || '(no message)')}</td>
+          </tr>
+        `).join('');
+        renderTable(rows, tableElements.logs, emptyStates.logs);
+
+        const errorCount = (logs || []).filter((log) => (log.log_level || '').toUpperCase() === 'ERROR').length;
+        summaryElements.errorCount.textContent = formatNumber(errorCount);
+      }
+
+      function clearRefreshTimer() {
+        if (state.refreshTimer) {
+          clearTimeout(state.refreshTimer);
+          state.refreshTimer = null;
+        }
+      }
+
+      function scheduleRefresh() {
+        clearRefreshTimer();
+        state.refreshTimer = setTimeout(() => {
+          loadDashboard(true).catch(() => {});
+        }, 60000);
+      }
+
+      async function loadDashboard(isAuto = false) {
+        if (!state.token) {
+          setStatus('Please provide an API token to load data.', 'warning');
+          return;
+        }
+        if (state.loading) {
+          return;
+        }
+
+        if (!isAuto) {
+          setStatus('Fetching latest data…', 'info');
+        }
+        setLoading(true);
+
+        try {
+          const [monitoringStatus, queueData, runs, jobs, logs] = await Promise.all([
+            authorizedFetch('/api/monitoring/status'),
+            authorizedFetch('/api/jobs/monitoring-queue?limit=10'),
+            authorizedFetch('/api/runs?limit=10'),
+            authorizedFetch('/api/jobs?limit=10'),
+            authorizedFetch('/api/logs?limit=10&order_direction=desc'),
+          ]);
+
+          renderMonitoringStatus(monitoringStatus);
+          renderMonitoringQueue(queueData);
+          renderRuns(runs);
+          renderJobs(jobs);
+          renderLogs(logs);
+
+          lastRefresh.textContent = new Date().toLocaleTimeString();
+          setStatus(isAuto ? 'Dashboard auto-refreshed.' : 'Dashboard updated successfully.', 'success');
+          scheduleRefresh();
+        } catch (error) {
+          console.error('Failed to load dashboard:', error);
+          setStatus(`Failed to load dashboard data: ${error.message}`, 'error');
+          clearRefreshTimer();
+        } finally {
+          setLoading(false);
+        }
+      }
+
+      tokenInput.addEventListener('input', (event) => {
+        updateToken(event.target.value);
+      });
+
+      tokenInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          loadDashboard();
+        }
+      });
+
+      toggleTokenButton.addEventListener('click', () => {
+        const currentType = tokenInput.getAttribute('type');
+        const nextType = currentType === 'password' ? 'text' : 'password';
+        tokenInput.setAttribute('type', nextType);
+        toggleTokenButton.textContent = nextType === 'password' ? 'Show' : 'Hide';
+      });
+
+      loadButton.addEventListener('click', () => loadDashboard());
+
+      if (state.token) {
+        loadDashboard();
+      }
+
+      window.addEventListener('beforeunload', clearRefreshTimer);
+    })();
+  </script>
+</body>
+</html>

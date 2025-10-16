@@ -46,6 +46,14 @@ A comprehensive AI-powered job discovery and career assistance platform built on
 - **Gap Analysis**: Identify skills gaps and provide improvement suggestions
 - **Career Recommendations**: AI-driven job recommendations based on background and preferences
 
+### 🏢 Company Benefits Intelligence
+- **Company Registry**: Automatic company creation/upserts normalized by domain from job scrapes.
+- **Benefits Snapshots**: Rule-based extraction of compensation, time-off, healthcare, retirement, perks, and work model details from job pages and careers sites.
+- **Historical Tracking**: Append-only `company_benefits_snapshots` table preserves every observation with provenance and timestamps.
+- **Nightly Benefits Scan**: Cloudflare Browser Rendering crawl of stored careers URLs with robots-aware fetching, retries, and deduplication.
+- **Stats Rollups**: Scheduled heuristics compute highlights, anomalies, and total compensation estimates into `benefits_stats` for fast UI reads.
+- **Public APIs**: `/api/companies`, `/api/companies/:id/benefits`, `/api/benefits/compare`, `/api/stats/highlights`, `/api/stats/valuations`, plus admin-triggered `/api/companies/scrape`.
+
 ### 📄 AI-Powered Career Document Generation
 - **Cover Letters**: Generate tailored, professional cover letters with personalized content
 - **Resume Optimization**: Create ATS-optimized resume content highlighting relevant experience
@@ -152,7 +160,13 @@ SMTP_PASSWORD = "your-smtp-password"
 
 # Email Routing Configuration
 EMAIL_ROUTING_DOMAIN = "9to5scout.dev"
+
+# Document Intelligence
+EMBEDDING_MODEL = "@cf/baai/bge-large-en-v1.5"
+VECTORIZE_INDEX = "resumes_index"
 ```
+
+Make sure `wrangler.toml` binds `RESUME_BUCKET` to the R2 bucket that stores generated applicant documents alongside the existing `R2` binding.
 
 ### 4. Configure Email Routing
 To receive job alert emails, configure Cloudflare Email Routing:
@@ -583,12 +597,70 @@ Authorization: Bearer your-api-token
 | GET | `/api/agent/query?q={query}` | Semantic job search using AI |
 | POST | `/api/crawl` | Manual job crawling |
 
+### Company Benefits & Insights
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/companies` | List companies with optional search, including latest benefits stats |
+| GET | `/api/companies/{id}/benefits` | Retrieve recent benefits snapshots and stats for a company |
+| GET | `/api/benefits/compare?company_ids=a,b` | Compare normalized benefits data and stats across companies |
+| GET | `/api/stats/highlights` | View top anomalies and standout perks across companies |
+| GET | `/api/stats/valuations` | List total compensation heuristics for ranking |
+| POST | `/api/companies/scrape` | Admin-only trigger to enqueue benefits scraping (supports DRY_RUN) |
+
 ### AI-Powered Career Tools
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | POST | `/api/cover-letter` | Generate personalized cover letters |
 | POST | `/api/resume` | Generate optimized resume content |
+
+### Applicant Documents & ATS Tools
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/docs` | Create a resume or cover letter record |
+| GET | `/api/docs/{id}` | Retrieve document metadata and sectioned content |
+| PUT | `/api/docs/{id}` | Update document content and trigger re-indexing |
+| DELETE | `/api/docs/{id}` | Delete a document and its embeddings |
+| POST | `/api/docs/search` | Semantic search across stored documents |
+| POST | `/api/docs/{id}/apply-patches` | Apply ATS recommendations to a document |
+| POST | `/api/agents/ats/evaluate` | Evaluate a document against a job posting |
+| POST | `/api/agents/docs/generate` | Generate a tailored resume or cover letter |
+
+#### Quick cURL Examples
+
+```bash
+# Create a resume document
+curl -X POST "$WORKER_URL/api/docs" \
+  -H "Authorization: Bearer $API_AUTH_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "user_id": "user-123",
+    "doc_type": "resume",
+    "title": "Staff Engineer Resume",
+    "content_md": "# Summary\n10+ years of platform engineering...",
+    "sections": {"summary": "Platform expert", "experience": "- Led migrations"}
+  }'
+
+# Semantic search scoped to a user
+curl -X POST "$WORKER_URL/api/docs/search" \
+  -H "Authorization: Bearer $API_AUTH_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"q": "graphql leadership", "user_id": "user-123", "top_k": 5}'
+
+# Run ATS evaluation against a job
+curl -X POST "$WORKER_URL/api/agents/ats/evaluate" \
+  -H "Authorization: Bearer $API_AUTH_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"document_id": 42, "job_id": "job-abc"}'
+
+# Apply accepted patch suggestions
+curl -X POST "$WORKER_URL/api/docs/42/apply-patches" \
+  -H "Authorization: Bearer $API_AUTH_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"patches": [{"target": "experience", "type": "replace", "range": {"start": {"line": 5, "col": 1}, "end": {"line": 5, "col": 80}}, "suggestion": "Led migration reducing latency by 30%"}]}'
+```
 
 ### Multi-Agent System Configuration
 
@@ -660,9 +732,17 @@ pnpm generate-types  # Generate Cloudflare Workers types
 ```
 
 ### Type Checking
-```bash  
+```bash
 pnpm typecheck      # Check TypeScript without building
 ```
+
+### Cron Schedule
+| Time (UTC) | Description |
+|------------|-------------|
+| Every 15 minutes | Background maintenance + socket health |
+| 06:00 | Daily job monitoring + email insights |
+| 08:00 | Nightly company benefits crawl via Browser Rendering |
+| 09:00 | Benefits stats rollup for anomalies and valuations |
 
 ## Database Schema
 
@@ -691,12 +771,28 @@ The platform uses a comprehensive relational database schema with the following 
 - **applicant_profiles**: User profiles with preferences and career information
 - **job_history_entries**: Structured job history data parsed from submissions
 - **job_history_submissions**: Raw job history submissions and processing status
+- **applicant_documents**: Stored resume and cover letter metadata plus R2 keys
+- **resume_sections**: Structured resume content (summary, skills, experience, etc.)
+- **document_embeddings**: Shadow table recording Vectorize metadata and hashes
 - **job_ratings**: AI-generated job fit scores and detailed analysis
 
 ### Email & Communication
 - **email_configs**: Email notification settings and preferences
 - **email_logs**: Email processing history and analytics
 - **notification_history**: System notification tracking
+
+### Company Benefits Intelligence
+- **companies**: Normalized company records keyed by registrable domain with website/careers URLs.
+- **company_benefits_snapshots**: Append-only benefits observations with raw snapshot text, structured JSON, source URL, and timestamps.
+- **benefits_stats**: Periodic rollups containing highlights, total-comp heuristics, and coverage confidence for each company.
+
+### Benefits Valuation Assumptions
+- **Daily Rate**: Base salary normalized to 260 working days per year; defaults to $120k/year if range unknown.
+- **401(k) Match**: Adds up to 6% of base salary depending on detected employer match percentage.
+- **Healthcare Value**: $9k baseline when medical coverage present, otherwise $6k conservative estimate.
+- **Paid Time Off**: PTO days and parental leave weeks converted to value using the daily rate; work-from-anywhere weeks add flexibility value.
+- **Equity & Bonus**: Bonus target percent contributes base * percent; equity presence adds 10% of base as a conservative estimate.
+- All assumptions, component breakdown, and detection coverage are persisted in `benefits_stats.total_comp_heuristics` for transparency.
 
 ### Key Database Features
 - **Vector Embeddings**: Job descriptions stored in Vectorize for semantic search
