@@ -43,7 +43,26 @@ Tasks are not complete after a single action. For job scraping:
 4. Generate and store vector embeddings in `VECTORIZE_INDEX`
 5. Initiate monitoring via `JobMonitor` Durable Object
 
-### 3. TypeScript and AI Model Typing (`typescript-ai-typing.mdc`)
+### 3. Cloudflare Workers AI Best Practices (`cloudflare-workers-ai.mdc`)
+
+**Scope:** All files using Workers AI  
+**Application:** Always applied (`alwaysApply: true`)
+
+#### Critical Workers AI Requirements:
+
+- **NEVER** use deprecated imports (`cloudflare:ai` or `cloudflare:workers`)
+- **ALWAYS** use `env.AI.run()` with proper `keyof AiModels` typing
+- **ALWAYS** use environment variables for model selection
+- **NEVER** use `any` type for AI model parameters
+- **ALWAYS** run `pnpm exec wrangler types` to generate proper types
+
+#### Model Selection Guidelines:
+
+- **`DEFAULT_MODEL_WEB_BROWSER`**: Web scraping, content extraction, browser tasks
+- **`DEFAULT_MODEL_REASONING`**: Complex reasoning, job analysis, document generation
+- **`EMBEDDING_MODEL`**: Vector embeddings for semantic search
+
+### 4. TypeScript and AI Model Typing (`typescript-ai-typing.mdc`)
 
 **Scope:** All TypeScript files  
 **Application:** Always applied (`alwaysApply: true`)

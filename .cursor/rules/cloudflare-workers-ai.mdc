@@ -1,0 +1,186 @@
+# Cloudflare Workers AI Best Practices
+
+## CRITICAL WORKERS AI RULES
+
+### **NEVER Use Deprecated Imports**
+
+- **WRONG**: `import type { AiModels } from "cloudflare:ai"` ❌
+- **WRONG**: `import type { AiModels } from "cloudflare:workers"` ❌
+- **CORRECT**: No import needed - `AiModels` is globally available ✅
+
+### **Proper Workers AI Usage Pattern**
+
+```typescript
+// CORRECT - Use env.AI.run() with proper typing
+const response = await env.AI.run(
+  env.DEFAULT_MODEL_REASONING as keyof AiModels,
+  {
+    messages: [
+      {
+        role: "user",
+        content: prompt,
+      },
+    ],
+  }
+);
+
+// CORRECT - For embeddings
+const embeddingResponse = await env.AI.run(
+  env.EMBEDDING_MODEL as keyof AiModels,
+  { text: content }
+);
+```
+
+### **Environment Variable Configuration**
+
+Always use environment variables for model selection in `wrangler.toml`:
+
+```toml
+[ai]
+binding = "AI"
+
+[vars]
+DEFAULT_MODEL_WEB_BROWSER = "@cf/meta/llama-3.1-8b-instruct"
+DEFAULT_MODEL_REASONING = "@cf/openai/gpt-oss-120b"
+EMBEDDING_MODEL = "@cf/baai/bge-large-en-v1.5"
+```
+
+### **TypeScript Typing Requirements**
+
+- **ALWAYS** use `keyof AiModels` for model parameters
+- **NEVER** use `any` type for AI model parameters
+- **ALWAYS** use environment variables for model selection
+- **ALWAYS** run `pnpm exec wrangler types` to generate proper types
+
+### **Model Selection Guidelines**
+
+- **`DEFAULT_MODEL_WEB_BROWSER`**: Use for web scraping, content extraction, browser-related AI tasks
+- **`DEFAULT_MODEL_REASONING`**: Use for complex reasoning tasks like:
+  - Job fit analysis
+  - Career history processing
+  - Cover letter generation
+  - Resume generation
+  - Change analysis and summarization
+- **`EMBEDDING_MODEL`**: Use for generating vector embeddings for semantic search
+
+### **Common Mistakes to Avoid**
+
+#### ❌ **WRONG Patterns**
+
+```typescript
+// WRONG - Deprecated import
+import type { AiModels } from "cloudflare:ai";
+
+// WRONG - Hardcoded model names
+const response = await env.AI.run("@cf/meta/llama-3.1-8b-instruct" as any, inputs);
+
+// WRONG - Using any type
+const response = await env.AI.run(env.MODEL as any, inputs);
+
+// WRONG - Direct model string without typing
+const response = await env.AI.run("@cf/meta/llama-3.1-8b-instruct", inputs);
+```
+
+#### ✅ **CORRECT Patterns**
+
+```typescript
+// CORRECT - No import needed, use global AiModels
+const response = await env.AI.run(
+  env.DEFAULT_MODEL_REASONING as keyof AiModels,
+  { messages: [{ role: "user", content: prompt }] }
+);
+
+// CORRECT - Proper embedding usage
+const embeddingResponse = await env.AI.run(
+  env.EMBEDDING_MODEL as keyof AiModels,
+  { text: content }
+);
+
+// CORRECT - With proper response typing
+const embeddingResponse = response as { data?: number[][] };
+```
+
+### **Response Type Safety**
+
+```typescript
+// CORRECT - Proper response typing for embeddings
+const response = await env.AI.run(env.EMBEDDING_MODEL as keyof AiModels, {
+  text: content,
+});
+const embeddingResponse = response as { data?: number[][] };
+
+// CORRECT - Proper response typing for text generation
+const response = await env.AI.run(env.DEFAULT_MODEL_REASONING as keyof AiModels, {
+  messages: [{ role: "user", content: prompt }],
+});
+const textResponse = response as { response: string };
+```
+
+### **Streaming Responses**
+
+```typescript
+// CORRECT - Streaming for better performance
+const response = await env.AI.run(
+  env.DEFAULT_MODEL_REASONING as keyof AiModels,
+  {
+    messages: [{ role: "user", content: prompt }],
+    stream: true, // Enable streaming
+  }
+);
+```
+
+### **Error Handling**
+
+```typescript
+// CORRECT - Proper error handling
+try {
+  const response = await env.AI.run(
+    env.DEFAULT_MODEL_REASONING as keyof AiModels,
+    { messages: [{ role: "user", content: prompt }] }
+  );
+  return response;
+} catch (error) {
+  console.error("AI model error:", error);
+  throw new Error("Failed to process AI request");
+}
+```
+
+### **Configuration Requirements**
+
+1. **Wrangler Configuration**: Always include AI binding in `wrangler.toml`
+2. **Type Generation**: Run `pnpm exec wrangler types` after any config changes
+3. **Environment Variables**: Use env vars for all model selections
+4. **No External Dependencies**: Workers AI is built-in, no additional packages needed
+
+### **Performance Best Practices**
+
+- Use streaming responses for long-running tasks
+- Choose appropriate models for specific tasks
+- Use environment variables for easy model switching
+- Implement proper error handling and logging
+- Consider using AI Gateway for caching and analytics
+
+### **Verification Checklist**
+
+Before using Workers AI in any code:
+
+- [ ] No deprecated imports (`cloudflare:ai` or `cloudflare:workers`)
+- [ ] Using `env.AI.run()` method
+- [ ] Model parameter typed as `keyof AiModels`
+- [ ] Using environment variables for model selection
+- [ ] Proper response typing
+- [ ] Error handling implemented
+- [ ] `wrangler types` run to generate latest types
+
+### **Documentation References**
+
+- [Workers AI Configuration](https://developers.cloudflare.com/workers-ai/configuration/bindings/)
+- [Workers AI Models](https://developers.cloudflare.com/workers-ai/models/)
+- [TypeScript Types](https://developers.cloudflare.com/workers/languages/typescript/)
+- [AI Gateway Integration](https://developers.cloudflare.com/ai-gateway/usage/providers/workersai/)
+
+## ENFORCEMENT
+
+**VIOLATION CONSEQUENCES**: Any code using deprecated imports or incorrect typing patterns will be rejected and must be corrected before proceeding.
+
+**MANDATORY**: All AI model usage must follow these patterns for consistency, type safety, and maintainability.
