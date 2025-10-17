@@ -231,7 +231,97 @@ const response = await env.AI.run("@cf/baai/bge-large-en-v1.5" as any, inputs);
 - When making architectural decisions
 - When using any Cloudflare API or service
 
-### 10. Email Processing (`email-processing.mdc`)
+### 10. Cloudflare Agents SDK (`cloudflare-agents.mdc`)
+
+**Scope:** All files using the Agents SDK  
+**Application:** Always applied (`alwaysApply: true`)
+
+#### Critical Agents SDK Requirements:
+
+- **ALWAYS** use the official `agents` package from npm: `pnpm add agents`
+- **NEVER** create local agent implementations or import from local files
+- **ALWAYS** extend the `Agent` class from the `agents` package
+- **ALWAYS** use proper TypeScript typing with `Agent<Env, State>`
+- **ALWAYS** configure Durable Object bindings in `wrangler.toml` or `wrangler.jsonc`
+- **ALWAYS** include SQLite migrations for agent state storage
+
+#### Agent Implementation Pattern:
+
+```typescript
+import { Agent, Connection, ConnectionContext, WSMessage } from "agents";
+
+export class MyAgent extends Agent<Env, AgentState> {
+  initialState: AgentState = {
+    /* initial state */
+  };
+
+  async onRequest(request: Request): Promise<Response> {
+    /* HTTP handling */
+  }
+  async onConnect(connection: Connection, ctx: ConnectionContext) {
+    /* WebSocket connect */
+  }
+  async onMessage(connection: Connection, message: WSMessage) {
+    /* WebSocket messages */
+  }
+  onStateUpdate(state: AgentState, source: "server" | Connection) {
+    /* state sync */
+  }
+}
+```
+
+#### Configuration Requirements:
+
+- Durable Object binding: `name = "MY_AGENT", class_name = "MyAgent"`
+- SQLite migration: `new_sqlite_classes = ["MyAgent"]`
+- State management: Use `this.setState()` for state updates
+- WebSocket communication: Use `connection.send()` for responses
+
+### 11. TypeScript Compilation (`typescript-compilation.mdc`)
+
+**Scope:** All TypeScript files and build configuration  
+**Application:** Auto-attached when working with TypeScript files (`alwaysApply: false`)
+
+#### Critical TypeScript Compilation Requirements:
+
+- **ALWAYS** specify `outDir` in `tsconfig.json` to prevent in-place compilation
+- **ALWAYS** specify `rootDir` in `tsconfig.json` for proper source organization
+- **ALWAYS** exclude `node_modules` and output directories from compilation
+- **NEVER** run `tsc` without proper output directory configuration
+- **ALWAYS** verify that `.gitignore` excludes compiled JavaScript files from source directories
+
+#### Required Configuration:
+
+```json
+{
+  "compilerOptions": {
+    "outDir": "./dist",           // ✅ REQUIRED: Output to dist
+    "rootDir": "./src",           // ✅ REQUIRED: Source from src
+    "target": "ES2022",
+    "module": "ESNext"
+  },
+  "exclude": [
+    "node_modules",               // ✅ REQUIRED: Exclude dependencies
+    "dist"                        // ✅ REQUIRED: Exclude output directory
+  ]
+}
+```
+
+#### Common Mistakes to Avoid:
+
+- Missing `outDir` configuration (causes JavaScript files in `src/`)
+- Running `tsc` without proper configuration
+- Missing `.gitignore` entries for compiled files
+- Allowing compiled files to be committed to repository
+
+#### Verification Checklist:
+
+- [ ] `tsconfig.json` has proper `outDir` and `rootDir`
+- [ ] `.gitignore` includes `src/**/*.js` patterns
+- [ ] No JavaScript files exist in `src/` directory
+- [ ] Compiled files appear only in `dist/` directory
+
+### 12. Email Processing (`email-processing.mdc`)
 
 **Scope:** Email-related files only  
 **Application:** Auto-attached when working with email files (`alwaysApply: false`)
