@@ -2,4 +2,8 @@ node_modules
 dist
 src/**/*.js
 .DS_Store
+
+# Wrangler build artifacts and local development files
 .wrangler/
+wrangler.toml.bak
+*.wrangler.toml
