@@ -145,7 +145,7 @@ const response = await env.AI.run("@cf/baai/bge-large-en-v1.5" as any, inputs);
 
 #### Configuration Rules:
 
-- **ALWAYS** provide wrangler.jsonc (not wrangler.toml)
+- **ALWAYS** provide wrangler.toml (not wrangler.toml)
 - Set `compatibility_date = "2025-03-07"`
 - Set `compatibility_flags = ["nodejs_compat"]`
 - Enable observability: `"enabled": true`

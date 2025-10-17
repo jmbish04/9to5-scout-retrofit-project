@@ -54,7 +54,7 @@ export class WebSocketHibernationServer extends DurableObject {
 - Extend `Agent` class with proper type parameters: `Agent<Env, MyState>`
 - Use `this.setState` for state management
 - Use `this.sql` for direct SQLite database access
-- Include proper Durable Object bindings in wrangler.jsonc
+- Include proper Durable Object bindings in wrangler.toml
 - Set `migrations[].new_sqlite_classes` to Agent class name
 
 ### Agent Implementation Pattern:

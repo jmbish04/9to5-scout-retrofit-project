@@ -8,7 +8,7 @@ alwaysApply: true
 
 ## CRITICAL CONFIGURATION RULES
 
-- ALWAYS provide wrangler.jsonc (not wrangler.toml)
+- ALWAYS provide wrangler.toml (not wrangler.toml)
 - Set `compatibility_date = "2025-03-07"`
 - Set `compatibility_flags = ["nodejs_compat"]`
 - Enable observability: `"enabled": true`

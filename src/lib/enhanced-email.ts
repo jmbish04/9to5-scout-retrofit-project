@@ -859,14 +859,10 @@ export async function generateEmailHTMLPreview(
         .classification-badge {
             display: inline-block;
             padding: 4px 8px;
-    const response = await env.AI.run(env.DEFAULT_MODEL_REASONING as keyof AiModels, {
-      messages: [
-        {
-          role: "user",
-          content: prompt,
-        },
-      ],
-    });
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
         .spam { background: #f8d7da; color: #721c24; }
         .personal { background: #e2e3e5; color: #383d41; }
         .other { background: #f8f9fa; color: #6c757d; }
@@ -1083,14 +1079,14 @@ export async function processJobLinksWithBrowserRendering(
     return { processedJobs: 0, jobLinksExtracted: 0 };
   }
 
-    const response = await env.AI.run(env.DEFAULT_MODEL_REASONING as keyof AiModels, {
-      messages: [
-        {
-          role: "user",
-          content: prompt,
-        },
-      ],
-    });
+  console.log(
+    `📧 Processing ${jobUrls.length} job links with browser rendering...`
+  );
+
+  for (const jobUrl of jobUrls) {
+    try {
+      // Insert job link record
+      const linkResult = await env.DB.prepare(
         `INSERT INTO email_job_links (email_auto_id, job_url, status) 
          VALUES (?, ?, 'pending')`
       )
@@ -1249,12 +1245,6 @@ export function buildEmailFilterWhereClause(filters: {
   if (filters.dateTo) {
     whereClause += ` AND e.received_at <= ?`;
     params.push(filters.dateTo);
-  }
-    const emailMessage = new CloudflareEmailMessage(
-      env.EMAIL_SENDER_ADDRESS, // Example env var
-      env.OTP_FORWARDING_ADDRESS, // Example env var
-      html
-    );
   }
 
   // Apply search
