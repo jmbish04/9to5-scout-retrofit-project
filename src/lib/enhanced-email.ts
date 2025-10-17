@@ -859,14 +859,14 @@ export async function generateEmailHTMLPreview(
         .classification-badge {
             display: inline-block;
             padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-        .job-alert { background: #d4edda; color: #155724; }
-        .announcement { background: #d1ecf1; color: #0c5460; }
-        .otp { background: #fff3cd; color: #856404; }
+    const response = await env.AI.run(env.DEFAULT_MODEL_REASONING as keyof AiModels, {
+      messages: [
+        {
+          role: "user",
+          content: prompt,
+        },
+      ],
+    });
         .spam { background: #f8d7da; color: #721c24; }
         .personal { background: #e2e3e5; color: #383d41; }
         .other { background: #f8f9fa; color: #6c757d; }
