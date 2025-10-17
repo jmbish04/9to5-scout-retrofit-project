@@ -1250,10 +1250,11 @@ export function buildEmailFilterWhereClause(filters: {
     whereClause += ` AND e.received_at <= ?`;
     params.push(filters.dateTo);
   }
-
-  if (filters.subject) {
-    whereClause += ` AND e.subject LIKE ?`;
-    params.push(`%${filters.subject}%`);
+    const emailMessage = new CloudflareEmailMessage(
+      env.EMAIL_SENDER_ADDRESS, // Example env var
+      env.OTP_FORWARDING_ADDRESS, // Example env var
+      html
+    );
   }
 
   // Apply search
