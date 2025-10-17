@@ -7,3 +7,7 @@ src/**/*.js
 .wrangler/
 wrangler.toml.bak
 *.wrangler.toml
+
+# Python virtual environments and test artifacts
+venv_tests/
+**/venv_tests/
