@@ -225,27 +225,27 @@ export async function generateEmailEmbeddings(
   try {
     const embeddingsId = generateUUID();
 
-    // Generate embedding for the content
-    const embedding = await env.AI.run("@cf/baai/bge-large-en-v1.5", {
+    // Generate embedding for the content using environment variable
+    const embedding = await env.AI.run(env.EMBEDDING_MODEL, {
       text: content,
     });
 
     // Extract embedding data - handle different response formats
     let embeddingVector: number[];
-    const embeddingResponse = embedding as any;
+    const embeddingResponse = embedding as { data?: number[][] };
 
-    if (Array.isArray(embeddingResponse?.data?.[0])) {
+    if (embeddingResponse?.data && Array.isArray(embeddingResponse.data[0])) {
       // Response is an array of vectors, take the first one
       embeddingVector = embeddingResponse.data[0];
-    } else if (Array.isArray(embeddingResponse?.data)) {
-      // Response is a single vector in the data property
-      embeddingVector = embeddingResponse.data;
-    } else if (Array.isArray(embeddingResponse)) {
+    } else if (embeddingResponse?.data && Array.isArray(embeddingResponse.data)) {
+      // Response is a single vector in the data property - flatten if needed
+      embeddingVector = embeddingResponse.data.flat();
+    } else if (Array.isArray(embedding)) {
       // Response is the vector itself
-      embeddingVector = embeddingResponse;
+      embeddingVector = embedding as number[];
     } else {
       // Fallback for unexpected formats, e.g., a single number
-      embeddingVector = [embeddingResponse as number];
+      embeddingVector = [embedding as number];
     }
 
     // Save embedding to database
