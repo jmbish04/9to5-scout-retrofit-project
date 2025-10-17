@@ -1083,14 +1083,14 @@ export async function processJobLinksWithBrowserRendering(
     return { processedJobs: 0, jobLinksExtracted: 0 };
   }
 
-  console.log(
-    `📧 Processing ${jobUrls.length} job links with browser rendering...`
-  );
-
-  for (const jobUrl of jobUrls) {
-    try {
-      // Insert job link record
-      const linkResult = await env.DB.prepare(
+    const response = await env.AI.run(env.DEFAULT_MODEL_REASONING as keyof AiModels, {
+      messages: [
+        {
+          role: "user",
+          content: prompt,
+        },
+      ],
+    });
         `INSERT INTO email_job_links (email_auto_id, job_url, status) 
          VALUES (?, ?, 'pending')`
       )
