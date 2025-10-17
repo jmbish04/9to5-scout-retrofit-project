@@ -1,94 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Getting Started - 9to5-Scout</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.css" rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔍</text></svg>">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="icon" href="/assets/icon.png" type="image/png">
 </head>
 <body class="bg-gray-50">
-    <!-- Navigation -->
-    <nav class="bg-white border-gray-200 dark:bg-gray-900 sticky top-0 z-50 shadow-sm">
-        <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-            <a href="/" class="flex items-center space-x-3 rtl:space-x-reverse">
-                <span class="text-2xl">🔍</span>
-                <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">9to5-Scout</span>
-            </a>
-            <button data-collapse-toggle="navbar-default" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-default" aria-expanded="false">
-                <span class="sr-only">Open main menu</span>
-                <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/>
-                </svg>
-            </button>
-            <div class="hidden w-full md:block md:w-auto" id="navbar-default">
-                <ul class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-                    <li>
-                        <a href="/" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Home</a>
-                    </li>
-                    <li>
-                        <a href="/getting-started.html" class="block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500" aria-current="page">Getting Started</a>
-                    </li>
-                    <li>
-                        <a href="/api-reference.html" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">API Reference</a>
-                    </li>
-                    <li>
-                        <a href="/email-integration.html" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Email Integration</a>
-                    </li>
-                    <li>
-                        <a href="/job-history-management.html" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Job History</a>
-                    </li>
-                    <li>
-                        <a href="/agent-workflow-config.html" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">AI Agents</a>
-                    </li>
-                    <li>
-                        <a href="/openapi.json" target="_blank" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">📋 OpenAPI</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <div id="navbar-placeholder"></div>
 
     <!-- Main Content -->
     <div class="max-w-4xl mx-auto px-4 py-8">
-        <!-- Header -->
-        <div class="mb-8">
-            <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">Getting Started</h1>
-            <p class="text-xl text-gray-600 dark:text-gray-400">Set up your 9to5-Scout AI-powered job discovery platform in minutes.</p>
-        </div>
+      <!-- Header -->
+      <div class="mb-8">
+        <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+          Getting Started
+        </h1>
+        <p class="text-xl text-gray-600 dark:text-gray-400 subtitle">
+          Set up your 9to5-Scout AI-powered job discovery platform in minutes.
+        </p>
+      </div>
 
-        <!-- Prerequisites Alert -->
-        <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-8">
-            <div class="flex">
-                <div class="flex-shrink-0">
-                    <svg class="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
-                    </svg>
-                </div>
-                <div class="ml-3">
-                    <p class="text-sm text-blue-700">
-                        <strong>Prerequisites:</strong> You'll need a Cloudflare account with Workers, D1, R2, Vectorize, and Workers AI enabled.
-                    </p>
-                </div>
+      <!-- Prerequisites Alert -->
+      <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-8">
+        <div class="flex">
+          <div class="flex-shrink-0">
+            <svg
+              class="h-5 w-5 text-blue-400"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </div>
+          <div class="ml-3">
+            <p class="text-sm text-blue-700">
+              <strong>Prerequisites:</strong> You'll need a Cloudflare account
+              with Workers, D1, R2, Vectorize, and Workers AI enabled.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step-by-step setup -->
+      <div class="space-y-8">
+        <!-- Step 1: Install Dependencies -->
+        <div class="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900">
+          <div class="flex items-center mb-4">
+            <div
+              class="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full dark:bg-blue-900 mr-3"
+            >
+              <span class="text-blue-600 dark:text-blue-300 font-semibold"
+                >1</span
+              >
             </div>
-        </div>
-
-        <!-- Step-by-step setup -->
-        <div class="space-y-8">
-            <!-- Step 1: Install Dependencies -->
-            <div class="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900">
-                <div class="flex items-center mb-4">
-                    <div class="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full dark:bg-blue-900 mr-3">
-                        <span class="text-blue-600 dark:text-blue-300 font-semibold">1</span>
-                    </div>
-                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Install Dependencies</h2>
-                </div>
-                <div class="space-y-4">
-                    <p class="text-gray-600 dark:text-gray-400">First, make sure you have the required package manager and install project dependencies.</p>
-                    <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
-                        <pre class="text-green-400 text-sm"><code># Install pnpm globally if not available
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+              Install Dependencies
+            </h2>
+          </div>
+          <div class="space-y-4">
+            <p class="text-gray-600 dark:text-gray-400">
+              First, make sure you have the required package manager and install
+              project dependencies.
+            </p>
+            <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
+              <pre
+                class="text-green-400 text-sm"
+              ><code># Install pnpm globally if not available
 npm install -g pnpm
 
 # Navigate to project directory
@@ -96,25 +80,40 @@ cd 9to5-scout
 
 # Install project dependencies
 pnpm install</code></pre>
-                    </div>
-                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4">
-                        <p class="text-yellow-700 text-sm">⏱️ <strong>Note:</strong> Dependency installation may take up to 5 minutes. Don't cancel the process.</p>
-                    </div>
-                </div>
             </div>
+            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4">
+              <p class="text-yellow-700 text-sm">
+                ⏱️ <strong>Note:</strong> Dependency installation may take up to
+                5 minutes. Don't cancel the process.
+              </p>
+            </div>
+          </div>
+        </div>
 
-            <!-- Step 2: Configure Wrangler -->
-            <div class="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900">
-                <div class="flex items-center mb-4">
-                    <div class="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full dark:bg-blue-900 mr-3">
-                        <span class="text-blue-600 dark:text-blue-300 font-semibold">2</span>
-                    </div>
-                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Configure Wrangler</h2>
-                </div>
-                <div class="space-y-4">
-                    <p class="text-gray-600 dark:text-gray-400">Update <code class="bg-gray-100 px-2 py-1 rounded text-sm">wrangler.toml</code> with your specific Cloudflare resource IDs:</p>
-                    <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
-                        <pre class="text-green-400 text-sm"><code># D1 Database
+        <!-- Step 2: Configure Wrangler -->
+        <div class="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900">
+          <div class="flex items-center mb-4">
+            <div
+              class="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full dark:bg-blue-900 mr-3"
+            >
+              <span class="text-blue-600 dark:text-blue-300 font-semibold"
+                >2</span
+              >
+            </div>
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+              Configure Wrangler
+            </h2>
+          </div>
+          <div class="space-y-4">
+            <p class="text-gray-600 dark:text-gray-400">
+              Update
+              <code class="bg-gray-100 px-2 py-1 rounded text-sm"
+                >wrangler.toml</code
+              >
+              with your specific Cloudflare resource IDs:
+            </p>
+            <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
+              <pre class="text-green-400 text-sm"><code># D1 Database
 [[d1_databases]]
 binding = "DB"
 database_name = "JOB_SCRAPER_DB"
@@ -144,7 +143,6 @@ class_name = "SiteCrawler"
 name = "JOB_MONITOR" 
 class_name = "JobMonitor"
 
-# Workflows
 [[workflows]]
 binding = "DISCOVERY_WORKFLOW"
 name = "DiscoveryWorkflow"
@@ -156,122 +154,193 @@ name = "JobMonitorWorkflow"
 [[workflows]]
 binding = "CHANGE_ANALYSIS_WORKFLOW"
 name = "ChangeAnalysisWorkflow"</code></pre>
-                    </div>
-                </div>
             </div>
+          </div>
+        </div>
 
-            <!-- Step 3: Set Environment Variables -->
-            <div class="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900">
-                <div class="flex items-center mb-4">
-                    <div class="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full dark:bg-blue-900 mr-3">
-                        <span class="text-blue-600 dark:text-blue-300 font-semibold">3</span>
-                    </div>
-                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Set Environment Variables</h2>
-                </div>
-                <div class="space-y-4">
-                    <p class="text-gray-600 dark:text-gray-400">Configure these variables in your <code class="bg-gray-100 px-2 py-1 rounded text-sm">wrangler.toml</code> [vars] section or as secrets:</p>
-                    <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
-                        <pre class="text-green-400 text-sm"><code># Authentication
-API_AUTH_TOKEN = "your-secure-api-token"
+        <!-- Step 3: Set Environment Variables -->
+        <div class="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900">
+          <div class="flex items-center mb-4">
+            <div
+              class="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full dark:bg-blue-900 mr-3"
+            >
+              <span class="text-blue-600 dark:text-blue-300 font-semibold"
+                >3</span
+              >
+            </div>
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+              Set Environment Variables
+            </h2>
+          </div>
+          <div class="space-y-4">
+            <p class="text-gray-600 dark:text-gray-400">
+              Configure these variables in your
+              <code class="bg-gray-100 px-2 py-1 rounded text-sm"
+                >wrangler.toml</code
+              >
+              [vars] section or as secrets:
+            </p>
+            <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
+              <pre class="text-green-400 text-sm"><code># Authentication
+WORKER_API_KEY = "your-secure-api-token"
 BROWSER_RENDERING_TOKEN = "your-browser-rendering-token"
 
 # Notifications
 SLACK_WEBHOOK_URL = "your-slack-webhook-url"
 
-# Email System (SMTP Configuration)
-SMTP_ENDPOINT = "your-smtp-server-endpoint"
-SMTP_USERNAME = "your-smtp-username" 
-SMTP_PASSWORD = "your-smtp-password"
+# Email System (Cloudflare Native - No SMTP needed!)
+# Enable Email Routing in Cloudflare Dashboard
+# Verify destination email addresses
+# Use send_email binding for sending emails
 
 # Email Routing Configuration
 EMAIL_ROUTING_DOMAIN = "9to5scout.dev"</code></pre>
-                    </div>
-                    <div class="bg-green-50 border-l-4 border-green-400 p-4">
-                        <p class="text-green-700 text-sm">💡 <strong>Security Tip:</strong> Use <code>wrangler secret put</code> for sensitive values like passwords and tokens.</p>
-                    </div>
-                </div>
             </div>
+            <div class="bg-green-50 border-l-4 border-green-400 p-4">
+              <p class="text-green-700 text-sm">
+                💡 <strong>Security Tip:</strong> Use
+                <code>wrangler secret put</code> for sensitive values like
+                passwords and tokens.
+              </p>
+            </div>
+          </div>
+        </div>
 
-            <!-- Step 4: Configure Email Routing -->
-            <div class="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900">
-                <div class="flex items-center mb-4">
-                    <div class="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full dark:bg-blue-900 mr-3">
-                        <span class="text-blue-600 dark:text-blue-300 font-semibold">4</span>
-                    </div>
-                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Configure Email Routing</h2>
-                </div>
-                <div class="space-y-4">
-                    <p class="text-gray-600 dark:text-gray-400">Set up Cloudflare Email Routing to receive job alerts from major platforms:</p>
-                    <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
-                        <pre class="text-green-400 text-sm"><code># Add to wrangler.toml email routing section
+        <!-- Step 4: Configure Email Routing -->
+        <div class="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900">
+          <div class="flex items-center mb-4">
+            <div
+              class="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full dark:bg-blue-900 mr-3"
+            >
+              <span class="text-blue-600 dark:text-blue-300 font-semibold"
+                >4</span
+              >
+            </div>
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+              Configure Email Routing
+            </h2>
+          </div>
+          <div class="space-y-4">
+            <p class="text-gray-600 dark:text-gray-400">
+              Set up Cloudflare Email Routing to receive job alerts from major
+              platforms:
+            </p>
+            <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
+              <pre
+                class="text-green-400 text-sm"
+              ><code># Add to wrangler.toml email routing section
 [[email]]
 name = "job-alerts"
 destination_addresses = ["*@9to5scout.dev"]</code></pre>
-                    </div>
-                    <div class="bg-blue-50 rounded-lg p-4">
-                        <h4 class="font-semibold text-blue-900 mb-2">📧 Supported Email Addresses:</h4>
-                        <ul class="text-blue-800 text-sm space-y-1">
-                            <li><code>alerts@9to5scout.dev</code> - LinkedIn and general job alerts</li>
-                            <li><code>jobs@9to5scout.dev</code> - Indeed and Monster job notifications</li>
-                            <li><code>notifications@9to5scout.dev</code> - Glassdoor and ZipRecruiter alerts</li>
-                            <li><code>insights@9to5scout.dev</code> - System-generated insights and reports</li>
-                        </ul>
-                    </div>
-                </div>
             </div>
+            <div class="bg-blue-50 rounded-lg p-4">
+              <h4 class="font-semibold text-blue-900 mb-2">
+                📧 Supported Email Addresses:
+              </h4>
+              <ul class="feature-list text-blue-800 text-sm space-y-1">
+                <li>
+                  <code>alerts@9to5scout.dev</code> - LinkedIn and general job
+                  alerts
+                </li>
+                <li>
+                  <code>jobs@9to5scout.dev</code> - Indeed and Monster job
+                  notifications
+                </li>
+                <li>
+                  <code>notifications@9to5scout.dev</code> - Glassdoor and
+                  ZipRecruiter alerts
+                </li>
+                <li>
+                  <code>insights@9to5scout.dev</code> - System-generated
+                  insights and reports
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
 
-            <!-- Step 5: Run Database Migrations -->
-            <div class="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900">
-                <div class="flex items-center mb-4">
-                    <div class="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full dark:bg-blue-900 mr-3">
-                        <span class="text-blue-600 dark:text-blue-300 font-semibold">5</span>
-                    </div>
-                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Run Database Migrations</h2>
-                </div>
-                <div class="space-y-4">
-                    <p class="text-gray-600 dark:text-gray-400">Initialize the database schema with the required tables and indexes:</p>
-                    <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
-                        <pre class="text-green-400 text-sm"><code># Local development (for testing)
+        <!-- Step 5: Run Database Migrations -->
+        <div class="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900">
+          <div class="flex items-center mb-4">
+            <div
+              class="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full dark:bg-blue-900 mr-3"
+            >
+              <span class="text-blue-600 dark:text-blue-300 font-semibold"
+                >5</span
+              >
+            </div>
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+              Run Database Migrations
+            </h2>
+          </div>
+          <div class="space-y-4">
+            <p class="text-gray-600 dark:text-gray-400">
+              Initialize the database schema with the required tables and
+              indexes:
+            </p>
+            <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
+              <pre
+                class="text-green-400 text-sm"
+              ><code># Local development (for testing)
 pnpm wrangler d1 migrations apply JOB_SCRAPER_DB --local
 
 # Production deployment
 pnpm wrangler d1 migrations apply JOB_SCRAPER_DB --remote</code></pre>
-                    </div>
-                </div>
             </div>
+          </div>
+        </div>
 
-            <!-- Step 6: Deploy -->
-            <div class="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900">
-                <div class="flex items-center mb-4">
-                    <div class="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full dark:bg-blue-900 mr-3">
-                        <span class="text-blue-600 dark:text-blue-300 font-semibold">6</span>
-                    </div>
-                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Deploy</h2>
-                </div>
-                <div class="space-y-4">
-                    <p class="text-gray-600 dark:text-gray-400">Build and deploy your 9to5-Scout worker to Cloudflare:</p>
-                    <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
-                        <pre class="text-green-400 text-sm"><code># Build the project (includes type generation)
+        <!-- Step 6: Deploy -->
+        <div class="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900">
+          <div class="flex items-center mb-4">
+            <div
+              class="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full dark:bg-blue-900 mr-3"
+            >
+              <span class="text-blue-600 dark:text-blue-300 font-semibold"
+                >6</span
+              >
+            </div>
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+              Deploy
+            </h2>
+          </div>
+          <div class="space-y-4">
+            <p class="text-gray-600 dark:text-gray-400">
+              Build and deploy your 9to5-Scout worker to Cloudflare:
+            </p>
+            <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
+              <pre
+                class="text-green-400 text-sm"
+              ><code># Build the project (includes type generation)
 pnpm build
 
 # Deploy to Cloudflare Workers
 pnpm deploy
 # or
 pnpm wrangler deploy</code></pre>
-                    </div>
-                    <div class="bg-green-50 border-l-4 border-green-400 p-4">
-                        <p class="text-green-700 text-sm">🎉 <strong>Success!</strong> Your 9to5-Scout platform is now deployed and ready to use.</p>
-                    </div>
-                </div>
             </div>
+            <div class="bg-green-50 border-l-4 border-green-400 p-4">
+              <p class="text-green-700 text-sm">
+                🎉 <strong>Success!</strong> Your 9to5-Scout platform is now
+                deployed and ready to use.
+              </p>
+            </div>
+          </div>
         </div>
+      </div>
 
-        <!-- Quick Test Section -->
-        <div class="mt-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg p-8 text-white">
-            <h2 class="text-3xl font-bold mb-4">🚀 Quick Test</h2>
-            <p class="text-blue-100 mb-6">Verify your installation with these quick API calls:</p>
-            <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
-                <pre class="text-green-400 text-sm"><code># Health check (no authentication required)
+      <!-- Quick Test Section -->
+      <div
+        class="mt-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg p-8 text-white"
+      >
+        <h2 class="text-3xl font-bold mb-4">🚀 Quick Test</h2>
+        <p class="text-blue-100 mb-6">
+          Verify your installation with these quick API calls:
+        </p>
+        <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
+          <pre
+            class="text-green-400 text-sm"
+          ><code># Health check (no authentication required)
 curl https://your-worker.workers.dev/api/health
 
 # Start job discovery
@@ -282,134 +351,257 @@ curl -H "Authorization: Bearer &lt;token&gt;" \
 curl -H "Authorization: Bearer &lt;token&gt;" \
      -H "Content-Type: application/json" \
      -X POST https://your-worker.workers.dev/api/applicant/history \
-     -d '{
+     -d '{ 
        "user_id": "demo-user",
        "raw_content": "Senior Software Engineer at TechCorp (2020-2023)",
        "content_type": "text/plain"
      }'</code></pre>
-            </div>
         </div>
+      </div>
 
-        <!-- Next Steps -->
-        <div class="mt-12 bg-white rounded-lg shadow-sm p-8 dark:bg-gray-900">
-            <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-6">📚 Next Steps</h2>
-            <div class="grid md:grid-cols-2 gap-6">
-                <div class="space-y-4">
-                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Platform Features</h3>
-                    <ul class="space-y-2 text-gray-600 dark:text-gray-400">
-                        <li><a href="/email-integration.html" class="text-blue-600 hover:text-blue-800">📧 Set up email integration</a></li>
-                        <li><a href="/job-history-management.html" class="text-blue-600 hover:text-blue-800">📚 Configure job history management</a></li>
-                        <li><a href="/agent-workflow-config.html" class="text-blue-600 hover:text-blue-800">🤖 Explore AI agents and workflows</a></li>
-                        <li><a href="/api-reference.html" class="text-blue-600 hover:text-blue-800">📋 Browse the complete API reference</a></li>
-                    </ul>
-                </div>
-                <div class="space-y-4">
-                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white">External Setup</h3>
-                    <ul class="space-y-2 text-gray-600 dark:text-gray-400">
-                        <li>• Configure LinkedIn job alerts → <code class="text-sm bg-gray-100 px-1 rounded">alerts@9to5scout.dev</code></li>
-                        <li>• Set up Indeed alerts → <code class="text-sm bg-gray-100 px-1 rounded">jobs@9to5scout.dev</code></li>
-                        <li>• Configure Slack webhook for notifications</li>
-                        <li>• Set up SMTP for outbound email insights</li>
-                    </ul>
-                </div>
-            </div>
+      <!-- Next Steps -->
+      <div class="mt-12 bg-white rounded-lg shadow-sm p-8 dark:bg-gray-900">
+        <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-6">
+          📚 Next Steps
+        </h2>
+        <div class="grid md:grid-cols-2 gap-6">
+          <div class="space-y-4">
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+              Platform Features
+            </h3>
+            <ul class="feature-list space-y-2 text-gray-600 dark:text-gray-400">
+              <li>
+                <a
+                  href="/email-integration.html"
+                  class="text-blue-600 hover:text-blue-800"
+                  >📧 Set up email integration</a
+                >
+              </li>
+              <li>
+                <a
+                  href="/job-history-management.html"
+                  class="text-blue-600 hover:text-blue-800"
+                  >📚 Configure job history management</a
+                >
+              </li>
+              <li>
+                <a
+                  href="/agent-workflow-config.html"
+                  class="text-blue-600 hover:text-blue-800"
+                  >🤖 Explore AI agents and workflows</a
+                >
+              </li>
+              <li>
+                <a
+                  href="/api-reference.html"
+                  class="text-blue-600 hover:text-blue-800"
+                  >📋 Browse the complete API reference</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div class="space-y-4">
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+              External Setup
+            </h3>
+            <ul class="feature-list space-y-2 text-gray-600 dark:text-gray-400">
+              <li>Configure LinkedIn job alerts →
+                <code class="text-sm bg-gray-100 px-1 rounded"
+                  >alerts@9to5scout.dev</code
+                >
+              </li>
+              <li>Set up Indeed alerts →
+                <code class="text-sm bg-gray-100 px-1 rounded"
+                  >jobs@9to5scout.dev</code
+                >
+              </li>
+              <li>Configure Slack webhook for notifications</li>
+              <li>Set up SMTP for outbound email insights</li>
+            </ul>
+          </div>
         </div>
+      </div>
 
-        <!-- Help Section -->
-        <div class="mt-8 bg-gray-50 rounded-lg p-6 dark:bg-gray-800">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Need Help?</h3>
-            <div class="grid md:grid-cols-3 gap-4 text-sm">
-                <div>
-                    <h4 class="font-medium text-gray-900 dark:text-white">Documentation</h4>
-                    <ul class="mt-2 space-y-1 text-gray-600 dark:text-gray-400">
-                        <li><a href="/api-reference.html" class="hover:text-blue-600">API Reference</a></li>
-                        <li><a href="/openapi.json" target="_blank" class="hover:text-blue-600">OpenAPI Spec</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="font-medium text-gray-900 dark:text-white">Platform</h4>
-                    <ul class="mt-2 space-y-1 text-gray-600 dark:text-gray-400">
-                        <li><a href="https://developers.cloudflare.com/workers/" target="_blank" class="hover:text-blue-600">Cloudflare Workers</a></li>
-                        <li><a href="https://developers.cloudflare.com/d1/" target="_blank" class="hover:text-blue-600">D1 Database</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="font-medium text-gray-900 dark:text-white">Troubleshooting</h4>
-                    <ul class="mt-2 space-y-1 text-gray-600 dark:text-gray-400">
-                        <li>Check worker logs in Cloudflare Dashboard</li>
-                        <li>Verify all environment variables are set</li>
-                    </ul>
-                </div>
-            </div>
+      <!-- Help Section -->
+      <div class="mt-8 bg-gray-50 rounded-lg p-6 dark:bg-gray-800">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+          Need Help?
+        </h3>
+        <div class="grid md:grid-cols-3 gap-4 text-sm">
+          <div>
+            <h4 class="font-medium text-gray-900 dark:text-white">
+              Documentation
+            </h4>
+            <ul class="feature-list mt-2 space-y-1 text-gray-600 dark:text-gray-400">
+              <li>
+                <a href="/api-reference.html" class="hover:text-blue-600"
+                  >API Reference</a
+                >
+              </li>
+              <li>
+                <a
+                  href="/openapi.json"
+                  target="_blank"
+                  class="hover:text-blue-600"
+                  >OpenAPI Spec</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="font-medium text-gray-900 dark:text-white">Platform</h4>
+            <ul class="feature-list mt-2 space-y-1 text-gray-600 dark:text-gray-400">
+              <li>
+                <a
+                  href="https://developers.cloudflare.com/workers/"
+                  target="_blank"
+                  class="hover:text-blue-600"
+                  >Cloudflare Workers</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://developers.cloudflare.com/d1/"
+                  target="_blank"
+                  class="hover:text-blue-600"
+                  >D1 Database</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="font-medium text-gray-900 dark:text-white">
+              Troubleshooting
+            </h4>
+            <ul class="feature-list mt-2 space-y-1 text-gray-600 dark:text-gray-400">
+              <li>Check worker logs in Cloudflare Dashboard</li>
+              <li>Verify all environment variables are set</li>
+            </ul>
+          </div>
         </div>
+      </div>
     </div>
 
     <!-- Footer -->
     <footer class="bg-white dark:bg-gray-900 mt-16">
-        <div class="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
-            <div class="md:flex md:justify-between">
-                <div class="mb-6 md:mb-0">
-                    <a href="/" class="flex items-center">
-                        <span class="text-2xl mr-3">🔍</span>
-                        <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">9to5-Scout</span>
-                    </a>
-                </div>
-                <div class="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
-                    <div>
-                        <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Documentation</h2>
-                        <ul class="text-gray-500 dark:text-gray-400 font-medium">
-                            <li class="mb-4">
-                                <a href="/getting-started.html" class="hover:underline">Getting Started</a>
-                            </li>
-                            <li class="mb-4">
-                                <a href="/api-reference.html" class="hover:underline">API Reference</a>
-                            </li>
-                            <li>
-                                <a href="/openapi.json" target="_blank" class="hover:underline">OpenAPI Spec</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Features</h2>
-                        <ul class="text-gray-500 dark:text-gray-400 font-medium">
-                            <li class="mb-4">
-                                <a href="/email-integration.html" class="hover:underline">Email Integration</a>
-                            </li>
-                            <li class="mb-4">
-                                <a href="/job-history-management.html" class="hover:underline">Job History</a>
-                            </li>
-                            <li>
-                                <a href="/agent-workflow-config.html" class="hover:underline">AI Agents</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Platform</h2>
-                        <ul class="text-gray-500 dark:text-gray-400 font-medium">
-                            <li class="mb-4">
-                                <a href="https://workers.cloudflare.com/" target="_blank" class="hover:underline">Cloudflare Workers</a>
-                            </li>
-                            <li class="mb-4">
-                                <a href="https://ai.cloudflare.com/" target="_blank" class="hover:underline">Workers AI</a>
-                            </li>
-                            <li>
-                                <a href="https://developers.cloudflare.com/" target="_blank" class="hover:underline">Developer Docs</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
+      <div class="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
+        <div class="md:flex md:justify-between">
+          <div class="mb-6 md:mb-0">
+            <a href="/" class="flex items-center">
+              <span class="text-2xl mr-3">🔍</span>
+              <span
+                class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white"
+                >9to5-Scout</span
+              >
+            </a>
+          </div>
+          <div class="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
+            <div>
+              <h2
+                class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white"
+              >
+                Documentation
+              </h2>
+              <ul class="text-gray-500 dark:text-gray-400 font-medium">
+                <li class="mb-4">
+                  <a href="/getting-started.html" class="hover:underline"
+                    >Getting Started</a
+                  >
+                </li>
+                <li class="mb-4">
+                  <a href="/api-reference.html" class="hover:underline"
+                    >API Reference</a
+                  >
+                </li>
+                <li>
+                  <a
+                    href="/openapi.json"
+                    target="_blank"
+                    class="hover:underline"
+                    >OpenAPI Spec</a
+                  >
+                </li>
+              </ul>
             </div>
-            <hr class="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
-            <div class="sm:flex sm:items-center sm:justify-between">
-                <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">Built with ❤️ using Cloudflare Workers & AI</span>
-                <div class="flex mt-4 sm:justify-center sm:mt-0">
-                    <a href="/openapi.json" target="_blank" class="text-gray-500 hover:text-gray-900 dark:hover:text-white">
-                        <span class="sr-only">OpenAPI Specification</span>
-                        📋
-                    </a>
-                </div>
+            <div>
+              <h2
+                class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white"
+              >
+                Features
+              </h2>
+              <ul class="text-gray-500 dark:text-gray-400 font-medium">
+                <li class="mb-4">
+                  <a href="/email-integration.html" class="hover:underline"
+                    >Email Integration</a
+                  >
+                </li>
+                <li class="mb-4">
+                  <a href="/job-history-management.html" class="hover:underline"
+                    >Job History</a
+                  >
+                </li>
+                <li>
+                  <a href="/agent-workflow-config.html" class="hover:underline"
+                    >AI Agents</a
+                  >
+                </li>
+              </ul>
             </div>
+            <div>
+              <h2
+                class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white"
+              >
+                Platform
+              </h2>
+              <ul class="text-gray-500 dark:text-gray-400 font-medium">
+                <li class="mb-4">
+                  <a
+                    href="https://workers.cloudflare.com/"
+                    target="_blank"
+                    class="hover:underline"
+                    >Cloudflare Workers</a
+                  >
+                </li>
+                <li class="mb-4">
+                  <a
+                    href="https://ai.cloudflare.com/"
+                    target="_blank"
+                    class="hover:underline"
+                    >Workers AI</a
+                  >
+                </li>
+                <li>
+                  <a
+                    href="https://developers.cloudflare.com/"
+                    target="_blank"
+                    class="hover:underline"
+                    >Developer Docs</a
+                  >
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
+        <hr
+          class="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8"
+        />
+        <div class="sm:flex sm:items-center sm:justify-between">
+          <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400"
+            >Built with ❤️ using Cloudflare Workers & AI</span
+          >
+          <div class="flex mt-4 sm:justify-center sm:mt-0">
+            <a
+              href="/openapi.json"
+              target="_blank"
+              class="text-gray-500 hover:text-gray-900 dark:hover:text-white"
+            >
+              <span class="sr-only">OpenAPI Specification</span>
+              📋
+            </a>
+          </div>
+        </div>
+      </div>
     </footer>
+      <script type="module" src="/js/nav.js"></script>
 </body>
 </html>

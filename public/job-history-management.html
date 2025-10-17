@@ -5,58 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Job History Management - 9to5-Scout</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.css" rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔍</text></svg>">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="icon" href="/assets/icon.png" type="image/png">
 </head>
 <body class="bg-gray-50">
-    <!-- Navigation -->
-    <nav class="bg-white border-gray-200 dark:bg-gray-900 sticky top-0 z-50 shadow-sm">
-        <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-            <a href="/" class="flex items-center space-x-3 rtl:space-x-reverse">
-                <span class="text-2xl">🔍</span>
-                <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">9to5-Scout</span>
-            </a>
-            <button data-collapse-toggle="navbar-default" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-default" aria-expanded="false">
-                <span class="sr-only">Open main menu</span>
-                <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/>
-                </svg>
-            </button>
-            <div class="hidden w-full md:block md:w-auto" id="navbar-default">
-                <ul class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-                    <li>
-                        <a href="/" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Home</a>
-                    </li>
-                    <li>
-                        <a href="/getting-started.html" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Getting Started</a>
-                    </li>
-                    <li>
-                        <a href="/api-reference.html" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">API Reference</a>
-                    </li>
-                    <li>
-                        <a href="/email-integration.html" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Email Integration</a>
-                    </li>
-                    <li>
-                        <a href="/job-history-management.html" class="block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500" aria-current="page">Job History</a>
-                    </li>
-                    <li>
-                        <a href="/agent-workflow-config.html" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">AI Agents</a>
-                    </li>
-                    <li>
-                        <a href="/openapi.json" target="_blank" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">📋 OpenAPI</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <div id="navbar-placeholder"></div>
 
     <!-- Main Content -->
     <div class="max-w-4xl mx-auto px-4 py-8">
         <!-- Header -->
         <div class="mb-8">
-            <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">📚 Job History Management</h1>
-            <p class="text-xl text-gray-600 dark:text-gray-400">AI-powered resume parsing, applicant profile management, and intelligent job fit analysis.</p>
+            <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4"><span class="icon" aria-hidden="true">📚</span> Job History Management</h1>
+            <p class="text-xl text-gray-600 dark:text-gray-400 subtitle">AI-powered resume parsing, applicant profile management, and intelligent job fit analysis.</p>
         </div>
 
         <!-- Overview -->
@@ -123,7 +83,8 @@
                             <pre class="text-green-400 text-sm"><code>curl -H "Authorization: Bearer &lt;token&gt;" \
      -H "Content-Type: application/json" \
      -X POST /api/applicant/history \
-     -d '{
+     -d 
+     '{ 
        "user_id": "user-123",
        "raw_content": "Senior Software Engineer at TechCorp (2020-2023)\n- Led development of microservices architecture\n- Managed team of 5 developers\n- Increased system performance by 40%\n\nSoftware Developer at StartupXYZ (2018-2020)\n- Full-stack development with React and Node.js\n- Built CI/CD pipelines\n- Contributed to 200% user growth",
        "content_type": "text/plain"
@@ -138,7 +99,8 @@
                             <pre class="text-green-400 text-sm"><code>curl -H "Authorization: Bearer &lt;token&gt;" \
      -H "Content-Type: application/json" \
      -X POST /api/applicant/history \
-     -d '{
+     -d 
+     '{ 
        "user_id": "user-123",
        "raw_content": "## Senior Software Engineer - TechCorp\n**Duration:** 2020-2023\n\n### Key Achievements\n- Led development of microservices architecture\n- Managed team of 5 developers\n- Increased system performance by 40%",
        "content_type": "text/markdown"
@@ -164,7 +126,7 @@
                 <div class="grid md:grid-cols-2 gap-6">
                     <div>
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">🔍 Data Extraction</h3>
-                        <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                        <ul class="feature-list space-y-2 text-sm text-gray-600 dark:text-gray-400">
                             <li class="flex items-center">
                                 <svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
@@ -199,7 +161,7 @@
                     </div>
                     <div>
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">👤 Profile Creation</h3>
-                        <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                        <ul class="feature-list space-y-2 text-sm text-gray-600 dark:text-gray-400">
                             <li class="flex items-center">
                                 <svg class="w-4 h-4 text-blue-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
@@ -326,7 +288,8 @@
                         <pre class="text-green-400 text-sm"><code>curl -H "Authorization: Bearer &lt;token&gt;" \
      -H "Content-Type: application/json" \
      -X POST /api/applicant/job-rating \
-     -d '{
+     -d 
+     '{ 
        "user_id": "user-123",
        "job_id": "job-456"
      }'</code></pre>
@@ -375,63 +338,63 @@
                     <!-- Strengths Analysis -->
                     <div class="bg-green-50 border border-green-200 rounded-lg p-4">
                         <h3 class="text-lg font-semibold text-green-900 mb-3">💪 Your Strengths</h3>
-                        <div class="space-y-2">
-                            <div class="flex items-center">
+                        <ul class="feature-list space-y-2">
+                            <li class="flex items-center">
                                 <svg class="w-4 h-4 text-green-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
                                 </svg>
                                 <span class="text-sm text-green-800">Strong technical leadership experience</span>
-                            </div>
-                            <div class="flex items-center">
+                            </li>
+                            <li class="flex items-center">
                                 <svg class="w-4 h-4 text-green-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
                                 </svg>
                                 <span class="text-sm text-green-800">Proven track record with Python & React</span>
-                            </div>
-                            <div class="flex items-center">
+                            </li>
+                            <li class="flex items-center">
                                 <svg class="w-4 h-4 text-green-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
                                 </svg>
                                 <span class="text-sm text-green-800">Microservices architecture expertise</span>
-                            </div>
-                            <div class="flex items-center">
+                            </li>
+                            <li class="flex items-center">
                                 <svg class="w-4 h-4 text-green-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
                                 </svg>
                                 <span class="text-sm text-green-800">Cross-functional team management</span>
-                            </div>
-                        </div>
+                            </li>
+                        </ul>
                     </div>
 
                     <!-- Skills Gaps -->
                     <div class="bg-orange-50 border border-orange-200 rounded-lg p-4">
                         <h3 class="text-lg font-semibold text-orange-900 mb-3">🎯 Skills Gaps to Address</h3>
-                        <div class="space-y-2">
-                            <div class="flex items-center">
+                        <ul class="feature-list space-y-2">
+                            <li class="flex items-center">
                                 <svg class="w-4 h-4 text-orange-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
                                 </svg>
                                 <span class="text-sm text-orange-800">Limited Kubernetes experience</span>
-                            </div>
-                            <div class="flex items-center">
+                            </li>
+                            <li class="flex items-center">
                                 <svg class="w-4 h-4 text-orange-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
                                 </svg>
                                 <span class="text-sm text-orange-800">No fintech industry background</span>
-                            </div>
-                            <div class="flex items-center">
+                            </li>
+                            <li class="flex items-center">
                                 <svg class="w-4 h-4 text-orange-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
                                 </svg>
                                 <span class="text-sm text-orange-800">Limited cloud security expertise</span>
-                            </div>
-                            <div class="flex items-center">
+                            </li>
+                            <li class="flex items-center">
                                 <svg class="w-4 h-4 text-orange-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
                                 </svg>
                                 <span class="text-sm text-orange-800">Need machine learning fundamentals</span>
-                            </div>
-                        </div>
+                            </li>
+                        </ul>
                     </div>
                 </div>
 
@@ -504,20 +467,20 @@
             <div class="grid md:grid-cols-2 gap-6">
                 <div>
                     <h3 class="text-lg font-semibold mb-3">📊 Career Optimization</h3>
-                    <ul class="text-indigo-100 text-sm space-y-1">
-                        <li>• Identify skills gaps for target roles</li>
-                        <li>• Track career progression over time</li>
-                        <li>• Get personalized learning recommendations</li>
-                        <li>• Optimize resume for ATS systems</li>
+                    <ul class="feature-list text-indigo-100 text-sm space-y-1">
+                        <li>Identify skills gaps for target roles</li>
+                        <li>Track career progression over time</li>
+                        <li>Get personalized learning recommendations</li>
+                        <li>Optimize resume for ATS systems</li>
                     </ul>
                 </div>
                 <div>
                     <h3 class="text-lg font-semibold mb-3">🔍 Job Search Enhancement</h3>
-                    <ul class="text-indigo-100 text-sm space-y-1">
-                        <li>• Score job compatibility before applying</li>
-                        <li>• Focus on highest-fit opportunities</li>
-                        <li>• Understand compensation alignment</li>
-                        <li>• Prepare targeted interview strategies</li>
+                    <ul class="feature-list text-indigo-100 text-sm space-y-1">
+                        <li>Score job compatibility before applying</li>
+                        <li>Focus on highest-fit opportunities</li>
+                        <li>Understand compensation alignment</li>
+                        <li>Prepare targeted interview strategies</li>
                     </ul>
                 </div>
             </div>
@@ -537,11 +500,11 @@
                 </div>
                 <div>
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">💡 Best Practices</h3>
-                    <ul class="space-y-2 text-gray-600 dark:text-gray-400">
-                        <li>• Keep job history updated regularly</li>
-                        <li>• Include quantifiable achievements</li>
-                        <li>• Review job ratings for insights</li>
-                        <li>• Act on improvement suggestions</li>
+                    <ul class="feature-list space-y-2 text-gray-600 dark:text-gray-400">
+                        <li>Keep job history updated regularly</li>
+                        <li>Include quantifiable achievements</li>
+                        <li>Review job ratings for insights</li>
+                        <li>Act on improvement suggestions</li>
                     </ul>
                 </div>
             </div>
@@ -615,5 +578,6 @@
             </div>
         </div>
     </footer>
+    <script type="module" src="/js/nav.js"></script>
 </body>
 </html>

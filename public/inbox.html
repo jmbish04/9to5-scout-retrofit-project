@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inbox - 9to5-Scout</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="icon" href="/assets/icon.png" type="image/png">
+</head>
+<body>
+    <div id="navbar-placeholder"></div>
+
+    <div class="flex h-screen bg-gray-50">
+        <!-- Left Pane: Email List -->
+        <div class="w-1/3 bg-white border-r border-gray-200 overflow-y-auto">
+            <div class="p-4 border-b border-gray-200">
+                <h2 class="text-xl font-semibold text-gray-800">Inbox (<span id="email-count">0</span>)</h2>
+            </div>
+            <div id="email-list" class="divide-y divide-gray-200">
+                <!-- Email items will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Right Pane: Email Preview -->
+        <div class="w-2/3 bg-white flex flex-col">
+            <div class="p-4 border-b border-gray-200">
+                <h2 id="preview-subject" class="text-xl font-semibold text-gray-800">Select an email to view</h2>
+                <p id="preview-from" class="text-sm text-gray-600"></p>
+                <p id="preview-date" class="text-xs text-gray-500"></p>
+                <div id="preview-status" class="mt-2 text-sm font-medium"></div>
+            </div>
+            <div id="email-content-preview" class="flex-1 p-4 overflow-y-auto text-gray-700">
+                <!-- Email content preview will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="/js/nav.js"></script>
+    <script type="module" src="/js/inbox_client.js"></script>
+</body>
+</html>

@@ -1,196 +1,247 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>9to5-Scout - AI-Powered Job Discovery Platform</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.css" rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔍</text></svg>">
-</head>
-<body class="bg-gray-50">
-    <!-- Navigation -->
-    <nav class="bg-white border-gray-200 dark:bg-gray-900 sticky top-0 z-50 shadow-sm">
-        <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-            <a href="/" class="flex items-center space-x-3 rtl:space-x-reverse">
-                <span class="text-2xl">🔍</span>
-                <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">9to5-Scout</span>
-            </a>
-            <button data-collapse-toggle="navbar-default" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-default" aria-expanded="false">
-                <span class="sr-only">Open main menu</span>
-                <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/>
-                </svg>
-            </button>
-            <div class="hidden w-full md:block md:w-auto" id="navbar-default">
-                <ul class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-                    <li>
-                        <a href="/" class="block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500" aria-current="page">Home</a>
-                    </li>
-                    <li>
-                        <a href="/getting-started.html" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Getting Started</a>
-                    </li>
-                    <li>
-                        <a href="/api-reference.html" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">API Reference</a>
-                    </li>
-                    <li>
-                        <a href="/email-integration.html" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Email Integration</a>
-                    </li>
-                    <li>
-                        <a href="/job-history-management.html" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Job History</a>
-                    </li>
-                    <li>
-                        <a href="/agent-workflow-config.html" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">AI Agents</a>
-                    </li>
-                    <li>
-                        <a href="/openapi.json" target="_blank" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">📋 OpenAPI</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <link rel="stylesheet" href="/css/styles.css" />
+    <link rel="icon" href="/assets/icon.png" type="image/png" />
+  </head>
+  <body class="bg-gray-50">
+    <div id="navbar-placeholder"></div>
 
     <!-- Hero Section -->
     <section class="bg-white dark:bg-gray-900">
-        <div class="py-8 px-4 mx-auto max-w-screen-xl text-center lg:py-16">
-            <h1 class="mb-4 text-4xl font-extrabold tracking-tight leading-none text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
-                🔍 9to5-Scout
-            </h1>
-            <p class="mb-8 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 lg:px-48 dark:text-gray-400">
-                AI-Powered Job Discovery & Career Assistance Platform
-            </p>
-            <p class="mb-8 text-base text-gray-600 sm:px-16 lg:px-48 dark:text-gray-300">
-                Comprehensive enterprise-grade system combining intelligent job scraping, multi-agent AI analysis, automated monitoring, email routing, and career document generation.
-            </p>
-            <div class="flex flex-col space-y-4 sm:flex-row sm:justify-center sm:space-y-0 sm:space-x-4">
-                <a href="/getting-started.html" class="inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-white rounded-lg bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900">
-                    Get started
-                    <svg class="w-3.5 h-3.5 ms-2 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
-                    </svg>
-                </a>
-                <a href="/openapi.json" target="_blank" class="inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-gray-900 rounded-lg border border-gray-300 hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 dark:text-white dark:border-gray-700 dark:hover:bg-gray-700 dark:focus:ring-gray-800">
-                    📋 View OpenAPI
-                </a>
-            </div>
+      <div class="py-8 px-4 mx-auto max-w-screen-xl text-center lg:py-16">
+        <h1
+          class="mb-4 text-4xl font-extrabold tracking-tight leading-none text-gray-900 md:text-5xl lg:text-6xl dark:text-white"
+        >
+          <span class="icon" aria-hidden="true">🔍</span> 9to5-Scout
+        </h1>
+        <p
+          class="mb-8 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 lg:px-48 dark:text-gray-400 subtitle"
+        >
+          AI-Powered Job Discovery & Career Assistance Platform
+        </p>
+        <p
+          class="mb-8 text-base text-gray-600 sm:px-16 lg:px-48 dark:text-gray-300"
+        >
+          Comprehensive enterprise-grade system combining intelligent job
+          scraping, multi-agent AI analysis, automated monitoring, email
+          routing, and career document generation.
+        </p>
+        <div
+          class="flex flex-col space-y-4 sm:flex-row sm:justify-center sm:space-y-0 sm:space-x-4"
+        >
+          <a
+            href="/getting-started.html"
+            class="inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-white rounded-lg bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900"
+          >
+            Get started
+            <svg
+              class="w-3.5 h-3.5 ms-2 rtl:rotate-180"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 14 10"
+            >
+              <path
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M1 5h12m0 0L9 1m4 4L9 9"
+              />
+            </svg>
+          </a>
+          <a
+            href="/openapi.json"
+            target="_blank"
+            class="cta inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-gray-900 rounded-lg border border-gray-300 hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 dark:text-white dark:border-gray-700 dark:hover:bg-gray-700 dark:focus:ring-gray-800"
+          >
+            <span>View OpenAPI</span>
+            <span aria-hidden="true" class="cta-icon">📋</span>
+          </a>
         </div>
+      </div>
     </section>
 
     <!-- Features Section -->
     <section class="bg-gray-50 dark:bg-gray-800">
-        <div class="py-8 px-4 mx-auto max-w-screen-xl sm:py-16 lg:px-6">
-            <div class="max-w-screen-md mb-8 lg:mb-16">
-                <h2 class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">Enterprise-Grade AI Platform</h2>
-                <p class="text-gray-500 sm:text-xl dark:text-gray-400">Built on Cloudflare's edge computing platform with advanced AI capabilities and comprehensive job market intelligence.</p>
-            </div>
-            
-            <div class="space-y-8 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-12 md:space-y-0">
-                <!-- Multi-Agent AI System -->
-                <div class="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900">
-                    <div class="flex justify-center items-center mb-4 w-10 h-10 rounded-full bg-primary-100 lg:h-12 lg:w-12 dark:bg-primary-900">
-                        <span class="text-2xl">🤖</span>
-                    </div>
-                    <h3 class="mb-2 text-xl font-bold dark:text-white">Multi-Agent AI System</h3>
-                    <p class="text-gray-500 dark:text-gray-400 mb-4">Specialized AI agents for resume analysis, job analysis, company research, and strategic career guidance.</p>
-                    <ul class="text-sm text-gray-600 dark:text-gray-300 space-y-1">
-                        <li>• Resume Analyzer (ATS optimization)</li>
-                        <li>• Job Analyzer (requirement extraction)</li>
-                        <li>• Company Researcher (intelligence)</li>
-                        <li>• Career Historian (narrative synthesis)</li>
-                    </ul>
-                </div>
-
-                <!-- Job Discovery & Monitoring -->
-                <div class="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900">
-                    <div class="flex justify-center items-center mb-4 w-10 h-10 rounded-full bg-primary-100 lg:h-12 lg:w-12 dark:bg-primary-900">
-                        <span class="text-2xl">🕷️</span>
-                    </div>
-                    <h3 class="mb-2 text-xl font-bold dark:text-white">Intelligent Job Discovery</h3>
-                    <p class="text-gray-500 dark:text-gray-400 mb-4">Automated job discovery with real-time monitoring and comprehensive content preservation.</p>
-                    <ul class="text-sm text-gray-600 dark:text-gray-300 space-y-1">
-                        <li>• Daily automated monitoring</li>
-                        <li>• Full snapshots (HTML, PDF, Markdown)</li>
-                        <li>• Change detection & analysis</li>
-                        <li>• Market analytics & insights</li>
-                    </ul>
-                </div>
-
-                <!-- Email Integration -->
-                <div class="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900">
-                    <div class="flex justify-center items-center mb-4 w-10 h-10 rounded-full bg-primary-100 lg:h-12 lg:w-12 dark:bg-primary-900">
-                        <span class="text-2xl">📧</span>
-                    </div>
-                    <h3 class="mb-2 text-xl font-bold dark:text-white">Advanced Email Integration</h3>
-                    <p class="text-gray-500 dark:text-gray-400 mb-4">Receive and process job alerts from major platforms with automated insights delivery.</p>
-                    <ul class="text-sm text-gray-600 dark:text-gray-300 space-y-1">
-                        <li>• LinkedIn, Indeed, Monster alerts</li>
-                        <li>• Automatic job link extraction</li>
-                        <li>• Scheduled insights reports</li>
-                        <li>• Professional HTML templates</li>
-                    </ul>
-                </div>
-
-                <!-- Job History Management -->
-                <div class="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900">
-                    <div class="flex justify-center items-center mb-4 w-10 h-10 rounded-full bg-primary-100 lg:h-12 lg:w-12 dark:bg-primary-900">
-                        <span class="text-2xl">📚</span>
-                    </div>
-                    <h3 class="mb-2 text-xl font-bold dark:text-white">Job History Management</h3>
-                    <p class="text-gray-500 dark:text-gray-400 mb-4">AI-powered resume parsing and comprehensive job fit analysis with detailed scoring.</p>
-                    <ul class="text-sm text-gray-600 dark:text-gray-300 space-y-1">
-                        <li>• Smart resume parsing (any format)</li>
-                        <li>• Job fit scoring (1-100 scale)</li>
-                        <li>• Skills gap analysis</li>
-                        <li>• Career recommendations</li>
-                    </ul>
-                </div>
-
-                <!-- Career Document Generation -->
-                <div class="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900">
-                    <div class="flex justify-center items-center mb-4 w-10 h-10 rounded-full bg-primary-100 lg:h-12 lg:w-12 dark:bg-primary-900">
-                        <span class="text-2xl">📄</span>
-                    </div>
-                    <h3 class="mb-2 text-xl font-bold dark:text-white">AI Career Documents</h3>
-                    <p class="text-gray-500 dark:text-gray-400 mb-4">Generate personalized cover letters and ATS-optimized resume content with AI.</p>
-                    <ul class="text-sm text-gray-600 dark:text-gray-300 space-y-1">
-                        <li>• Tailored cover letters</li>
-                        <li>• ATS-optimized resumes</li>
-                        <li>• Interview preparation</li>
-                        <li>• Strategic career reports</li>
-                    </ul>
-                </div>
-
-                <!-- Analytics & Tracking -->
-                <div class="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900">
-                    <div class="flex justify-center items-center mb-4 w-10 h-10 rounded-full bg-primary-100 lg:h-12 lg:w-12 dark:bg-primary-900">
-                        <span class="text-2xl">📈</span>
-                    </div>
-                    <h3 class="mb-2 text-xl font-bold dark:text-white">Market Analytics</h3>
-                    <p class="text-gray-500 dark:text-gray-400 mb-4">Comprehensive job market intelligence with real-time trends and insights.</p>
-                    <ul class="text-sm text-gray-600 dark:text-gray-300 space-y-1">
-                        <li>• Real-time salary trends</li>
-                        <li>• Skill demand analysis</li>
-                        <li>• Company intelligence</li>
-                        <li>• Performance metrics</li>
-                    </ul>
-                </div>
-            </div>
+      <div class="py-8 px-4 mx-auto max-w-screen-xl sm:py-16 lg:px-6">
+        <div class="max-w-screen-md mb-8 lg:mb-16">
+          <h2
+            class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white"
+          >
+            Enterprise-Grade AI Platform
+          </h2>
+          <p class="text-gray-500 sm:text-xl dark:text-gray-400">
+            Built on Cloudflare's edge computing platform with advanced AI
+            capabilities and comprehensive job market intelligence.
+          </p>
         </div>
+
+        <div
+          class="space-y-8 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-12 md:space-y-0"
+        >
+          <!-- Multi-Agent AI System -->
+          <div class="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900">
+            <div class="icon-title mb-4">
+              <span class="icon text-2xl" aria-hidden="true">🤖</span>
+              <h3 class="text-xl font-bold dark:text-white">
+                Multi-Agent AI System
+              </h3>
+            </div>
+            <p class="text-gray-500 dark:text-gray-400 mb-4">
+              Specialized AI agents for resume analysis, job analysis, company
+              research, and strategic career guidance.
+            </p>
+            <ul
+              class="feature-list text-sm text-gray-600 dark:text-gray-300 space-y-1"
+            >
+              <li>Resume Analyzer (ATS optimization)</li>
+              <li>Job Analyzer (requirement extraction)</li>
+              <li>Company Researcher (intelligence)</li>
+              <li>Career Historian (narrative synthesis)</li>
+            </ul>
+          </div>
+
+          <!-- Job Discovery & Monitoring -->
+          <div class="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900">
+            <div class="icon-title mb-4">
+              <span class="icon text-2xl" aria-hidden="true">🕷️</span>
+              <h3 class="text-xl font-bold dark:text-white">
+                Intelligent Job Discovery
+              </h3>
+            </div>
+            <p class="text-gray-500 dark:text-gray-400 mb-4">
+              Automated job discovery with real-time monitoring and
+              comprehensive content preservation.
+            </p>
+            <ul
+              class="feature-list text-sm text-gray-600 dark:text-gray-300 space-y-1"
+            >
+              <li>Daily automated monitoring</li>
+              <li>Full snapshots (HTML, PDF, Markdown)</li>
+              <li>Change detection & analysis</li>
+              <li>Market analytics & insights</li>
+            </ul>
+          </div>
+
+          <!-- Email Integration -->
+          <div class="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900">
+            <div class="icon-title mb-4">
+              <span class="icon text-2xl" aria-hidden="true">📧</span>
+              <h3 class="text-xl font-bold dark:text-white">
+                Advanced Email Integration
+              </h3>
+            </div>
+            <p class="text-gray-500 dark:text-gray-400 mb-4">
+              Receive and process job alerts from major platforms with automated
+              insights delivery.
+            </p>
+            <ul
+              class="feature-list text-sm text-gray-600 dark:text-gray-300 space-y-1"
+            >
+              <li>LinkedIn, Indeed, Monster alerts</li>
+              <li>Automatic job link extraction</li>
+              <li>Scheduled insights reports</li>
+              <li>Professional HTML templates</li>
+            </ul>
+          </div>
+
+          <!-- Job History Management -->
+          <div class="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900">
+            <div class="icon-title mb-4">
+              <span class="icon text-2xl" aria-hidden="true">📚</span>
+              <h3 class="mb-2 text-xl font-bold dark:text-white">
+                Job History Management
+              </h3>
+            </div>
+            <p class="text-gray-500 dark:text-gray-400 mb-4">
+              AI-powered resume parsing and comprehensive job fit analysis with
+              detailed scoring.
+            </p>
+            <ul
+              class="feature-list text-sm text-gray-600 dark:text-gray-300 space-y-1"
+            >
+              <li>Smart resume parsing (any format)</li>
+              <li>Job fit scoring (1-100 scale)</li>
+              <li>Skills gap analysis</li>
+              <li>Career recommendations</li>
+            </ul>
+          </div>
+
+          <!-- Career Document Generation -->
+          <div class="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900">
+            <div class="icon-title mb-4">
+              <span class="icon text-2xl" aria-hidden="true">📄</span>
+              <h3 class="mb-2 text-xl font-bold dark:text-white">
+                AI Career Documents
+              </h3>
+            </div>
+            <p class="text-gray-500 dark:text-gray-400 mb-4">
+              Generate personalized cover letters and ATS-optimized resume
+              content with AI.
+            </p>
+            <ul
+              class="feature-list text-sm text-gray-600 dark:text-gray-300 space-y-1"
+            >
+              <li>Tailored cover letters</li>
+              <li>ATS-optimized resumes</li>
+              <li>Interview preparation</li>
+              <li>Strategic career reports</li>
+            </ul>
+          </div>
+
+          <!-- Analytics & Tracking -->
+          <div class="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900">
+            <div class="icon-title mb-4">
+              <span class="icon text-2xl" aria-hidden="true">📈</span>
+              <h3 class="mb-2 text-xl font-bold dark:text-white">
+                Market Analytics
+              </h3>
+            </div>
+            <p class="text-gray-500 dark:text-gray-400 mb-4">
+              Comprehensive job market intelligence with real-time trends and
+              insights.
+            </p>
+            <ul
+              class="feature-list text-sm text-gray-600 dark:text-gray-300 space-y-1"
+            >
+              <li>Real-time salary trends</li>
+              <li>Skill demand analysis</li>
+              <li>Company intelligence</li>
+              <li>Performance metrics</li>
+            </ul>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- Quick Start Section -->
     <section class="bg-white dark:bg-gray-900">
-        <div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16">
-            <div class="max-w-screen-md mb-8 lg:mb-16">
-                <h2 class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">Quick Start</h2>
-                <p class="text-gray-500 sm:text-xl dark:text-gray-400">Get up and running with 9to5-Scout in minutes.</p>
-            </div>
-            
-            <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-6">
-                <h3 class="mb-4 text-lg font-semibold text-gray-900 dark:text-white">Start Job Discovery</h3>
-                <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
-                    <pre class="text-green-400 text-sm"><code># Start comprehensive job discovery
+      <div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16">
+        <div class="max-w-screen-md mb-8 lg:mb-16">
+          <h2
+            class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white"
+          >
+            Quick Start
+          </h2>
+          <p class="text-gray-500 sm:text-xl dark:text-gray-400">
+            Get up and running with 9to5-Scout in minutes.
+          </p>
+        </div>
+
+        <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-6">
+          <h3 class="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
+            Start Job Discovery
+          </h3>
+          <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
+            <pre
+              class="text-green-400 text-sm"
+            ><code># Start comprehensive job discovery
 curl -H "Authorization: Bearer &lt;token&gt;" \
      -X POST https://your-worker.workers.dev/api/runs/discovery
 
@@ -203,138 +254,240 @@ curl -H "Authorization: Bearer &lt;token&gt;" \
      -H "Content-Type: application/json" \
      -X POST https://your-worker.workers.dev/api/cover-letter \
      -d '{"job_title": "Senior Software Engineer", "company_name": "TechCorp"}'</code></pre>
-                </div>
-                <div class="mt-4">
-                    <a href="/getting-started.html" class="inline-flex items-center text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
-                        View complete setup guide
-                        <svg class="w-3 h-3 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
-                        </svg>
-                    </a>
-                </div>
-            </div>
+          </div>
+          <div class="mt-4">
+            <a
+              href="/getting-started.html"
+              class="inline-flex items-center text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+            >
+              View complete setup guide
+              <svg
+                class="w-3 h-3 ms-1"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 14 10"
+              >
+                <path
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M1 5h12m0 0L9 1m4 4L9 9"
+                />
+              </svg>
+            </a>
+          </div>
         </div>
+      </div>
     </section>
 
     <!-- Architecture Section -->
     <section class="bg-gray-50 dark:bg-gray-800">
-        <div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16">
-            <div class="max-w-screen-md mb-8 lg:mb-16">
-                <h2 class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">Enterprise Architecture</h2>
-                <p class="text-gray-500 sm:text-xl dark:text-gray-400">Built on Cloudflare's global edge computing platform with enterprise-grade scalability.</p>
-            </div>
-            
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="text-center p-4">
-                    <div class="text-3xl mb-2">⚡</div>
-                    <h4 class="font-semibold text-gray-900 dark:text-white">Workers</h4>
-                    <p class="text-sm text-gray-600 dark:text-gray-400">Serverless compute</p>
-                </div>
-                <div class="text-center p-4">
-                    <div class="text-3xl mb-2">🗄️</div>
-                    <h4 class="font-semibold text-gray-900 dark:text-white">D1 Database</h4>
-                    <p class="text-sm text-gray-600 dark:text-gray-400">SQL storage</p>
-                </div>
-                <div class="text-center p-4">
-                    <div class="text-3xl mb-2">🧠</div>
-                    <h4 class="font-semibold text-gray-900 dark:text-white">Workers AI</h4>
-                    <p class="text-sm text-gray-600 dark:text-gray-400">Language models</p>
-                </div>
-                <div class="text-center p-4">
-                    <div class="text-3xl mb-2">🔍</div>
-                    <h4 class="font-semibold text-gray-900 dark:text-white">Vectorize</h4>
-                    <p class="text-sm text-gray-600 dark:text-gray-400">Vector search</p>
-                </div>
-                <div class="text-center p-4">
-                    <div class="text-3xl mb-2">💾</div>
-                    <h4 class="font-semibold text-gray-900 dark:text-white">R2 Storage</h4>
-                    <p class="text-sm text-gray-600 dark:text-gray-400">Object storage</p>
-                </div>
-                <div class="text-center p-4">
-                    <div class="text-3xl mb-2">🌐</div>
-                    <h4 class="font-semibold text-gray-900 dark:text-white">Browser</h4>
-                    <p class="text-sm text-gray-600 dark:text-gray-400">Headless rendering</p>
-                </div>
-                <div class="text-center p-4">
-                    <div class="text-3xl mb-2">📧</div>
-                    <h4 class="font-semibold text-gray-900 dark:text-white">Email Routing</h4>
-                    <p class="text-sm text-gray-600 dark:text-gray-400">Email processing</p>
-                </div>
-                <div class="text-center p-4">
-                    <div class="text-3xl mb-2">⚙️</div>
-                    <h4 class="font-semibold text-gray-900 dark:text-white">Workflows</h4>
-                    <p class="text-sm text-gray-600 dark:text-gray-400">Orchestration</p>
-                </div>
-            </div>
+      <div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16">
+        <div class="max-w-screen-md mb-8 lg:mb-16">
+          <h2
+            class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white"
+          >
+            Enterprise Architecture
+          </h2>
+          <p class="text-gray-500 sm:text-xl dark:text-gray-400">
+            Built on Cloudflare's global edge computing platform with
+            enterprise-grade scalability.
+          </p>
         </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div class="text-center p-4">
+            <div class="text-3xl mb-2">⚡</div>
+            <h4 class="font-semibold text-gray-900 dark:text-white">Workers</h4>
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+              Serverless compute
+            </p>
+          </div>
+          <div class="text-center p-4">
+            <div class="text-3xl mb-2">🗄️</div>
+            <h4 class="font-semibold text-gray-900 dark:text-white">
+              D1 Database
+            </h4>
+            <p class="text-sm text-gray-600 dark:text-gray-400">SQL storage</p>
+          </div>
+          <div class="text-center p-4">
+            <div class="text-3xl mb-2">🧠</div>
+            <h4 class="font-semibold text-gray-900 dark:text-white">
+              Workers AI
+            </h4>
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+              Language models
+            </p>
+          </div>
+          <div class="text-center p-4">
+            <div class="text-3xl mb-2">🔍</div>
+            <h4 class="font-semibold text-gray-900 dark:text-white">
+              Vectorize
+            </h4>
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+              Vector search
+            </p>
+          </div>
+          <div class="text-center p-4">
+            <div class="text-3xl mb-2">💾</div>
+            <h4 class="font-semibold text-gray-900 dark:text-white">
+              R2 Storage
+            </h4>
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+              Object storage
+            </p>
+          </div>
+          <div class="text-center p-4">
+            <div class="text-3xl mb-2">🌐</div>
+            <h4 class="font-semibold text-gray-900 dark:text-white">Browser</h4>
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+              Headless rendering
+            </p>
+          </div>
+          <div class="text-center p-4">
+            <div class="text-3xl mb-2">📧</div>
+            <h4 class="font-semibold text-gray-900 dark:text-white">
+              Email Routing
+            </h4>
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+              Email processing
+            </p>
+          </div>
+          <div class="text-center p-4">
+            <div class="text-3xl mb-2">⚙️</div>
+            <h4 class="font-semibold text-gray-900 dark:text-white">
+              Workflows
+            </h4>
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+              Orchestration
+            </p>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- Footer -->
     <footer class="bg-white dark:bg-gray-900">
-        <div class="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
-            <div class="md:flex md:justify-between">
-                <div class="mb-6 md:mb-0">
-                    <a href="/" class="flex items-center">
-                        <span class="text-2xl mr-3">🔍</span>
-                        <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">9to5-Scout</span>
-                    </a>
-                </div>
-                <div class="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
-                    <div>
-                        <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Documentation</h2>
-                        <ul class="text-gray-500 dark:text-gray-400 font-medium">
-                            <li class="mb-4">
-                                <a href="/getting-started.html" class="hover:underline">Getting Started</a>
-                            </li>
-                            <li class="mb-4">
-                                <a href="/api-reference.html" class="hover:underline">API Reference</a>
-                            </li>
-                            <li>
-                                <a href="/openapi.json" target="_blank" class="hover:underline">OpenAPI Spec</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Features</h2>
-                        <ul class="text-gray-500 dark:text-gray-400 font-medium">
-                            <li class="mb-4">
-                                <a href="/email-integration.html" class="hover:underline">Email Integration</a>
-                            </li>
-                            <li class="mb-4">
-                                <a href="/job-history-management.html" class="hover:underline">Job History</a>
-                            </li>
-                            <li>
-                                <a href="/agent-workflow-config.html" class="hover:underline">AI Agents</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Platform</h2>
-                        <ul class="text-gray-500 dark:text-gray-400 font-medium">
-                            <li class="mb-4">
-                                <a href="https://workers.cloudflare.com/" target="_blank" class="hover:underline">Cloudflare Workers</a>
-                            </li>
-                            <li class="mb-4">
-                                <a href="https://ai.cloudflare.com/" target="_blank" class="hover:underline">Workers AI</a>
-                            </li>
-                            <li>
-                                <a href="https://developers.cloudflare.com/" target="_blank" class="hover:underline">Developer Docs</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
+      <div class="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
+        <div class="md:flex md:justify-between">
+          <div class="mb-6 md:mb-0">
+            <a href="/" class="flex items-center">
+              <span class="text-2xl mr-3">🔍</span>
+              <span
+                class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white"
+                >9to5-Scout</span
+              >
+            </a>
+          </div>
+          <div class="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
+            <div>
+              <h2
+                class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white"
+              >
+                Documentation
+              </h2>
+              <ul class="text-gray-500 dark:text-gray-400 font-medium">
+                <li class="mb-4">
+                  <a href="/getting-started.html" class="hover:underline"
+                    >Getting Started</a
+                  >
+                </li>
+                <li class="mb-4">
+                  <a href="/api-reference.html" class="hover:underline"
+                    >API Reference</a
+                  >
+                </li>
+                <li>
+                  <a
+                    href="/openapi.json"
+                    target="_blank"
+                    class="hover:underline"
+                    >OpenAPI Spec</a
+                  >
+                </li>
+              </ul>
             </div>
-            <hr class="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
-            <div class="sm:flex sm:items-center sm:justify-between">
-                <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">Built with ❤️ using Cloudflare Workers & AI</span>
-                <div class="flex mt-4 sm:justify-center sm:mt-0">
-                    <a href="/openapi.json" target="_blank" class="text-gray-500 hover:text-gray-900 dark:hover:text-white">
-                        <span class="sr-only">OpenAPI Specification</span>
-                        📋
-                    </a>
-                </div>
+            <div>
+              <h2
+                class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white"
+              >
+                Features
+              </h2>
+              <ul class="text-gray-500 dark:text-gray-400 font-medium">
+                <li class="mb-4">
+                  <a href="/email-integration.html" class="hover:underline"
+                    >Email Integration</a
+                  >
+                </li>
+                <li class="mb-4">
+                  <a href="/job-history-management.html" class="hover:underline"
+                    >Job History</a
+                  >
+                </li>
+                <li>
+                  <a href="/agent-workflow-config.html" class="hover:underline"
+                    >AI Agents</a
+                  >
+                </li>
+              </ul>
             </div>
+            <div>
+              <h2
+                class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white"
+              >
+                Platform
+              </h2>
+              <ul class="text-gray-500 dark:text-gray-400 font-medium">
+                <li class="mb-4">
+                  <a
+                    href="https://workers.cloudflare.com/"
+                    target="_blank"
+                    class="hover:underline"
+                    >Cloudflare Workers</a
+                  >
+                </li>
+                <li class="mb-4">
+                  <a
+                    href="https://ai.cloudflare.com/"
+                    target="_blank"
+                    class="hover:underline"
+                    >Workers AI</a
+                  >
+                </li>
+                <li>
+                  <a
+                    href="https://developers.cloudflare.com/"
+                    target="_blank"
+                    class="hover:underline"
+                    >Developer Docs</a
+                  >
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
+        <hr
+          class="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8"
+        />
+        <div class="sm:flex sm:items-center sm:justify-between">
+          <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400"
+            >Built with ❤️ using Cloudflare Workers & AI</span
+          >
+          <div class="flex mt-4 sm:justify-center sm:mt-0">
+            <a
+              href="/openapi.json"
+              target="_blank"
+              class="text-gray-500 hover:text-gray-900 dark:hover:text-white"
+            >
+              <span class="sr-only">OpenAPI Specification</span>
+              📋
+            </a>
+          </div>
+        </div>
+      </div>
     </footer>
-</body>
+    <script type="module" src="/js/nav.js"></script>
+  </body>
 </html>

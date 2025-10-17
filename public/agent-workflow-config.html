@@ -5,58 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Agents & Workflows - 9to5-Scout</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.css" rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔍</text></svg>">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="icon" href="/assets/icon.png" type="image/png">
 </head>
 <body class="bg-gray-50">
-    <!-- Navigation -->
-    <nav class="bg-white border-gray-200 dark:bg-gray-900 sticky top-0 z-50 shadow-sm">
-        <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-            <a href="/" class="flex items-center space-x-3 rtl:space-x-reverse">
-                <span class="text-2xl">🔍</span>
-                <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">9to5-Scout</span>
-            </a>
-            <button data-collapse-toggle="navbar-default" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-default" aria-expanded="false">
-                <span class="sr-only">Open main menu</span>
-                <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/>
-                </svg>
-            </button>
-            <div class="hidden w-full md:block md:w-auto" id="navbar-default">
-                <ul class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-                    <li>
-                        <a href="/" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Home</a>
-                    </li>
-                    <li>
-                        <a href="/getting-started.html" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Getting Started</a>
-                    </li>
-                    <li>
-                        <a href="/api-reference.html" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">API Reference</a>
-                    </li>
-                    <li>
-                        <a href="/email-integration.html" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Email Integration</a>
-                    </li>
-                    <li>
-                        <a href="/job-history-management.html" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Job History</a>
-                    </li>
-                    <li>
-                        <a href="/agent-workflow-config.html" class="block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500" aria-current="page">AI Agents</a>
-                    </li>
-                    <li>
-                        <a href="/openapi.json" target="_blank" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">📋 OpenAPI</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <div id="navbar-placeholder"></div>
 
     <!-- Main Content -->
     <div class="max-w-4xl mx-auto px-4 py-8">
         <!-- Header -->
         <div class="mb-8">
-            <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">🤖 AI Agents & Workflows</h1>
-            <p class="text-xl text-gray-600 dark:text-gray-400">Configure and orchestrate specialized AI agents for comprehensive job analysis and career intelligence.</p>
+            <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4"><span class="icon" aria-hidden="true">🤖</span> AI Agents & Workflows</h1>
+            <p class="text-xl text-gray-600 dark:text-gray-400 subtitle">Configure and orchestrate specialized AI agents for comprehensive job analysis and career intelligence.</p>
         </div>
 
         <!-- Overview -->
@@ -88,8 +48,8 @@
             <div class="grid md:grid-cols-2 gap-6">
                 <!-- Resume Analyzer -->
                 <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                    <div class="flex items-center mb-3">
-                        <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 mr-3">
+                    <div class="icon-title mb-3">
+                        <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 mr-3 icon">
                             📄
                         </div>
                         <div>
@@ -106,8 +66,8 @@
 
                 <!-- Job Analyzer -->
                 <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                    <div class="flex items-center mb-3">
-                        <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-600 mr-3">
+                    <div class="icon-title mb-3">
+                        <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-600 mr-3 icon">
                             🎯
                         </div>
                         <div>
@@ -124,8 +84,8 @@
 
                 <!-- Company Researcher -->
                 <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                    <div class="flex items-center mb-3">
-                        <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 mr-3">
+                    <div class="icon-title mb-3">
+                        <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 mr-3 icon">
                             🏢
                         </div>
                         <div>
@@ -142,8 +102,8 @@
 
                 <!-- Resume Writer -->
                 <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                    <div class="flex items-center mb-3">
-                        <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center text-orange-600 mr-3">
+                    <div class="icon-title mb-3">
+                        <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center text-orange-600 mr-3 icon">
                             ✍️
                         </div>
                         <div>
@@ -160,8 +120,8 @@
 
                 <!-- Interview Strategist -->
                 <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                    <div class="flex items-center mb-3">
-                        <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center text-red-600 mr-3">
+                    <div class="icon-title mb-3">
+                        <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center text-red-600 mr-3 icon">
                             💬
                         </div>
                         <div>
@@ -178,8 +138,8 @@
 
                 <!-- Career Historian -->
                 <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                    <div class="flex items-center mb-3">
-                        <div class="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 mr-3">
+                    <div class="icon-title mb-3">
+                        <div class="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 mr-3 icon">
                             📚
                         </div>
                         <div>
@@ -229,7 +189,8 @@ curl -H "Authorization: Bearer &lt;token&gt;" \
                         <pre class="text-green-400 text-sm"><code>curl -H "Authorization: Bearer &lt;token&gt;" \
      -H "Content-Type: application/json" \
      -X POST https://your-worker.workers.dev/api/agents \
-     -d '{
+     -d 
+     '{ 
        "id": "custom-job-analyzer",
        "name": "Custom Job Requirements Analyzer",
        "role": "Senior Job Analysis Expert",
@@ -253,7 +214,7 @@ curl -H "Authorization: Bearer &lt;token&gt;" \
                     <div class="grid md:grid-cols-2 gap-4 text-sm text-blue-800">
                         <div>
                             <p><strong>Core Identity:</strong></p>
-                            <ul class="list-disc list-inside space-y-1">
+                            <ul class="feature-list list-inside space-y-1">
                                 <li><code>role</code> - Agent's professional role</li>
                                 <li><code>goal</code> - Primary objective</li>
                                 <li><code>backstory</code> - Experience context</li>
@@ -261,7 +222,7 @@ curl -H "Authorization: Bearer &lt;token&gt;" \
                         </div>
                         <div>
                             <p><strong>Behavior Settings:</strong></p>
-                            <ul class="list-disc list-inside space-y-1">
+                            <ul class="feature-list list-inside space-y-1">
                                 <li><code>max_iter</code> - Maximum iterations (1-100)</li>
                                 <li><code>verbose</code> - Detailed output logging</li>
                                 <li><code>memory</code> - Context retention</li>
@@ -269,7 +230,7 @@ curl -H "Authorization: Bearer &lt;token&gt;" \
                         </div>
                         <div>
                             <p><strong>AI Configuration:</strong></p>
-                            <ul class="list-disc list-inside space-y-1">
+                            <ul class="feature-list list-inside space-y-1">
                                 <li><code>llm</code> - Language model selection</li>
                                 <li><code>tools</code> - Available tool integrations</li>
                                 <li><code>max_rpm</code> - Rate limiting</li>
@@ -277,7 +238,7 @@ curl -H "Authorization: Bearer &lt;token&gt;" \
                         </div>
                         <div>
                             <p><strong>Templates:</strong></p>
-                            <ul class="list-disc list-inside space-y-1">
+                            <ul class="feature-list list-inside space-y-1">
                                 <li><code>system_template</code> - System prompts</li>
                                 <li><code>prompt_template</code> - User prompts</li>
                                 <li><code>response_template</code> - Output format</li>
@@ -307,7 +268,8 @@ curl -H "Authorization: Bearer &lt;token&gt;" \
                         <pre class="text-green-400 text-sm"><code>curl -H "Authorization: Bearer &lt;token&gt;" \
      -H "Content-Type: application/json" \
      -X POST https://your-worker.workers.dev/api/tasks \
-     -d '{
+     -d 
+     '{ 
        "id": "analyze-job-fit",
        "description": "Analyze job posting for candidate fit and requirements breakdown",
        "agent_id": "job-analyzer",
@@ -330,20 +292,20 @@ curl -H "Authorization: Bearer &lt;token&gt;" \
                 <div class="grid md:grid-cols-2 gap-6">
                     <div class="border border-gray-200 rounded-lg p-4">
                         <h4 class="font-semibold text-gray-900 dark:text-white mb-2">🔍 Analysis Tasks</h4>
-                        <ul class="text-sm text-gray-600 dark:text-gray-400 space-y-1">
-                            <li>• Resume analysis and optimization</li>
-                            <li>• Job requirement extraction</li>
-                            <li>• Company culture assessment</li>
-                            <li>• Skill gap identification</li>
+                        <ul class="feature-list text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                            <li>Resume analysis and optimization</li>
+                            <li>Job requirement extraction</li>
+                            <li>Company culture assessment</li>
+                            <li>Skill gap identification</li>
                         </ul>
                     </div>
                     <div class="border border-gray-200 rounded-lg p-4">
                         <h4 class="font-semibold text-gray-900 dark:text-white mb-2">📝 Generation Tasks</h4>
-                        <ul class="text-sm text-gray-600 dark:text-gray-400 space-y-1">
-                            <li>• Cover letter creation</li>
-                            <li>• Resume content writing</li>
-                            <li>• Interview question preparation</li>
-                            <li>• Career narrative development</li>
+                        <ul class="feature-list text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                            <li>Cover letter creation</li>
+                            <li>Resume content writing</li>
+                            <li>Interview question preparation</li>
+                            <li>Career narrative development</li>
                         </ul>
                     </div>
                 </div>
@@ -405,7 +367,8 @@ curl -H "Authorization: Bearer &lt;token&gt;" \
                         <pre class="text-green-400 text-sm"><code>curl -H "Authorization: Bearer &lt;token&gt;" \
      -H "Content-Type: application/json" \
      -X POST https://your-worker.workers.dev/api/workflows \
-     -d '{
+     -d 
+     '{ 
        "id": "comprehensive-job-analysis",
        "name": "Comprehensive Job Analysis Workflow",
        "description": "Full analysis of job posting with resume fit assessment",
@@ -438,7 +401,8 @@ curl -H "Authorization: Bearer &lt;token&gt;" \
                         <pre class="text-green-400 text-sm"><code>curl -H "Authorization: Bearer &lt;token&gt;" \
      -H "Content-Type: application/json" \
      -X POST https://your-worker.workers.dev/api/workflows/comprehensive-job-analysis/execute \
-     -d '{
+     -d 
+     '{ 
        "context": {
          "job_url": "https://company.com/careers/senior-engineer",
          "applicant_id": "user-123",
@@ -632,20 +596,20 @@ curl -H "Authorization: Bearer &lt;token&gt;" \
             <div class="grid md:grid-cols-2 gap-6">
                 <div>
                     <h3 class="text-lg font-semibold mb-3">🎯 Agent Design</h3>
-                    <ul class="text-green-100 text-sm space-y-1">
-                        <li>• Keep agent roles focused and specific</li>
-                        <li>• Write clear, detailed backstories</li>
-                        <li>• Use appropriate LLM models for tasks</li>
-                        <li>• Set reasonable iteration limits</li>
+                    <ul class="feature-list text-green-100 text-sm space-y-1">
+                        <li>Keep agent roles focused and specific</li>
+                        <li>Write clear, detailed backstories</li>
+                        <li>Use appropriate LLM models for tasks</li>
+                        <li>Set reasonable iteration limits</li>
                     </ul>
                 </div>
                 <div>
                     <h3 class="text-lg font-semibold mb-3">⚙️ Workflow Optimization</h3>
-                    <ul class="text-green-100 text-sm space-y-1">
-                        <li>• Chain related tasks in logical sequence</li>
-                        <li>• Use caching for repeated operations</li>
-                        <li>• Enable memory for context retention</li>
-                        <li>• Monitor performance and adjust</li>
+                    <ul class="feature-list text-green-100 text-sm space-y-1">
+                        <li>Chain related tasks in logical sequence</li>
+                        <li>Use caching for repeated operations</li>
+                        <li>Enable memory for context retention</li>
+                        <li>Monitor performance and adjust</li>
                     </ul>
                 </div>
             </div>
@@ -665,11 +629,11 @@ curl -H "Authorization: Bearer &lt;token&gt;" \
                 </div>
                 <div>
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">🔧 Advanced Features</h3>
-                    <ul class="space-y-2 text-gray-600 dark:text-gray-400">
-                        <li>• Create custom agent templates</li>
-                        <li>• Build complex hierarchical workflows</li>
-                        <li>• Integrate external tools and APIs</li>
-                        <li>• Monitor agent performance metrics</li>
+                    <ul class="feature-list space-y-2 text-gray-600 dark:text-gray-400">
+                        <li>Create custom agent templates</li>
+                        <li>Build complex hierarchical workflows</li>
+                        <li>Integrate external tools and APIs</li>
+                        <li>Monitor agent performance metrics</li>
                     </ul>
                 </div>
             </div>
@@ -743,5 +707,6 @@ curl -H "Authorization: Bearer &lt;token&gt;" \
             </div>
         </div>
     </footer>
+    <script type="module" src="/js/nav.js"></script>
 </body>
 </html>
