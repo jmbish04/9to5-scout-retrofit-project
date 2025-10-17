@@ -7,6 +7,8 @@
     "noUncheckedIndexedAccess": true,
     "isolatedModules": true,
     "skipLibCheck": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
     "types": [
       "./worker-configuration",
       "node"
@@ -18,5 +20,9 @@
   "include": [
     "src/**/*.ts",
     "worker-configuration.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
   ]
 }
