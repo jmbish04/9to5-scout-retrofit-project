@@ -1187,7 +1187,7 @@ const sql = postgres(env.HYPERDRIVE.connectionString)
 
 <usage>
 // Install Postgres.js
-npm install postgres
+pnpm add postgres
 
 // Create a Hyperdrive configuration
 npx wrangler hyperdrive create <YOUR_CONFIG_NAME> --connection-string="postgres://user:password@HOSTNAME_OR_IP_ADDRESS:PORT/database_name"
