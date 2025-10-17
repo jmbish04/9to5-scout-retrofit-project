@@ -8,6 +8,8 @@ import {
   generateWelcomeHTML,
 } from "../lib/email-templates";
 import {
+  buildEmailFilterWhereClause,
+  buildSearchWhereClause,
   classifyEmailContent,
   detectOTPCode,
   extractJobUrlsEnhanced,
@@ -651,78 +653,24 @@ export async function handleEnhancedEmailLogsGet(
       `;
     }
 
-    query += ` FROM enhanced_email_logs e WHERE 1=1`;
-    const params: any[] = [];
+    query += ` FROM enhanced_email_logs e`;
 
-    // Apply filters
-    if (status) {
-      query += ` AND e.status = ?`;
-      params.push(status);
-    }
+    // Build WHERE clause using helper function
+    const { whereClause, params } = buildEmailFilterWhereClause({
+      status: status || undefined,
+      fromEmail: fromEmail || undefined,
+      toEmail: toEmail || undefined,
+      otpDetected: otpDetected || undefined,
+      otpOnly,
+      classification: classification || undefined,
+      dateFrom: dateFrom || undefined,
+      dateTo: dateTo || undefined,
+      subject: subject || undefined,
+      search: search || undefined,
+      searchType: searchType || undefined,
+    });
 
-    if (fromEmail) {
-      query += ` AND e.from_email LIKE ?`;
-      params.push(`%${fromEmail}%`);
-    }
-
-    if (toEmail) {
-      query += ` AND e.to_email LIKE ?`;
-      params.push(`%${toEmail}%`);
-    }
-
-    if (otpDetected !== null) {
-      query += ` AND e.otp_detected = ?`;
-      params.push(otpDetected === "true" ? 1 : 0);
-    }
-
-    if (otpOnly) {
-      query += ` AND e.otp_detected = 1`;
-    }
-
-    if (classification) {
-      query += ` AND e.ai_classification = ?`;
-      params.push(classification);
-    }
-
-    if (dateFrom) {
-      query += ` AND e.received_at >= ?`;
-      params.push(dateFrom);
-    }
-
-    if (dateTo) {
-      query += ` AND e.received_at <= ?`;
-      params.push(dateTo);
-    }
-
-    if (subject) {
-      query += ` AND e.subject LIKE ?`;
-      params.push(`%${subject}%`);
-    }
-
-    // Apply search
-    if (search) {
-      if (searchType === "fulltext") {
-        query += ` AND (
-          e.subject LIKE ? OR 
-          e.content_text LIKE ? OR 
-          e.content_html LIKE ? OR
-          e.from_email LIKE ? OR
-          e.to_email LIKE ?
-        )`;
-        const searchTerm = `%${search}%`;
-        params.push(searchTerm, searchTerm, searchTerm, searchTerm, searchTerm);
-      } else if (searchType === "embedding") {
-        // For embedding search, we'll need to use vector similarity
-        // This is a placeholder - actual implementation would use vector search
-        query += ` AND (
-          e.subject LIKE ? OR 
-          e.content_text LIKE ? OR 
-          e.content_html LIKE ?
-        )`;
-        const searchTerm = `%${search}%`;
-        params.push(searchTerm, searchTerm, searchTerm);
-      }
-    }
+    query += ` ${whereClause}`;
 
     // AI-powered search
     if (aiQuery && searchType === "ai") {
@@ -951,6 +899,9 @@ export async function handleEmailSearch(
       } catch (error) {
         console.error("Semantic search failed:", error);
         // Fallback to keyword search directly
+        const { whereClause, params: searchParams } = buildSearchWhereClause(
+          `%${query}%`
+        );
         const searchQuery = `
           SELECT 
             e.id, e.uuid, e.from_email, e.to_email, e.subject, e.date_received,
@@ -958,28 +909,13 @@ export async function handleEmailSearch(
             e.job_links_extracted, e.jobs_processed, e.otp_detected,
             e.received_at, e.status
           FROM enhanced_email_logs e
-          WHERE (
-            e.subject LIKE ? OR 
-            e.content_text LIKE ? OR 
-            e.content_html LIKE ? OR
-            e.from_email LIKE ? OR
-            e.to_email LIKE ?
-          )
+          ${whereClause}
           ORDER BY e.received_at DESC
           LIMIT ? OFFSET ?
         `;
 
-        const searchTerm = `%${query}%`;
         const fallbackResult = await env.DB.prepare(searchQuery)
-          .bind(
-            searchTerm,
-            searchTerm,
-            searchTerm,
-            searchTerm,
-            searchTerm,
-            limit,
-            offset
-          )
+          .bind(...searchParams, limit, offset)
           .all();
 
         results = fallbackResult.results || [];

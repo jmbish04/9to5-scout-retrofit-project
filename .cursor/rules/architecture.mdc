@@ -1,0 +1,68 @@
+---
+description: Core Cloudflare Workers architecture and service usage patterns
+globs: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.mjs", "src/**"]
+alwaysApply: true
+---
+
+# Cloudflare Workers Architecture Rules
+
+## CRITICAL SERVICE USAGE PATTERNS
+
+### AI (Workers AI)
+
+- Use `env.AI` for all generative and analytical tasks
+- NEVER use `any` type for AI model parameters
+- ALWAYS use environment variables for model selection
+- Use proper TypeScript typing: `keyof AiModels`
+
+```typescript
+// CORRECT - Use environment variables with proper typing
+const response = await env.AI.run(env.EMBEDDING_MODEL, { text: content });
+const embeddingResponse = response as { data?: number[][] };
+
+// WRONG - Never do this
+const response = await env.AI.run("@cf/baai/bge-large-en-v1.5" as any, inputs);
+```
+
+### Database (D1)
+
+- Use `env.DB` as single source of truth for structured data
+- Adhere strictly to established schema
+- Core tables: `sites`, `jobs`, `job_changes`
+- Do NOT alter schemas without documented migration plan
+
+### Browser Rendering (MYBROWSER)
+
+- Use `env.MYBROWSER` for web scraping - not simple `fetch`
+- Essential for accessing fully-rendered HTML from dynamic sites
+- Use `@cloudflare/playwright` package only
+
+### Vectorize (VECTORIZE_INDEX)
+
+- Use for semantic search and similarity matching
+- Generate embeddings for job descriptions and user skills
+- Use vector queries to find relevant skills from user profiles
+
+### Storage Services
+
+- **R2**: Store large artifacts (HTML snapshots, PDFs, screenshots)
+- **KV**: Configuration data, session tokens, fast reads
+- **Durable Objects**: Stateful coordinators (`SiteCrawler`, `JobMonitor`)
+
+## WORKFLOW PATTERNS
+
+### Proactive Task Chaining
+
+A task is not complete after a single action. For job scraping:
+
+1. Scrape job data via `SiteCrawler`
+2. Save to `jobs` table in D1
+3. Create content snapshot in R2
+4. Generate and store vector embeddings in `VECTORIZE_INDEX`
+5. Initiate monitoring via `JobMonitor` Durable Object
+
+### Resourcefulness
+
+- Use the right tool for the job
+- R2 for large blobs, D1 for structured data, Queues for decoupling
+- Utilize full Cloudflare Developer Platform capabilities

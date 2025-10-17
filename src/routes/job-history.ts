@@ -3,33 +3,46 @@
  * Handles applicant profile management, job history submission, and job rating functionality
  */
 
-import { ApplicantProfile, JobHistoryEntry, JobHistorySubmission, JobRating, JobHistoryRequest } from '../lib/types';
-import { 
-  getApplicantProfile, 
-  createApplicantProfile, 
-  updateApplicantProfile,
-  saveJobHistorySubmission,
-  updateJobHistorySubmission,
-  saveJobHistoryEntry,
+import type { Env } from "../index";
+import {
+  createApplicantProfile,
+  getApplicantProfile,
+  getJobById,
   getJobHistoryByApplicant,
   getJobHistorySubmissions,
-  getJobById,
-  saveJobRating,
   getJobRatingsByApplicant,
-  type StorageEnv
-} from '../lib/storage';
+  saveJobHistoryEntry,
+  saveJobHistorySubmission,
+  saveJobRating,
+  updateApplicantProfile,
+  updateJobHistorySubmission,
+  type StorageEnv,
+} from "../lib/storage";
+import {
+  ApplicantProfile,
+  JobHistoryEntry,
+  JobHistoryRequest,
+  JobHistorySubmission,
+  JobRating,
+} from "../lib/types";
 
-export async function handleJobHistoryPost(request: Request, env: any): Promise<Response> {
+export async function handleJobHistoryPost(
+  request: Request,
+  env: Env
+): Promise<Response> {
   try {
-    const body = await request.json() as JobHistoryRequest;
-    
+    const body = (await request.json()) as JobHistoryRequest;
+
     if (!body.user_id || !body.raw_content) {
-      return new Response(JSON.stringify({ 
-        error: 'Missing required fields: user_id and raw_content' 
-      }), { 
-        status: 400,
-        headers: { 'Content-Type': 'application/json' }
-      });
+      return new Response(
+        JSON.stringify({
+          error: "Missing required fields: user_id and raw_content",
+        }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
     }
 
     const storageEnv = env as StorageEnv;
@@ -46,17 +59,21 @@ export async function handleJobHistoryPost(request: Request, env: any): Promise<
       id: submissionId,
       applicant_id: applicant.id!,
       raw_content: body.raw_content,
-      content_type: body.content_type || 'text/plain',
-      processing_status: 'processing',
-      submitted_at: new Date().toISOString()
+      content_type: body.content_type || "text/plain",
+      processing_status: "processing",
+      submitted_at: new Date().toISOString(),
     };
 
     await saveJobHistorySubmission(storageEnv, submission);
 
     // Process the job history with AI
     try {
-      const processedHistory = await processJobHistoryWithAI(env, body.raw_content, applicant);
-      
+      const processedHistory = await processJobHistoryWithAI(
+        env,
+        body.raw_content,
+        applicant
+      );
+
       // Save processed job history entries
       const savedEntries = [];
       for (const entry of processedHistory.entries) {
@@ -67,136 +84,186 @@ export async function handleJobHistoryPost(request: Request, env: any): Promise<
 
       // Update applicant profile with extracted information
       if (processedHistory.profile_updates) {
-        await updateApplicantProfile(storageEnv, applicant.id!, processedHistory.profile_updates);
+        await updateApplicantProfile(
+          storageEnv,
+          applicant.id!,
+          processedHistory.profile_updates
+        );
       }
 
       // Update submission status
       await updateJobHistorySubmission(storageEnv, submissionId, {
-        processing_status: 'completed',
+        processing_status: "completed",
         ai_response: JSON.stringify(processedHistory),
         processed_entries: savedEntries.length,
-        processed_at: new Date().toISOString()
+        processed_at: new Date().toISOString(),
       });
 
-      return new Response(JSON.stringify({
-        success: true,
-        submission_id: submissionId,
-        applicant_id: applicant.id,
-        entries_processed: savedEntries.length,
-        entries: savedEntries
-      }), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' }
-      });
-
+      return new Response(
+        JSON.stringify({
+          success: true,
+          submission_id: submissionId,
+          applicant_id: applicant.id,
+          entries_processed: savedEntries.length,
+          entries: savedEntries,
+        }),
+        {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
     } catch (aiError) {
       // Update submission with error
       await updateJobHistorySubmission(storageEnv, submissionId, {
-        processing_status: 'failed',
-        processing_error: aiError instanceof Error ? aiError.message : 'AI processing failed',
-        processed_at: new Date().toISOString()
+        processing_status: "failed",
+        processing_error:
+          aiError instanceof Error ? aiError.message : "AI processing failed",
+        processed_at: new Date().toISOString(),
       });
 
-      return new Response(JSON.stringify({
-        error: 'Failed to process job history with AI',
-        submission_id: submissionId,
-        details: aiError instanceof Error ? aiError.message : 'Unknown error'
-      }), {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' }
-      });
+      return new Response(
+        JSON.stringify({
+          error: "Failed to process job history with AI",
+          submission_id: submissionId,
+          details: aiError instanceof Error ? aiError.message : "Unknown error",
+        }),
+        {
+          status: 500,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
     }
-
   } catch (error) {
-    return new Response(JSON.stringify({ 
-      error: 'Internal server error',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    }), { 
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    return new Response(
+      JSON.stringify({
+        error: "Internal server error",
+        details: error instanceof Error ? error.message : "Unknown error",
+      }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   }
 }
 
-export async function handleJobHistoryGet(request: Request, env: any, params: Record<string, string>): Promise<Response> {
+export async function handleJobHistoryGet(
+  request: Request,
+  env: Env,
+  params: Record<string, string>
+): Promise<Response> {
   try {
     const { user_id } = params;
-    
+
     if (!user_id) {
-      return new Response(JSON.stringify({ error: 'Missing user_id parameter' }), { 
-        status: 400,
-        headers: { 'Content-Type': 'application/json' }
-      });
+      return new Response(
+        JSON.stringify({ error: "Missing user_id parameter" }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
     }
 
     const storageEnv = env as StorageEnv;
     const applicant = await getApplicantProfile(storageEnv, user_id);
     if (!applicant) {
-      return new Response(JSON.stringify({ error: 'Applicant profile not found' }), { 
-        status: 404,
-        headers: { 'Content-Type': 'application/json' }
-      });
+      return new Response(
+        JSON.stringify({ error: "Applicant profile not found" }),
+        {
+          status: 404,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
     }
 
-    const jobHistory = await getJobHistoryByApplicant(storageEnv, applicant.id!);
-    const submissions = await getJobHistorySubmissions(storageEnv, applicant.id!);
+    const jobHistory = await getJobHistoryByApplicant(
+      storageEnv,
+      applicant.id!
+    );
+    const submissions = await getJobHistorySubmissions(
+      storageEnv,
+      applicant.id!
+    );
 
-    return new Response(JSON.stringify({
-      applicant: applicant,
-      job_history: jobHistory,
-      submissions: submissions
-    }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' }
-    });
-
+    return new Response(
+      JSON.stringify({
+        applicant: applicant,
+        job_history: jobHistory,
+        submissions: submissions,
+      }),
+      {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   } catch (error) {
-    return new Response(JSON.stringify({ 
-      error: 'Internal server error',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    }), { 
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    return new Response(
+      JSON.stringify({
+        error: "Internal server error",
+        details: error instanceof Error ? error.message : "Unknown error",
+      }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   }
 }
 
-export async function handleJobRatingPost(request: Request, env: any): Promise<Response> {
+export async function handleJobRatingPost(
+  request: Request,
+  env: Env
+): Promise<Response> {
   try {
-    const body = await request.json() as { user_id: string; job_id: string };
-    
+    const body = (await request.json()) as { user_id: string; job_id: string };
+
     if (!body.user_id || !body.job_id) {
-      return new Response(JSON.stringify({ 
-        error: 'Missing required fields: user_id and job_id' 
-      }), { 
-        status: 400,
-        headers: { 'Content-Type': 'application/json' }
-      });
+      return new Response(
+        JSON.stringify({
+          error: "Missing required fields: user_id and job_id",
+        }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
     }
 
     const storageEnv = env as StorageEnv;
     const applicant = await getApplicantProfile(storageEnv, body.user_id);
     if (!applicant) {
-      return new Response(JSON.stringify({ error: 'Applicant profile not found' }), { 
-        status: 404,
-        headers: { 'Content-Type': 'application/json' }
-      });
+      return new Response(
+        JSON.stringify({ error: "Applicant profile not found" }),
+        {
+          status: 404,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
     }
 
     // Get job details
     const job = await getJobById(storageEnv, body.job_id);
     if (!job) {
-      return new Response(JSON.stringify({ error: 'Job not found' }), { 
+      return new Response(JSON.stringify({ error: "Job not found" }), {
         status: 404,
-        headers: { 'Content-Type': 'application/json' }
+        headers: { "Content-Type": "application/json" },
       });
     }
 
     // Get applicant's job history
-    const jobHistory = await getJobHistoryByApplicant(storageEnv, applicant.id!);
+    const jobHistory = await getJobHistoryByApplicant(
+      storageEnv,
+      applicant.id!
+    );
 
     // Generate job rating using AI
-    const rating = await generateJobRating(env, applicant, jobHistory, job);
+    const rating = await generateJobRating(
+      env,
+      applicant,
+      jobHistory,
+      job as unknown as Record<string, unknown>
+    );
     rating.applicant_id = applicant.id!;
     rating.job_id = body.job_id;
 
@@ -205,55 +272,69 @@ export async function handleJobRatingPost(request: Request, env: any): Promise<R
 
     return new Response(JSON.stringify(savedRating), {
       status: 200,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { "Content-Type": "application/json" },
     });
-
   } catch (error) {
-    return new Response(JSON.stringify({ 
-      error: 'Internal server error',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    }), { 
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    return new Response(
+      JSON.stringify({
+        error: "Internal server error",
+        details: error instanceof Error ? error.message : "Unknown error",
+      }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   }
 }
 
-export async function handleJobRatingsGet(request: Request, env: any, params: Record<string, string>): Promise<Response> {
+export async function handleJobRatingsGet(
+  request: Request,
+  env: Env,
+  params: Record<string, string>
+): Promise<Response> {
   try {
     const { user_id } = params;
-    
+
     if (!user_id) {
-      return new Response(JSON.stringify({ error: 'Missing user_id parameter' }), { 
-        status: 400,
-        headers: { 'Content-Type': 'application/json' }
-      });
+      return new Response(
+        JSON.stringify({ error: "Missing user_id parameter" }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
     }
 
     const storageEnv = env as StorageEnv;
     const applicant = await getApplicantProfile(storageEnv, user_id);
     if (!applicant) {
-      return new Response(JSON.stringify({ error: 'Applicant profile not found' }), { 
-        status: 404,
-        headers: { 'Content-Type': 'application/json' }
-      });
+      return new Response(
+        JSON.stringify({ error: "Applicant profile not found" }),
+        {
+          status: 404,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
     }
 
     const ratings = await getJobRatingsByApplicant(storageEnv, applicant.id!);
 
     return new Response(JSON.stringify(ratings), {
       status: 200,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { "Content-Type": "application/json" },
     });
-
   } catch (error) {
-    return new Response(JSON.stringify({ 
-      error: 'Internal server error',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    }), { 
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    return new Response(
+      JSON.stringify({
+        error: "Internal server error",
+        details: error instanceof Error ? error.message : "Unknown error",
+      }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   }
 }
 
@@ -264,7 +345,11 @@ interface ProcessedJobHistory {
   profile_updates?: Partial<ApplicantProfile>;
 }
 
-async function processJobHistoryWithAI(env: any, rawContent: string, applicant: ApplicantProfile): Promise<ProcessedJobHistory> {
+async function processJobHistoryWithAI(
+  env: Env,
+  rawContent: string,
+  applicant: ApplicantProfile
+): Promise<ProcessedJobHistory> {
   const prompt = `
 You are a career historian expert. Your task is to analyze the provided job history content and extract structured information.
 
@@ -314,30 +399,40 @@ Return a JSON response with this exact structure:
 `;
 
   try {
-    const response = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
-      messages: [{ role: 'user', content: prompt }]
+    const response = await env.AI.run(env.DEFAULT_MODEL_REASONING, {
+      messages: [{ role: "user", content: prompt }],
     });
 
-    if (!response.response) {
-      throw new Error('No response from AI');
+    if (!(response as { response?: string }).response) {
+      throw new Error("No response from AI");
     }
 
     // Extract JSON from response
-    const jsonMatch = response.response.match(/\{[\s\S]*\}/);
+    const jsonMatch = (response as { response: string }).response.match(
+      /\{[\s\S]*\}/
+    );
     if (!jsonMatch) {
-      throw new Error('No valid JSON found in AI response');
+      throw new Error("No valid JSON found in AI response");
     }
 
     const parsed = JSON.parse(jsonMatch[0]);
     return parsed as ProcessedJobHistory;
-
   } catch (error) {
-    console.error('AI processing error:', error);
-    throw new Error(`Failed to process job history with AI: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    console.error("AI processing error:", error);
+    throw new Error(
+      `Failed to process job history with AI: ${
+        error instanceof Error ? error.message : "Unknown error"
+      }`
+    );
   }
 }
 
-async function generateJobRating(env: any, applicant: ApplicantProfile, jobHistory: JobHistoryEntry[], job: any): Promise<JobRating> {
+async function generateJobRating(
+  env: Env,
+  applicant: ApplicantProfile,
+  jobHistory: JobHistoryEntry[],
+  job: Record<string, unknown>
+): Promise<JobRating> {
   const prompt = `
 You are a job fit analysis expert. Analyze how well this candidate matches the given job opportunity.
 
@@ -384,25 +479,30 @@ Return JSON with this structure:
 `;
 
   try {
-    const response = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
-      messages: [{ role: 'user', content: prompt }]
+    const response = await env.AI.run(env.DEFAULT_MODEL_REASONING, {
+      messages: [{ role: "user", content: prompt }],
     });
 
-    if (!response.response) {
-      throw new Error('No response from AI');
+    if (!(response as { response?: string }).response) {
+      throw new Error("No response from AI");
     }
 
     // Extract JSON from response
-    const jsonMatch = response.response.match(/\{[\s\S]*\}/);
+    const jsonMatch = (response as { response: string }).response.match(
+      /\{[\s\S]*\}/
+    );
     if (!jsonMatch) {
-      throw new Error('No valid JSON found in AI response');
+      throw new Error("No valid JSON found in AI response");
     }
 
     const parsed = JSON.parse(jsonMatch[0]);
     return parsed as JobRating;
-
   } catch (error) {
-    console.error('Job rating AI error:', error);
-    throw new Error(`Failed to generate job rating with AI: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    console.error("Job rating AI error:", error);
+    throw new Error(
+      `Failed to generate job rating with AI: ${
+        error instanceof Error ? error.message : "Unknown error"
+      }`
+    );
   }
 }

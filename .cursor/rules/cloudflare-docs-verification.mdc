@@ -1,0 +1,109 @@
+---
+description: Mandatory Cloudflare documentation verification before implementation
+globs: ["**/*.ts", "**/*.js", "**/*.mjs", "src/**", "wrangler.*"]
+alwaysApply: true
+---
+
+# Cloudflare Documentation Verification Rules
+
+## CRITICAL DOCUMENTATION REQUIREMENT
+
+- **MANDATORY**: Use `mcp_cloudflare-docs_search_cloudflare_documentation` before ANY implementation
+- **ALWAYS**: Search Cloudflare docs before developing new features
+- **ALWAYS**: Search Cloudflare docs before theorizing bug fixes
+- **ALWAYS**: Verify approach against official documentation
+- **VIOLATION CONSEQUENCES**: Any implementation without prior Cloudflare documentation verification will be rejected and must be redesigned with proper documentation research
+
+## REQUIRED WORKFLOW
+
+### Before Any Implementation:
+
+1. **Search First**: Use `mcp_cloudflare-docs_search_cloudflare_documentation` tool
+2. **Research Context**: Obtain latest Cloudflare Workers patterns and best practices
+3. **Verify Approach**: Ensure implementation aligns with official documentation
+4. **Check Updates**: Look for recent changes or new features
+5. **Validate Patterns**: Confirm usage patterns are current and recommended
+
+### When to Use Cloudflare Docs MCP:
+
+- **Before new feature development**
+- **When debugging or fixing issues**
+- **When confidence level < 85% on any Cloudflare Workers implementation**
+- **When exploring new Cloudflare services**
+- **When making architectural decisions**
+- **When using any Cloudflare API or service**
+- **When encountering build errors or deployment failures**
+- **When troubleshooting CI/CD or Workers Builds issues**
+- **When resolving module resolution or bundling problems**
+
+## CLOUDFLARE SERVICES TO RESEARCH
+
+### Core Services:
+
+- **Workers AI**: Model usage, structured outputs, embeddings
+- **D1 Database**: Schema design, migrations, queries
+- **Browser Rendering**: Playwright integration, best practices
+- **Vectorize**: Embeddings, similarity search, indexing
+- **R2 Storage**: Object storage, presigned URLs, lifecycle
+- **Workers KV**: Key-value storage, caching patterns
+- **Durable Objects**: State management, WebSocket hibernation
+- **Queues**: Message processing, retry logic, dead letter queues
+
+### Advanced Services:
+
+- **Workflows**: Long-running processes, step functions
+- **Analytics Engine**: Event tracking, metrics
+- **Hyperdrive**: Database connections, connection pooling
+- **AI Gateway**: Request routing, caching, logging
+- **Agents SDK**: AI agent development, state management
+
+## VERIFICATION PATTERNS
+
+### Feature Development Pattern:
+
+```typescript
+// 1. FIRST: Search Cloudflare docs for the service
+// 2. THEN: Implement based on official patterns
+const response = await env.AI.run(env.EMBEDDING_MODEL, {
+  text: content,
+});
+```
+
+### Bug Investigation Pattern:
+
+```typescript
+// 1. FIRST: Search docs for known issues and solutions
+// 2. THEN: Apply documented fixes or workarounds
+// 3. VERIFY: Implementation matches current best practices
+```
+
+## ENFORCEMENT
+
+- **MANDATORY**: No implementation without prior documentation research
+- **REJECTION**: Code without documentation verification will be rejected
+- **REDESIGN**: Must redesign with proper documentation research
+- **VERIFICATION**: All approaches must be validated against official docs
+
+## EXAMPLE OF PROPER WORKFLOW
+
+### ❌ WRONG (What I did initially):
+
+1. User reports build errors
+2. I immediately start creating fixes and configuration files
+3. I skip the Cloudflare docs research step
+4. I waste time on incorrect solutions
+
+### ✅ CORRECT (What I should have done):
+
+1. User reports build errors
+2. **FIRST**: Use `mcp_cloudflare-docs_search_cloudflare_documentation` to research "Cloudflare Workers build errors module resolution"
+3. **THEN**: Research "Cloudflare Workers CI/CD Builds troubleshooting"
+4. **THEN**: Apply documented solutions based on official guidance
+5. **RESULT**: Correct solution found quickly (dashboard configuration, not code changes)
+
+## TOOL USAGE
+
+- **Primary Tool**: `mcp_cloudflare-docs_search_cloudflare_documentation`
+- **Search Terms**: Use specific service names and feature descriptions
+- **Context**: Include relevant Cloudflare service context in searches
+- **Follow-up**: Use additional searches for related services or patterns

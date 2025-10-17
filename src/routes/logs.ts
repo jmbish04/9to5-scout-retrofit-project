@@ -4,7 +4,7 @@ import type { Env } from "../index";
 const logs = new Hono<{ Bindings: Env }>();
 
 // Log test result to D1
-logs.post("/test", async (c) => {
+logs.post("/api/logs/test", async (c) => {
   console.log("📝 Logs API: Test log request received");
   
   try {
@@ -86,7 +86,7 @@ logs.post("/test", async (c) => {
 });
 
 // Get test logs by session ID
-logs.get("/session/:sessionId", async (c) => {
+logs.get("/api/logs/session/:sessionId", async (c) => {
   try {
     const sessionId = c.req.param("sessionId");
 
@@ -118,7 +118,7 @@ logs.get("/session/:sessionId", async (c) => {
 });
 
 // Get test logs by type
-logs.get("/type/:testType", async (c) => {
+logs.get("/api/logs/type/:testType", async (c) => {
   try {
     const testType = c.req.param("testType");
     const limit = c.req.query("limit") || "100";

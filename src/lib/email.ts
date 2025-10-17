@@ -4,8 +4,9 @@
  */
 
 // Import EmailMessage type for sending emails
-import { EmailMessage as CloudflareEmailMessage } from 'cloudflare:email';
-import type { EmailConfig, EmailInsights } from './types';
+import { EmailMessage as CloudflareEmailMessage } from "cloudflare:email";
+import type { Env } from "../index";
+import type { EmailConfig, EmailInsights } from "./types";
 
 export interface EmailMessage {
   from: string;
@@ -49,7 +50,7 @@ export function extractJobUrls(content: string): string[] {
     // Company career pages
     /https?:\/\/[^\/\s]+\/(?:careers?|jobs?)\/[^?\s]+/gi,
     // Generic job posting patterns
-    /https?:\/\/[^\/\s]+\/[^?\s]*(?:job|career|position|opening|vacancy)[^?\s]*/gi
+    /https?:\/\/[^\/\s]+\/[^?\s]*(?:job|career|position|opening|vacancy)[^?\s]*/gi,
   ];
 
   // Extract URLs using patterns
@@ -64,11 +65,19 @@ export function extractJobUrls(content: string): string[] {
   const urlPattern = /https?:\/\/[^\s<>"]+/gi;
   const allUrls = content.match(urlPattern) || [];
 
-  const jobKeywords = ['job', 'career', 'position', 'opening', 'vacancy', 'hiring', 'opportunity'];
+  const jobKeywords = [
+    "job",
+    "career",
+    "position",
+    "opening",
+    "vacancy",
+    "hiring",
+    "opportunity",
+  ];
 
   for (const url of allUrls) {
     const urlLower = url.toLowerCase();
-    if (jobKeywords.some(keyword => urlLower.includes(keyword))) {
+    if (jobKeywords.some((keyword) => urlLower.includes(keyword))) {
       if (!urls.includes(url)) {
         urls.push(url);
       }
@@ -77,64 +86,74 @@ export function extractJobUrls(content: string): string[] {
 
   // Clean and deduplicate URLs
   return [...new Set(urls)]
-    .map(url => url.replace(/[<>"']$/, '')) // Remove trailing punctuation
-    .filter(url => url.length > 10); // Filter out malformed URLs
+    .map((url) => url.replace(/[<>"']$/, "")) // Remove trailing punctuation
+    .filter((url) => url.length > 10); // Filter out malformed URLs
 }
 
 /**
  * Extract job information from email content using AI-powered parsing.
  */
-export async function extractJobInfo(env: { AI: any }, content: string): Promise<ExtractedJobInfo[]> {
+export async function extractJobInfo(
+  env: { AI: Ai; DEFAULT_MODEL_REASONING: keyof AiModels },
+  content: string
+): Promise<ExtractedJobInfo[]> {
   try {
     // Limit content to avoid exceeding token limits, focusing on the body
-    const cleanContent = content.replace(/<head>[\s\S]*?<\/head>/i, '').slice(0, 12000);
+    const cleanContent = content
+      .replace(/<head>[\s\S]*?<\/head>/i, "")
+      .slice(0, 12000);
 
     const jobSchema = {
-      type: 'array',
+      type: "array",
       items: {
-        type: 'object',
+        type: "object",
         properties: {
-          url: { type: 'string', description: 'The direct URL to the job posting.' },
-          title: { type: 'string', description: 'The job title.' },
-          company: { type: 'string', description: 'The name of the company.' },
-          location: { type: 'string', description: 'The location of the job.' }
+          url: {
+            type: "string",
+            description: "The direct URL to the job posting.",
+          },
+          title: { type: "string", description: "The job title." },
+          company: { type: "string", description: "The name of the company." },
+          location: { type: "string", description: "The location of the job." },
         },
-        required: ['url']
-      }
+        required: ["url"],
+      },
     };
 
     const messages = [
       {
-        role: 'system',
-        content: `You are an expert at parsing job alert emails. Your task is to extract all job postings from the provided email content (HTML or text). Identify each distinct job and extract its URL, title, company, and location. Return the data as a JSON array following the provided schema. Only include jobs that have a valid URL.`
+        role: "system",
+        content: `You are an expert at parsing job alert emails. Your task is to extract all job postings from the provided email content (HTML or text). Identify each distinct job and extract its URL, title, company, and location. Return the data as a JSON array following the provided schema. Only include jobs that have a valid URL.`,
       },
       {
-        role: 'user',
-        content: `Here is the email content:\n\n${cleanContent}`
-      }
+        role: "user",
+        content: `Here is the email content:\n\n${cleanContent}`,
+      },
     ];
 
-    const response = await env.AI.run('@cf/meta/llama-4-scout-17b-16e-instruct', {
+    const response = await env.AI.run(env.DEFAULT_MODEL_REASONING, {
       messages,
-      guided_json: jobSchema
+      guided_json: jobSchema,
     });
 
-    if (response?.response) {
-      const jobData = typeof response.response === 'string'
-        ? JSON.parse(response.response)
-        : response.response;
+    const responseData = response as any;
+    if (responseData?.response) {
+      const jobData =
+        typeof responseData.response === "string"
+          ? JSON.parse(responseData.response)
+          : responseData.response;
 
       if (Array.isArray(jobData)) {
-        return jobData.filter(job => job.url); // Ensure every entry has a URL
+        return jobData.filter((job) => job.url); // Ensure every entry has a URL
       }
     }
 
     return [];
   } catch (error) {
-    console.error('AI-powered job info extraction failed:', error);
+    console.error("AI-powered job info extraction failed:", error);
     // Fallback to regex if AI fails
     const urls = extractJobUrls(content);
-    return urls.map(url => ({ url }));
+    return urls.map((url) => ({ url }));
   }
 }
 
@@ -142,34 +161,40 @@ export async function extractJobInfo(env: { AI: any }, content: string): Promise
  * Parse email content from Cloudflare Email Routing request.
  * Cloudflare sends emails as multipart MIME in the request body.
  */
-export async function parseEmailFromRequest(request: Request): Promise<EmailMessage | null> {
+export async function parseEmailFromRequest(
+  request: Request
+): Promise<EmailMessage | null> {
   try {
-    const contentType = request.headers.get('content-type') || '';
+    const contentType = request.headers.get("content-type") || "";
 
-    if (!contentType.includes('multipart/form-data')) {
+    if (!contentType.includes("multipart/form-data")) {
       // Simple email format
       const text = await request.text();
       return {
-        from: request.headers.get('x-from') || '',
-        to: [request.headers.get('x-to') || ''],
-        subject: request.headers.get('x-subject') || '',
+        from: request.headers.get("x-from") || "",
+        to: [request.headers.get("x-to") || ""],
+        subject: request.headers.get("x-subject") || "",
         text: text,
-        headers: Object.fromEntries(request.headers.entries())
+        headers: Object.fromEntries(request.headers.entries()),
       };
     }
 
     // Parse multipart email content
     const formData = await request.formData();
     const email: EmailMessage = {
-      from: formData.get('from')?.toString() || request.headers.get('x-from') || '',
-      to: [formData.get('to')?.toString() || request.headers.get('x-to') || ''],
-      subject: formData.get('subject')?.toString() || request.headers.get('x-subject') || '',
-      headers: Object.fromEntries(request.headers.entries())
+      from:
+        formData.get("from")?.toString() || request.headers.get("x-from") || "",
+      to: [formData.get("to")?.toString() || request.headers.get("x-to") || ""],
+      subject:
+        formData.get("subject")?.toString() ||
+        request.headers.get("x-subject") ||
+        "",
+      headers: Object.fromEntries(request.headers.entries()),
     };
 
     // Extract text and HTML content
-    const textContent = formData.get('text');
-    const htmlContent = formData.get('html');
+    const textContent = formData.get("text");
+    const htmlContent = formData.get("html");
 
     if (textContent) {
       email.text = textContent.toString();
@@ -181,7 +206,7 @@ export async function parseEmailFromRequest(request: Request): Promise<EmailMess
 
     return email;
   } catch (error) {
-    console.error('Failed to parse email:', error);
+    console.error("Failed to parse email:", error);
     return null;
   }
 }
@@ -190,41 +215,66 @@ export async function parseEmailFromRequest(request: Request): Promise<EmailMess
  * Generate email insights data for a specific configuration.
  * Aggregates new jobs, job changes, and statistics for email reporting.
  */
-export async function generateEmailInsights(env: any, config: EmailConfig): Promise<EmailInsights> {
+export async function generateEmailInsights(
+  env: Env,
+  config: EmailConfig
+): Promise<EmailInsights> {
   const hours = config.frequency_hours;
-  const cutoffTime = new Date(Date.now() - hours * 60 * 60 * 1000).toISOString();
+  const cutoffTime = new Date(
+    Date.now() - hours * 60 * 60 * 1000
+  ).toISOString();
 
   // Get new jobs
-  const newJobs = config.include_new_jobs ? await env.DB.prepare(`
+  const newJobs = config.include_new_jobs
+    ? await env.DB.prepare(
+        `
     SELECT title, company, location, url, first_seen_at as posted_at
     FROM jobs 
     WHERE first_seen_at >= ? AND status = 'open'
     ORDER BY first_seen_at DESC
     LIMIT 50
-  `).bind(cutoffTime).all() : { results: [] };
+  `
+      )
+        .bind(cutoffTime)
+        .all()
+    : { results: [] };
 
   // Get job changes
-  const jobChanges = config.include_job_changes ? await env.DB.prepare(`
+  const jobChanges = config.include_job_changes
+    ? await env.DB.prepare(
+        `
     SELECT j.title, j.company, j.url, c.semantic_summary as change_summary
     FROM changes c
     JOIN jobs j ON c.job_id = j.id
     WHERE c.changed_at >= ?
     ORDER BY c.changed_at DESC
     LIMIT 20
-  `).bind(cutoffTime).all() : { results: [] };
+  `
+      )
+        .bind(cutoffTime)
+        .all()
+    : { results: [] };
 
   // Get statistics
-  const totalJobsResult = await env.DB.prepare(`
+  const totalJobsResult = await env.DB.prepare(
+    `
     SELECT COUNT(*) as count FROM jobs WHERE status = 'open'
-  `).first();
+  `
+  ).first();
 
-  const newJobsCountResult = await env.DB.prepare(`
+  const newJobsCountResult = await env.DB.prepare(
+    `
     SELECT COUNT(*) as count FROM jobs 
     WHERE first_seen_at >= ? AND status = 'open'
-  `).bind(cutoffTime).first();
+  `
+  )
+    .bind(cutoffTime)
+    .first();
 
   // Get role statistics
-  const roleStatsResult = config.include_statistics ? await env.DB.prepare(`
+  const roleStatsResult = config.include_statistics
+    ? await env.DB.prepare(
+        `
     SELECT 
       CASE 
         WHEN LOWER(title) LIKE '%engineer%' OR LOWER(title) LIKE '%developer%' THEN 'Engineer/Developer'
@@ -244,23 +294,48 @@ export async function generateEmailInsights(env: any, config: EmailConfig): Prom
     GROUP BY role
     ORDER BY count DESC
     LIMIT 10
-  `).all() : { results: [] };
+  `
+      ).all()
+    : { results: [] };
 
   return {
-    newJobs: newJobs.results || [],
-    jobChanges: jobChanges.results || [],
+    newJobs:
+      (newJobs.results as Array<{
+        title: string;
+        company: string;
+        location?: string;
+        url: string;
+        posted_at: string;
+      }>) || [],
+    jobChanges:
+      (jobChanges.results as Array<{
+        title: string;
+        company: string;
+        change_summary: string;
+        url: string;
+      }>) || [],
     statistics: {
-      totalJobs: totalJobsResult?.count || 0,
-      newJobsLastPeriod: newJobsCountResult?.count || 0,
-      roleStats: roleStatsResult.results || []
-    }
+      totalJobs: (totalJobsResult?.count as number) || 0,
+      newJobsLastPeriod: (newJobsCountResult?.count as number) || 0,
+      roleStats:
+        (roleStatsResult.results as Array<{
+          role: string;
+          count: number;
+          avgMinSalary?: number;
+          avgMaxSalary?: number;
+        }>) || [],
+    },
   };
 }
 
 /**
  * Send insights email using email service.
  */
-export async function sendInsightsEmail(insights: EmailInsights, config: EmailConfig, env: any): Promise<boolean> {
+export async function sendInsightsEmail(
+  insights: EmailInsights,
+  config: EmailConfig,
+  env: Env
+): Promise<boolean> {
   try {
     const htmlContent = formatInsightsEmail(insights, config.frequency_hours);
     const subject = `9to5-Scout Job Insights - ${insights.statistics.newJobsLastPeriod} new jobs`;
@@ -269,29 +344,34 @@ export async function sendInsightsEmail(insights: EmailInsights, config: EmailCo
       console.error("EMAIL_SENDER binding not configured. Cannot send email.");
       // Fallback to KV for demo/testing purposes if sender is not available
       const emailId = crypto.randomUUID();
-      await env.KV.put(`email:${emailId}`, JSON.stringify({
-        to: config.recipient_email,
-        subject,
-        html: htmlContent,
-        sent_at: new Date().toISOString()
-      }));
+      await env.KV.put(
+        `email:${emailId}`,
+        JSON.stringify({
+          to: config.recipient_email,
+          subject,
+          html: htmlContent,
+          sent_at: new Date().toISOString(),
+        })
+      );
       return true;
     }
 
     // Construct the email message
     const message = new CloudflareEmailMessage(
       `digest@${env.EMAIL_ROUTING_DOMAIN}`, // From
-      config.recipient_email,               // To
+      config.recipient_email, // To
       `Subject: ${subject}\r\nContent-Type: text/html; charset=utf-8\r\n\r\n${htmlContent}` // Raw content
     );
 
     // Send the email
     await env.EMAIL_SENDER.send(message);
 
-    console.log(`Email insights sent successfully to ${config.recipient_email}`);
+    console.log(
+      `Email insights sent successfully to ${config.recipient_email}`
+    );
     return true;
   } catch (error) {
-    console.error('Failed to send email:', error);
+    console.error("Failed to send email:", error);
     return false;
   }
 }
@@ -299,9 +379,12 @@ export async function sendInsightsEmail(insights: EmailInsights, config: EmailCo
 /**
  * Format email insights into HTML email content.
  */
-export function formatInsightsEmail(insights: EmailInsights, periodHours: number): string {
-  const period = periodHours === 24 ? 'daily' : `${periodHours}-hour`;
-  
+export function formatInsightsEmail(
+  insights: EmailInsights,
+  periodHours: number
+): string {
+  const period = periodHours === 24 ? "daily" : `${periodHours}-hour`;
+
   return `
 <!DOCTYPE html>
 <html>
@@ -323,38 +406,64 @@ export function formatInsightsEmail(insights: EmailInsights, periodHours: number
         <p>Your ${period} job market update</p>
     </div>
 
-    ${insights.newJobs.length > 0 ? `
+    ${
+      insights.newJobs.length > 0
+        ? `
     <div class="section">
         <h2>New Job Openings (${insights.newJobs.length})</h2>
-        ${insights.newJobs.map(job => `
+        ${insights.newJobs
+          .map(
+            (job) => `
         <div class="job-item">
             <strong><a href="${job.url}">${job.title}</a></strong><br>
-            <em>${job.company}${job.location ? ` • ${job.location}` : ''}</em><br>
-            <small>Posted: ${new Date(job.posted_at).toLocaleDateString()}</small>
+            <em>${job.company}${
+              job.location ? ` • ${job.location}` : ""
+            }</em><br>
+            <small>Posted: ${new Date(
+              job.posted_at
+            ).toLocaleDateString()}</small>
         </div>
-        `).join('')}
+        `
+          )
+          .join("")}
     </div>
-    ` : ''}
+    `
+        : ""
+    }
 
-    ${insights.jobChanges.length > 0 ? `
+    ${
+      insights.jobChanges.length > 0
+        ? `
     <div class="section">
         <h2>Job Updates (${insights.jobChanges.length})</h2>
-        ${insights.jobChanges.map(change => `
+        ${insights.jobChanges
+          .map(
+            (change) => `
         <div class="job-item">
             <strong><a href="${change.url}">${change.title}</a></strong><br>
             <em>${change.company}</em><br>
             <p>${change.change_summary}</p>
         </div>
-        `).join('')}
+        `
+          )
+          .join("")}
     </div>
-    ` : ''}
+    `
+        : ""
+    }
 
     <div class="section">
         <h2>Market Statistics</h2>
-        <p><strong>Total Active Jobs:</strong> ${insights.statistics.totalJobs}</p>
-        <p><strong>New Jobs in Last ${periodHours}h:</strong> ${insights.statistics.newJobsLastPeriod}</p>
+        <p><strong>Total Active Jobs:</strong> ${
+          insights.statistics.totalJobs
+        }</p>
+        <p><strong>New Jobs in Last ${periodHours}h:</strong> ${
+    insights.statistics.newJobsLastPeriod
+  }</p>
         
-        ${insights.statistics.roleStats.length > 0 ? `
+        ${
+          insights.statistics.roleStats.length > 0
+            ? `
         <h3>Top Roles</h3>
         <table class="stats-table">
             <thead>
@@ -366,17 +475,31 @@ export function formatInsightsEmail(insights: EmailInsights, periodHours: number
                 </tr>
             </thead>
             <tbody>
-                ${insights.statistics.roleStats.map(stat => `
+                ${insights.statistics.roleStats
+                  .map(
+                    (stat) => `
                 <tr>
                     <td>${stat.role}</td>
                     <td>${stat.count}</td>
-                    <td>${stat.avgMinSalary ? `$${stat.avgMinSalary.toLocaleString()}` : 'N/A'}</td>
-                    <td>${stat.avgMaxSalary ? `$${stat.avgMaxSalary.toLocaleString()}` : 'N/A'}</td>
+                    <td>${
+                      stat.avgMinSalary
+                        ? `$${stat.avgMinSalary.toLocaleString()}`
+                        : "N/A"
+                    }</td>
+                    <td>${
+                      stat.avgMaxSalary
+                        ? `$${stat.avgMaxSalary.toLocaleString()}`
+                        : "N/A"
+                    }</td>
                 </tr>
-                `).join('')}
+                `
+                  )
+                  .join("")}
             </tbody>
         </table>
-        ` : ''}
+        `
+            : ""
+        }
     </div>
 
     <div class="footer">

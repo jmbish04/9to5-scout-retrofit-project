@@ -1,4 +1,80 @@
 node_modules
 dist
 src/**/*.js
+
+# Editors / OS
+.vscode/
+.idea/
 .DS_Store
+
+# Cloudflare Workers
+.wrangler/
+.dev.vars
+
+# TypeScript
+*.tsbuildinfo
+
+# Node / JS logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+coverage/
+.nyc_output/
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*.pyd
+
+# Python environments
+venv/
+.venv/
+env/
+ENV/
+**/venv/
+**/.venv/
+**/env/
+**/ENV/
+python-node/JobSpy/venv/
+
+# Python tooling caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Python packaging/build artifacts
+build/
+develop-eggs/
+downloads/
+eggs/
+.eggs/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+pip-wheel-metadata/
+
+# Environment variables files
+.env
+.env.*
+.envrc
+
+# Service account credentials
+scripts/setup/talent-api-sa-key.json
+**/talent-api-sa-key.json
+**/*-sa-key.json
+**/service-account*.json
+
+# Sample / test assets
+scripts/assets/*
+
+# Test deliverables and sensitive outputs
+tests/delivered_assets/
+tests/py_scripts/logs/
+tests/py_scripts/venv_tests/

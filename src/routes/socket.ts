@@ -1,8 +1,11 @@
-import type { Env } from '../index';
+import type { Env } from "../index";
 
-export async function handleScrapeSocket(request: Request, env: Env): Promise<Response> {
-  const auth = request.headers.get('Authorization') || '';
-  const expected = `Bearer ${env.API_AUTH_TOKEN}`;
+export async function handleScrapeSocket(
+  request: Request,
+  env: Env
+): Promise<Response> {
+  const auth = request.headers.get("Authorization") || "";
+  const expected = `Bearer ${env.WORKER_API_KEY}`;
 
   let diff = auth.length ^ expected.length;
   for (let i = 0; i < auth.length && i < expected.length; i++) {
@@ -10,20 +13,23 @@ export async function handleScrapeSocket(request: Request, env: Env): Promise<Re
   }
 
   if (diff !== 0) {
-    return new Response('Unauthorized', { status: 401 });
+    return new Response("Unauthorized", { status: 401 });
   }
-  const id = env.SCRAPE_SOCKET.idFromName('default');
+  const id = env.SCRAPE_SOCKET.idFromName("default");
   const stub = env.SCRAPE_SOCKET.get(id);
   return stub.fetch(request);
 }
 
-export async function handleScrapeDispatch(request: Request, env: Env): Promise<Response> {
-  const id = env.SCRAPE_SOCKET.idFromName('default');
+export async function handleScrapeDispatch(
+  request: Request,
+  env: Env
+): Promise<Response> {
+  const id = env.SCRAPE_SOCKET.idFromName("default");
   const stub = env.SCRAPE_SOCKET.get(id);
   const body = await request.text();
-  return stub.fetch('https://dummy/dispatch', {
-    method: 'POST',
+  return stub.fetch("https://dummy/dispatch", {
+    method: "POST",
     body,
-    headers: { 'Content-Type': 'application/json' },
+    headers: { "Content-Type": "application/json" },
   });
 }

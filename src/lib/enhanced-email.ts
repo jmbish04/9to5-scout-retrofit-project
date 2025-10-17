@@ -237,7 +237,10 @@ export async function generateEmailEmbeddings(
     if (embeddingResponse?.data && Array.isArray(embeddingResponse.data[0])) {
       // Response is an array of vectors, take the first one
       embeddingVector = embeddingResponse.data[0];
-    } else if (embeddingResponse?.data && Array.isArray(embeddingResponse.data)) {
+    } else if (
+      embeddingResponse?.data &&
+      Array.isArray(embeddingResponse.data)
+    ) {
       // Response is a single vector in the data property - flatten if needed
       embeddingVector = embeddingResponse.data.flat();
     } else if (Array.isArray(embedding)) {
@@ -457,116 +460,16 @@ export async function processEmailFromRouting(
       console.error("Failed to generate embeddings:", error);
     }
 
-    // Process job links
-    let jobLinksExtracted = 0;
-    let jobsProcessed = 0;
-    if (aiResult.jobLinks.length > 0) {
-      jobLinksExtracted = aiResult.jobLinks.length;
-      console.log(`📧 Processing ${aiResult.jobLinks.length} job links...`);
+    // Process job links using the comprehensive helper function
+    const jobProcessingResult = await processJobLinksWithBrowserRendering(
+      env,
+      emailId,
+      aiResult.jobLinks,
+      aiResult.subject
+    );
 
-      // Save job links to email_job_links table
-      for (const jobUrl of aiResult.jobLinks) {
-        try {
-          // Insert job link record
-          const linkResult = await env.DB.prepare(
-            `INSERT INTO email_job_links (email_auto_id, job_url, status) 
-             VALUES (?, ?, 'pending')`
-          )
-            .bind(emailId, jobUrl)
-            .run();
-
-          console.log(`📧 Job link saved: ${jobUrl}`);
-
-          // Process the job URL using Cloudflare Browser Rendering API
-          try {
-            const browserResponse = await fetch(
-              `https://api.cloudflare.com/client/v4/accounts/${env.CLOUDFLARE_ACCOUNT_ID}/browser/render`,
-              {
-                method: "POST",
-                headers: {
-                  Authorization: `Bearer ${env.CLOUDFLARE_API_TOKEN}`,
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  url: jobUrl,
-                  html: true,
-                  waitUntil: "networkidle0",
-                }),
-              }
-            );
-
-            if (browserResponse.ok) {
-              const browserResult = (await browserResponse.json()) as any;
-              const html = browserResult.result?.html;
-
-              if (html) {
-                // Extract job information from the rendered HTML
-                const jobInfo = extractJobInfoFromUrl(jobUrl);
-                if (jobInfo) {
-                  // Create a proper Job object
-                  const job: Job = {
-                    url: jobUrl,
-                    title: jobInfo.title || "Unknown Title",
-                    company: jobInfo.company || "Unknown Company",
-                    location: jobInfo.location || "Unknown Location",
-                    description_md: html.slice(0, 1000), // Use first 1000 chars of HTML as description
-                    salary_min: 0,
-                    salary_max: 0,
-                    posted_at: new Date().toISOString(),
-                    source: "EMAIL",
-                  };
-                  const savedJobId = await saveJob(env, job);
-
-                  // Update the job link record with the job ID and status
-                  await env.DB.prepare(
-                    `UPDATE email_job_links 
-                     SET status = 'completed', 
-                         job_id = ?, 
-                         updated_at = CURRENT_TIMESTAMP 
-                     WHERE id = ?`
-                  )
-                    .bind(savedJobId, linkResult.meta.last_row_id)
-                    .run();
-
-                  jobsProcessed++;
-                  console.log(
-                    `📧 Job processed: ${jobUrl} -> Job ID: ${savedJobId}`
-                  );
-                } else {
-                  // Update status to failed if no job info could be extracted
-                  await markJobLinkAsFailed(
-                    env,
-                    linkResult.meta.last_row_id as number
-                  );
-                }
-              } else {
-                // Update status to failed if no HTML could be rendered
-                await markJobLinkAsFailed(
-                  env,
-                  linkResult.meta.last_row_id as number
-                );
-              }
-            } else {
-              // Update status to failed if browser rendering failed
-              await markJobLinkAsFailed(
-                env,
-                linkResult.meta.last_row_id as number
-              );
-            }
-          } catch (browserError) {
-            console.error(`Failed to process job URL ${jobUrl}:`, browserError);
-
-            // Update status to failed
-            await markJobLinkAsFailed(
-              env,
-              linkResult.meta.last_row_id as number
-            );
-          }
-        } catch (error) {
-          console.error(`Failed to save job link ${jobUrl}:`, error);
-        }
-      }
-    }
+    const jobLinksExtracted = jobProcessingResult.jobLinksExtracted;
+    const jobsProcessed = jobProcessingResult.processedJobs;
 
     // Handle OTP detection and forwarding
     if (aiResult.otpDetected && aiResult.otpCode) {
@@ -1158,6 +1061,238 @@ export async function processJobUrlsFromEmail(
   }
 
   return processedJobs;
+}
+
+/**
+ * Process job links with browser rendering and database logging
+ * This is a comprehensive helper that handles the full job processing pipeline
+ */
+export async function processJobLinksWithBrowserRendering(
+  env: Env,
+  emailId: number,
+  jobUrls: string[],
+  emailSubject: string
+): Promise<{
+  processedJobs: number;
+  jobLinksExtracted: number;
+}> {
+  let processedJobs = 0;
+  const jobLinksExtracted = jobUrls.length;
+
+  if (jobUrls.length === 0) {
+    return { processedJobs: 0, jobLinksExtracted: 0 };
+  }
+
+  console.log(
+    `📧 Processing ${jobUrls.length} job links with browser rendering...`
+  );
+
+  for (const jobUrl of jobUrls) {
+    try {
+      // Insert job link record
+      const linkResult = await env.DB.prepare(
+        `INSERT INTO email_job_links (email_auto_id, job_url, status) 
+         VALUES (?, ?, 'pending')`
+      )
+        .bind(emailId, jobUrl)
+        .run();
+
+      console.log(`📧 Job link saved: ${jobUrl}`);
+
+      // Process the job URL using Cloudflare Browser Rendering API
+      try {
+        const browserResponse = await fetch(
+          `https://api.cloudflare.com/client/v4/accounts/${env.CLOUDFLARE_ACCOUNT_ID}/browser/render`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${env.CLOUDFLARE_API_TOKEN}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              url: jobUrl,
+              html: true,
+              waitUntil: "networkidle0",
+            }),
+          }
+        );
+
+        if (browserResponse.ok) {
+          const browserResult = (await browserResponse.json()) as any;
+          const html = browserResult.result?.html;
+
+          if (html) {
+            // Extract job information from the rendered HTML
+            const jobInfo = extractJobInfoFromUrl(jobUrl);
+            if (jobInfo) {
+              // Create a proper Job object
+              const job: Job = {
+                url: jobUrl,
+                title: jobInfo.title || "Unknown Title",
+                company: jobInfo.company || "Unknown Company",
+                location: jobInfo.location || "Unknown Location",
+                description_md: html.slice(0, 1000), // Use first 1000 chars of HTML as description
+                salary_min: 0,
+                salary_max: 0,
+                posted_at: new Date().toISOString(),
+                source: "EMAIL",
+              };
+              const savedJobId = await saveJob(env, job);
+
+              // Update the job link record with the job ID and status
+              await env.DB.prepare(
+                `UPDATE email_job_links 
+                 SET status = 'completed', 
+                     job_id = ?, 
+                     updated_at = CURRENT_TIMESTAMP 
+                 WHERE id = ?`
+              )
+                .bind(savedJobId, linkResult.meta.last_row_id)
+                .run();
+
+              processedJobs++;
+              console.log(
+                `📧 Job processed: ${jobUrl} -> Job ID: ${savedJobId}`
+              );
+            } else {
+              // Update status to failed if no job info could be extracted
+              await markJobLinkAsFailed(
+                env,
+                linkResult.meta.last_row_id as number
+              );
+            }
+          } else {
+            // Update status to failed if no HTML could be rendered
+            await markJobLinkAsFailed(
+              env,
+              linkResult.meta.last_row_id as number
+            );
+          }
+        } else {
+          // Update status to failed if browser rendering failed
+          await markJobLinkAsFailed(env, linkResult.meta.last_row_id as number);
+        }
+      } catch (browserError) {
+        console.error(`Failed to process job URL ${jobUrl}:`, browserError);
+
+        // Update status to failed
+        await markJobLinkAsFailed(env, linkResult.meta.last_row_id as number);
+      }
+    } catch (error) {
+      console.error(`Failed to save job link ${jobUrl}:`, error);
+    }
+  }
+
+  console.log(
+    `✅ Processed ${processedJobs}/${jobLinksExtracted} jobs successfully`
+  );
+  return { processedJobs, jobLinksExtracted };
+}
+
+/**
+ * Build WHERE clause and parameters for email filtering
+ */
+export function buildEmailFilterWhereClause(filters: {
+  status?: string;
+  fromEmail?: string;
+  toEmail?: string;
+  otpDetected?: string;
+  otpOnly?: boolean;
+  classification?: string;
+  dateFrom?: string;
+  dateTo?: string;
+  subject?: string;
+  search?: string;
+  searchType?: string;
+}): {
+  whereClause: string;
+  params: any[];
+} {
+  let whereClause = "WHERE 1=1";
+  const params: any[] = [];
+
+  // Apply filters
+  if (filters.status) {
+    whereClause += ` AND e.status = ?`;
+    params.push(filters.status);
+  }
+
+  if (filters.fromEmail) {
+    whereClause += ` AND e.from_email LIKE ?`;
+    params.push(`%${filters.fromEmail}%`);
+  }
+
+  if (filters.toEmail) {
+    whereClause += ` AND e.to_email LIKE ?`;
+    params.push(`%${filters.toEmail}%`);
+  }
+
+  if (filters.otpDetected !== null && filters.otpDetected !== undefined) {
+    whereClause += ` AND e.otp_detected = ?`;
+    params.push(filters.otpDetected === "true" ? 1 : 0);
+  }
+
+  if (filters.otpOnly) {
+    whereClause += ` AND e.otp_detected = 1`;
+  }
+
+  if (filters.classification) {
+    whereClause += ` AND e.ai_classification = ?`;
+    params.push(filters.classification);
+  }
+
+  if (filters.dateFrom) {
+    whereClause += ` AND e.received_at >= ?`;
+    params.push(filters.dateFrom);
+  }
+
+  if (filters.dateTo) {
+    whereClause += ` AND e.received_at <= ?`;
+    params.push(filters.dateTo);
+  }
+
+  if (filters.subject) {
+    whereClause += ` AND e.subject LIKE ?`;
+    params.push(`%${filters.subject}%`);
+  }
+
+  // Apply search
+  if (filters.search) {
+    if (filters.searchType === "fulltext") {
+      whereClause += ` AND (
+        e.subject LIKE ? OR 
+        e.content_text LIKE ? OR 
+        e.content_html LIKE ? OR
+        e.from_email LIKE ? OR
+        e.to_email LIKE ?
+      )`;
+      const searchTerm = `%${filters.search}%`;
+      params.push(searchTerm, searchTerm, searchTerm, searchTerm, searchTerm);
+    }
+    // Note: Semantic and AI search are handled separately
+  }
+
+  return { whereClause, params };
+}
+
+/**
+ * Build search WHERE clause for fallback keyword search
+ */
+export function buildSearchWhereClause(searchTerm: string): {
+  whereClause: string;
+  params: any[];
+} {
+  const whereClause = `WHERE (
+    e.subject LIKE ? OR 
+    e.content_text LIKE ? OR 
+    e.content_html LIKE ? OR
+    e.from_email LIKE ? OR
+    e.to_email LIKE ?
+  )`;
+
+  const params = [searchTerm, searchTerm, searchTerm, searchTerm, searchTerm];
+
+  return { whereClause, params };
 }
 
 /**

@@ -1,0 +1,45 @@
+---
+description: Testing, documentation, and code quality standards
+globs: ["**/*.ts", "**/*.js", "**/*.test.*", "**/*.spec.*", "tests/**"]
+alwaysApply: true
+---
+
+# Testing and Code Standards Rules
+
+## CRITICAL TESTING RULES
+
+- Include basic test examples
+- Provide curl commands for API endpoints
+- Add example environment variable values
+- Include sample requests and responses
+
+## CRITICAL CODE STANDARDS
+
+- Generate TypeScript by default unless JavaScript specifically requested
+- Add appropriate TypeScript types and interfaces
+- Keep code in single file unless otherwise specified
+- Use official SDKs when available
+- Minimize external dependencies
+- NO libraries with FFI/native/C bindings
+- Include proper error handling and logging
+- Include comments explaining complex logic
+
+## VERIFICATION PROTOCOL
+
+- When confidence level < 85% on Cloudflare Workers implementation
+- MUST use search_cloudflare_documentation tool
+- Verify approach using available tools
+- Ensure accuracy and latest best practices
+
+## PROACTIVE TASK CHAINING
+
+- Tasks not complete after single action
+- For job scraping: scrape → save to D1 → create R2 snapshot → generate embeddings → initiate monitoring
+- Use full Cloudflare platform capabilities
+- Right tool for job: R2 for blobs, D1 for structured data, Queues for decoupling
+
+## HYBRID ARCHITECTURE RULES
+
+- Python scraper integration via Cloudflare Tunnel
+- Tunnel: `ubudesk1`, Endpoint: `https://local-scraper.hacolby.app`
+- Worker communicates via fetch requests to public endpoint

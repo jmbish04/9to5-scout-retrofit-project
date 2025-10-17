@@ -1,0 +1,77 @@
+---
+description: WebSocket and Durable Objects implementation rules
+globs: ["**/*.ts", "**/*.js", "src/**"]
+alwaysApply: true
+---
+
+# WebSocket and Durable Objects Rules
+
+## CRITICAL WEBSOCKET RULES
+
+- ALWAYS use Durable Objects WebSocket Hibernation API
+- Use `this.ctx.acceptWebSocket(server)` - NOT `server.accept()`
+- Define `async webSocketMessage()` and `async webSocketClose()` handlers
+- NEVER use `addEventListener` pattern in Durable Objects
+
+### WebSocket Implementation Pattern:
+
+```typescript
+export class WebSocketHibernationServer extends DurableObject {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext) {
+    const webSocketPair = new WebSocketPair();
+    const [client, server] = Object.values(webSocketPair);
+
+    // Call this to accept the WebSocket connection
+    this.ctx.acceptWebSocket(server);
+
+    return new Response(null, {
+      status: 101,
+      webSocket: client,
+    });
+  }
+
+  async webSocketMessage(
+    ws: WebSocket,
+    message: string | ArrayBuffer
+  ): void | Promise<void> {
+    // Handle incoming messages
+  }
+
+  async webSocketClose(
+    ws: WebSocket,
+    code: number,
+    reason: string,
+    wasClean: boolean
+  ): void | Promise<void> {
+    // Handle connection close
+  }
+}
+```
+
+## CRITICAL AGENTS SDK RULES
+
+- Prefer `agents` SDK for AI Agents
+- Extend `Agent` class with proper type parameters: `Agent<Env, MyState>`
+- Use `this.setState` for state management
+- Use `this.sql` for direct SQLite database access
+- Include proper Durable Object bindings in wrangler.jsonc
+- Set `migrations[].new_sqlite_classes` to Agent class name
+
+### Agent Implementation Pattern:
+
+```typescript
+export class AIAgent extends Agent<Env, MyState> {
+  async onRequest(request: Request) {
+    // Handle HTTP requests
+  }
+
+  async onConnect(connection: Connection) {
+    await this.initiate(connection);
+    connection.accept();
+  }
+
+  async onMessage(connection: Connection, message: WSMessage) {
+    // Handle WebSocket messages
+  }
+}
+```

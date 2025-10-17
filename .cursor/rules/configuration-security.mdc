@@ -1,0 +1,55 @@
+---
+description: Configuration and security best practices
+globs: ["wrangler.*", "**/*.ts", "**/*.js", "src/**"]
+alwaysApply: true
+---
+
+# Configuration and Security Rules
+
+## CRITICAL CONFIGURATION RULES
+
+- ALWAYS provide wrangler.jsonc (not wrangler.toml)
+- Set `compatibility_date = "2025-03-07"`
+- Set `compatibility_flags = ["nodejs_compat"]`
+- Enable observability: `"enabled": true`
+- Only include bindings that are actually used in code
+
+### Browser Rendering Configuration:
+
+```toml
+compatibility_flags = ["nodejs_compat"]
+browser = { binding = "MYBROWSER" }
+# No [build] section with external dependencies needed
+```
+
+### TypeScript Type Generation:
+
+```bash
+# Generate types based on your wrangler.toml configuration
+pnpm exec wrangler types
+```
+
+## CRITICAL SECURITY RULES
+
+- Implement proper request validation
+- Use appropriate security headers
+- Handle CORS correctly when needed
+- Follow least privilege principle for bindings
+- Sanitize user inputs
+- Never bake secrets into code
+
+## CRITICAL ERROR HANDLING RULES
+
+- Implement proper error boundaries
+- Return appropriate HTTP status codes
+- Provide meaningful error messages
+- Log errors appropriately
+- Handle edge cases gracefully
+
+## CRITICAL PERFORMANCE RULES
+
+- Optimize for cold starts
+- Minimize unnecessary computation
+- Use appropriate caching strategies
+- Consider Workers limits and quotas
+- Implement streaming where beneficial

@@ -1,0 +1,35 @@
+---
+description: Package management and dependency rules
+globs: ["package.json", "pnpm-lock.yaml", "**/*.ts", "**/*.js"]
+alwaysApply: true
+---
+
+# Package Management Rules
+
+## CRITICAL PACKAGE MANAGEMENT
+
+- NEVER use `npm` or `yarn` commands
+- ALWAYS use `pnpm` exclusively for all package management:
+  - Installing: `pnpm install`
+  - Adding packages: `pnpm add <package-name>`
+  - Running scripts: `pnpm run <script-name>`
+  - Updating: `pnpm update`
+
+## DEPENDENCY RULES
+
+- Use official SDKs when available
+- Minimize external dependencies
+- NO libraries with FFI/native/C bindings
+- Prefer Cloudflare-native packages
+
+## BROWSER RENDERING DEPENDENCIES
+
+- NEVER use standard Playwright package
+- ALWAYS use `@cloudflare/playwright` package
+- NEVER use `external` field in `[build]` section for Playwright
+- ALWAYS configure browser binding in wrangler.toml
+
+## STEEL SCRAPER DEPENDENCIES
+
+- NEVER use `external` field in `[build]` section for Steel SDK
+- Install Steel SDK as regular dependency and bundle normally

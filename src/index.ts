@@ -3,6 +3,8 @@ type DurableObjectState = any;
 
 // Import GenericAgent for Cloudflare Agents SDK
 import { GenericAgent } from "./lib/generic_agent";
+// Import RAGAgent for embeddings and RAG functionality
+import { RAGAgent } from "./lib/rag_agent";
 
 // Import job scraping functionality
 import { crawlJob } from "./lib/crawl";
@@ -10,6 +12,7 @@ import { generateEmailInsights, sendInsightsEmail } from "./lib/email";
 import { runDailyJobMonitoring } from "./lib/monitoring";
 import type { EmailConfig } from "./lib/types";
 // Using generated types from wrangler types instead of @cloudflare/workers-types
+import { processEmailFromRouting } from "./lib/enhanced-email";
 import { handleTestStreamingWebSocket } from "./lib/test-streaming";
 import { handleAgentQuery } from "./routes/agent";
 import {
@@ -27,9 +30,23 @@ import {
   handleEmailConfigsGet,
   handleEmailConfigsPut,
   handleEmailInsightsSend,
-  handleEmailLogsGet,
-  handleEmailReceived,
+  handleEmailLogsGet
 } from "./routes/email";
+import {
+  handleAIPoweredEmailReceived,
+  handleEmailAnalytics,
+  handleEmailSearch,
+  handleEmailTemplatePost,
+  handleEmailTemplatesGet,
+  handleEnhancedEmailLogsGet,
+  handleEnhancedEmailReceived,
+  handleOTPForwardingLogsGet,
+  handleOTPTest,
+  handleSendHTMLEmail,
+  handleSendJobInsights,
+  handleSendWelcomeEmail,
+  handleTestEmailForward,
+} from "./routes/enhanced-email";
 import {
   handleBulkFileDelete,
   handleFileDelete,
@@ -93,6 +110,26 @@ import {
   handleWorkflowsGet,
   handleWorkflowsPost,
 } from "./routes/workflows";
+// Import embeddings and RAG route handlers
+import {
+  handleCreateEmbedding,
+  handleDeleteEmbedding,
+  handleGetEmbeddingOperations,
+  handleGetEmbeddingStats,
+  handleSearchByUUID,
+  handleSearchEmbeddings,
+  handleUpdateEmbedding,
+} from "./routes/embeddings";
+import {
+  handleFindMatchingResumes,
+  handleFindSimilarJobs,
+  handleGenerateCoverLetterSuggestions,
+  handleGetJobMarketInsights,
+  handleGetRAGAnalytics,
+  handleGetRAGQueries,
+  handleRAGQuery,
+  handleSearchAllContent,
+} from "./routes/rag";
 
 /**
  * Cloudflare Worker handling AI-driven cover letter, resume generation, and job scraping.
@@ -188,15 +225,21 @@ export interface Env {
   KV: KVNamespace;
   R2: R2Bucket;
   VECTORIZE_INDEX: VectorizeIndex;
+  JOB_OPENINGS_INDEX: VectorizeIndex;
+  RESUMES_INDEX: VectorizeIndex;
+  COVER_LETTERS_INDEX: VectorizeIndex;
+  GENERAL_CONTENT_INDEX: VectorizeIndex;
   MYBROWSER: Fetcher;
   BROWSER: Fetcher;
   ASSETS: Fetcher;
   WORKER_API_KEY: string;
   BROWSER_RENDERING_TOKEN: string;
   CLOUDFLARE_ACCOUNT_ID: string;
+  CLOUDFLARE_API_TOKEN: string;
   SLACK_WEBHOOK_URL: string;
   SITE_CRAWLER: DurableObjectNamespace;
   JOB_MONITOR: DurableObjectNamespace;
+  RAG_AGENT: DurableObjectNamespace;
   DISCOVERY_WORKFLOW: Workflow;
   JOB_MONITOR_WORKFLOW: Workflow;
   CHANGE_ANALYSIS_WORKFLOW: Workflow;
@@ -882,6 +925,8 @@ export class ScrapeSocket {
 
 // Export GenericAgent for Cloudflare Agents SDK
 export { GenericAgent };
+// Export RAGAgent for embeddings and RAG functionality
+  export { RAGAgent };
 
 export default {
   /**
@@ -936,12 +981,18 @@ export default {
     }
 
     // Email routing for Cloudflare Email Routing (no auth required)
-    if (
-      request.method === "POST" &&
-      request.headers.get("content-type")?.includes("multipart/form-data")
-    ) {
-      // This is likely an incoming email from Cloudflare Email Routing
-      return handleEmailReceived(request, env);
+    if (request.method === "POST") {
+      const contentType = request.headers.get("content-type");
+      console.log("🔍 POST request detected, content-type:", contentType);
+      
+      if (contentType?.includes("multipart/form-data")) {
+        console.log("📧 Email webhook detected - routing to AI-powered handler");
+        // This is likely an incoming email from Cloudflare Email Routing
+        // Use AI-powered email processing for better functionality
+        return handleAIPoweredEmailReceived(request, env);
+      } else {
+        console.log("🔍 Not an email webhook, continuing with other routes");
+      }
     }
 
     if (
@@ -1063,6 +1114,59 @@ export default {
         request.method === "POST"
       ) {
         return handleEmailInsightsSend(request, env);
+      }
+
+      // Enhanced email processing endpoints
+      if (url.pathname === "/api/enhanced-email/receive" && request.method === "POST") {
+        return handleEnhancedEmailReceived(request, env);
+      }
+
+      if (url.pathname === "/api/enhanced-email/logs" && request.method === "GET") {
+        return handleEnhancedEmailLogsGet(request, env);
+      }
+
+      if (url.pathname === "/api/enhanced-email/otp-logs" && request.method === "GET") {
+        return handleOTPForwardingLogsGet(request, env);
+      }
+
+      if (url.pathname === "/api/enhanced-email/send" && request.method === "POST") {
+        return handleSendHTMLEmail(request, env);
+      }
+
+      if (url.pathname === "/api/enhanced-email/templates" && request.method === "GET") {
+        return handleEmailTemplatesGet(request, env);
+      }
+
+      if (url.pathname === "/api/enhanced-email/templates" && request.method === "POST") {
+        return handleEmailTemplatePost(request, env);
+      }
+
+      if (url.pathname === "/api/enhanced-email/insights" && request.method === "POST") {
+        return handleSendJobInsights(request, env);
+      }
+
+      if (url.pathname === "/api/enhanced-email/welcome" && request.method === "POST") {
+        return handleSendWelcomeEmail(request, env);
+      }
+
+      if (url.pathname === "/api/enhanced-email/search" && request.method === "GET") {
+        return handleEmailSearch(request, env);
+      }
+
+      if (url.pathname === "/api/enhanced-email/analytics" && request.method === "GET") {
+        return handleEmailAnalytics(request, env);
+      }
+
+      if (url.pathname === "/api/enhanced-email/otp-test" && request.method === "GET") {
+        return handleOTPTest(request, env);
+      }
+
+      if (url.pathname === "/api/enhanced-email/ai-receive" && request.method === "POST") {
+        return handleAIPoweredEmailReceived(request, env);
+      }
+
+      if (url.pathname === "/api/enhanced-email/test-forward" && request.method === "GET") {
+        return handleTestEmailForward(request, env);
       }
 
       // Agent management endpoints
@@ -1347,7 +1451,7 @@ export default {
       console.log(`🔍 Path starts with /api/talent/? ${url.pathname.startsWith("/api/talent/")}`);
       
       // Talent API routes (with authentication) - SIMPLIFIED TEST
-      if (url.pathname.startsWith("/api/talent/")) {
+      if (url.pathname.startsWith("/api/talent")) {
         console.log(`🎯 Talent API route matched: ${url.pathname}`);
         
         // Check authentication for talent routes
@@ -1375,7 +1479,7 @@ export default {
         console.log(`🚀 Calling talentRoutes.fetch for ${url.pathname}`);
         
         try {
-          const result = await talentRoutes.fetch(request, env);
+          const result = await (talentRoutes as any).fetch(request, env, {});
           console.log(`✅ Talent routes fetch successful: ${result.status}`);
           return result;
         } catch (error) {
@@ -1702,6 +1806,89 @@ export default {
         return handleR2AssetUpload(request, env);
       }
 
+      // Embeddings API routes
+      if (url.pathname === "/api/embeddings" && request.method === "POST") {
+        return handleCreateEmbedding(request, env);
+      }
+
+      if (url.pathname.startsWith("/api/embeddings/") && request.method === "PUT") {
+        const params = parsePathParams(url.pathname, "/api/embeddings/:uuid");
+        if (!params || !params.uuid) {
+          return new Response(JSON.stringify({ error: "UUID is required" }), {
+            status: 400,
+            headers: { "Content-Type": "application/json" },
+          });
+        }
+        return handleUpdateEmbedding(request, env, params.uuid);
+      }
+
+      if (url.pathname.startsWith("/api/embeddings/") && request.method === "DELETE") {
+        const params = parsePathParams(url.pathname, "/api/embeddings/:uuid");
+        if (!params || !params.uuid) {
+          return new Response(JSON.stringify({ error: "UUID is required" }), {
+            status: 400,
+            headers: { "Content-Type": "application/json" },
+          });
+        }
+        return handleDeleteEmbedding(request, env, params.uuid);
+      }
+
+      if (url.pathname === "/api/embeddings/search" && request.method === "GET") {
+        return handleSearchEmbeddings(request, env);
+      }
+
+      if (url.pathname.startsWith("/api/embeddings/similar/") && request.method === "GET") {
+        const params = parsePathParams(url.pathname, "/api/embeddings/similar/:uuid");
+        if (!params || !params.uuid) {
+          return new Response(JSON.stringify({ error: "UUID is required" }), {
+            status: 400,
+            headers: { "Content-Type": "application/json" },
+          });
+        }
+        return handleSearchByUUID(request, env, params.uuid);
+      }
+
+      if (url.pathname === "/api/embeddings/stats" && request.method === "GET") {
+        return handleGetEmbeddingStats(request, env);
+      }
+
+      if (url.pathname === "/api/embeddings/operations" && request.method === "GET") {
+        return handleGetEmbeddingOperations(request, env);
+      }
+
+      // RAG API routes
+      if (url.pathname === "/api/rag/query" && request.method === "POST") {
+        return handleRAGQuery(request, env);
+      }
+
+      if (url.pathname === "/api/rag/similar-jobs" && request.method === "POST") {
+        return handleFindSimilarJobs(request, env);
+      }
+
+      if (url.pathname === "/api/rag/matching-resumes" && request.method === "POST") {
+        return handleFindMatchingResumes(request, env);
+      }
+
+      if (url.pathname === "/api/rag/cover-letter-suggestions" && request.method === "POST") {
+        return handleGenerateCoverLetterSuggestions(request, env);
+      }
+
+      if (url.pathname === "/api/rag/job-market-insights" && request.method === "GET") {
+        return handleGetJobMarketInsights(request, env);
+      }
+
+      if (url.pathname === "/api/rag/search-all" && request.method === "GET") {
+        return handleSearchAllContent(request, env);
+      }
+
+      if (url.pathname === "/api/rag/analytics" && request.method === "GET") {
+        return handleGetRAGAnalytics(request, env);
+      }
+
+      if (url.pathname === "/api/rag/queries" && request.method === "GET") {
+        return handleGetRAGQueries(request, env);
+      }
+
       // Route not found
       return new Response(JSON.stringify({ error: "Not Found" }), {
         status: 404,
@@ -1731,25 +1918,21 @@ export default {
     try {
       console.log(`Email received from: ${message.from}, to: ${message.to}`);
 
-      // The handleEmailReceived function expects a Request object.
-      // We can create a mock request to pass the necessary email data.
-      // A more direct integration would refactor the logic from handleEmailReceived
-      // to accept the 'message' object directly.
+      // Process email directly using AI-powered processing
+      const rawEmail = await new Response(message.raw).text();
+      const result = await processEmailFromRouting(
+        env,
+        rawEmail,
+        message.from,
+        message.to
+      );
 
-      const request = new Request("http://localhost/email-ingestion", {
-        method: "POST",
-        headers: message.headers,
-        body: message.raw,
-      });
-
-      // Call your existing email processing logic
-      const response = await handleEmailReceived(request, env);
-
-      if (!response.ok) {
+      if (!result.success) {
         // If processing fails, reject the email to notify the sender.
-        const errorBody = await response.text();
-        message.setReject(`Email processing failed: ${errorBody}`);
-        console.error(`Failed to process email: ${errorBody}`);
+        message.setReject("Email processing failed");
+        console.error("Failed to process email with AI");
+      } else {
+        console.log(`Email processed successfully: ID ${result.emailId}, Classification: ${result.classification}, Job Links: ${result.jobLinksExtracted}`);
       }
     } catch (error) {
       console.error("Error in email handler:", error);

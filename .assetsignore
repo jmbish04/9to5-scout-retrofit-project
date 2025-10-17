@@ -1,0 +1,13 @@
+ # Exclude .DS_Store files from all directories
+.DS_Store
+**/.DS_Store
+
+# The assetsignore file is used to exclude specific files or directories from being uploaded as static assets in a Cloudflare Worker. This file uses the same syntax as a .gitignore file, allowing you to specify patterns for files or directories that should be ignored.
+
+# By using an assetsignore file, you can prevent certain files or directories from being uploaded and served as static assets, which can be useful for keeping sensitive data or unnecessary files out of your production environment.
+
+# For more information on using the assetsignore file, you can refer to the Cloudflare Workers documentation on static assets.
+
+
+# These sources might provide additional context:
+# https://developers.cloudflare.com/workers/static-assets/binding

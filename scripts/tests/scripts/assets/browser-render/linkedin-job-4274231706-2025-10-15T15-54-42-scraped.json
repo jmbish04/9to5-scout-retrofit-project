@@ -1,0 +1,26 @@
+[
+  {
+    "results": [],
+    "selector": "h1.job-title"
+  },
+  {
+    "results": [],
+    "selector": ".job-details-jobs-unified-top-card__company-name"
+  },
+  {
+    "results": [],
+    "selector": ".job-details-jobs-unified-top-card__bullet"
+  },
+  {
+    "results": [],
+    "selector": ".job-details-jobs-unified-top-card__salary"
+  },
+  {
+    "results": [],
+    "selector": ".jobs-description-content__text"
+  },
+  {
+    "results": [],
+    "selector": ".jobs-unified-top-card__job-insight"
+  }
+]

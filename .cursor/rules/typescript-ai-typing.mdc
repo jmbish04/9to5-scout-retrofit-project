@@ -1,0 +1,49 @@
+---
+description: TypeScript and AI model typing requirements
+globs: ["**/*.ts", "**/*.tsx", "src/**"]
+alwaysApply: true
+---
+
+# TypeScript and AI Model Typing Rules
+
+## CRITICAL AI MODEL TYPING
+
+- NEVER use `any` type for AI model parameters or responses
+- ALWAYS use `keyof AiModels` type for model parameters
+- ALWAYS use environment variables for model selection (never hardcode model names)
+- ALWAYS use proper TypeScript typing for AI responses
+
+### Required AI Model Usage Pattern:
+
+```typescript
+// CORRECT - Use environment variables with proper typing
+const response = await env.AI.run(
+  env.EMBEDDING_MODEL, // Use env var, not hardcoded string
+  { text: content }
+);
+
+// CORRECT - Proper response typing
+const embeddingResponse = response as { data?: number[][] };
+
+// WRONG - Never do this
+const response = await env.AI.run("@cf/baai/bge-large-en-v1.5" as any, inputs); // ❌
+```
+
+### Environment Variables for Models:
+
+- `env.DEFAULT_MODEL_WEB_BROWSER` - For web scraping and browser tasks
+- `env.DEFAULT_MODEL_REASONING` - For complex reasoning tasks
+- `env.EMBEDDING_MODEL` - For generating vector embeddings
+
+## CRITICAL TYPESCRIPT RULES
+
+- ALWAYS generate proper TypeScript types: `pnpm exec wrangler types`
+- NEVER use `any` types for bindings - always use generated types
+- ALWAYS import all methods, classes and types used in code
+- Use ES modules format exclusively (NEVER Service Worker format)
+
+## STRUCTURED AI INTERACTION
+
+- ALWAYS use `guided_json` parameter for data extraction/analysis
+- Ensure predictable, machine-readable outputs
+- Use `response_format` with `json_schema` for structured responses

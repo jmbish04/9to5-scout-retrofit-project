@@ -1,0 +1,62 @@
+---
+description: Email processing and AI extraction specific rules
+globs:
+  [
+    "src/lib/enhanced-email.ts",
+    "src/routes/enhanced-email.ts",
+    "src/lib/schemas.ts",
+  ]
+alwaysApply: false
+---
+
+# Email Processing Rules
+
+## CRITICAL EMAIL AI EXTRACTION RULES
+
+- Use Llama 4 for structured responses with `response_format` and `json_schema`
+- Use Zod schemas for validation and type safety
+- Implement proper fallback mechanisms for AI failures
+- Use environment variables for model selection
+
+### Required Email Processing Pattern:
+
+```typescript
+// CORRECT - Use environment variables and proper typing
+const response = await env.AI.run(env.EMBEDDING_MODEL, {
+  text: content,
+});
+
+const embeddingResponse = response as { data?: number[][] };
+
+// CORRECT - Use structured JSON schema
+const response = await env.AI.run(llamaModel, {
+  messages: [...],
+  response_format: {
+    type: "json_schema",
+    json_schema: emailAIExtractionJSONSchema,
+  },
+});
+```
+
+## EMAIL PROCESSING WORKFLOW
+
+1. Parse raw email content
+2. Extract structured data using AI with JSON schema
+3. Validate using Zod schemas
+4. Generate embeddings for semantic search
+5. Process job links and OTP detection
+6. Store in database with proper error handling
+
+## OTP DETECTION RULES
+
+- Use enhanced regex patterns for OTP detection
+- Implement proper service name extraction
+- Handle multiple OTP formats and patterns
+- Provide meaningful fallback when detection fails
+
+## JOB LINK EXTRACTION RULES
+
+- Extract job-related URLs from email content
+- Validate URLs before processing
+- Handle multiple job links per email
+- Implement proper error handling for failed links

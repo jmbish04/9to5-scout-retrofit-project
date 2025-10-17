@@ -1,0 +1,73 @@
+---
+description: Database schema compliance and API conventions
+globs: ["**/*.ts", "**/*.js", "migrations/**", "src/routes/**"]
+alwaysApply: true
+---
+
+# Database and API Rules
+
+## CRITICAL DATABASE SCHEMA COMPLIANCE
+
+- ALL D1 database operations MUST conform to established table structures
+- Do NOT alter schemas without documented migration plan
+- Core tables: `sites`, `jobs`, `job_changes` - see AGENT.md for full schema
+
+### Database Schema Reference:
+
+```sql
+-- Stores information about the websites to be scraped.
+CREATE TABLE sites (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  base_url TEXT NOT NULL,
+  robots_txt TEXT,
+  sitemap_url TEXT,
+  discovery_strategy TEXT CHECK(discovery_strategy IN ('sitemap', 'list', 'search', 'custom')),
+  last_discovered_at DATETIME,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Stores details of individual job postings.
+CREATE TABLE jobs (
+  id TEXT PRIMARY KEY,
+  site_id TEXT NOT NULL,
+  url TEXT NOT NULL,
+  title TEXT,
+  company TEXT,
+  location TEXT,
+  salary_min REAL,
+  salary_max REAL,
+  description TEXT,
+  status TEXT CHECK(status IN ('open', 'closed', 'expired')),
+  tags TEXT, -- JSON array
+  posted_at DATETIME,
+  first_seen_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  last_crawled_at DATETIME,
+  last_changed_at DATETIME,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (site_id) REFERENCES sites(id)
+);
+
+-- Logs significant changes to job postings over time.
+CREATE TABLE job_changes (
+  id TEXT PRIMARY KEY,
+  job_id TEXT NOT NULL,
+  change_type TEXT,
+  old_value TEXT,
+  new_value TEXT,
+  significance_score REAL,
+  ai_summary TEXT,
+  detected_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (job_id) REFERENCES jobs(id)
+);
+```
+
+## CRITICAL API CONVENTIONS
+
+- Follow RESTful patterns in `/src/routes/` directory
+- Sites: `GET /api/sites`, `POST /api/sites`, `GET /api/sites/:id`
+- Jobs: `GET /api/jobs`, `GET /api/jobs/:id`, `POST /api/jobs/:id/monitor`
+- Discovery & Monitoring: `POST /api/discovery/:siteId`, `GET /api/monitor/:jobId/status`
+- Search: `GET /api/search?q=query`
