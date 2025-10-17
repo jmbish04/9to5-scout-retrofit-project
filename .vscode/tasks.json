@@ -1,0 +1,294 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Wrangler: Dev Server",
+      "type": "shell",
+      "command": "wrangler",
+      "args": ["dev"],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "runOptions": {
+        "instanceLimit": 1
+      },
+      "problemMatcher": [],
+      "detail": "Start Wrangler development server"
+    },
+    {
+      "label": "Wrangler: Deploy",
+      "type": "shell",
+      "command": "wrangler",
+      "args": ["deploy"],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "new"
+      },
+      "problemMatcher": [],
+      "detail": "Deploy Worker to Cloudflare"
+    },
+    {
+      "label": "Wrangler: Deploy (Dry Run)",
+      "type": "shell",
+      "command": "wrangler",
+      "args": ["deploy", "--dry-run"],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "new"
+      },
+      "problemMatcher": [],
+      "detail": "Test deployment without actually deploying"
+    },
+    {
+      "label": "Wrangler: Generate Types",
+      "type": "shell",
+      "command": "wrangler",
+      "args": ["types"],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "silent",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": [],
+      "detail": "Generate TypeScript types for Worker bindings"
+    },
+    {
+      "label": "D1: Apply Migrations (Local)",
+      "type": "shell",
+      "command": "wrangler",
+      "args": ["d1", "migrations", "apply", "${input:d1DatabaseName}", "--local"],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "new"
+      },
+      "problemMatcher": [],
+      "detail": "Apply D1 migrations to local database"
+    },
+    {
+      "label": "D1: Apply Migrations (Remote)",
+      "type": "shell",
+      "command": "wrangler",
+      "args": ["d1", "migrations", "apply", "${input:d1DatabaseName}", "--remote"],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "new"
+      },
+      "problemMatcher": [],
+      "detail": "Apply D1 migrations to remote database"
+    },
+    {
+      "label": "D1: Create Migration",
+      "type": "shell",
+      "command": "wrangler",
+      "args": ["d1", "migrations", "create", "${input:d1DatabaseName}", "${input:migrationName}"],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "new"
+      },
+      "problemMatcher": [],
+      "detail": "Create a new D1 migration file"
+    },
+    {
+      "label": "D1: List Migrations",
+      "type": "shell",
+      "command": "wrangler",
+      "args": ["d1", "migrations", "list", "${input:d1DatabaseName}"],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "new"
+      },
+      "problemMatcher": [],
+      "detail": "List pending D1 migrations"
+    },
+    {
+      "label": "D1: Execute Query (Local)",
+      "type": "shell",
+      "command": "wrangler",
+      "args": ["d1", "execute", "${input:d1DatabaseName}", "--local", "--command", "${input:sqlQuery}"],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "new"
+      },
+      "problemMatcher": [],
+      "detail": "Execute SQL query on local D1 database"
+    },
+    {
+      "label": "R2: List Buckets",
+      "type": "shell",
+      "command": "wrangler",
+      "args": ["r2", "bucket", "list"],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "new"
+      },
+      "problemMatcher": [],
+      "detail": "List all R2 buckets"
+    },
+    {
+      "label": "R2: List Objects",
+      "type": "shell",
+      "command": "wrangler",
+      "args": ["r2", "object", "list", "${input:bucketName}"],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "new"
+      },
+      "problemMatcher": [],
+      "detail": "List objects in R2 bucket"
+    },
+    {
+      "label": "KV: List Namespaces",
+      "type": "shell",
+      "command": "wrangler",
+      "args": ["kv:namespace", "list"],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "new"
+      },
+      "problemMatcher": [],
+      "detail": "List all KV namespaces"
+    },
+    {
+      "label": "Wrangler: Tail Logs",
+      "type": "shell",
+      "command": "wrangler",
+      "args": ["tail"],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new"
+      },
+      "problemMatcher": [],
+      "detail": "Stream Worker logs in real-time"
+    },
+    {
+      "label": "Wrangler: View Config",
+      "type": "shell",
+      "command": "wrangler",
+      "args": ["whoami"],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "new"
+      },
+      "problemMatcher": [],
+      "detail": "Show current Wrangler configuration"
+    },
+    {
+      "label": "NPM: Install Dependencies",
+      "type": "shell",
+      "command": "npm",
+      "args": ["install"],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "new"
+      },
+      "problemMatcher": [],
+      "detail": "Install npm dependencies"
+    },
+    {
+      "label": "NPM: Update Dependencies",
+      "type": "shell",
+      "command": "npm",
+      "args": ["update"],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "new"
+      },
+      "problemMatcher": [],
+      "detail": "Update npm dependencies"
+    },
+    {
+      "label": "TypeScript: Check Types",
+      "type": "shell",
+      "command": "npx",
+      "args": ["tsc", "--noEmit"],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "shared"
+      },
+      "problemMatcher": ["$tsc"],
+      "detail": "Run TypeScript type checking"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "d1DatabaseName",
+      "description": "D1 Database Name",
+      "default": "your-database-name",
+      "type": "promptString"
+    },
+    {
+      "id": "migrationName",
+      "description": "Migration Name",
+      "default": "create_new_table",
+      "type": "promptString"
+    },
+    {
+      "id": "sqlQuery",
+      "description": "SQL Query",
+      "default": "SELECT * FROM your_table LIMIT 10;",
+      "type": "promptString"
+    },
+    {
+      "id": "bucketName",
+      "description": "R2 Bucket Name",
+      "default": "your-bucket-name",
+      "type": "promptString"
+    }
+  ]
+}

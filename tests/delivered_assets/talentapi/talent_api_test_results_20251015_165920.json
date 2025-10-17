@@ -1,0 +1,27 @@
+{
+  "timestamp": "2025-10-15T16:59:20.831824",
+  "worker_url": "http://localhost:8787",
+  "service_account_available": true,
+  "results": [
+    {
+      "test_name": "Direct Google Search",
+      "success": true,
+      "duration": 0.9110710620880127,
+      "error": null,
+      "data_keys": [
+        "locationFilters",
+        "metadata"
+      ]
+    },
+    {
+      "test_name": "Direct Google Search",
+      "success": true,
+      "duration": 0.6636590957641602,
+      "error": null,
+      "data_keys": [
+        "locationFilters",
+        "metadata"
+      ]
+    }
+  ]
+}

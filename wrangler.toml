@@ -8,7 +8,6 @@ compatibility_flags = ["nodejs_compat"] # ["nodejs_compat"] -- needed for browse
 DEFAULT_MODEL_WEB_BROWSER = "@cf/meta/llama-3.1-8b-instruct"  # @cf/meta/llama-3.1-8b-instruct
 DEFAULT_MODEL_REASONING = "@cf/openai/gpt-oss-120b" # @cf/openai/gpt-oss-120b
 EMBEDDING_MODEL = "@cf/baai/bge-large-en-v1.5" # @cf/baai/bge-large-en-v1.5
-DEFAULT_PROVIDER = "serper" # serper or serpapi
 
 
 # Secrets should be set using: wrangler secret bulk .dev.vars
@@ -26,8 +25,6 @@ DEFAULT_PROVIDER = "serper" # serper or serpapi
 # - LOCAL_SCRAPER_URL (for Local scraper url)
 # - LOCAL_SCRAPER_API_KEY (for Local scraper api key)
 # - PYTHON_SCRAPER_URL (for Python scraper Cloudflare Tunnel URL)
-# - SERPER_API_KEY (for Serper.dev job search API)
-# - SERPAPI_API_KEY (for SerpAPI.com job search API)
 # - PYTHON_SCRAPER_API_KEY (for Python scraper API key)
 
 
@@ -66,22 +63,10 @@ binding = "R2"
 bucket_name = "job-scraper"
 preview_bucket_name = "job-scraper-preview"
 
-# Vectorize indexes for different content types
+# Vectorize
 [[vectorize]]
-binding = "JOB_OPENINGS_INDEX"
-index_name = "job-openings"
-
-[[vectorize]]
-binding = "RESUMES_INDEX"
-index_name = "resumes"
-
-[[vectorize]]
-binding = "COVER_LETTERS_INDEX"
-index_name = "cover-letters"
-
-[[vectorize]]
-binding = "GENERAL_CONTENT_INDEX"
-index_name = "general-content"
+binding = "VECTORIZE_INDEX"
+index_name = "jobs"
 
 # AI
 [ai]
@@ -104,8 +89,7 @@ bindings = [
   { name = "SITE_CRAWLER", class_name = "SiteCrawler" },
   { name = "JOB_MONITOR", class_name = "JobMonitor" },
   { name = "SCRAPE_SOCKET", class_name = "ScrapeSocket" },
-  { name = "GENERIC_AGENT", class_name = "GenericAgent" },
-  { name = "RAG_AGENT", class_name = "RAGAgent" }
+  { name = "GENERIC_AGENT", class_name = "GenericAgent" }
 ]
 
 # DiscoveryWorkflow
@@ -141,11 +125,6 @@ new_sqlite_classes = ["ScrapeSocket"]  # Changed from new_classes to new_sqlite_
 tag = "v3"
 new_sqlite_classes = ["GenericAgent"]
 
-# RAGAgent for embeddings and RAG functionality
-[[migrations]]
-tag = "v4"
-new_sqlite_classes = ["RAGAgent"]
-
 # Triggers
 [triggers]
 crons = [
@@ -157,5 +136,4 @@ crons = [
 [assets]
 directory = "./public" # ./public -- directory for static assets
 binding = "ASSETS" # ASSETS -- for serving static assets
-
-# Exclude .DS_Store files from all directories
+exclude = [".DS_Store", "**/.DS_Store"] # Exclude .DS_Store files from all directories

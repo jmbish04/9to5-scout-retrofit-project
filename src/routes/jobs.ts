@@ -2,142 +2,87 @@
  * Jobs API routes for retrieving and managing job data.
  */
 
-import type { Env } from "../index";
-import { getJob, getJobs } from "../lib/storage";
+import { getJobs, getJob } from '../lib/storage';
 
-export async function handleJobsGet(
-  request: Request,
-  env: Env
-): Promise<Response> {
+export async function handleJobsGet(request: Request, env: any): Promise<Response> {
   try {
     const url = new URL(request.url);
-    const status = url.searchParams.get("status") || undefined;
-    const siteId = url.searchParams.get("site_id") || undefined;
-    const limit = parseInt(url.searchParams.get("limit") || "50");
+    const status = url.searchParams.get('status') || undefined;
+    const siteId = url.searchParams.get('site_id') || undefined;
+    const limit = parseInt(url.searchParams.get('limit') || '50');
 
     const jobs = await getJobs(env, { status, site_id: siteId, limit });
-
+    
     return new Response(JSON.stringify(jobs), {
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' },
     });
   } catch (error) {
-    console.error("Error fetching jobs:", error);
-    return new Response(JSON.stringify({ error: "Failed to fetch jobs" }), {
+    console.error('Error fetching jobs:', error);
+    return new Response(JSON.stringify({ error: 'Failed to fetch jobs' }), {
       status: 500,
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' },
     });
   }
 }
 
-export async function handleJobGet(
-  request: Request,
-  env: Env,
-  jobId: string
-): Promise<Response> {
+export async function handleJobGet(request: Request, env: any, jobId: string): Promise<Response> {
   try {
     const job = await getJob(env, jobId);
-
+    
     if (!job) {
-      return new Response(JSON.stringify({ error: "Job not found" }), {
+      return new Response(JSON.stringify({ error: 'Job not found' }), {
         status: 404,
-        headers: { "Content-Type": "application/json" },
+        headers: { 'Content-Type': 'application/json' },
       });
     }
-
+    
     return new Response(JSON.stringify(job), {
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' },
     });
   } catch (error) {
-    console.error("Error fetching job:", error);
-    return new Response(JSON.stringify({ error: "Failed to fetch job" }), {
+    console.error('Error fetching job:', error);
+    return new Response(JSON.stringify({ error: 'Failed to fetch job' }), {
       status: 500,
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' },
     });
   }
 }
 
-export interface BatchJobsRequest {
-  jobs: any[];
-}
-
-export async function handleJobsBatchPost(
-  request: Request,
-  env: Env
-): Promise<Response> {
+export async function handleJobsExportGet(request: Request, env: any): Promise<Response> {
   try {
-    const body = (await request.json()) as BatchJobsRequest;
+    const url = new URL(request.url);
+    const status = url.searchParams.get('status');
+    const siteId = url.searchParams.get('site_id');
+    const limitParam = parseInt(url.searchParams.get('limit') || '1000', 10);
+    const limit = Math.max(1, Math.min(limitParam, 1000));
 
-    if (!body.jobs || !Array.isArray(body.jobs)) {
-      return new Response(JSON.stringify({ error: "jobs array is required" }), {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      });
+    let sql = 'SELECT * FROM jobs WHERE 1=1';
+    const params: any[] = [];
+
+    if (status) {
+      sql += ' AND status = ?';
+      params.push(status);
     }
 
-    const results = {
-      total_received: body.jobs.length,
-      successful: 0,
-      failed: 0,
-      errors: [] as string[],
-    };
-
-    // Process each job
-    for (const job of body.jobs) {
-      try {
-        // Generate a unique ID for the job
-        const jobId = crypto.randomUUID();
-        const now = new Date().toISOString();
-
-        // Map the scraped job data to our database schema
-        await env.DB.prepare(
-          `INSERT OR IGNORE INTO jobs (
-            id, url, title, company, location, employment_type, 
-            department, salary_min, salary_max, salary_currency, 
-            salary_raw, compensation_raw, description_md, 
-            requirements_md, posted_at, status, first_seen_at, last_crawled_at
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-        )
-          .bind(
-            jobId,
-            job.url || "",
-            job.title || null,
-            job.company || null,
-            job.location || null,
-            job.employment_type || null,
-            job.department || null,
-            job.salary_min || null,
-            job.salary_max || null,
-            job.salary_currency || null,
-            job.salary_raw || null,
-            job.compensation_raw || null,
-            job.description_md || null,
-            job.requirements_md || null,
-            job.posted_at || null,
-            "open",
-            now,
-            now
-          )
-          .run();
-
-        results.successful++;
-      } catch (jobError) {
-        console.error(`Error storing job:`, jobError);
-        results.failed++;
-        results.errors.push(`Job ${job.url || "unknown"}: ${jobError}`);
-      }
+    if (siteId) {
+      sql += ' AND site_id = ?';
+      params.push(siteId);
     }
 
-    return new Response(JSON.stringify(results), {
-      headers: { "Content-Type": "application/json" },
+    sql += ' ORDER BY first_seen_at DESC LIMIT ?';
+    params.push(limit);
+
+    const stmt = env.DB.prepare(sql);
+    const { results } = await stmt.bind(...params).all();
+
+    return new Response(JSON.stringify(results || []), {
+      headers: { 'Content-Type': 'application/json' },
     });
   } catch (error) {
-    console.error("Error processing batch jobs:", error);
-    return new Response(
-      JSON.stringify({ error: "Failed to process batch jobs" }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    console.error('Error exporting jobs:', error);
+    return new Response(JSON.stringify({ error: 'Failed to export jobs' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 }

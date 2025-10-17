@@ -1,0 +1,53 @@
+{
+  "recommendations": [
+    // Essential TypeScript/JavaScript Development
+    "ms-vscode.vscode-typescript-next",
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+
+    // TOML Support for wrangler.toml
+    "tamasfe.even-better-toml",
+
+    // SQL Support for D1 migrations
+    "inferrinizzard.prettier-sql-vscode",
+
+    // Error Highlighting
+    "usernamehw.errorlens",
+
+    // JSON Tools
+    "eriklynd.json-tools",
+
+    // YAML Support
+    "redhat.vscode-yaml",
+
+    // Markdown Support
+    "yzhang.markdown-all-in-one",
+
+    // Auto Close Tag
+    "formulahendry.auto-close-tag",
+
+    // Indent Rainbow
+    "oderwat.indent-rainbow",
+
+    // GitHub Copilot (AI assistance)
+    "github.copilot",
+    "github.copilot-chat",
+
+    // Extension for WebSocket testing
+    "compulim.vscode-websocket-client",
+
+    // Turbo Console Log
+    "chakrounanas.turbo-console-log",
+
+    // Better Comments
+    "aaron-bond.better-comments",
+
+    // Output Colorizer
+    "ibm.output-colorizer"
+  ],
+  "unwantedRecommendations": [
+    "ms-vscode.vscode-json",
+    "hookyqr.beautify",
+    "ms-vscode.typescript-javascript-grammar"
+  ]
+}

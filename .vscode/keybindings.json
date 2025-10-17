@@ -1,0 +1,234 @@
+[
+  // Wrangler Commands
+  {
+    "key": "ctrl+shift+d",
+    "command": "workbench.action.tasks.runTask",
+    "args": "Wrangler: Dev Server",
+    "when": "!inDebugMode"
+  },
+  {
+    "key": "ctrl+shift+b",
+    "command": "workbench.action.tasks.runTask",
+    "args": "Wrangler: Deploy"
+  },
+  {
+    "key": "ctrl+shift+t",
+    "command": "workbench.action.tasks.runTask",
+    "args": "Wrangler: Generate Types"
+  },
+  {
+    "key": "ctrl+shift+l",
+    "command": "workbench.action.tasks.runTask",
+    "args": "Wrangler: Tail Logs"
+  },
+  
+  // D1 Database Commands
+  {
+    "key": "ctrl+shift+m",
+    "command": "workbench.action.tasks.runTask",
+    "args": "D1: Apply Migrations (Local)"
+  },
+  {
+    "key": "ctrl+shift+alt+m",
+    "command": "workbench.action.tasks.runTask",
+    "args": "D1: Apply Migrations (Remote)"
+  },
+  
+  // File Navigation
+  {
+    "key": "ctrl+shift+w",
+    "command": "workbench.action.quickOpen",
+    "args": "wrangler"
+  },
+  {
+    "key": "ctrl+shift+s",
+    "command": "workbench.action.quickOpen",
+    "args": "src/"
+  },
+  {
+    "key": "ctrl+shift+alt+s",
+    "command": "workbench.action.quickOpen",
+    "args": "migrations/"
+  },
+  
+  // Toggle Terminal
+  {
+    "key": "ctrl+shift+`",
+    "command": "workbench.action.terminal.toggleTerminal"
+  },
+  
+  // TypeScript Specific
+  {
+    "key": "ctrl+shift+r",
+    "command": "typescript.restartTsServer"
+  },
+  {
+    "key": "ctrl+shift+o",
+    "command": "editor.action.organizeImports"
+  },
+  
+  // Quick Fixes
+  {
+    "key": "ctrl+.",
+    "command": "editor.action.quickFix",
+    "when": "editorHasCodeActionsProvider && editorTextFocus && !editorReadonly"
+  },
+  
+  // Format Document
+  {
+    "key": "alt+shift+f",
+    "command": "editor.action.formatDocument",
+    "when": "editorHasDocumentFormattingProvider && editorTextFocus && !editorReadonly && !inCompositeEditor"
+  },
+  
+  // Toggle Problems Panel
+  {
+    "key": "ctrl+shift+p",
+    "command": "workbench.actions.view.problems"
+  },
+  
+  // Search in Files
+  {
+    "key": "ctrl+shift+f",
+    "command": "workbench.action.findInFiles",
+    "when": "!searchViewletVisible"
+  },
+  
+  // Git Commands
+  {
+    "key": "ctrl+shift+g",
+    "command": "workbench.view.scm"
+  },
+  {
+    "key": "ctrl+k ctrl+c",
+    "command": "git.commitAll"
+  },
+  
+  // Explorer
+  {
+    "key": "ctrl+shift+e",
+    "command": "workbench.view.explorer"
+  },
+  
+  // Extensions View
+  {
+    "key": "ctrl+shift+x",
+    "command": "workbench.view.extensions"
+  },
+  
+  // Command Palette
+  {
+    "key": "f1",
+    "command": "workbench.action.showCommands"
+  },
+  {
+    "key": "ctrl+shift+p",
+    "command": "workbench.action.showCommands"
+  },
+  
+  // File Explorer Focus
+  {
+    "key": "ctrl+0",
+    "command": "workbench.files.action.focusFilesExplorer"
+  },
+  
+  // Focus Editor
+  {
+    "key": "ctrl+1",
+    "command": "workbench.action.focusFirstEditorGroup"
+  },
+  
+  // Close All Editors
+  {
+    "key": "ctrl+k ctrl+w",
+    "command": "workbench.action.closeAllEditors"
+  },
+  
+  // Restart Wrangler Dev Server
+  {
+    "key": "ctrl+shift+r",
+    "command": "workbench.action.tasks.terminate",
+    "args": "Wrangler: Dev Server"
+  },
+  
+  // Quick Open Recent
+  {
+    "key": "ctrl+r",
+    "command": "workbench.action.openRecent"
+  },
+  
+  // Toggle Word Wrap
+  {
+    "key": "alt+z",
+    "command": "editor.action.toggleWordWrap"
+  },
+  
+  // Peek Definition
+  {
+    "key": "alt+f12",
+    "command": "editor.action.peekDefinition",
+    "when": "editorHasDefinitionProvider && editorTextFocus"
+  },
+  
+  // Go to Definition
+  {
+    "key": "f12",
+    "command": "editor.action.revealDefinition",
+    "when": "editorHasDefinitionProvider && editorTextFocus"
+  },
+  
+  // Find References
+  {
+    "key": "shift+f12",
+    "command": "editor.action.goToReferences",
+    "when": "editorHasReferenceProvider && editorTextFocus"
+  },
+  
+  // Rename Symbol
+  {
+    "key": "f2",
+    "command": "editor.action.rename",
+    "when": "editorHasRenameProvider && editorTextFocus && !editorReadonly"
+  },
+  
+  // Multi-cursor
+  {
+    "key": "ctrl+alt+down",
+    "command": "editor.action.insertCursorBelow",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "ctrl+alt+up",
+    "command": "editor.action.insertCursorAbove",
+    "when": "editorTextFocus"
+  },
+  
+  // Line Operations
+  {
+    "key": "ctrl+shift+k",
+    "command": "editor.action.deleteLines",
+    "when": "editorTextFocus && !editorReadonly"
+  },
+  {
+    "key": "alt+down",
+    "command": "editor.action.moveLinesDownAction",
+    "when": "editorTextFocus && !editorReadonly"
+  },
+  {
+    "key": "alt+up",
+    "command": "editor.action.moveLinesUpAction",
+    "when": "editorTextFocus && !editorReadonly"
+  },
+  
+  // Folding
+  {
+    "key": "ctrl+shift+[",
+    "command": "editor.fold",
+    "when": "editorTextFocus && foldingEnabled"
+  },
+  {
+    "key": "ctrl+shift+]",
+    "command": "editor.unfold",
+    "when": "editorTextFocus && foldingEnabled"
+  }
+]

@@ -1,0 +1,84 @@
+{
+  "folders": [
+    {
+      "name": "Cloudflare Worker",
+      "path": "."
+    }
+  ],
+  "settings": {
+    "files.associations": {
+      "wrangler.toml": "toml",
+      "wrangler.jsonc": "jsonc",
+      "*.toml": "toml",
+      "*.d1": "sql",
+      "*.sql": "sql",
+      "Dockerfile.workers": "dockerfile",
+      ".dev.vars": "properties",
+      ".env.example": "properties"
+    },
+    "typescript.preferences.includePackageJsonAutoImports": "on",
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit",
+      "source.fixAll.eslint": "explicit"
+    }
+  },
+  "launch": {
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Debug Wrangler Dev Server",
+        "type": "node",
+        "request": "launch",
+        "program": "${workspaceFolder}/node_modules/.bin/wrangler",
+        "args": ["dev", "--inspect"],
+        "console": "integratedTerminal"
+      }
+    ]
+  },
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "Wrangler: Dev Server",
+        "type": "shell",
+        "command": "wrangler",
+        "args": ["dev"],
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        },
+        "presentation": {
+          "echo": true,
+          "reveal": "always",
+          "panel": "new"
+        }
+      },
+      {
+        "label": "Wrangler: Deploy",
+        "type": "shell",
+        "command": "wrangler",
+        "args": ["deploy"],
+        "group": "build"
+      },
+      {
+        "label": "Wrangler: Generate Types",
+        "type": "shell",
+        "command": "wrangler",
+        "args": ["types"],
+        "group": "build"
+      }
+    ]
+  },
+  "extensions": {
+    "recommendations": [
+      "tamasfe.even-better-toml",
+      "esbenp.prettier-vscode",
+      "dbaeumer.vscode-eslint",
+      "ms-vscode.vscode-typescript-next",
+      "usernamehw.errorlens",
+      "github.copilot"
+    ]
+  }
+}

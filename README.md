@@ -5,9 +5,8 @@ A comprehensive AI-powered job discovery and career assistance platform built on
 ## Features
 
 ### 🤖 Multi-Agent AI System
-
 - **Resume Analyzer**: ATS optimization expert with deep resume analysis
-- **Job Analyzer**: Comprehensive requirement extraction and role analysis
+- **Job Analyzer**: Comprehensive requirement extraction and role analysis  
 - **Company Researcher**: Corporate intelligence and culture analysis
 - **Resume Writer**: Strategic content generation with industry best practices
 - **Interview Strategist**: Interview preparation and question anticipation
@@ -18,7 +17,6 @@ A comprehensive AI-powered job discovery and career assistance platform built on
 - Memory-enabled agents for contextual conversations
 
 ### 🕷️ Intelligent Job Discovery & Monitoring
-
 - Automated job discovery from multiple sites with configurable crawling
 - AI-powered job posting extraction using structured schemas
 - **Real-time Job Monitoring**: Daily automated tracking with change detection
@@ -29,7 +27,6 @@ A comprehensive AI-powered job discovery and career assistance platform built on
 - Multi-source job tracking (scraped, email alerts, manual entry)
 
 ### 📧 Advanced Email Integration & Insights
-
 - **Email Routing**: Receive job alert emails from major platforms (LinkedIn, Indeed, Monster, Glassdoor, ZipRecruiter)
 - **Intelligent Processing**: Automatic job link extraction and content parsing from emails
 - **Scheduled Insights**: Configurable email reports with job market analysis and statistics
@@ -38,7 +35,6 @@ A comprehensive AI-powered job discovery and career assistance platform built on
 - **Source Attribution**: Track job discovery source (email alerts vs. web scraping vs. manual)
 
 ### 📚 Comprehensive Job History Management
-
 - **AI-Powered Resume Parsing**: Process job history in any format (plaintext, markdown, JSON)
 - **Applicant Profiles**: Structured career profiles with skills, preferences, and experience tracking
 - **Job Fit Analysis**: AI-generated job rating system (1-100 score) with detailed breakdowns:
@@ -50,8 +46,15 @@ A comprehensive AI-powered job discovery and career assistance platform built on
 - **Gap Analysis**: Identify skills gaps and provide improvement suggestions
 - **Career Recommendations**: AI-driven job recommendations based on background and preferences
 
-### 📄 AI-Powered Career Document Generation
+### 🏢 Company Benefits Intelligence
+- **Company Registry**: Automatic company creation/upserts normalized by domain from job scrapes.
+- **Benefits Snapshots**: Rule-based extraction of compensation, time-off, healthcare, retirement, perks, and work model details from job pages and careers sites.
+- **Historical Tracking**: Append-only `company_benefits_snapshots` table preserves every observation with provenance and timestamps.
+- **Nightly Benefits Scan**: Cloudflare Browser Rendering crawl of stored careers URLs with robots-aware fetching, retries, and deduplication.
+- **Stats Rollups**: Scheduled heuristics compute highlights, anomalies, and total compensation estimates into `benefits_stats` for fast UI reads.
+- **Public APIs**: `/api/companies`, `/api/companies/:id/benefits`, `/api/benefits/compare`, `/api/stats/highlights`, `/api/stats/valuations`, plus admin-triggered `/api/companies/scrape`.
 
+### 📄 AI-Powered Career Document Generation
 - **Cover Letters**: Generate tailored, professional cover letters with personalized content
 - **Resume Optimization**: Create ATS-optimized resume content highlighting relevant experience
 - **Interview Preparation**: Generate interview questions and strategic talking points
@@ -59,7 +62,6 @@ A comprehensive AI-powered job discovery and career assistance platform built on
 - **HTML Conversion Utilities**: Convert HTML or URLs to Markdown, render HTML/CSS templates into PDF resumes and cover letters, and proxy Cloudflare Browser Rendering endpoints (content, screenshot, pdf, snapshot, scrape, json, links, markdown)
 
 ### 📈 Enterprise-Grade Job Tracking & Analytics
-
 - **Daily Monitoring Workflows**: Automated daily job status checking with comprehensive reporting
 - **Full Content Preservation**: Complete job snapshots stored in R2 with multiple formats (HTML, PDF, Markdown)
 - **Visual Change Tracking**: Screenshot comparisons and manual review capabilities
@@ -68,7 +70,6 @@ A comprehensive AI-powered job discovery and career assistance platform built on
 - **Historical Timeline**: Complete job lifecycle tracking from discovery to closure
 
 ### 🔔 Notifications & Integrations
-
 - **Slack Integration**: Real-time notifications for job discoveries, changes, and alerts
 - **SMTP Email System**: Professional outbound email capabilities for insights and reports
 - **Webhook Support**: Custom integration endpoints for external systems and workflows
@@ -80,7 +81,7 @@ Built on Cloudflare's edge computing platform with enterprise-grade scalability:
 
 - **Cloudflare Workers**: Serverless compute for API endpoints and business logic
 - **Durable Objects**: Stateful coordination for crawling and monitoring processes
-- **Workflows**: Long-running job processing orchestration and task management
+- **Workflows**: Long-running job processing orchestration and task management  
 - **D1 Database**: SQL storage for jobs, applicants, configurations, and analytics
 - **Vectorize**: Vector database for semantic search and job matching
 - **R2 Storage**: Object storage for HTML snapshots, PDFs, and content artifacts
@@ -91,7 +92,6 @@ Built on Cloudflare's edge computing platform with enterprise-grade scalability:
 ## Setup
 
 ### 1. Install Dependencies
-
 ```bash
 # Install pnpm globally if not available
 npm install -g pnpm
@@ -101,16 +101,14 @@ pnpm install
 ```
 
 ### 2. Configure Wrangler
-
 Update `wrangler.toml` with your specific resource IDs:
-
 ```toml
 [[d1_databases]]
 binding = "DB"
 database_name = "JOB_SCRAPER_DB"
 database_id = "your-d1-database-id"
 
-[[kv_namespaces]]
+[[kv_namespaces]]  
 binding = "KV"
 id = "your-kv-namespace-id"
 
@@ -119,7 +117,7 @@ binding = "R2"
 bucket_name = "job-scraper"
 
 [[vectorize]]
-binding = "VECTORIZE_INDEX"
+binding = "VECTORIZE_INDEX" 
 index_name = "jobs"
 
 # Durable Objects for stateful processing
@@ -128,7 +126,7 @@ name = "SITE_CRAWLER"
 class_name = "SiteCrawler"
 
 [[durable_objects.bindings]]
-name = "JOB_MONITOR"
+name = "JOB_MONITOR" 
 class_name = "JobMonitor"
 
 # Workflows for long-running processes
@@ -146,28 +144,31 @@ name = "ChangeAnalysisWorkflow"
 ```
 
 ### 3. Set Environment Variables
-
 Configure these variables in `wrangler.toml` [vars] section or as secrets:
-
 ```bash
 # Authentication
-WORKER_API_KEY = "your-secure-api-token"
+API_AUTH_TOKEN = "your-secure-api-token"
 BROWSER_RENDERING_TOKEN = "your-browser-rendering-token"
 
 # Notifications
 SLACK_WEBHOOK_URL = "your-slack-webhook-url"
 
-# Email System (Cloudflare Native - No SMTP needed!)
-# Enable Email Routing in Cloudflare Dashboard
-# Verify destination email addresses
-# Use send_email binding for sending emails
+# Email System (SMTP Configuration)
+SMTP_ENDPOINT = "your-smtp-server-endpoint"
+SMTP_USERNAME = "your-smtp-username" 
+SMTP_PASSWORD = "your-smtp-password"
 
 # Email Routing Configuration
 EMAIL_ROUTING_DOMAIN = "9to5scout.dev"
+
+# Document Intelligence
+EMBEDDING_MODEL = "@cf/baai/bge-large-en-v1.5"
+VECTORIZE_INDEX = "resumes_index"
 ```
 
-### 4. Configure Email Routing
+Make sure `wrangler.toml` binds `RESUME_BUCKET` to the R2 bucket that stores generated applicant documents alongside the existing `R2` binding.
 
+### 4. Configure Email Routing
 To receive job alert emails, configure Cloudflare Email Routing:
 
 ```toml
@@ -178,16 +179,14 @@ destination_addresses = ["*@9to5scout.dev"]
 ```
 
 **Supported Email Addresses for Job Alerts:**
-
 - `alerts@9to5scout.dev` - LinkedIn and general job alerts
 - `jobs@9to5scout.dev` - Indeed and Monster job notifications
 - `notifications@9to5scout.dev` - Glassdoor and ZipRecruiter alerts
 - `insights@9to5scout.dev` - System-generated insights and reports
 
 Configure job alert subscriptions on major platforms:
-
 - **LinkedIn Job Alerts** → Set email to `alerts@9to5scout.dev`
-- **Indeed Job Alerts** → Use `jobs@9to5scout.dev`
+- **Indeed Job Alerts** → Use `jobs@9to5scout.dev`  
 - **Monster.com Alerts** → Use `jobs@9to5scout.dev`
 - **Glassdoor Job Alerts** → Use `notifications@9to5scout.dev`
 - **ZipRecruiter Alerts** → Use `notifications@9to5scout.dev`
@@ -195,41 +194,26 @@ Configure job alert subscriptions on major platforms:
 Jobs extracted from emails will be marked with `source: "EMAIL"` to distinguish them from scraped jobs.
 
 ### 5. Run Database Migrations
-
 ```bash
 # Local development
 pnpm wrangler d1 migrations apply JOB_SCRAPER_DB --local
 
-# Production
+# Production  
 pnpm wrangler d1 migrations apply JOB_SCRAPER_DB --remote
 ```
 
 ### 6. Deploy
-
 ```bash
 pnpm deploy
+# or
+pnpm wrangler deploy
 ```
 
-## Development
-
-### Available Scripts
-
-- `pnpm dev`: Starts the development server with hot-reloading. Also runs local database migrations before starting.
-- `pnpm build`: Builds the worker for production. Includes automatic TypeScript type generation.
-- `pnpm deploy`: Deploys the worker to your Cloudflare account. It automatically builds and runs remote database migrations before deploying.
-- `pnpm typecheck`: Runs the TypeScript compiler to check for any type errors in the codebase.
-- `pnpm types`: Manually generates TypeScript types for your Cloudflare bindings based on your `wrangler.toml` file. This is useful after you've made changes to your configuration.
-- `pnpm secret:bulk`: Uploads secrets from your `.dev.vars` file to your worker's environment. This is the recommended way to manage secrets.
-- `pnpm vectorize:create`: Creates the "jobs" Vectorize index required for the application. This only needs to be run once.
-- `pnpm migrate:local`: Applies database migrations to your local D1 database.
-- `pnpm migrate:remote`: Applies database migrations to your remote/production D1 database.
-
-### Usage
+## Usage
 
 ### Multi-Agent Configuration & Management
 
 #### 1. List and Configure AI Agents
-
 ```bash
 # List all available agents
 curl -H "Authorization: Bearer <token>" \
@@ -267,7 +251,6 @@ curl -H "Authorization: Bearer <token>" \
 ```
 
 #### 2. Task Configuration and Workflows
-
 ```bash
 # List all tasks
 curl -H "Authorization: Bearer <token>" \
@@ -300,14 +283,13 @@ curl -H "Authorization: Bearer <token>" \
 ### Job Discovery & Monitoring
 
 #### 1. Configure Job Sites
-
 ```bash
 # Add a job site for crawling
 curl -H "Authorization: Bearer <token>" \
      -H "Content-Type: application/json" \
      -X POST https://your-worker.workers.dev/api/configs \
      -d '{
-       "name": "Tech Jobs",
+       "name": "Tech Jobs", 
        "keywords": ["software engineer", "developer", "python"],
        "locations": ["San Francisco", "Remote"],
        "include_domains": ["company.com", "startup.io"]
@@ -315,7 +297,6 @@ curl -H "Authorization: Bearer <token>" \
 ```
 
 #### 2. Start Job Discovery
-
 ```bash
 # Discover new jobs across all configured sites
 curl -H "Authorization: Bearer <token>" \
@@ -329,9 +310,8 @@ curl -H "Authorization: Bearer <token>" \
 ```
 
 #### 3. Advanced Job Monitoring & Tracking
-
 ```bash
-# Start comprehensive monitoring for all active jobs
+# Start comprehensive monitoring for all active jobs  
 curl -H "Authorization: Bearer <token>" \
      -X POST https://your-worker.workers.dev/api/runs/monitor
 
@@ -358,7 +338,6 @@ curl -H "Authorization: Bearer <token>" \
 ```
 
 #### 4. Job Tracking History & Content Access
-
 ```bash
 # Get complete job tracking timeline with all snapshots
 curl -H "Authorization: Bearer <token>" \
@@ -378,7 +357,6 @@ curl -H "Authorization: Bearer <token>" \
 ```
 
 #### 5. AI-Powered Job Search
-
 ```bash
 # Semantic search for relevant jobs
 curl -H "Authorization: Bearer <token>" \
@@ -392,7 +370,6 @@ curl -H "Authorization: Bearer <token>" \
 ### Job History Management & Applicant Profiles
 
 #### 1. Submit Job History for AI Processing
-
 ```bash
 # Submit job history in any format (plaintext, markdown, JSON)
 curl -H "Authorization: Bearer <token>" \
@@ -426,7 +403,6 @@ curl -H "Authorization: Bearer <token>" \
 ```
 
 #### 2. Get Applicant Profile and Structured Job History
-
 ```bash
 # Retrieve complete applicant profile with processed job history
 curl -H "Authorization: Bearer <token>" \
@@ -434,7 +410,6 @@ curl -H "Authorization: Bearer <token>" \
 ```
 
 #### 3. AI-Powered Job Fit Rating & Analysis
-
 ```bash
 # Generate comprehensive job fit analysis
 curl -H "Authorization: Bearer <token>" \
@@ -451,10 +426,9 @@ curl -H "Authorization: Bearer <token>" \
 ```
 
 The job rating system provides detailed analysis including:
-
 - **Overall Score**: 1-100 comprehensive fit rating
 - **Skill Match**: Technical and soft skills alignment
-- **Experience Match**: Role level and background compatibility
+- **Experience Match**: Role level and background compatibility  
 - **Compensation Fit**: Salary expectations and market alignment
 - **Location Fit**: Geographic and remote work preferences
 - **Company Culture**: Cultural fit assessment
@@ -464,7 +438,6 @@ The job rating system provides detailed analysis including:
 ### Advanced Email Integration & Insights
 
 #### 1. Configure Email Notification Settings
-
 ```bash
 # Configure email insights and reporting
 curl -H "Authorization: Bearer <token>" \
@@ -486,7 +459,6 @@ curl -H "Authorization: Bearer <token>" \
 ```
 
 #### 2. Email Insights and Reports
-
 ```bash
 # Send job insights email manually
 curl -H "Authorization: Bearer <token>" \
@@ -500,15 +472,12 @@ curl -H "Authorization: Bearer <token>" \
 ```
 
 #### 3. Email Alert Processing
-
 The system automatically processes emails sent to configured addresses:
-
 - **alerts@9to5scout.dev** - LinkedIn and general job alerts
 - **jobs@9to5scout.dev** - Indeed and Monster notifications
 - **notifications@9to5scout.dev** - Glassdoor and ZipRecruiter alerts
 
 Email processing includes:
-
 - Automatic job link extraction
 - Content parsing and job data extraction
 - Source attribution (`source: "EMAIL"`)
@@ -517,7 +486,6 @@ Email processing includes:
 ### AI-Powered Career Document Generation
 
 #### Generate Optimized Cover Letter
-
 ```bash
 curl -H "Authorization: Bearer <token>" \
      -H "Content-Type: application/json" \
@@ -531,14 +499,13 @@ curl -H "Authorization: Bearer <token>" \
      }'
 ```
 
-#### Generate ATS-Optimized Resume Content
-
+#### Generate ATS-Optimized Resume Content  
 ```bash
 curl -H "Authorization: Bearer <token>" \
      -H "Content-Type: application/json" \
      -X POST https://your-worker.workers.dev/api/resume \
      -d '{
-       "job_title": "Senior Software Engineer",
+       "job_title": "Senior Software Engineer", 
        "company_name": "TechCorp Inc",
        "job_description_text": "We are seeking a senior software engineer with expertise in microservices architecture and team leadership. The ideal candidate will have 5+ years of experience with Python, React, and cloud platforms.",
        "candidate_career_summary": "Experienced full-stack developer with 7 years building scalable systems. Led development of microservices platform serving 10M+ users. Expert in Python, React, AWS, and team leadership with proven track record of delivering high-impact projects."
@@ -548,7 +515,6 @@ curl -H "Authorization: Bearer <token>" \
 ### Manual Job Crawling & Data Management
 
 #### Manual Job Processing
-
 ```bash
 # Crawl a specific job URL
 curl -H "Authorization: Bearer <token>" \
@@ -560,7 +526,6 @@ curl -H "Authorization: Bearer <token>" \
 ### View Results & Analytics
 
 #### Job Data Retrieval
-
 ```bash
 # List all jobs with filtering options
 curl -H "Authorization: Bearer <token>" \
@@ -584,7 +549,6 @@ curl -H "Authorization: Bearer <token>" \
 ```
 
 #### System Health & Notifications
-
 ```bash
 # Health check endpoint (no authentication required)
 curl "https://your-worker.workers.dev/api/health"
@@ -602,101 +566,156 @@ curl -H "Authorization: Bearer <token>" \
 ## API Reference
 
 ### Authentication
-
 All API endpoints (except `/api/health`) require Bearer token authentication:
-
 ```
 Authorization: Bearer your-api-token
 ```
 
 ### Core Job Discovery & Management
 
-| Method | Endpoint                                        | Description                                      |
-| ------ | ----------------------------------------------- | ------------------------------------------------ |
-| GET    | `/api/health`                                   | Health check (no auth required)                  |
-| GET    | `/api/jobs`                                     | List jobs with filtering (status, source, limit) |
-| GET    | `/api/jobs/{id}`                                | Get single job with complete details             |
-| GET    | `/api/jobs/{id}/tracking`                       | Get complete job tracking timeline               |
-| GET    | `/api/jobs/{id}/snapshots/{snapshotId}/content` | Download job snapshots (HTML, PDF, Markdown)     |
-| PUT    | `/api/jobs/{id}/monitoring`                     | Configure job monitoring settings                |
-| GET    | `/api/jobs/monitoring-queue`                    | List jobs needing monitoring                     |
-| GET    | `/api/configs`                                  | List search configurations                       |
-| POST   | `/api/configs`                                  | Create search configuration                      |
-| GET    | `/api/runs`                                     | List processing runs                             |
-| POST   | `/api/runs/discovery`                           | Start discovery run                              |
-| POST   | `/api/runs/monitor`                             | Start monitoring run                             |
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/health` | Health check (no auth required) |
+| GET | `/api/jobs` | List jobs with filtering (status, source, limit) |  
+| GET | `/api/jobs/{id}` | Get single job with complete details |
+| GET | `/api/jobs/{id}/tracking` | Get complete job tracking timeline |
+| GET | `/api/jobs/{id}/snapshots/{snapshotId}/content` | Download job snapshots (HTML, PDF, Markdown) |
+| PUT | `/api/jobs/{id}/monitoring` | Configure job monitoring settings |
+| GET | `/api/jobs/monitoring-queue` | List jobs needing monitoring |
+| GET | `/api/configs` | List search configurations |
+| POST | `/api/configs` | Create search configuration |
+| GET | `/api/runs` | List processing runs |
+| POST | `/api/runs/discovery` | Start discovery run |
+| POST | `/api/runs/monitor` | Start monitoring run |
 
 ### Job Monitoring & Analytics
 
-| Method | Endpoint                     | Description                              |
-| ------ | ---------------------------- | ---------------------------------------- |
-| POST   | `/api/monitoring/daily-run`  | Manually trigger daily monitoring        |
-| GET    | `/api/monitoring/status`     | Get monitoring status & market analytics |
-| GET    | `/api/agent/query?q={query}` | Semantic job search using AI             |
-| POST   | `/api/crawl`                 | Manual job crawling                      |
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/monitoring/daily-run` | Manually trigger daily monitoring |
+| GET | `/api/monitoring/status` | Get monitoring status & market analytics |
+| GET | `/api/agent/query?q={query}` | Semantic job search using AI |
+| POST | `/api/crawl` | Manual job crawling |
+
+### Company Benefits & Insights
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/companies` | List companies with optional search, including latest benefits stats |
+| GET | `/api/companies/{id}/benefits` | Retrieve recent benefits snapshots and stats for a company |
+| GET | `/api/benefits/compare?company_ids=a,b` | Compare normalized benefits data and stats across companies |
+| GET | `/api/stats/highlights` | View top anomalies and standout perks across companies |
+| GET | `/api/stats/valuations` | List total compensation heuristics for ranking |
+| POST | `/api/companies/scrape` | Admin-only trigger to enqueue benefits scraping (supports DRY_RUN) |
 
 ### AI-Powered Career Tools
 
-| Method | Endpoint            | Description                         |
-| ------ | ------------------- | ----------------------------------- |
-| POST   | `/api/cover-letter` | Generate personalized cover letters |
-| POST   | `/api/resume`       | Generate optimized resume content   |
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/cover-letter` | Generate personalized cover letters |
+| POST | `/api/resume` | Generate optimized resume content |
+
+### Applicant Documents & ATS Tools
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/docs` | Create a resume or cover letter record |
+| GET | `/api/docs/{id}` | Retrieve document metadata and sectioned content |
+| PUT | `/api/docs/{id}` | Update document content and trigger re-indexing |
+| DELETE | `/api/docs/{id}` | Delete a document and its embeddings |
+| POST | `/api/docs/search` | Semantic search across stored documents |
+| POST | `/api/docs/{id}/apply-patches` | Apply ATS recommendations to a document |
+| POST | `/api/agents/ats/evaluate` | Evaluate a document against a job posting |
+| POST | `/api/agents/docs/generate` | Generate a tailored resume or cover letter |
+
+#### Quick cURL Examples
+
+```bash
+# Create a resume document
+curl -X POST "$WORKER_URL/api/docs" \
+  -H "Authorization: Bearer $API_AUTH_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "user_id": "user-123",
+    "doc_type": "resume",
+    "title": "Staff Engineer Resume",
+    "content_md": "# Summary\n10+ years of platform engineering...",
+    "sections": {"summary": "Platform expert", "experience": "- Led migrations"}
+  }'
+
+# Semantic search scoped to a user
+curl -X POST "$WORKER_URL/api/docs/search" \
+  -H "Authorization: Bearer $API_AUTH_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"q": "graphql leadership", "user_id": "user-123", "top_k": 5}'
+
+# Run ATS evaluation against a job
+curl -X POST "$WORKER_URL/api/agents/ats/evaluate" \
+  -H "Authorization: Bearer $API_AUTH_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"document_id": 42, "job_id": "job-abc"}'
+
+# Apply accepted patch suggestions
+curl -X POST "$WORKER_URL/api/docs/42/apply-patches" \
+  -H "Authorization: Bearer $API_AUTH_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"patches": [{"target": "experience", "type": "replace", "range": {"start": {"line": 5, "col": 1}, "end": {"line": 5, "col": 80}}, "suggestion": "Led migration reducing latency by 30%"}]}'
+```
 
 ### Multi-Agent System Configuration
 
-| Method | Endpoint                      | Description                       |
-| ------ | ----------------------------- | --------------------------------- |
-| GET    | `/api/agents`                 | List all AI agent configurations  |
-| POST   | `/api/agents`                 | Create new agent configuration    |
-| GET    | `/api/agents/{id}`            | Get agent configuration by ID     |
-| PUT    | `/api/agents/{id}`            | Update agent configuration        |
-| DELETE | `/api/agents/{id}`            | Delete agent configuration        |
-| GET    | `/api/tasks`                  | List all task configurations      |
-| POST   | `/api/tasks`                  | Create new task configuration     |
-| GET    | `/api/tasks/{id}`             | Get task configuration by ID      |
-| PUT    | `/api/tasks/{id}`             | Update task configuration         |
-| DELETE | `/api/tasks/{id}`             | Delete task configuration         |
-| GET    | `/api/workflows`              | List all workflow configurations  |
-| POST   | `/api/workflows`              | Create new workflow configuration |
-| GET    | `/api/workflows/{id}`         | Get workflow configuration by ID  |
-| PUT    | `/api/workflows/{id}`         | Update workflow configuration     |
-| DELETE | `/api/workflows/{id}`         | Delete workflow configuration     |
-| POST   | `/api/workflows/{id}/execute` | Execute multi-agent workflows     |
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/agents` | List all AI agent configurations |
+| POST | `/api/agents` | Create new agent configuration |
+| GET | `/api/agents/{id}` | Get agent configuration by ID |
+| PUT | `/api/agents/{id}` | Update agent configuration |
+| DELETE | `/api/agents/{id}` | Delete agent configuration |
+| GET | `/api/tasks` | List all task configurations |
+| POST | `/api/tasks` | Create new task configuration |
+| GET | `/api/tasks/{id}` | Get task configuration by ID |
+| PUT | `/api/tasks/{id}` | Update task configuration |
+| DELETE | `/api/tasks/{id}` | Delete task configuration |
+| GET | `/api/workflows` | List all workflow configurations |
+| POST | `/api/workflows` | Create new workflow configuration |
+| GET | `/api/workflows/{id}` | Get workflow configuration by ID |
+| PUT | `/api/workflows/{id}` | Update workflow configuration |
+| DELETE | `/api/workflows/{id}` | Delete workflow configuration |
+| POST | `/api/workflows/{id}/execute` | Execute multi-agent workflows |
 
 ### Email Integration & Insights
 
-| Method | Endpoint                   | Description                     |
-| ------ | -------------------------- | ------------------------------- |
-| GET    | `/api/email/logs`          | View email processing history   |
-| GET    | `/api/email/configs`       | Get email notification settings |
-| PUT    | `/api/email/configs`       | Update email preferences        |
-| POST   | `/api/email/insights/send` | Send job insights manually      |
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/email/logs` | View email processing history |
+| GET | `/api/email/configs` | Get email notification settings |
+| PUT | `/api/email/configs` | Update email preferences |
+| POST | `/api/email/insights/send` | Send job insights manually |
 
 ### Job History & Applicant Management
 
-| Method | Endpoint                               | Description                          |
-| ------ | -------------------------------------- | ------------------------------------ |
-| POST   | `/api/applicant/history`               | Submit job history for AI processing |
-| GET    | `/api/applicant/{user_id}/history`     | Get applicant profile & job history  |
-| POST   | `/api/applicant/job-rating`            | Generate AI-powered job fit rating   |
-| GET    | `/api/applicant/{user_id}/job-ratings` | View all job ratings for applicant   |
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/applicant/history` | Submit job history for AI processing |
+| GET | `/api/applicant/{user_id}/history` | Get applicant profile & job history |
+| POST | `/api/applicant/job-rating` | Generate AI-powered job fit rating |
+| GET | `/api/applicant/{user_id}/job-ratings` | View all job ratings for applicant |
 
 ### System & Notifications
 
-| Method | Endpoint             | Description        |
-| ------ | -------------------- | ------------------ |
-| POST   | `/api/webhooks/test` | Test notifications |
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/webhooks/test` | Test notifications |
 
 ## Development
 
 ### Available Scripts
-
 ```bash
 # Generate Cloudflare Workers types from wrangler.toml
 pnpm generate-types
 
 # Type checking with automatic type generation
-pnpm typecheck
+pnpm typecheck  
 
 # Build the worker (includes type generation)
 pnpm build
@@ -708,58 +727,74 @@ pnpm deploy
 **Note**: Local development server requires Cloudflare authentication for Browser Rendering and AI bindings. Use `pnpm build` and `pnpm typecheck` for local validation.
 
 ### Type Generation
-
 ```bash
 pnpm generate-types  # Generate Cloudflare Workers types
 ```
 
 ### Type Checking
-
 ```bash
 pnpm typecheck      # Check TypeScript without building
 ```
+
+### Cron Schedule
+| Time (UTC) | Description |
+|------------|-------------|
+| Every 15 minutes | Background maintenance + socket health |
+| 06:00 | Daily job monitoring + email insights |
+| 08:00 | Nightly company benefits crawl via Browser Rendering |
+| 09:00 | Benefits stats rollup for anomalies and valuations |
 
 ## Database Schema
 
 The platform uses a comprehensive relational database schema with the following key tables:
 
 ### Core Job Management
-
 - **sites**: Job site configurations and crawling settings
-- **search_configs**: Search criteria, keywords, and filtering rules
+- **search_configs**: Search criteria, keywords, and filtering rules  
 - **jobs**: Job postings with complete metadata and tracking information
 - **snapshots**: Historical job data snapshots for change detection
 - **changes**: Change analysis with AI-generated summaries and impact assessment
 - **runs**: Processing run tracking and performance metrics
 
 ### Job Monitoring & Analytics
-
 - **job_tracking_history**: Daily monitoring results and content preservation
 - **job_market_stats**: Aggregated market analytics and trend data
 - **r2_storage_metadata**: R2 object storage keys for HTML, PDF, and Markdown content
 
 ### Multi-Agent System
-
 - **agent_configs**: AI agent configurations, prompts, and behavior settings
 - **task_configs**: Task definitions and execution parameters
 - **workflow_configs**: Multi-agent workflow orchestration
 - **agent_executions**: Execution history and results tracking
 
 ### Applicant & Job History Management
-
 - **applicant_profiles**: User profiles with preferences and career information
 - **job_history_entries**: Structured job history data parsed from submissions
 - **job_history_submissions**: Raw job history submissions and processing status
+- **applicant_documents**: Stored resume and cover letter metadata plus R2 keys
+- **resume_sections**: Structured resume content (summary, skills, experience, etc.)
+- **document_embeddings**: Shadow table recording Vectorize metadata and hashes
 - **job_ratings**: AI-generated job fit scores and detailed analysis
 
 ### Email & Communication
-
 - **email_configs**: Email notification settings and preferences
 - **email_logs**: Email processing history and analytics
 - **notification_history**: System notification tracking
 
-### Key Database Features
+### Company Benefits Intelligence
+- **companies**: Normalized company records keyed by registrable domain with website/careers URLs.
+- **company_benefits_snapshots**: Append-only benefits observations with raw snapshot text, structured JSON, source URL, and timestamps.
+- **benefits_stats**: Periodic rollups containing highlights, total-comp heuristics, and coverage confidence for each company.
 
+### Benefits Valuation Assumptions
+- **Daily Rate**: Base salary normalized to 260 working days per year; defaults to $120k/year if range unknown.
+- **401(k) Match**: Adds up to 6% of base salary depending on detected employer match percentage.
+- **Healthcare Value**: $9k baseline when medical coverage present, otherwise $6k conservative estimate.
+- **Paid Time Off**: PTO days and parental leave weeks converted to value using the daily rate; work-from-anywhere weeks add flexibility value.
+- **Equity & Bonus**: Bonus target percent contributes base * percent; equity presence adds 10% of base as a conservative estimate.
+- All assumptions, component breakdown, and detection coverage are persisted in `benefits_stats.total_comp_heuristics` for transparency.
+
+### Key Database Features
 - **Vector Embeddings**: Job descriptions stored in Vectorize for semantic search
 - **Content Versioning**: Complete job change history with content snapshots
 - **Multi-format Storage**: R2 integration for HTML, PDF, Markdown, and screenshot storage

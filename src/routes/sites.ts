@@ -1,545 +1,185 @@
-/**
- * Sites management routes for D1 database operations
- * Handles CRUD operations for job sites configuration
- */
-
-import { Context, Hono } from "hono";
-import { z } from "zod";
+import type { Env } from '../lib/env';
+import type { Site } from '../lib/types';
 import {
-  cors,
-  errorHandler,
-  logger,
-  rateLimit,
-  validateBody,
-  validateParams,
-  validateQuery,
-} from "../lib/hono-validation";
+  getSites,
+  createSite,
+  getSiteById,
+  updateSite,
+  deleteSite,
+} from '../lib/storage';
 
-// Define the Hono context type with proper bindings
-type HonoContext = Context<{
-  Bindings: {
-    DB: D1Database;
-  };
-  Variables: {
-    validatedParams: Record<string, unknown>;
-    validatedBody: Record<string, unknown>;
-    validatedQuery: Record<string, unknown>;
-  };
-}>;
+function parsePagination(searchParams: URLSearchParams): { limit: number; offset: number } {
+  const limit = Math.min(parseInt(searchParams.get('limit') || '50', 10), 100);
+  const offset = Math.max(parseInt(searchParams.get('offset') || '0', 10), 0);
+  return { limit, offset };
+}
 
-const app = new Hono<{
-  Bindings: {
-    DB: D1Database;
-  };
-  Variables: {
-    validatedParams: Record<string, unknown>;
-    validatedBody: Record<string, unknown>;
-    validatedQuery: Record<string, unknown>;
-  };
-}>();
+function sanitizeSitePayload(payload: Partial<Site>): Partial<Site> {
+  if (!payload) {
+    return {};
+  }
 
-// Apply global middleware
-app.use("*", cors());
-app.use("*", logger());
-app.use("*", rateLimit(100)); // 100 requests per minute
-app.use("*", errorHandler());
+  const site: Partial<Site> = {};
 
-// Validation schemas
-const SiteSchema = z.object({
-  id: z.string().min(1, "Site ID is required"),
-  name: z.string().min(1, "Site name is required"),
-  base_url: z.string().url("Valid base URL is required"),
-  robots_txt: z.string().url().optional().nullable(),
-  sitemap_url: z.string().url().optional().nullable(),
-  discovery_strategy: z.enum(["sitemap", "list", "search", "custom"]),
-  last_discovered_at: z.string().datetime().optional().nullable(),
-});
+  if (payload.name !== undefined) {
+    site.name = payload.name.trim();
+  }
+  if (payload.base_url !== undefined) {
+    site.base_url = payload.base_url.trim();
+  }
+  if (payload.robots_txt !== undefined) {
+    site.robots_txt = payload.robots_txt ? payload.robots_txt.trim() : null;
+  }
+  if (payload.sitemap_url !== undefined) {
+    site.sitemap_url = payload.sitemap_url ? payload.sitemap_url.trim() : null;
+  }
+  if (payload.discovery_strategy !== undefined) {
+    site.discovery_strategy = payload.discovery_strategy.trim();
+  }
+  if (payload.last_discovered_at !== undefined) {
+    site.last_discovered_at = payload.last_discovered_at;
+  }
 
-const CreateSiteSchema = SiteSchema.omit({ last_discovered_at: true });
-const UpdateSiteSchema = SiteSchema.partial().omit({ id: true });
+  return site;
+}
 
-const QuerySchema = z.object({
-  strategy: z.enum(["sitemap", "list", "search", "custom"]).optional(),
-  limit: z
-    .string()
-    .transform(Number)
-    .pipe(z.number().int().min(1).max(100))
-    .optional(),
-  offset: z.string().transform(Number).pipe(z.number().int().min(0)).optional(),
-});
+function validateSiteForCreate(site: Partial<Site>): string | null {
+  if (!site.name) {
+    return 'Site name is required';
+  }
+  if (!site.base_url) {
+    return 'Base URL is required';
+  }
+  if (!site.discovery_strategy) {
+    return 'Discovery strategy is required';
+  }
+  return null;
+}
 
-/**
- * GET /sites
- * Get all job sites with optional filtering
- */
-app.get("/", validateQuery(QuerySchema), async (c: HonoContext) => {
+export async function handleSitesGet(request: Request, env: Env): Promise<Response> {
   try {
-    const {
-      strategy,
-      limit = 50,
-      offset = 0,
-    } = c.get("validatedQuery") as {
-      strategy?: string;
-      limit: number;
-      offset: number;
-    };
+    const url = new URL(request.url);
+    const { limit, offset } = parsePagination(url.searchParams);
 
-    let query = "SELECT * FROM sites";
-    const params: unknown[] = [];
+    const [sites, totalRow] = await Promise.all([
+      getSites(env, { limit, offset }),
+      env.DB.prepare('SELECT COUNT(*) as count FROM sites').first<{ count: number }>(),
+    ]);
 
-    if (strategy) {
-      query += " WHERE discovery_strategy = ?";
-      params.push(strategy);
-    }
-
-    query += " ORDER BY name LIMIT ? OFFSET ?";
-    params.push(limit, offset);
-
-    const result = await c.env.DB.prepare(query)
-      .bind(...params)
-      .all();
-
-    // Get total count for pagination
-    let countQuery = "SELECT COUNT(*) as total FROM sites";
-    const countParams: unknown[] = [];
-
-    if (strategy) {
-      countQuery += " WHERE discovery_strategy = ?";
-      countParams.push(strategy);
-    }
-
-    const countResult = await c.env.DB.prepare(countQuery)
-      .bind(...countParams)
-      .first();
-    const total = (countResult?.total as number) || 0;
-
-    return c.json({
-      sites: result.results,
+    return new Response(JSON.stringify({
+      sites,
       pagination: {
-        total,
         limit,
         offset,
-        hasMore: offset + limit < total,
+        total: totalRow?.count ?? sites.length,
       },
-      timestamp: new Date().toISOString(),
+    }), {
+      headers: { 'Content-Type': 'application/json' },
     });
   } catch (error) {
-    console.error("Failed to fetch sites:", error);
-    return c.json(
-      {
-        error: "Failed to fetch sites",
-        details: error instanceof Error ? error.message : "Unknown error",
-      },
-      500
-    );
+    console.error('Failed to list sites:', error);
+    return new Response(JSON.stringify({ error: 'Failed to list sites' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
-});
+}
 
-/**
- * GET /sites/:id
- * Get a specific job site by ID
- */
-app.get(
-  "/:id",
-  validateParams(z.object({ id: z.string() })),
-  async (c: HonoContext) => {
-    try {
-      const { id } = c.get("validatedParams");
-
-      const result = await c.env.DB.prepare("SELECT * FROM sites WHERE id = ?")
-        .bind(id)
-        .first();
-
-      if (!result) {
-        return c.json(
-          {
-            error: "Site not found",
-            details: `No site found with ID: ${id}`,
-          },
-          404
-        );
-      }
-
-      return c.json({
-        site: result,
-        timestamp: new Date().toISOString(),
-      });
-    } catch (error) {
-      console.error("Failed to fetch site:", error);
-      return c.json(
-        {
-          error: "Failed to fetch site",
-          details: error instanceof Error ? error.message : "Unknown error",
-        },
-        500
-      );
-    }
-  }
-);
-
-/**
- * POST /sites
- * Create a new job site
- */
-app.post("/", validateBody(CreateSiteSchema), async (c: HonoContext) => {
+export async function handleSitesPost(request: Request, env: Env): Promise<Response> {
   try {
-    const siteData = c.get("validatedBody");
+    const payload = sanitizeSitePayload(await request.json() as Partial<Site>);
+    const validationError = validateSiteForCreate(payload);
 
-    // Check if site already exists
-    const existing = await c.env.DB.prepare("SELECT id FROM sites WHERE id = ?")
-      .bind(siteData.id)
-      .first();
-
-    if (existing) {
-      return c.json(
-        {
-          error: "Site already exists",
-          details: `A site with ID '${siteData.id}' already exists`,
-        },
-        409
-      );
+    if (validationError) {
+      return new Response(JSON.stringify({ error: validationError }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
     }
 
-    const insertQuery = `
-        INSERT INTO sites (
-          id, name, base_url, robots_txt, sitemap_url, 
-          discovery_strategy, created_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?)
-      `;
+    const id = await createSite(env, payload as Site);
+    const created = await getSiteById(env, id);
 
-    const result = await c.env.DB.prepare(insertQuery)
-      .bind(
-        siteData.id,
-        siteData.name,
-        siteData.base_url,
-        siteData.robots_txt || null,
-        siteData.sitemap_url || null,
-        siteData.discovery_strategy,
-        new Date().toISOString()
-      )
-      .run();
-
-    if (result.success) {
-      // Fetch the created site
-      const createdSite = await c.env.DB.prepare(
-        "SELECT * FROM sites WHERE id = ?"
-      )
-        .bind(siteData.id)
-        .first();
-
-      return c.json(
-        {
-          site: createdSite,
-          message: "Site created successfully",
-          timestamp: new Date().toISOString(),
-        },
-        201
-      );
-    } else {
-      return c.json(
-        {
-          error: "Failed to create site",
-          details: result.error || "Unknown database error",
-        },
-        500
-      );
-    }
+    return new Response(JSON.stringify(created), {
+      status: 201,
+      headers: { 'Content-Type': 'application/json' },
+    });
   } catch (error) {
-    console.error("Failed to create site:", error);
-    return c.json(
-      {
-        error: "Failed to create site",
-        details: error instanceof Error ? error.message : "Unknown error",
-      },
-      500
-    );
+    console.error('Failed to create site:', error);
+    return new Response(JSON.stringify({ error: 'Failed to create site' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
-});
+}
 
-/**
- * PUT /sites/:id
- * Update an existing job site
- */
-app.put(
-  "/:id",
-  validateParams(z.object({ id: z.string() })),
-  validateBody(UpdateSiteSchema),
-  async (c: HonoContext) => {
-    try {
-      const { id } = c.get("validatedParams");
-      const updateData = c.get("validatedBody");
+export async function handleSiteGet(_request: Request, env: Env, siteId: string): Promise<Response> {
+  try {
+    const site = await getSiteById(env, siteId);
 
-      // Check if site exists
-      const existing = await c.env.DB.prepare(
-        "SELECT id FROM sites WHERE id = ?"
-      )
-        .bind(id)
-        .first();
-
-      if (!existing) {
-        return c.json(
-          {
-            error: "Site not found",
-            details: `No site found with ID: ${id}`,
-          },
-          404
-        );
-      }
-
-      // Build dynamic update query
-      const updateFields = [];
-      const updateValues = [];
-
-      Object.entries(updateData).forEach(([key, value]) => {
-        if (value !== undefined) {
-          updateFields.push(`${key} = ?`);
-          updateValues.push(value);
-        }
+    if (!site) {
+      return new Response(JSON.stringify({ error: 'Site not found' }), {
+        status: 404,
+        headers: { 'Content-Type': 'application/json' },
       });
-
-      if (updateFields.length === 0) {
-        return c.json(
-          {
-            error: "No valid fields to update",
-            details: "At least one field must be provided for update",
-          },
-          400
-        );
-      }
-
-      updateFields.push("updated_at = ?");
-      updateValues.push(new Date().toISOString());
-      updateValues.push(id);
-
-      const updateQuery = `
-        UPDATE sites 
-        SET ${updateFields.join(", ")} 
-        WHERE id = ?
-      `;
-
-      const result = await c.env.DB.prepare(updateQuery)
-        .bind(...updateValues)
-        .run();
-
-      if (result.success) {
-        // Fetch the updated site
-        const updatedSite = await c.env.DB.prepare(
-          "SELECT * FROM sites WHERE id = ?"
-        )
-          .bind(id)
-          .first();
-
-        return c.json({
-          site: updatedSite,
-          message: "Site updated successfully",
-          timestamp: new Date().toISOString(),
-        });
-      } else {
-        return c.json(
-          {
-            error: "Failed to update site",
-            details: result.error || "Unknown database error",
-          },
-          500
-        );
-      }
-    } catch (error) {
-      console.error("Failed to update site:", error);
-      return c.json(
-        {
-          error: "Failed to update site",
-          details: error instanceof Error ? error.message : "Unknown error",
-        },
-        500
-      );
     }
+
+    return new Response(JSON.stringify(site), {
+      headers: { 'Content-Type': 'application/json' },
+    });
+  } catch (error) {
+    console.error('Failed to fetch site:', error);
+    return new Response(JSON.stringify({ error: 'Failed to fetch site' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
-);
+}
 
-/**
- * DELETE /sites/:id
- * Delete a job site
- */
-app.delete(
-  "/:id",
-  validateParams(z.object({ id: z.string() })),
-  async (c: HonoContext) => {
-    try {
-      const { id } = c.get("validatedParams");
-
-      // Check if site exists
-      const existing = await c.env.DB.prepare(
-        "SELECT id FROM sites WHERE id = ?"
-      )
-        .bind(id)
-        .first();
-
-      if (!existing) {
-        return c.json(
-          {
-            error: "Site not found",
-            details: `No site found with ID: ${id}`,
-          },
-          404
-        );
-      }
-
-      // Check if site has associated jobs
-      const jobCount = await c.env.DB.prepare(
-        "SELECT COUNT(*) as count FROM jobs WHERE site_id = ?"
-      )
-        .bind(id)
-        .first();
-
-      if (jobCount && (jobCount.count as number) > 0) {
-        return c.json(
-          {
-            error: "Cannot delete site with associated jobs",
-            details: `Site has ${
-              jobCount.count as number
-            } associated jobs. Delete jobs first.`,
-          },
-          409
-        );
-      }
-
-      const result = await c.env.DB.prepare("DELETE FROM sites WHERE id = ?")
-        .bind(id)
-        .run();
-
-      if (result.success) {
-        return c.json({
-          message: "Site deleted successfully",
-          timestamp: new Date().toISOString(),
-        });
-      } else {
-        return c.json(
-          {
-            error: "Failed to delete site",
-            details: result.error || "Unknown database error",
-          },
-          500
-        );
-      }
-    } catch (error) {
-      console.error("Failed to delete site:", error);
-      return c.json(
-        {
-          error: "Failed to delete site",
-          details: error instanceof Error ? error.message : "Unknown error",
-        },
-        500
-      );
-    }
-  }
-);
-
-/**
- * GET /sites/:id/jobs
- * Get jobs for a specific site
- */
-app.get(
-  "/:id/jobs",
-  validateParams(z.object({ id: z.string() })),
-  validateQuery(
-    z.object({
-      status: z.enum(["open", "closed", "paused"]).optional(),
-      limit: z
-        .string()
-        .transform(Number)
-        .pipe(z.number().int().min(1).max(100))
-        .optional(),
-      offset: z
-        .string()
-        .transform(Number)
-        .pipe(z.number().int().min(0))
-        .optional(),
-    })
-  ),
-  async (c: HonoContext) => {
-    try {
-      const { id } = c.get("validatedParams") as { id: string };
-      const {
-        status,
-        limit = 50,
-        offset = 0,
-      } = c.get("validatedQuery") as {
-        status?: string;
-        limit: number;
-        offset: number;
-      };
-
-      // Check if site exists
-      const site = await c.env.DB.prepare(
-        "SELECT id, name FROM sites WHERE id = ?"
-      )
-        .bind(id)
-        .first();
-
-      if (!site) {
-        return c.json(
-          {
-            error: "Site not found",
-            details: `No site found with ID: ${id}`,
-          },
-          404
-        );
-      }
-
-      let query = "SELECT * FROM jobs WHERE site_id = ?";
-      const params: unknown[] = [id];
-
-      if (status) {
-        query += " AND status = ?";
-        params.push(status);
-      }
-
-      query += " ORDER BY first_seen_at DESC LIMIT ? OFFSET ?";
-      params.push(limit, offset);
-
-      const result = await c.env.DB.prepare(query)
-        .bind(...params)
-        .all();
-
-      // Get total count
-      let countQuery = "SELECT COUNT(*) as total FROM jobs WHERE site_id = ?";
-      const countParams: unknown[] = [id];
-
-      if (status) {
-        countQuery += " AND status = ?";
-        countParams.push(status);
-      }
-
-      const countResult = await c.env.DB.prepare(countQuery)
-        .bind(...countParams)
-        .first();
-      const total = (countResult?.total as number) || 0;
-
-      return c.json({
-        site: {
-          id: site.id,
-          name: site.name,
-        },
-        jobs: result.results,
-        pagination: {
-          total,
-          limit,
-          offset,
-          hasMore: offset + limit < total,
-        },
-        timestamp: new Date().toISOString(),
+export async function handleSitePut(request: Request, env: Env, siteId: string): Promise<Response> {
+  try {
+    const existing = await getSiteById(env, siteId);
+    if (!existing) {
+      return new Response(JSON.stringify({ error: 'Site not found' }), {
+        status: 404,
+        headers: { 'Content-Type': 'application/json' },
       });
-    } catch (error) {
-      console.error("Failed to fetch site jobs:", error);
-      return c.json(
-        {
-          error: "Failed to fetch site jobs",
-          details: error instanceof Error ? error.message : "Unknown error",
-        },
-        500
-      );
     }
-  }
-);
 
-export default app;
+    const payload = sanitizeSitePayload(await request.json() as Partial<Site>);
+    await updateSite(env, siteId, payload);
+    const updated = await getSiteById(env, siteId);
+
+    return new Response(JSON.stringify(updated), {
+      headers: { 'Content-Type': 'application/json' },
+    });
+  } catch (error) {
+    console.error('Failed to update site:', error);
+    return new Response(JSON.stringify({ error: 'Failed to update site' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+}
+
+export async function handleSiteDelete(_request: Request, env: Env, siteId: string): Promise<Response> {
+  try {
+    const existing = await getSiteById(env, siteId);
+    if (!existing) {
+      return new Response(JSON.stringify({ error: 'Site not found' }), {
+        status: 404,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    await deleteSite(env, siteId);
+
+    return new Response(null, { status: 204 });
+  } catch (error) {
+    console.error('Failed to delete site:', error);
+    return new Response(JSON.stringify({ error: 'Failed to delete site' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+}

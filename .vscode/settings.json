@@ -1,0 +1,35 @@
+{
+  "files.associations": {
+    "wrangler.toml": "toml",
+    "wrangler.jsonc": "jsonc",
+    "*.toml": "toml",
+    "*.d1": "sql",
+    "*.sql": "sql",
+    "Dockerfile.workers": "dockerfile",
+    ".dev.vars": "properties",
+    ".env.example": "properties"
+  },
+  "typescript.preferences.includePackageJsonAutoImports": "on",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit",
+    "source.fixAll.eslint": "explicit"
+  },
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact",
+    "json",
+    "jsonc"
+  ],
+  "[toml]": {
+    "editor.defaultFormatter": "tamasfe.even-better-toml",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {}
+  },
+  "evenBetterToml.schema.associations": {
+    "wrangler.toml": "https://raw.githubusercontent.com/cloudflare/workers-sdk/main/packages/wrangler/config-schema.json"
+  }
+}

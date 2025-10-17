@@ -1,0 +1,30 @@
+2025-10-15 15:55:19,015 - INFO - ✅ Configuration loaded from .dev.vars
+2025-10-15 15:55:19,016 - INFO - 📋 Account ID: b3304b14848de15c72c24a14b0cd187d
+2025-10-15 15:55:19,016 - INFO - 🔑 API Token: qfyJ7VxE...
+2025-10-15 15:55:19,016 - INFO - 🚀 Starting LinkedIn job scraping test...
+2025-10-15 15:55:19,016 - INFO - 🔗 Testing LinkedIn job scraping for job ID: 4274231706 - FULL GAMBIT
+2025-10-15 15:57:08,554 - INFO - 💾 Text asset saved locally: scripts/assets/browser-render/linkedin-job-4274231706-2025-10-15T15-57-08-content.html
+2025-10-15 15:57:08,555 - ERROR - ❌ screenshot-viewport task failed: API request failed: 429 - {"success":false,"errors":[{"code":2001,"message":"Rate limit exceeded"}]}
+2025-10-15 15:57:08,556 - ERROR - ❌ screenshot-fullpage task failed: API request failed: 429 - {"success":false,"errors":[{"code":2001,"message":"Rate limit exceeded"}]}
+2025-10-15 15:57:08,556 - ERROR - ❌ markdown task failed: API request failed: 429 - {"success":false,"errors":[{"code":2001,"message":"Rate limit exceeded"}]}
+2025-10-15 15:57:08,556 - ERROR - ❌ links task failed: API request failed: 429 - {"success":false,"errors":[{"code":2001,"message":"Rate limit exceeded"}]}
+2025-10-15 15:57:08,561 - INFO - 💾 Text asset saved locally: scripts/assets/browser-render/linkedin-job-4274231706-2025-10-15T15-57-08-scraped.json
+2025-10-15 15:57:08,564 - INFO - 💾 Asset saved locally: scripts/assets/browser-render/linkedin-job-4274231706-2025-10-15T15-57-08-document.pdf
+2025-10-15 15:57:08,564 - INFO - 
+🎯 LinkedIn Job Scraping - FULL GAMBIT COMPLETE!
+2025-10-15 15:57:08,564 - INFO - 📁 Generated 3 assets:
+2025-10-15 15:57:08,564 - INFO -    scripts/assets/browser-render/linkedin-job-4274231706-2025-10-15T15-57-08-content.html
+2025-10-15 15:57:08,564 - INFO -    scripts/assets/browser-render/linkedin-job-4274231706-2025-10-15T15-57-08-scraped.json
+2025-10-15 15:57:08,564 - INFO -    scripts/assets/browser-render/linkedin-job-4274231706-2025-10-15T15-57-08-document.pdf
+2025-10-15 15:57:08,564 - INFO - 
+📋 Detailed logs available at: /Volumes/Projects/workers/9to5-scout/scripts/tests/browser_rendering_test.log
+2025-10-15 15:57:08,565 - INFO - 🤖 AI Agent: Review the log file for comprehensive test details
+2025-10-15 15:57:08,568 - INFO - 
+🎉 All tests completed! Total files saved: 3
+2025-10-15 15:57:08,569 - INFO - 📁 All saved files:
+2025-10-15 15:57:08,569 - INFO -    scripts/assets/browser-render/linkedin-job-4274231706-2025-10-15T15-57-08-content.html
+2025-10-15 15:57:08,569 - INFO -    scripts/assets/browser-render/linkedin-job-4274231706-2025-10-15T15-57-08-scraped.json
+2025-10-15 15:57:08,569 - INFO -    scripts/assets/browser-render/linkedin-job-4274231706-2025-10-15T15-57-08-document.pdf
+2025-10-15 15:57:08,569 - INFO - 
+📋 Detailed logs available at: /Volumes/Projects/workers/9to5-scout/scripts/tests/browser_rendering_test.log
+2025-10-15 15:57:08,569 - INFO - 🤖 AI Agent: Review the log file for comprehensive test details

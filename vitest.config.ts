@@ -1,27 +1,18 @@
-import { defineConfig } from "vitest/config";
+import { defineConfig } from 'vitest/config';
+import { fileURLToPath } from 'node:url';
+import { dirname, resolve } from 'node:path';
+
+const projectRoot = dirname(fileURLToPath(new URL('.', import.meta.url)));
 
 export default defineConfig({
   test: {
-    environment: "node",
     globals: true,
-    setupFiles: ["./tests/setup.ts"],
-    coverage: {
-      provider: "v8",
-      reporter: ["text", "json", "html"],
-      exclude: [
-        "node_modules/",
-        "dist/",
-        "tests/",
-        "**/*.d.ts",
-        "**/*.config.*",
-        "wrangler.toml",
-      ],
-    },
-    testTimeout: 10000,
+    environment: 'node',
   },
   resolve: {
     alias: {
-      "@": "/Volumes/Projects/workers/9to5-scout/src",
+      'cloudflare:email': resolve(projectRoot, 'src/test-support/cloudflare-email.ts'),
+      'html-entities': resolve(projectRoot, 'src/test-support/html-entities.ts'),
     },
   },
 });

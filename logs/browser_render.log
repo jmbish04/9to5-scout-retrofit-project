@@ -1,0 +1,29 @@
+2025-10-15 17:14:46,543 - INFO - Starting Browser Render test session: browser_render_1760573686
+2025-10-15 17:14:46,543 - INFO - Worker URL: https://9to5-scout.hacolby.workers.dev
+2025-10-15 17:14:46,543 - INFO - 🔧 Testing Browser Rendering...
+2025-10-15 17:14:46,543 - INFO - ==================================================
+2025-10-15 17:14:46,683 - INFO - ✅ Worker Health Check (0.14s)
+2025-10-15 17:14:46,819 - WARNING - Failed to log to D1: 401
+2025-10-15 17:14:46,974 - INFO - ❌ Browser Rendering (0.14s)
+2025-10-15 17:14:46,974 - ERROR -    Error: HTTP 404: 404 Not Found
+2025-10-15 17:14:47,174 - WARNING - Failed to log to D1: 401
+2025-10-15 17:14:47,349 - INFO - ❌ Job Scraping (0.17s)
+2025-10-15 17:14:47,349 - ERROR -    Error: HTTP 404: 404 Not Found
+2025-10-15 17:14:47,472 - WARNING - Failed to log to D1: 401
+2025-10-15 17:14:47,473 - INFO - 
+📊 Test Summary
+2025-10-15 17:14:47,473 - INFO - ==================================================
+2025-10-15 17:14:47,473 - INFO - Total Tests: 3
+2025-10-15 17:14:47,473 - INFO - ✅ Passed: 1
+2025-10-15 17:14:47,473 - INFO - ❌ Failed: 2
+2025-10-15 17:14:47,473 - INFO - Success Rate: 33.3%
+2025-10-15 17:14:47,473 - INFO - 
+❌ Failed Tests:
+2025-10-15 17:14:47,473 - INFO -    - Browser Rendering: HTTP 404: 404 Not Found
+2025-10-15 17:14:47,473 - INFO -    - Job Scraping: HTTP 404: 404 Not Found
+2025-10-15 17:14:47,473 - INFO - 
+⏱️  Total Duration: 0.45s
+2025-10-15 17:14:47,599 - WARNING - Failed to log to D1: 401
+2025-10-15 17:14:47,600 - INFO - 
+🤖 AI Model: Read the full test session log at: /Volumes/Projects/workers/9to5-scout/logs/browser_render.log
+2025-10-15 17:14:47,600 - INFO -    This log file contains only the current test session (overwritten each run)

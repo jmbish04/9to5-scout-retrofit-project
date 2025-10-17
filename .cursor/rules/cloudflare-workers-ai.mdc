@@ -72,7 +72,10 @@ EMBEDDING_MODEL = "@cf/baai/bge-large-en-v1.5"
 import type { AiModels } from "cloudflare:ai";
 
 // WRONG - Hardcoded model names
-const response = await env.AI.run("@cf/meta/llama-3.1-8b-instruct" as any, inputs);
+const response = await env.AI.run(
+  "@cf/meta/llama-3.1-8b-instruct" as any,
+  inputs
+);
 
 // WRONG - Using any type
 const response = await env.AI.run(env.MODEL as any, inputs);
@@ -110,9 +113,12 @@ const response = await env.AI.run(env.EMBEDDING_MODEL as keyof AiModels, {
 const embeddingResponse = response as { data?: number[][] };
 
 // CORRECT - Proper response typing for text generation
-const response = await env.AI.run(env.DEFAULT_MODEL_REASONING as keyof AiModels, {
-  messages: [{ role: "user", content: prompt }],
-});
+const response = await env.AI.run(
+  env.DEFAULT_MODEL_REASONING as keyof AiModels,
+  {
+    messages: [{ role: "user", content: prompt }],
+  }
+);
 const textResponse = response as { response: string };
 ```
 
