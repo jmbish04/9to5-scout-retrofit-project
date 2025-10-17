@@ -94,25 +94,18 @@ export async function handleAIPoweredEmailReceived(
 
     console.log(`💾 Email saved with ID: ${emailId}`);
 
+    // Prepare variables for consolidated update
+    let embeddingsId: string | null = null;
+    let otpForwardedTo: string | null = null;
+
     // Generate embeddings for the email content
     try {
-      const embeddingsId = await generateEmailEmbeddings(
+      embeddingsId = await generateEmailEmbeddings(
         env,
         email.uuid!,
         aiResult.contentText
       );
       console.log(`🧠 Generated embeddings with ID: ${embeddingsId}`);
-
-      // Update email with embeddings ID
-      await env.DB.prepare(
-        `
-        UPDATE enhanced_email_logs 
-        SET embeddings_id = ?, updated_at = CURRENT_TIMESTAMP 
-        WHERE id = ?
-      `
-      )
-        .bind(embeddingsId, emailId)
-        .run();
     } catch (error) {
       console.error("Failed to generate embeddings:", error);
     }
@@ -122,17 +115,6 @@ export async function handleAIPoweredEmailReceived(
       console.log(
         `🔐 OTP detected: ${aiResult.otpCode} for ${aiResult.otpService}`
       );
-
-      // Update email with OTP info
-      await env.DB.prepare(
-        `
-        UPDATE enhanced_email_logs 
-        SET otp_detected = 1, otp_code = ?, updated_at = CURRENT_TIMESTAMP 
-        WHERE id = ?
-      `
-      )
-        .bind(aiResult.otpCode, emailId)
-        .run();
 
       // Send OTP alert
       const otpSent = await sendOTPAlert(
@@ -151,17 +133,7 @@ export async function handleAIPoweredEmailReceived(
           "sent"
         );
 
-        // Update email with forwarding info
-        await env.DB.prepare(
-          `
-          UPDATE enhanced_email_logs 
-          SET otp_forwarded_to = ?, updated_at = CURRENT_TIMESTAMP 
-          WHERE id = ?
-        `
-        )
-          .bind("justin@126colby.com", emailId)
-          .run();
-
+        otpForwardedTo = "justin@126colby.com";
         console.log(`📤 OTP forwarded to justin@126colby.com`);
       }
     } else {
@@ -185,17 +157,6 @@ export async function handleAIPoweredEmailReceived(
       );
     }
 
-    // Update email with job links count
-    await env.DB.prepare(
-      `
-      UPDATE enhanced_email_logs 
-      SET job_links_extracted = ?, updated_at = CURRENT_TIMESTAMP 
-      WHERE id = ?
-    `
-    )
-      .bind(aiResult.jobLinks.length, emailId)
-      .run();
-
     // Generate HTML preview and PDF
     console.log("🖼️ Generating HTML preview and PDF...");
     let htmlPreviewUrl: string | undefined;
@@ -214,15 +175,31 @@ export async function handleAIPoweredEmailReceived(
       // Continue processing even if preview generation fails
     }
 
-    // Update email with final results including preview URLs
+    // Consolidated update with all email processing results
     await env.DB.prepare(
       `
       UPDATE enhanced_email_logs 
-      SET jobs_processed = ?, html_preview_url = ?, pdf_preview_url = ?, status = 'processed', processed_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP 
+      SET 
+        embeddings_id = ?,
+        otp_detected = ?,
+        otp_code = ?,
+        otp_forwarded_to = ?,
+        job_links_extracted = ?,
+        jobs_processed = ?, 
+        html_preview_url = ?, 
+        pdf_preview_url = ?, 
+        status = 'processed', 
+        processed_at = CURRENT_TIMESTAMP, 
+        updated_at = CURRENT_TIMESTAMP 
       WHERE id = ?
     `
     )
       .bind(
+        embeddingsId,
+        aiResult.otpDetected ? 1 : 0,
+        aiResult.otpCode || null,
+        otpForwardedTo,
+        aiResult.jobLinks.length,
         processedJobs,
         htmlPreviewUrl || null,
         pdfPreviewUrl || null,
@@ -927,38 +904,50 @@ export async function handleEmailSearch(
     let results: any[] = [];
 
     if (searchType === "semantic") {
-      // Use embedding similarity search
+      // Use Cloudflare Vectorize for semantic search
       try {
-        const embedding = await env.AI.run("@cf/baai/bge-large-en-v1.5", {
-          text: query,
+        const queryVectorResponse = await env.AI.run(
+          "@cf/baai/bge-large-en-v1.5",
+          {
+            text: query,
+          }
+        );
+
+        // Extract the query vector
+        const queryVector = Array.isArray(queryVectorResponse)
+          ? queryVectorResponse
+          : (queryVectorResponse as any).data || queryVectorResponse;
+
+        // Use Vectorize for similarity search
+        const vectorMatches = await env.VECTORIZE_INDEX.query(queryVector, {
+          topK: limit,
+          returnMetadata: true,
         });
 
-        const embeddingData = Array.isArray(embedding)
-          ? embedding
-          : (embedding as any).data || embedding;
-        const embeddingVector = Array.isArray(embeddingData)
-          ? embeddingData[0]
-          : embeddingData;
+        if (!vectorMatches.matches.length) {
+          results = [];
+        } else {
+          // Get email UUIDs from vector matches
+          const emailUuids = vectorMatches.matches.map((match) => match.id);
+          const placeholders = emailUuids.map(() => "?").join(",");
 
-        // Search for similar embeddings
-        const searchQuery = `
-          SELECT 
-            e.id, e.uuid, e.from_email, e.to_email, e.subject, e.date_received,
-            e.content_text, e.content_preview, e.ai_classification,
-            e.job_links_extracted, e.jobs_processed, e.otp_detected,
-            e.received_at, e.status
-          FROM enhanced_email_logs e
-          JOIN email_embeddings emb ON e.uuid = emb.email_uuid
-          WHERE emb.content_type = 'full'
-          ORDER BY emb.embedding <-> ? 
-          LIMIT ? OFFSET ?
-        `;
+          const searchQuery = `
+            SELECT 
+              e.id, e.uuid, e.from_email, e.to_email, e.subject, e.date_received,
+              e.content_text, e.content_preview, e.ai_classification,
+              e.job_links_extracted, e.jobs_processed, e.otp_detected,
+              e.received_at, e.status
+            FROM enhanced_email_logs e
+            WHERE e.uuid IN (${placeholders})
+            ORDER BY e.received_at DESC
+          `;
 
-        const searchResult = await env.DB.prepare(searchQuery)
-          .bind(JSON.stringify(embeddingVector), limit, offset)
-          .all();
+          const searchResult = await env.DB.prepare(searchQuery)
+            .bind(...emailUuids)
+            .all();
 
-        results = searchResult.results || [];
+          results = searchResult.results || [];
+        }
       } catch (error) {
         console.error("Semantic search failed:", error);
         // Fallback to keyword search directly

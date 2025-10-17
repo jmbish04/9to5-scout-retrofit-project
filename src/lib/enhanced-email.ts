@@ -232,27 +232,20 @@ export async function generateEmailEmbeddings(
 
     // Extract embedding data - handle different response formats
     let embeddingVector: number[];
+    const embeddingResponse = embedding as any;
 
-    if (Array.isArray(embedding)) {
-      // If it's already an array, use it directly
-      embeddingVector = embedding;
-    } else if (
-      (embedding as any).data &&
-      Array.isArray((embedding as any).data)
-    ) {
-      // If it has a data property with an array, use that
-      embeddingVector = (embedding as any).data;
-    } else if (
-      (embedding as any).data &&
-      Array.isArray((embedding as any).data[0])
-    ) {
-      // If it's an array of vectors, take the first vector
-      embeddingVector = (embedding as any).data[0];
+    if (Array.isArray(embeddingResponse?.data?.[0])) {
+      // Response is an array of vectors, take the first one
+      embeddingVector = embeddingResponse.data[0];
+    } else if (Array.isArray(embeddingResponse?.data)) {
+      // Response is a single vector in the data property
+      embeddingVector = embeddingResponse.data;
+    } else if (Array.isArray(embeddingResponse)) {
+      // Response is the vector itself
+      embeddingVector = embeddingResponse;
     } else {
-      // Fallback - convert to array if it's a single value
-      embeddingVector = Array.isArray(embedding)
-        ? embedding
-        : [embedding as number];
+      // Fallback for unexpected formats, e.g., a single number
+      embeddingVector = [embeddingResponse as number];
     }
 
     // Save embedding to database
@@ -386,8 +379,10 @@ export function detectOTPCode(content: string): {
       const code = match[1];
       console.log(`🔍 OTP Code found: ${code}`);
 
-      // Try to detect service from content
-      const serviceMatch = content.match(/(?:from|at)\s+([A-Za-z\s]+)/i);
+      // Try to detect service from content with more specific pattern
+      const serviceMatch = content.match(
+        /(?:from|for|with)\s+([A-Z][a-zA-Z0-9\s-]{2,20})/i
+      );
       const service = serviceMatch
         ? serviceMatch[1]?.trim()
         : "Unknown Service";
@@ -451,7 +446,11 @@ export async function processEmailFromRouting(
     // Generate embeddings
     let embeddingsGenerated = false;
     try {
-      await generateEmailEmbeddings(env, email.uuid!, aiResult.contentText);
+      email.embeddingsId = await generateEmailEmbeddings(
+        env,
+        email.uuid!,
+        aiResult.contentText
+      );
       embeddingsGenerated = true;
       console.log("📧 Embeddings generated successfully");
     } catch (error) {
@@ -803,17 +802,13 @@ function createFallbackEmailExtraction(
   const contentText = rawEmail.slice(0, 2000);
   const contentPreview = contentText.slice(0, 200);
 
-  // Basic OTP detection
-  const otpMatch = contentText.match(/(?:code|otp|pin)[\s:]*(\d{4,8})/i);
-  const otpDetected = !!otpMatch;
-  const otpCode = otpMatch ? otpMatch[1] : undefined;
+  // Enhanced OTP detection using existing function
+  const otpResult = detectOTPCode(contentText);
+  const otpDetected = otpResult.detected;
+  const otpCode = otpResult.code;
 
-  // Basic job link detection
-  const jobLinkMatches =
-    contentText.match(
-      /https?:\/\/[^\s]+(?:job|career|position|hiring)[^\s]*/gi
-    ) || [];
-  const jobLinks = [...new Set(jobLinkMatches)]; // Remove duplicates
+  // Enhanced job link detection using existing function
+  const jobLinks = extractJobUrlsEnhanced(contentText);
 
   // Use partial result if available, otherwise use fallback values
   const result: EmailAIExtraction = {
