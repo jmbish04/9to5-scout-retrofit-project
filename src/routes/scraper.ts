@@ -176,6 +176,7 @@ function normalizeIntakePayload(raw: any): NormalizedIntakePayload | { error: st
     raw.details?.url,
     raw.metadata?.job_url,
     raw.metadata?.url,
+  );
 
   if (!jobUrl) {
     return { error: 'A job_url field is required for each submission.' };

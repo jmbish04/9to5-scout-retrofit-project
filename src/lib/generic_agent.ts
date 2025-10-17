@@ -6,7 +6,7 @@
  * interface for all agent types defined in the YAML configuration files.
  */
 
-import { Agent } from "agents";
+import { Agent } from "./agents";
 
 // Define the shape of the config we'll load from D1
 interface AgentConfig {
