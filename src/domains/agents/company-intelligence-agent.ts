@@ -12,7 +12,7 @@
  */
 
 import { Agent } from "agents";
-import type { Env } from "../../config/env/env.config";
+import type { Env } from "../config/env/env.config";
 
 export interface CompanyIntelligenceState {
   status: "idle" | "processing" | "error" | "completed";

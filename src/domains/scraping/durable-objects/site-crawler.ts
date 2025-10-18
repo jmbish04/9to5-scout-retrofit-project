@@ -1,4 +1,4 @@
-import type { Env } from "../../../config/env/env.config";
+import type { Env } from "../../config/env/env.config";
 
 type DurableObjectState = any;
 

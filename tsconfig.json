@@ -10,9 +10,9 @@
     "skipDefaultLibCheck": true,
     "outDir": "./dist",
     "rootDir": "./src",
-    "types": ["./worker-configuration", "node"],
+    "types": ["./src/worker-configuration", "node"],
     "lib": ["ES2022", "dom", "webworker"]
   },
-  "include": ["src/**/*.ts", "worker-configuration.d.ts"],
+  "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }
