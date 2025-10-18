@@ -330,8 +330,8 @@ export function createFileMetadata(
  * @returns The full public URL of the R2 object.
  */
 export function getR2ObjectUrl(r2PublicUrl: string, objectKey: string): string {
-    // Ensure the base URL ends with a slash and the object key doesn't start with one
-    const baseUrl = r2PublicUrl.endsWith('/') ? r2PublicUrl : `${r2PublicUrl}/`;
-    const key = objectKey.startsWith('/') ? objectKey.substring(1) : objectKey;
-    return `${baseUrl}${key}`;
+  // Ensure the base URL ends with a slash and the object key doesn't start with one
+  const baseUrl = r2PublicUrl.endsWith("/") ? r2PublicUrl : `${r2PublicUrl}/`;
+  const key = objectKey.startsWith("/") ? objectKey.substring(1) : objectKey;
+  return `${baseUrl}${key}`;
 }

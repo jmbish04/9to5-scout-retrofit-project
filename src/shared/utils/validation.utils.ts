@@ -24,7 +24,7 @@ export class ValidationUtils {
       return schema.parse(data);
     } catch (error) {
       if (error instanceof z.ZodError) {
-        const validationErrors = error.errors.map((err) => ({
+        const validationErrors = error.issues.map((err) => ({
           field: err.path.join("."),
           message: err.message,
           value: err.input,
@@ -52,7 +52,7 @@ export class ValidationUtils {
       return { success: true, data: result };
     } catch (error) {
       if (error instanceof z.ZodError) {
-        const validationErrors = error.errors.map((err) => ({
+        const validationErrors = error.issues.map((err) => ({
           field: err.path.join("."),
           message: err.message,
           value: err.input,
@@ -202,7 +202,9 @@ export class ValidationUtils {
     let isEven = false;
 
     for (let i = cleaned.length - 1; i >= 0; i--) {
-      let digit = parseInt(cleaned[i], 10);
+      const char = cleaned[i];
+      if (!char) continue;
+      let digit = parseInt(char, 10);
 
       if (isEven) {
         digit *= 2;

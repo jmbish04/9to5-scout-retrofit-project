@@ -32,11 +32,28 @@ export const CommonSchemas = {
   UUID: z.string().uuid("Invalid UUID format"),
   EMAIL: z.string().email("Invalid email format"),
   URL: z.string().url("Invalid URL format"),
-  PHONE: z.string().regex(ValidationPatterns.PHONE, "Invalid phone number format"),
+  PHONE: z
+    .string()
+    .regex(ValidationPatterns.PHONE, "Invalid phone number format"),
   SLUG: z.string().regex(ValidationPatterns.SLUG, "Invalid slug format"),
-  ALPHANUMERIC: z.string().regex(ValidationPatterns.ALPHANUMERIC, "Must contain only alphanumeric characters"),
-  ALPHANUMERIC_WITH_SPACES: z.string().regex(ValidationPatterns.ALPHANUMERIC_WITH_SPACES, "Must contain only alphanumeric characters and spaces"),
-  ALPHANUMERIC_WITH_HYPHENS: z.string().regex(ValidationPatterns.ALPHANUMERIC_WITH_HYPHENS, "Must contain only alphanumeric characters and hyphens"),
+  ALPHANUMERIC: z
+    .string()
+    .regex(
+      ValidationPatterns.ALPHANUMERIC,
+      "Must contain only alphanumeric characters"
+    ),
+  ALPHANUMERIC_WITH_SPACES: z
+    .string()
+    .regex(
+      ValidationPatterns.ALPHANUMERIC_WITH_SPACES,
+      "Must contain only alphanumeric characters and spaces"
+    ),
+  ALPHANUMERIC_WITH_HYPHENS: z
+    .string()
+    .regex(
+      ValidationPatterns.ALPHANUMERIC_WITH_HYPHENS,
+      "Must contain only alphanumeric characters and hyphens"
+    ),
   POSITIVE_INT: z.number().int().positive("Must be a positive integer"),
   NON_NEGATIVE_INT: z.number().int().min(0, "Must be a non-negative integer"),
   POSITIVE_FLOAT: z.number().positive("Must be a positive number"),
@@ -90,21 +107,21 @@ export function validateData<T>(
   } catch (error) {
     if (error instanceof z.ZodError) {
       const errors: Record<string, string[]> = {};
-      
-      error.errors.forEach((err) => {
+
+      error.issues.forEach((err) => {
         const path = err.path.join(".");
         if (!errors[path]) {
           errors[path] = [];
         }
         errors[path].push(err.message);
       });
-      
+
       return {
         success: false,
         errors,
       };
     }
-    
+
     return {
       success: false,
       errors: { general: ["Validation failed"] },
@@ -118,10 +135,7 @@ export function validateData<T>(
  * @param data Data to parse
  * @returns Parsed data or null if validation fails
  */
-export function safeParse<T>(
-  schema: z.ZodSchema<T>,
-  data: unknown
-): T | null {
+export function safeParse<T>(schema: z.ZodSchema<T>, data: unknown): T | null {
   try {
     return schema.parse(data);
   } catch {
@@ -145,25 +159,25 @@ export function sanitizeString(
   } = {}
 ): string {
   let sanitized = input;
-  
+
   if (options.trim !== false) {
     sanitized = sanitized.trim();
   }
-  
+
   if (options.maxLength) {
     sanitized = sanitized.substring(0, options.maxLength);
   }
-  
+
   if (!options.allowHtml) {
     // Remove HTML tags
     sanitized = sanitized.replace(/<[^>]*>/g, "");
   }
-  
+
   if (!options.allowSpecialChars) {
     // Remove special characters except basic punctuation
     sanitized = sanitized.replace(/[^\w\s\-.,!?]/g, "");
   }
-  
+
   return sanitized;
 }
 
@@ -177,11 +191,11 @@ export function validateAndSanitizeEmail(email: string): string | null {
     maxLength: 254, // RFC 5321 limit
     allowSpecialChars: false,
   });
-  
+
   if (CommonSchemas.EMAIL.safeParse(sanitized).success) {
     return sanitized;
   }
-  
+
   return null;
 }
 
@@ -194,11 +208,11 @@ export function validateAndSanitizeUrl(url: string): string | null {
   const sanitized = sanitizeString(url.trim(), {
     allowSpecialChars: true,
   });
-  
+
   if (CommonSchemas.URL.safeParse(sanitized).success) {
     return sanitized;
   }
-  
+
   return null;
 }
 
@@ -211,11 +225,11 @@ export function validateAndSanitizePhone(phone: string): string | null {
   const sanitized = sanitizeString(phone.trim(), {
     allowSpecialChars: true,
   });
-  
+
   if (CommonSchemas.PHONE.safeParse(sanitized).success) {
     return sanitized;
   }
-  
+
   return null;
 }
 
@@ -350,7 +364,7 @@ export function toBoolean(value: any, defaultValue: boolean = false): boolean {
   if (typeof value === "boolean") {
     return value;
   }
-  
+
   if (typeof value === "string") {
     const lower = value.toLowerCase();
     if (lower === "true" || lower === "1" || lower === "yes") {
@@ -360,11 +374,11 @@ export function toBoolean(value: any, defaultValue: boolean = false): boolean {
       return false;
     }
   }
-  
+
   if (typeof value === "number") {
     return value !== 0;
   }
-  
+
   return defaultValue;
 }
 
@@ -389,16 +403,16 @@ export function validateArray<T>(
   errors?: Record<string, string[]>;
 } {
   const errors: Record<string, string[]> = {};
-  
+
   // Check array length
   if (options.minLength && items.length < options.minLength) {
     errors.array = [`Array must have at least ${options.minLength} items`];
   }
-  
+
   if (options.maxLength && items.length > options.maxLength) {
     errors.array = [`Array must have at most ${options.maxLength} items`];
   }
-  
+
   // Validate each item
   const validatedItems: T[] = [];
   items.forEach((item, index) => {
@@ -409,23 +423,25 @@ export function validateArray<T>(
       validatedItems.push(result.data!);
     }
   });
-  
+
   // Check uniqueness if required
   if (options.unique && validatedItems.length > 0) {
-    const uniqueItems = new Set(validatedItems.map(item => JSON.stringify(item)));
+    const uniqueItems = new Set(
+      validatedItems.map((item) => JSON.stringify(item))
+    );
     if (uniqueItems.size !== validatedItems.length) {
       errors.array = errors.array || [];
       errors.array.push("Array items must be unique");
     }
   }
-  
+
   if (Object.keys(errors).length > 0) {
     return {
       success: false,
       errors,
     };
   }
-  
+
   return {
     success: true,
     data: validatedItems,

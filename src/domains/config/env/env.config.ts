@@ -45,6 +45,10 @@ export interface Env {
   // External API keys
   SERPAPI_API_KEY: string; // SerpAPI for job search (replaces Google Jobs API)
 
+  // FastAPI Integration
+  LOCAL_SCRAPER_URL: string; // URL of the local FastAPI scraper service
+  LOCAL_SCRAPER_API_KEY: string; // API key for FastAPI authentication
+
   // Email configuration
   FORWARD_EMAIL_ADDRESS?: string;
   NOTIFICATION_EMAIL_ADDRESS?: string;

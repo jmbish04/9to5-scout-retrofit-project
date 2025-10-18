@@ -9,19 +9,17 @@
  * @since 1.0.0
  */
 
-import type { AiModels } from "cloudflare:workers";
-
 /**
  * Environment interface for scraping operations
  */
 export interface ScrapingEnv {
   DB: D1Database;
   R2: R2Bucket;
-  AI: any;
+  AI: Ai;
   VECTORIZE_INDEX: VectorizeIndex;
   MYBROWSER: Fetcher;
-  DEFAULT_MODEL_WEB_BROWSER: keyof AiModels;
-  EMBEDDING_MODEL: keyof AiModels;
+  DEFAULT_MODEL_WEB_BROWSER: string;
+  EMBEDDING_MODEL: string;
   STEEL_API_KEY?: string;
   LINKEDIN_USERNAME?: string;
   LINKEDIN_PASSWORD?: string;

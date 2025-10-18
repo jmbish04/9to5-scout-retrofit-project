@@ -11,7 +11,7 @@
  */
 
 import { Agent } from "agents";
-import type { Env } from "../env";
+import type { Env } from "../../config/env/env.config";
 
 export interface InterviewPreparationState {
   status: "idle" | "processing" | "error" | "completed";

@@ -3,7 +3,7 @@
  * Provides endpoints for submitting job URLs and checking processing status
  */
 
-import type { Env } from "../lib/env";
+import type { Env } from "../domains/config/env/env.config";
 import {
   getJobProcessingStatus,
   submitJobUrlsForProcessing,

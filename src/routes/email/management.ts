@@ -3,7 +3,7 @@
  * Handles email configuration, logs, and insights
  */
 
-import type { Env } from "../../lib/env";
+import type { Env } from "../../domains/config/env/env.config";
 
 /**
  * Get email logs
@@ -209,7 +209,7 @@ export async function handleEmailInsightsSend(
 
     // Use the existing email insights functionality
     const { generateEmailInsights, sendInsightsEmail } = await import(
-      "../../lib/email"
+      "../../domains/integrations/email/email.service"
     );
 
     // Create email config based on insights type

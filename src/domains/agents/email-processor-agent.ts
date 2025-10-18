@@ -13,7 +13,7 @@ import type { ForwardableEmailMessage } from "@cloudflare/workers-types";
 import { Agent } from "agents";
 import PostalMime from "postal-mime";
 import { v4 as uuidv4 } from "uuid";
-import type { Env } from "../env";
+import type { Env } from "../../config/env/env.config";
 
 // ====================================================================================
 // TYPE DEFINITIONS
@@ -361,7 +361,7 @@ export class EmailProcessorAgent extends Agent<Env> {
 
     try {
       // Use the centralized job processing system
-      const { submitJobUrlsForProcessing } = await import("../job-processing");
+      const { submitJobUrlsForProcessing } = await import("../../lib/job-processing");
 
       const result = await submitJobUrlsForProcessing(this.env, {
         urls: actualJobLinks,

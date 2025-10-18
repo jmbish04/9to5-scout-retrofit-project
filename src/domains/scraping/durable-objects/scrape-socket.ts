@@ -1,4 +1,4 @@
-import { hasActivePythonClient, isPythonClient } from "../auth";
+import { hasActivePythonClient, isPythonClient } from "../../../lib/auth";
 
 type DurableObjectState = any;
 
@@ -163,7 +163,7 @@ export class ScrapeSocket {
       }
 
       // Submit job URLs for processing using the generic job processing service
-      const { submitJobUrlsForProcessing } = await import("../job-processing");
+      const { submitJobUrlsForProcessing } = await import("../../../lib/job-processing");
       const result = await submitJobUrlsForProcessing(this.env, {
         urls,
         source: source || "websocket",

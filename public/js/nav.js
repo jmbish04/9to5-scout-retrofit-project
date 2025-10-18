@@ -40,6 +40,9 @@ document.addEventListener("DOMContentLoaded", () => {
                                         <li>
                                             <a href="/frontend-mocks.html" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Frontend Vision</a>
                                         </li>
+                                        <li>
+                                            <a href="/user-manual.html" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">User Manual</a>
+                                        </li>                                        
                                     </ul>
                                 </div>
                             </li>

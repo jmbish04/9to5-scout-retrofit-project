@@ -11,3 +11,4 @@ wrangler.toml.bak
 # Python virtual environments and test artifacts
 venv_tests/
 **/venv_tests/
+python-node/JobSpy/

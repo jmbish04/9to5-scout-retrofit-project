@@ -98,7 +98,8 @@ bindings = [
   { name = "JOB_MONITOR_AGENT", class_name = "JobMonitorAgent" },
   { name = "RESUME_OPTIMIZATION_AGENT", class_name = "ResumeOptimizationAgent" },
   { name = "COMPANY_INTELLIGENCE_AGENT", class_name = "CompanyIntelligenceAgent" },
-  { name = "INTERVIEW_PREPARATION_AGENT", class_name = "InterviewPreparationAgent" }
+  { name = "INTERVIEW_PREPARATION_AGENT", class_name = "InterviewPreparationAgent" },
+  { name = "CAREER_COACH_AGENT", class_name = "CareerCoachAgent" }
 ]
 
 # DiscoveryWorkflow
@@ -143,6 +144,11 @@ new_sqlite_classes = ["EmailProcessorAgent"]
 [[migrations]]
 tag = "v5"
 new_sqlite_classes = ["JobMonitorAgent", "ResumeOptimizationAgent", "CompanyIntelligenceAgent", "InterviewPreparationAgent"]
+
+# Career Coach Agent for Cloudflare Agents SDK
+[[migrations]]
+tag = "v6"
+new_sqlite_classes = ["CareerCoachAgent"]
 
 # Triggers
 [triggers]

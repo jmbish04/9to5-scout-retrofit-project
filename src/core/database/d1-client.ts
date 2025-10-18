@@ -418,6 +418,73 @@ export async function getJobsBySite(
 }
 
 /**
+ * Get search configurations from D1
+ */
+export async function getSearchConfigs(env: any): Promise<any[]> {
+  try {
+    const result = await env.DB.prepare(
+      "SELECT * FROM search_configs ORDER BY created_at DESC"
+    ).all();
+    return result.results || [];
+  } catch (error) {
+    console.error("Error fetching search configs:", error);
+    throw new D1ValidationError("Failed to fetch search configurations", error);
+  }
+}
+
+/**
+ * Save search configuration to D1
+ */
+export async function saveSearchConfig(env: any, config: any): Promise<string> {
+  try {
+    const result = await env.DB.prepare(
+      `
+      INSERT OR REPLACE INTO search_configs (
+        id, name, keywords, locations, include_domains, exclude_domains,
+        min_salary, max_salary, job_type, experience_level, posted_date,
+        remote, company_name, search_engine, gl, hl, age, start, num,
+        min_comp_total, created_at, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `
+    )
+      .bind(
+        config.id,
+        config.name,
+        config.keywords,
+        config.locations,
+        config.include_domains,
+        config.exclude_domains,
+        config.min_salary,
+        config.max_salary,
+        config.job_type,
+        config.experience_level,
+        config.posted_date,
+        config.remote,
+        config.company_name,
+        config.search_engine,
+        config.gl,
+        config.hl,
+        config.age,
+        config.start,
+        config.num,
+        config.min_comp_total,
+        new Date().toISOString(),
+        new Date().toISOString()
+      )
+      .run();
+
+    if (!result.success) {
+      throw new Error(`Failed to save search config: ${result.error}`);
+    }
+
+    return config.id;
+  } catch (error) {
+    console.error("Error saving search config:", error);
+    throw new D1ValidationError("Failed to save search configuration", error);
+  }
+}
+
+/**
  * Handle D1 errors and return appropriate HTTP responses
  */
 export function handleD1Error(error: unknown): {
@@ -473,4 +540,70 @@ export function handleD1Error(error: unknown): {
     message: "Internal database error",
     code: "D1_ERROR",
   };
+}
+
+/**
+ * Get all search configurations
+ */
+export async function getSearchConfigs(env: any): Promise<any[]> {
+  try {
+    const result = await env.DB.prepare(
+      "SELECT * FROM search_configs ORDER BY created_at DESC"
+    ).all();
+
+    return result.results || [];
+  } catch (error) {
+    console.error("Error fetching search configs:", error);
+    throw new D1ValidationError("Failed to fetch search configurations", error);
+  }
+}
+
+/**
+ * Save search configuration
+ */
+export async function saveSearchConfig(env: any, config: any): Promise<string> {
+  try {
+    const result = await env.DB.prepare(
+      `INSERT OR REPLACE INTO search_configs (
+        id, name, keywords, locations, include_domains, exclude_domains,
+        min_salary, max_salary, job_type, experience_level, posted_date,
+        remote, company_name, search_engine, gl, hl, age, start, num,
+        min_comp_total, created_at, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+    )
+      .bind(
+        config.id,
+        config.name,
+        config.keywords,
+        config.locations,
+        config.include_domains,
+        config.exclude_domains,
+        config.min_salary,
+        config.max_salary,
+        config.job_type,
+        config.experience_level,
+        config.posted_date,
+        config.remote,
+        config.company_name,
+        config.search_engine,
+        config.gl,
+        config.hl,
+        config.age,
+        config.start,
+        config.num,
+        config.min_comp_total,
+        new Date().toISOString(),
+        new Date().toISOString()
+      )
+      .run();
+
+    if (!result.success) {
+      throw new Error(`Failed to save search config: ${result.error}`);
+    }
+
+    return config.id;
+  } catch (error) {
+    console.error("Error saving search config:", error);
+    throw new D1ValidationError("Failed to save search configuration", error);
+  }
 }

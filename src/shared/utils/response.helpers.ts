@@ -9,11 +9,11 @@
  * @since 2024-01-01
  */
 
-import type { 
-  SuccessResponse, 
-  ErrorResponse, 
+import type {
+  ErrorResponse,
   PaginatedResponse,
-  ValidationErrorResponse 
+  SuccessResponse,
+  ValidationErrorResponse,
 } from "../types/common.types";
 
 /**
@@ -32,15 +32,16 @@ export function createSuccessResponse<T>(
     success: true,
     data,
   };
-  
-  if (message) {
-    response.message = message;
-  }
-  
+
   if (meta) {
-    response.meta = meta;
+    response.meta = {
+      timestamp: new Date().toISOString(),
+      request_id: crypto.randomUUID(),
+      version: "1.0.0",
+      ...meta,
+    };
   }
-  
+
   return response;
 }
 
@@ -60,22 +61,17 @@ export function createErrorResponse(
 ): ErrorResponse {
   const response: ErrorResponse = {
     success: false,
-    error,
-    message: error,
+    error: {
+      code: code || "UNKNOWN_ERROR",
+      message: error,
+      details,
+    },
   };
-  
-  if (code) {
-    response.code = code;
-  }
-  
-  if (details) {
-    response.details = details;
-  }
-  
+
   if (statusCode) {
     (response as any).statusCode = statusCode;
   }
-  
+
   return response;
 }
 
@@ -96,11 +92,18 @@ export function createPaginatedResponse<T>(
   },
   message?: string
 ): PaginatedResponse<T> {
+  const totalPages = Math.ceil(pagination.total / pagination.limit);
+
   return {
-    success: true,
     data,
-    pagination,
-    message,
+    pagination: {
+      page: pagination.page,
+      limit: pagination.limit,
+      total: pagination.total,
+      total_pages: totalPages,
+      has_next: pagination.page < totalPages,
+      has_prev: pagination.page > 1,
+    },
   };
 }
 
@@ -114,14 +117,16 @@ export function createValidationErrorResponse(
   errors: Record<string, string[]>,
   message: string = "Validation failed"
 ): ValidationErrorResponse {
-  return {
-    success: false,
-    error: message,
-    message,
+  const validationErrors = Object.entries(errors).map(([field, messages]) => ({
+    field,
+    message: messages.join(", "),
+    value: undefined,
     code: "VALIDATION_ERROR",
-    details: {
-      validation_errors: errors,
-    },
+  }));
+
+  return {
+    valid: false,
+    errors: validationErrors,
   };
 }
 
@@ -135,15 +140,11 @@ export function createNotFoundResponse(
   resource: string,
   id?: string
 ): ErrorResponse {
-  const message = id 
+  const message = id
     ? `${resource} with ID '${id}' not found`
     : `${resource} not found`;
-    
-  return createErrorResponse(
-    message,
-    "NOT_FOUND",
-    { resource, id }
-  );
+
+  return createErrorResponse(message, "NOT_FOUND", { resource, id });
 }
 
 /**
@@ -156,11 +157,7 @@ export function createConflictResponse(
   message: string,
   details?: Record<string, any>
 ): ErrorResponse {
-  return createErrorResponse(
-    message,
-    "CONFLICT",
-    details
-  );
+  return createErrorResponse(message, "CONFLICT", details);
 }
 
 /**
@@ -171,10 +168,7 @@ export function createConflictResponse(
 export function createUnauthorizedResponse(
   message: string = "Unauthorized"
 ): ErrorResponse {
-  return createErrorResponse(
-    message,
-    "UNAUTHORIZED"
-  );
+  return createErrorResponse(message, "UNAUTHORIZED");
 }
 
 /**
@@ -185,10 +179,7 @@ export function createUnauthorizedResponse(
 export function createForbiddenResponse(
   message: string = "Forbidden"
 ): ErrorResponse {
-  return createErrorResponse(
-    message,
-    "FORBIDDEN"
-  );
+  return createErrorResponse(message, "FORBIDDEN");
 }
 
 /**
@@ -201,11 +192,9 @@ export function createRateLimitResponse(
   retryAfter: number,
   message: string = "Rate limit exceeded"
 ): ErrorResponse {
-  return createErrorResponse(
-    message,
-    "RATE_LIMIT_EXCEEDED",
-    { retry_after: retryAfter }
-  );
+  return createErrorResponse(message, "RATE_LIMIT_EXCEEDED", {
+    retry_after: retryAfter,
+  });
 }
 
 /**
@@ -220,16 +209,12 @@ export function createServiceUnavailableResponse(
 ): ErrorResponse {
   const message = `${service} is currently unavailable`;
   const details: Record<string, any> = { service };
-  
+
   if (retryAfter) {
     details.retry_after = retryAfter;
   }
-  
-  return createErrorResponse(
-    message,
-    "SERVICE_UNAVAILABLE",
-    details
-  );
+
+  return createErrorResponse(message, "SERVICE_UNAVAILABLE", details);
 }
 
 /**
@@ -264,8 +249,12 @@ export function createResponseWithMeta<T>(
   return {
     success: true,
     data,
-    meta,
-    message,
+    meta: {
+      timestamp: new Date().toISOString(),
+      request_id: crypto.randomUUID(),
+      version: "1.0.0",
+      ...meta,
+    },
   };
 }
 

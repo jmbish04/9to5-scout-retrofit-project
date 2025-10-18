@@ -120,6 +120,22 @@ export async function handleApiRequest(
     );
   }
 
+  // FastAPI Integration Routes
+  if (url.pathname.startsWith("/api/v1/")) {
+    const { fastapiRoutes } = await import(
+      "../domains/integrations/fastapi/fastapi.routes"
+    );
+    return fastapiRoutes.fetch(request, env, ctx);
+  }
+
+  // Render API Routes (Cloudflare Browser Rendering API)
+  if (url.pathname.startsWith("/api/render/")) {
+    const { renderApiRoutes } = await import(
+      "../domains/integrations/browser/render-api.routes"
+    );
+    return renderApiRoutes.fetch(request, env, ctx);
+  }
+
   const isScraperEndpoint = url.pathname.startsWith("/api/scraper/");
   if (request.method === "OPTIONS" && isScraperEndpoint) {
     return handleScraperOptions();

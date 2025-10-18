@@ -35,9 +35,11 @@ export { JobMonitorWorkflow } from './domains/workflows/workflow-classes/job-mon
 export * from './domains/agents';
 export * from './domains/companies';
 export * from './domains/documents';
+export * from './domains/interview';
 export * from './domains/monitoring';
 export * from './domains/scraping';
 export * from './domains/sites';
+export * from './domains/stats';
 export * from './domains/workflows';
 
 // Re-exports of shared utilities

@@ -180,13 +180,16 @@ export class ObjectUtils {
 
     for (let i = 0; i < keys.length - 1; i++) {
       const key = keys[i];
-      if (!this.isObject(current[key])) {
+      if (!key || !this.isObject((current as any)[key])) {
         return result;
       }
-      current = { ...current[key] };
+      current = { ...(current as any)[key] };
     }
 
-    delete current[keys[keys.length - 1]];
+    const lastKey = keys[keys.length - 1];
+    if (lastKey) {
+      delete (current as any)[lastKey];
+    }
     return result;
   }
 
@@ -268,7 +271,7 @@ export class ObjectUtils {
    */
   static mergeAll<T extends object>(...objects: T[]): T {
     if (objects.length === 0) return {} as T;
-    if (objects.length === 1) return objects[0];
+    if (objects.length === 1) return objects[0] || ({} as T);
 
     return objects.reduce((result, obj) => this.merge(result, obj), {} as T);
   }
@@ -564,13 +567,17 @@ export class ObjectUtils {
 
       for (let i = 0; i < keys.length - 1; i++) {
         const k = keys[i];
+        if (!k) continue;
         if (!(k in current)) {
           current[k] = {};
         }
         current = current[k];
       }
 
-      current[keys[keys.length - 1]] = value;
+      const lastKey = keys[keys.length - 1];
+      if (lastKey) {
+        current[lastKey] = value;
+      }
     }
 
     return result;

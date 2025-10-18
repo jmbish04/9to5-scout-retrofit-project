@@ -12,6 +12,7 @@
  */
 
 // Agent Classes
+export { CareerCoachAgent } from "./career-coach-agent";
 export { CompanyIntelligenceAgent } from "./company-intelligence-agent";
 export { EmailProcessorAgent } from "./email-processor-agent";
 export { GenericAgent } from "./generic_agent";

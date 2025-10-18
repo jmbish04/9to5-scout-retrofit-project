@@ -96,6 +96,7 @@ export interface ApiResponse<T = unknown> {
     timestamp: string;
     request_id: string;
     version: string;
+    [key: string]: unknown;
   };
 }
 
@@ -114,6 +115,7 @@ export interface ErrorResponse {
     timestamp: string;
     request_id: string;
     version: string;
+    [key: string]: unknown;
   };
 }
 
@@ -127,6 +129,7 @@ export interface SuccessResponse<T = unknown> {
     timestamp: string;
     request_id: string;
     version: string;
+    [key: string]: unknown;
   };
 }
 
@@ -567,3 +570,41 @@ export interface FormState<T = Record<string, unknown>> {
   submitting: boolean;
   submitted: boolean;
 }
+
+/**
+ * Search configuration
+ */
+export interface SearchConfig {
+  id: string;
+  name: string;
+  keywords: string;
+  locations: string;
+  include_domains: string;
+  exclude_domains: string;
+  min_salary?: number;
+  max_salary?: number;
+  job_type?: string;
+  experience_level?: string;
+  posted_date?: string;
+  remote?: boolean;
+  company_name?: string;
+  search_engine?: string;
+  gl?: string;
+  hl?: string;
+  age?: number;
+  start?: number;
+  num?: number;
+  min_comp_total?: number;
+  created_at?: string;
+  updated_at?: string;
+}
+
+/**
+ * Paginated response (alias for PaginationResponse)
+ */
+export type PaginatedResponse<T> = PaginationResponse<T>;
+
+/**
+ * Validation error response (alias for ValidationResponse)
+ */
+export type ValidationErrorResponse = ValidationResponse;

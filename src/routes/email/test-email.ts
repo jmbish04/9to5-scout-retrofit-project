@@ -3,7 +3,7 @@
  * Provides a REST API endpoint to test email processing without actual email routing
  */
 
-import type { Env } from "../../lib/env";
+import type { Env } from "../../domains/config/env/env.config";
 
 export async function handleTestEmail(
   request: Request,

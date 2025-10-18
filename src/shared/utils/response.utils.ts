@@ -46,7 +46,7 @@ export class ResponseUtils {
   static error(
     code: string,
     message: string,
-    statusCode = HTTP_STATUS.INTERNAL_SERVER_ERROR,
+    statusCode: number = HTTP_STATUS.INTERNAL_SERVER_ERROR,
     details?: Record<string, unknown>
   ): ErrorResponse {
     return {
@@ -129,6 +129,9 @@ export class ResponseUtils {
     );
     if (retryAfter) {
       response.meta = {
+        timestamp: new Date().toISOString(),
+        request_id: crypto.randomUUID(),
+        version: "1.0.0",
         ...response.meta,
         retry_after: retryAfter,
       };
@@ -168,7 +171,7 @@ export class ResponseUtils {
     data: T,
     message = API_MESSAGES.CREATED
   ): SuccessResponse<T> {
-    return this.success(data, message, HTTP_STATUS.CREATED);
+    return this.success(data, message);
   }
 
   /**
@@ -178,21 +181,21 @@ export class ResponseUtils {
     data: T,
     message = API_MESSAGES.UPDATED
   ): SuccessResponse<T> {
-    return this.success(data, message, HTTP_STATUS.OK);
+    return this.success(data, message);
   }
 
   /**
    * Creates a deleted response
    */
   static deleted(message = API_MESSAGES.DELETED): SuccessResponse<null> {
-    return this.success(null, message, HTTP_STATUS.NO_CONTENT);
+    return this.success(null, message);
   }
 
   /**
    * Creates a no content response
    */
   static noContent(): SuccessResponse<null> {
-    return this.success(null, "", HTTP_STATUS.NO_CONTENT);
+    return this.success(null, "");
   }
 
   /**
@@ -299,7 +302,7 @@ export class ResponseUtils {
     message: string,
     statusCode: number
   ): SuccessResponse<T> {
-    return this.success(data, message, statusCode);
+    return this.success(data, message);
   }
 
   /**
@@ -312,6 +315,9 @@ export class ResponseUtils {
     return {
       ...response,
       meta: {
+        timestamp: new Date().toISOString(),
+        request_id: crypto.randomUUID(),
+        version: "1.0.0",
         ...response.meta,
         ...metadata,
       },
@@ -330,6 +336,9 @@ export class ResponseUtils {
     return {
       ...response,
       meta: {
+        timestamp: new Date().toISOString(),
+        request_id: crypto.randomUUID(),
+        version: "1.0.0",
         ...response.meta,
         cache: {
           ttl,
@@ -352,6 +361,9 @@ export class ResponseUtils {
     return {
       ...response,
       meta: {
+        timestamp: new Date().toISOString(),
+        request_id: crypto.randomUUID(),
+        version: "1.0.0",
         ...response.meta,
         rate_limit: {
           limit,
@@ -376,6 +388,9 @@ export class ResponseUtils {
     return {
       ...response,
       meta: {
+        timestamp: new Date().toISOString(),
+        request_id: crypto.randomUUID(),
+        version: "1.0.0",
         ...response.meta,
         pagination: {
           page,

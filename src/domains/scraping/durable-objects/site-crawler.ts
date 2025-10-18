@@ -1,4 +1,4 @@
-import type { Env } from "../env";
+import type { Env } from "../../../config/env/env.config";
 
 type DurableObjectState = any;
 
@@ -54,7 +54,7 @@ export class SiteCrawler {
     await this.state.storage.put("last_activity", new Date().toISOString());
     await this.state.storage.put("status", "discovering");
 
-    const { discoverJobUrls } = await import("../crawl");
+    const { discoverJobUrls } = await import("../../../lib/crawl");
     const urls = await discoverJobUrls(base_url, search_terms || []);
 
     await this.state.storage.put("discovered_urls", urls);
@@ -94,7 +94,7 @@ export class SiteCrawler {
 
     const batchUrls = urls.slice(crawledCount, crawledCount + batch_size);
 
-    const { crawlJobs } = await import("../crawl");
+    const { crawlJobs } = await import("../../../lib/crawl");
     const jobs = await crawlJobs(this.env, batchUrls, siteId);
 
     const newCrawledCount = crawledCount + batchUrls.length;
@@ -131,7 +131,7 @@ export class SiteCrawler {
       console.log(`🔗 Processing ${urls.length} job URLs from ${source}...`);
 
       // Use the new generic job processing service
-      const { submitJobUrlsForProcessing } = await import("../job-processing");
+      const { submitJobUrlsForProcessing } = await import("../../../lib/job-processing");
       const result = await submitJobUrlsForProcessing(this.env, {
         urls,
         source,

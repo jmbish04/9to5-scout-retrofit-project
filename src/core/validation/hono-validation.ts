@@ -143,3 +143,42 @@ export function validateParams(schema: z.ZodSchema) {
     }
   };
 }
+
+/**
+ * Request query validation middleware
+ */
+export function validateQuery(schema: z.ZodSchema) {
+  return async (c: Context, next: Next) => {
+    try {
+      const query = c.req.query();
+      const validated = schema.parse(query);
+      c.set("validatedQuery", validated);
+      await next();
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return c.json(
+          { error: "Query validation error", details: error.issues },
+          400
+        );
+      }
+      return c.json({ error: "Invalid query parameters" }, 400);
+    }
+  };
+}
+
+/**
+ * Helper function to get validated query from context
+ */
+export function getValidatedQuery(c: Context): any {
+  return c.get("validatedQuery");
+}
+
+/**
+ * Validates query parameters using Zod schema
+ */
+export function validateQuery<T extends z.ZodTypeAny>(
+  schema: T,
+  query: Record<string, string | string[] | undefined>
+): z.infer<T> {
+  return schema.parse(query);
+}

@@ -10,7 +10,7 @@
  */
 
 import { Agent } from "agents";
-import type { Env } from "../env";
+import type { Env } from "../../config/env/env.config";
 
 export interface JobMonitorState {
   status: "idle" | "processing" | "error" | "completed";

@@ -1,0 +1,94 @@
+-- Migration 015: Enhance Existing Queues and Add Python Clients
+-- Enhances existing scrape_queue and job_processing_queue tables with missing fields
+-- Adds python_clients table for FastAPI integration
+
+PRAGMA foreign_keys=ON;
+
+-- First, let's check which scrape_queue table exists and enhance it
+-- We'll add missing fields to the existing scrape_queue table
+
+-- Add missing fields to scrape_queue (if they don't exist)
+-- Note: SQLite doesn't support ALTER COLUMN, so we'll add new columns
+
+-- Add job_id field to scrape_queue if it doesn't exist
+ALTER TABLE scrape_queue ADD COLUMN job_id TEXT;
+ALTER TABLE scrape_queue ADD COLUMN job_type TEXT CHECK(job_type IN ('scrape_job', 'autonomous_scrape', 'monitor_job'));
+ALTER TABLE scrape_queue ADD COLUMN context TEXT;
+ALTER TABLE scrape_queue ADD COLUMN max_tasks INTEGER DEFAULT 1;
+ALTER TABLE scrape_queue ADD COLUMN started_at TEXT;
+ALTER TABLE scrape_queue ADD COLUMN completed_at TEXT;
+ALTER TABLE scrape_queue ADD COLUMN error_message TEXT;
+ALTER TABLE scrape_queue ADD COLUMN retry_count INTEGER DEFAULT 0;
+ALTER TABLE scrape_queue ADD COLUMN max_retries INTEGER DEFAULT 3;
+ALTER TABLE scrape_queue ADD COLUMN metadata TEXT; -- JSON metadata
+ALTER TABLE scrape_queue ADD COLUMN last_claimed_at TEXT;
+
+-- Add foreign key constraint for job_id if it doesn't exist
+-- Note: SQLite doesn't support adding foreign keys after table creation
+-- This would need to be handled in application code
+
+-- Enhance job_processing_queue with additional fields
+ALTER TABLE job_processing_queue ADD COLUMN priority INTEGER DEFAULT 0;
+ALTER TABLE job_processing_queue ADD COLUMN retry_count INTEGER DEFAULT 0;
+ALTER TABLE job_processing_queue ADD COLUMN max_retries INTEGER DEFAULT 3;
+ALTER TABLE job_processing_queue ADD COLUMN started_at TEXT;
+ALTER TABLE job_processing_queue ADD COLUMN completed_at TEXT;
+ALTER TABLE job_processing_queue ADD COLUMN processing_time_ms INTEGER;
+
+-- Create python_clients table for FastAPI integration
+CREATE TABLE IF NOT EXISTS python_clients (
+  id TEXT PRIMARY KEY,
+  client_name TEXT NOT NULL,
+  client_type TEXT CHECK(client_type IN ('scraper', 'monitor', 'analyzer')) NOT NULL,
+  status TEXT CHECK(status IN ('active', 'inactive', 'error', 'maintenance')) DEFAULT 'active',
+  last_seen TEXT DEFAULT CURRENT_TIMESTAMP,
+  last_poll TEXT,
+  api_key TEXT NOT NULL,
+  capabilities TEXT, -- JSON array of client capabilities
+  version TEXT,
+  environment TEXT, -- 'development', 'staging', 'production'
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+  updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+  error_count INTEGER DEFAULT 0,
+  success_count INTEGER DEFAULT 0,
+  metadata TEXT -- JSON metadata for the client
+);
+
+-- Create job_processing_results table for tracking results
+CREATE TABLE IF NOT EXISTS job_processing_results (
+  id TEXT PRIMARY KEY,
+  queue_id TEXT, -- Can reference either scrape_queue or job_processing_queue
+  job_id TEXT,
+  status TEXT CHECK(status IN ('completed', 'failed', 'partial')) NOT NULL,
+  results_count INTEGER DEFAULT 0,
+  processing_time_ms INTEGER,
+  scraped_at TEXT DEFAULT CURRENT_TIMESTAMP,
+  error_message TEXT,
+  raw_data TEXT, -- JSON raw data from scraping
+  processed_data TEXT, -- JSON processed data
+  metadata TEXT, -- JSON additional metadata
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE
+);
+
+-- Add indexes for performance
+CREATE INDEX IF NOT EXISTS idx_scrape_queue_job_id ON scrape_queue(job_id);
+CREATE INDEX IF NOT EXISTS idx_scrape_queue_job_type ON scrape_queue(job_type);
+CREATE INDEX IF NOT EXISTS idx_scrape_queue_started_at ON scrape_queue(started_at);
+CREATE INDEX IF NOT EXISTS idx_scrape_queue_completed_at ON scrape_queue(completed_at);
+CREATE INDEX IF NOT EXISTS idx_scrape_queue_retry_count ON scrape_queue(retry_count);
+
+CREATE INDEX IF NOT EXISTS idx_job_processing_queue_priority ON job_processing_queue(priority DESC);
+CREATE INDEX IF NOT EXISTS idx_job_processing_queue_started_at ON job_processing_queue(started_at);
+CREATE INDEX IF NOT EXISTS idx_job_processing_queue_completed_at ON job_processing_queue(completed_at);
+CREATE INDEX IF NOT EXISTS idx_job_processing_queue_retry_count ON job_processing_queue(retry_count);
+
+CREATE INDEX IF NOT EXISTS idx_python_clients_status ON python_clients(status);
+CREATE INDEX IF NOT EXISTS idx_python_clients_last_seen ON python_clients(last_seen);
+CREATE INDEX IF NOT EXISTS idx_python_clients_client_type ON python_clients(client_type);
+CREATE INDEX IF NOT EXISTS idx_python_clients_api_key ON python_clients(api_key);
+
+CREATE INDEX IF NOT EXISTS idx_job_processing_results_queue_id ON job_processing_results(queue_id);
+CREATE INDEX IF NOT EXISTS idx_job_processing_results_status ON job_processing_results(status);
+CREATE INDEX IF NOT EXISTS idx_job_processing_results_scraped_at ON job_processing_results(scraped_at);
+CREATE INDEX IF NOT EXISTS idx_job_processing_results_job_id ON job_processing_results(job_id);
