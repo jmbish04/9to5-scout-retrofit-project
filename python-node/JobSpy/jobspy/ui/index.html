@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JobSpy Scraper Logs</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #4caf50;
+        }
+        #logs {
+            background-color: #2a2a2a;
+            border: 1px solid #444;
+            border-radius: 5px;
+            padding: 15px;
+            height: 80vh;
+            overflow-y: scroll;
+            white-space: pre-wrap;
+            font-family: "SF Mono", "Monaco", "Consolas", "Liberation Mono", "Courier New", monospace;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .log-entry {
+            padding: 2px 0;
+        }
+        .log-entry.info { color: #e0e0e0; }
+        .log-entry.warning { color: #ffeb3b; }
+        .log-entry.error { color: #f44336; font-weight: bold; }
+        #status {
+            margin-top: 10px;
+            font-style: italic;
+        }
+        .connected { color: #4caf50; }
+        .disconnected { color: #f44336; }
+    </style>
+</head>
+<body>
+    <h1>JobSpy Real-Time Logs</h1>
+    <div id="logs"></div>
+    <div id="status" class="disconnected">Connecting...</div>
+
+    <script>
+        const logsContainer = document.getElementById('logs');
+        const statusElement = document.getElementById('status');
+        let socket;
+
+        function connect() {
+            const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = `${wsProtocol}//${window.location.host}/ws`;
+            
+            socket = new WebSocket(wsUrl);
+
+            socket.onopen = function(event) {
+                console.log("WebSocket connection established");
+                statusElement.textContent = "Connected";
+                statusElement.className = "connected";
+            };
+
+            socket.onmessage = function(event) {
+                const message = event.data;
+                const logEntry = document.createElement('div');
+                logEntry.className = 'log-entry';
+                
+                if (message.includes('INFO')) {
+                    logEntry.classList.add('info');
+                } else if (message.includes('WARNING')) {
+                    logEntry.classList.add('warning');
+                } else if (message.includes('ERROR')) {
+                    logEntry.classList.add('error');
+                }
+                
+                logEntry.textContent = message;
+                logsContainer.appendChild(logEntry);
+                logsContainer.scrollTop = logsContainer.scrollHeight; // Auto-scroll
+            };
+
+            socket.onclose = function(event) {
+                console.log("WebSocket connection closed. Reconnecting in 5 seconds...");
+                statusElement.textContent = "Disconnected. Retrying...";
+                statusElement.className = "disconnected";
+                setTimeout(connect, 5000);
+            };
+
+            socket.onerror = function(error) {
+                console.error("WebSocket error:", error);
+                socket.close();
+            };
+        }
+
+        connect();
+    </script>
+</body>
+</html>
