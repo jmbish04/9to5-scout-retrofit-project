@@ -361,7 +361,9 @@ export class EmailProcessorAgent extends Agent<Env> {
 
     try {
       // Use the centralized job processing system
-      const { submitJobUrlsForProcessing } = await import("../../lib/job-processing");
+      const { submitJobUrlsForProcessing } = await import(
+        "../../lib/job-processing"
+      );
 
       const result = await submitJobUrlsForProcessing(this.env, {
         urls: actualJobLinks,

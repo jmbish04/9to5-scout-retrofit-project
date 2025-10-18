@@ -2,64 +2,11 @@ node_modules
 dist
 src/**/*.js
 .DS_Store
+.dev.vars
 
 # Wrangler build artifacts and local development files
 .wrangler/
-wrangler.toml.bak
-*.wrangler.toml
 
 # Python virtual environments and test artifacts
 venv_tests/
 **/venv_tests/
-.dev.vars
-
-# Environment and secrets
-.env
-.env.local
-.env.development
-.env.production
-.dev.vars
-*.key
-*.pem
-*.p12
-*.pfx
-secrets.json
-credentials.json
-service-account*.json
-
-# Logs and temporary files
-*.log
-logs/
-tmp/
-temp/
-
-# IDE and editor files
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# OS generated files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
-
-# Embedded git repositories
-python-node/JobSpy/

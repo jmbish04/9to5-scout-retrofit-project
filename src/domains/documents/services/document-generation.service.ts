@@ -9,7 +9,9 @@ import type { Env } from "../../../config/env";
 import type {
   ApplicantDocumentWithSections,
   DocumentGenerationInput,
+  DocumentPurpose,
   DocumentTemplate,
+  DocumentType,
   ResumeSections,
 } from "../types/document.types";
 
@@ -70,8 +72,10 @@ export class DocumentGenerationService {
     };
 
     // Use the document storage service to create the document
-    const { createDocument } = await import("./document-storage.service");
-    const storageService = createDocument(this.env);
+    const { createDocumentStorageService } = await import(
+      "./document-storage.service"
+    );
+    const storageService = createDocumentStorageService(this.env);
 
     return await storageService.createDocument(documentInput);
   }
@@ -353,7 +357,7 @@ Return the cover letter in markdown format.`;
     `
     )
       .bind(...params)
-      .all<DocumentTemplate>();
+      .all();
 
     return templates || [];
   }
@@ -372,7 +376,7 @@ Return the cover letter in markdown format.`;
     `
     )
       .bind(templateId)
-      .first<DocumentTemplate>();
+      .first();
 
     if (!template) {
       throw new Error("Template not found");
@@ -400,16 +404,18 @@ Return the cover letter in markdown format.`;
     // Create the document
     const documentInput = {
       user_id: userId,
-      doc_type: template.doc_type,
-      purpose: "job_related",
+      doc_type: template.doc_type as DocumentType,
+      purpose: "job_related" as DocumentPurpose,
       job_id: jobId || null,
       title: `${template.name} - ${new Date().toLocaleDateString()}`,
       content_md: generatedContent,
       sections: generatedSections,
     };
 
-    const { createDocument } = await import("./document-storage.service");
-    const storageService = createDocument(this.env);
+    const { createDocumentStorageService } = await import(
+      "./document-storage.service"
+    );
+    const storageService = createDocumentStorageService(this.env);
 
     return await storageService.createDocument(documentInput);
   }

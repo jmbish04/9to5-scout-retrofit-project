@@ -15,9 +15,8 @@ export { BrowserRenderingService } from "./browser-rendering.service";
 export type {
   BrowserRenderingEnv,
   BrowserRenderingResponse,
-  ScreenshotOptions,
-  ViewportOptions,
 } from "./browser-rendering.service";
+export type { ViewportOptions } from "./browser.types";
 
 // Render API Service (All 8 Cloudflare Endpoints)
 export { RenderAPIService, createRenderAPIService } from "./render-api.service";
@@ -44,7 +43,6 @@ export { browserRoutes } from "./browser.routes";
 export { renderApiRoutes } from "./render-api.routes";
 
 // Types
-export type { BrowserTypes } from "./browser.types";
 export type {
   HealthCheckResponse,
   RenderAPIError,

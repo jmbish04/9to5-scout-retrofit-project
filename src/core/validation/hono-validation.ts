@@ -174,9 +174,9 @@ export function getValidatedQuery(c: Context): any {
 }
 
 /**
- * Validates query parameters using Zod schema
+ * Validates query parameters using Zod schema (standalone function)
  */
-export function validateQuery<T extends z.ZodTypeAny>(
+export function validateQueryParams<T extends z.ZodTypeAny>(
   schema: T,
   query: Record<string, string | string[] | undefined>
 ): z.infer<T> {

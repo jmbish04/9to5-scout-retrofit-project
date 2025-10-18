@@ -11,8 +11,8 @@
 import {
   getSearchConfigs,
   saveSearchConfig,
-} from "../../core/database/d1-client";
-import type { SearchConfig } from "../../shared/types/common.types";
+} from "../../../core/database/d1-client";
+import type { SearchConfig } from "../../../shared/types/common.types";
 import type { Env } from "../env/env.config";
 
 /**

@@ -3,49 +3,23 @@
 
 PRAGMA foreign_keys=ON;
 
--- Main applicant profiles table
-CREATE TABLE IF NOT EXISTS applicant_profiles (
-  id TEXT PRIMARY KEY,
-  user_id TEXT UNIQUE NOT NULL, -- External user identifier
-  email TEXT UNIQUE NOT NULL,
-  first_name TEXT,
-  last_name TEXT,
-  phone TEXT,
-  linkedin_url TEXT,
-  github_url TEXT,
-  portfolio_url TEXT,
-  location TEXT,
-  timezone TEXT,
-  current_title TEXT,
-  current_company TEXT,
-  years_experience INTEGER,
-  is_active BOOLEAN DEFAULT 1,
-  is_confirmed BOOLEAN DEFAULT 0, -- For human-in-the-loop approval
-  created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-  updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
-  last_activity_at TEXT DEFAULT CURRENT_TIMESTAMP
-);
+-- Enhance existing applicant profiles table with additional columns
+-- The table already exists from migration 005, so we'll add missing columns
+ALTER TABLE applicant_profiles ADD COLUMN first_name TEXT;
+ALTER TABLE applicant_profiles ADD COLUMN last_name TEXT;
+ALTER TABLE applicant_profiles ADD COLUMN linkedin_url TEXT;
+ALTER TABLE applicant_profiles ADD COLUMN github_url TEXT;
+ALTER TABLE applicant_profiles ADD COLUMN portfolio_url TEXT;
+ALTER TABLE applicant_profiles ADD COLUMN location TEXT;
+ALTER TABLE applicant_profiles ADD COLUMN timezone TEXT;
+ALTER TABLE applicant_profiles ADD COLUMN current_company TEXT;
+ALTER TABLE applicant_profiles ADD COLUMN is_active BOOLEAN DEFAULT 1;
+ALTER TABLE applicant_profiles ADD COLUMN is_confirmed BOOLEAN DEFAULT 0; -- For human-in-the-loop approval
+ALTER TABLE applicant_profiles ADD COLUMN last_activity_at TEXT DEFAULT CURRENT_TIMESTAMP;
 
--- Job history table
-CREATE TABLE IF NOT EXISTS job_history (
-  id TEXT PRIMARY KEY,
-  profile_id TEXT NOT NULL,
-  company_name TEXT NOT NULL,
-  job_title TEXT NOT NULL,
-  start_date TEXT NOT NULL,
-  end_date TEXT, -- NULL for current position
-  is_current BOOLEAN DEFAULT 0,
-  location TEXT,
-  description TEXT,
-  achievements TEXT, -- JSON array of achievements
-  skills_used TEXT, -- JSON array of skills
-  salary_range TEXT, -- e.g., "80000-100000"
-  employment_type TEXT, -- 'full-time', 'part-time', 'contract', 'internship'
-  is_confirmed BOOLEAN DEFAULT 0,
-  created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-  updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (profile_id) REFERENCES applicant_profiles(id) ON DELETE CASCADE
-);
+-- Job history table already exists from migration 005
+-- We'll add any missing columns if needed
+-- Note: The existing job_history table uses applicant_id instead of profile_id
 
 -- Skills table
 CREATE TABLE IF NOT EXISTS skills (
@@ -172,13 +146,15 @@ CREATE TABLE IF NOT EXISTS interview_prep_data (
 -- Create indexes for performance
 CREATE INDEX IF NOT EXISTS idx_applicant_profiles_user_id ON applicant_profiles(user_id);
 CREATE INDEX IF NOT EXISTS idx_applicant_profiles_email ON applicant_profiles(email);
-CREATE INDEX IF NOT EXISTS idx_applicant_profiles_is_active ON applicant_profiles(is_active);
-CREATE INDEX IF NOT EXISTS idx_applicant_profiles_is_confirmed ON applicant_profiles(is_confirmed);
+-- Note: These indexes are created after the ALTER TABLE statements above
+-- CREATE INDEX IF NOT EXISTS idx_applicant_profiles_is_active ON applicant_profiles(is_active);
+-- CREATE INDEX IF NOT EXISTS idx_applicant_profiles_is_confirmed ON applicant_profiles(is_confirmed);
 
-CREATE INDEX IF NOT EXISTS idx_job_history_profile_id ON job_history(profile_id);
-CREATE INDEX IF NOT EXISTS idx_job_history_company_name ON job_history(company_name);
-CREATE INDEX IF NOT EXISTS idx_job_history_is_current ON job_history(is_current);
-CREATE INDEX IF NOT EXISTS idx_job_history_is_confirmed ON job_history(is_confirmed);
+-- Note: job_history table already exists from migration 005, using applicant_id instead of profile_id
+-- CREATE INDEX IF NOT EXISTS idx_job_history_profile_id ON job_history(profile_id);
+-- CREATE INDEX IF NOT EXISTS idx_job_history_company_name ON job_history(company_name);
+-- CREATE INDEX IF NOT EXISTS idx_job_history_is_current ON job_history(is_current);
+-- CREATE INDEX IF NOT EXISTS idx_job_history_is_confirmed ON job_history(is_confirmed);
 
 CREATE INDEX IF NOT EXISTS idx_skills_profile_id ON skills(profile_id);
 CREATE INDEX IF NOT EXISTS idx_skills_skill_name ON skills(skill_name);

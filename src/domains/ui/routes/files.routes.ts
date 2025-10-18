@@ -8,12 +8,12 @@
  * deletion, and metadata retrieval for various file types stored in R2 storage.
  */
 
-import type { Env } from "../../config/env";
 import {
   FileType,
   createFileMetadata,
   createR2Storage,
-} from "../../core/storage/r2-client";
+} from "../../../core/storage/r2-client";
+import type { Env } from "../../config/env";
 
 /**
  * Handles file upload requests with metadata tracking

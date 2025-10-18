@@ -1,9 +1,9 @@
-import type { Env } from '../../config/env';
-import { computeSHA256 } from '../../shared/utils/hash';
+import type { Env } from "../../config/env";
+import { computeSHA256 } from "../../shared/utils/hash";
 
 export interface VectorMetadata {
   document_id: number;
-  doc_type: 'resume' | 'cover_letter';
+  doc_type: "resume" | "cover_letter";
   user_id: string;
   job_id?: string | null;
   content_sha256: string;
@@ -16,19 +16,22 @@ export interface EmbeddingComputation {
   hash: string;
 }
 
-const DEFAULT_EMBEDDING_MODEL = '@cf/baai/bge-large-en-v1.5';
+const DEFAULT_EMBEDDING_MODEL = "@cf/baai/bge-large-en-v1.5";
 
 export function stripMarkdown(text: string): string {
   return text
-    .replace(/```[\s\S]*?```/g, ' ')
-    .replace(/`([^`]+)`/g, '$1')
-    .replace(/[#>*_\-]+/g, ' ')
-    .replace(/\[(.*?)\]\((.*?)\)/g, '$1')
-    .replace(/\s+/g, ' ')
+    .replace(/```[\s\S]*?```/g, " ")
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/[#>*_\-]+/g, " ")
+    .replace(/\[(.*?)\]\((.*?)\)/g, "$1")
+    .replace(/\s+/g, " ")
     .trim();
 }
 
-export async function computeEmbedding(env: Env, text: string): Promise<EmbeddingComputation | null> {
+export async function computeEmbedding(
+  env: Env,
+  text: string
+): Promise<EmbeddingComputation | null> {
   const cleanText = stripMarkdown(text);
   if (!cleanText) {
     return null;
@@ -75,7 +78,7 @@ export async function shouldReindex(
     const existingMetadata = existing[0].metadata as VectorMetadata;
     return existingMetadata.content_sha256 !== newHash;
   } catch (error) {
-    console.error('Error checking if should reindex:', error);
+    console.error("Error checking if should reindex:", error);
     return true; // On error, assume we should reindex
   }
 }
@@ -96,7 +99,7 @@ export async function searchSimilar(
     filter,
   });
 
-  return searchResult.matches.map(match => ({
+  return searchResult.matches.map((match: any) => ({
     id: match.id,
     score: match.score,
     metadata: match.metadata as VectorMetadata,

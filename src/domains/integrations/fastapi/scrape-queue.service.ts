@@ -10,6 +10,7 @@
  */
 
 import type { Env } from "../../config/env/env.config";
+import type { PollingResponse } from "./fastapi.service";
 
 /**
  * Environment interface for Scrape Queue Service
@@ -47,24 +48,13 @@ export interface ScrapeQueueJob {
 /**
  * Polling response for FastAPI
  */
-export interface PollingResponse {
-  action: "scrape_job" | "autonomous_scrape" | "no_action";
-  job?: {
-    job_id: string;
-    url: string;
-    site_id: string;
-  };
-  params?: {
-    context: string;
-    max_tasks: number;
-  };
-}
+// PollingResponse interface is exported from fastapi.service.ts
 
 /**
  * Scrape Queue Management Service
  *
  * Manages the scrape_queue table for FastAPI integration,
- * including job queuing, polling, and status updates.
+ * including job queuing, polling, and status updates.r
  */
 export class ScrapeQueueService {
   private env: ScrapeQueueServiceEnv;
@@ -94,7 +84,7 @@ export class ScrapeQueueService {
         .bind(maxJobs)
         .all();
 
-      const jobs = result.results as ScrapeQueueJob[];
+      const jobs = result.results as unknown as ScrapeQueueJob[];
 
       if (jobs.length === 0) {
         return {
@@ -104,6 +94,11 @@ export class ScrapeQueueService {
 
       // Take the first job
       const job = jobs[0];
+      if (!job) {
+        return {
+          action: "no_action",
+        };
+      }
 
       // Update job status to processing
       await this.updateJobStatus(job.id, "processing", {
@@ -112,7 +107,10 @@ export class ScrapeQueueService {
       });
 
       return {
-        action: job.job_type || "scrape_job",
+        action:
+          job.job_type === "monitor_job"
+            ? "scrape_job"
+            : job.job_type || "scrape_job",
         job: {
           job_id: job.id,
           url: job.url,
@@ -230,11 +228,11 @@ export class ScrapeQueueService {
         }
         if (additionalData.last_claimed_at) {
           updateFields.push("last_claimed_at = ?");
-          bindValues.push(additionalData.last_claimed_at);
+          bindValues.push(String(additionalData.last_claimed_at));
         }
         if (additionalData.retry_count !== undefined) {
           updateFields.push("retry_count = ?");
-          bindValues.push(additionalData.retry_count);
+          bindValues.push(String(additionalData.retry_count));
         }
       }
 
@@ -309,7 +307,7 @@ export class ScrapeQueueService {
         .bind(status, limit)
         .all();
 
-      return result.results as ScrapeQueueJob[];
+      return result.results as unknown as ScrapeQueueJob[];
     } catch (error) {
       console.error("Error getting jobs by status:", error);
       throw new Error(

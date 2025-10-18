@@ -43,9 +43,9 @@ binding = "MYBROWSER"
 # D1 database for job scraper
 [[d1_databases]]
 binding = "DB"
-database_name = "JOB_SCRAPER_DB"
-database_id = "11092798-a3d9-44b8-be5f-1835c0027887"
-preview_database_id = "11092798-a3d9-44b8-be5f-1835c0027887"  # Added missing preview_database_id
+database_name = "9to5-scout-v1"
+database_id = "531f918a-a699-4aa2-a646-70d31722a259"
+preview_database_id = "6ccf32bc-f2e3-4ff9-aeae-c1024ca540d0"  # Added missing preview_database_id
 migrations_dir = "migrations"  # Added migrations configuration
 migrations_table = "d1_migrations"
 
@@ -120,35 +120,21 @@ name = "change-analysis-workflow"
 binding = "CHANGE_ANALYSIS_WORKFLOW"
 class_name = "ChangeAnalysisWorkflow"
 
-# SiteCrawler and JobMonitor
+# All Durable Object classes in a single migration
 [[migrations]]
 tag = "v1"
-new_sqlite_classes = ["SiteCrawler", "JobMonitor"]
-
-# ScrapeSocket
-[[migrations]]
-tag = "v2"
-new_sqlite_classes = ["ScrapeSocket"]  # Changed from new_classes to new_sqlite_classes
-
-# GenericAgent for Cloudflare Agents SDK
-[[migrations]]
-tag = "v3"
-new_sqlite_classes = ["GenericAgent"]
-
-# EmailProcessorAgent for Cloudflare Agents SDK
-[[migrations]]
-tag = "v4"
-new_sqlite_classes = ["EmailProcessorAgent"]
-
-# New dedicated agents for Cloudflare Agents SDK
-[[migrations]]
-tag = "v5"
-new_sqlite_classes = ["JobMonitorAgent", "ResumeOptimizationAgent", "CompanyIntelligenceAgent", "InterviewPreparationAgent"]
-
-# Career Coach Agent for Cloudflare Agents SDK
-[[migrations]]
-tag = "v6"
-new_sqlite_classes = ["CareerCoachAgent"]
+new_sqlite_classes = [
+  "SiteCrawler", 
+  "JobMonitor", 
+  "ScrapeSocket", 
+  "GenericAgent", 
+  "EmailProcessorAgent", 
+  "JobMonitorAgent", 
+  "ResumeOptimizationAgent", 
+  "CompanyIntelligenceAgent", 
+  "InterviewPreparationAgent", 
+  "CareerCoachAgent"
+]
 
 # Triggers
 [triggers]

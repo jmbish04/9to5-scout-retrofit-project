@@ -9,16 +9,9 @@
  * @since 2024-01-01
  */
 
-/**
- * AI service environment interface
- */
-export interface AIServiceEnv {
-  AI: Ai;
-  VECTORIZE_INDEX: VectorizeIndex;
-  DEFAULT_MODEL_WEB_BROWSER: string;
-  DEFAULT_MODEL_REASONING: string;
-  EMBEDDING_MODEL: string;
-}
+import type { AIServiceEnv, ContentAnalysisResult } from "./ai.types";
+
+// AIServiceEnv is imported from ai.types.ts
 
 /**
  * Job extraction result interface
@@ -43,18 +36,7 @@ export interface JobExtractionResult {
 /**
  * Content analysis result interface
  */
-export interface ContentAnalysisResult {
-  summary: string;
-  key_points: string[];
-  sentiment: "positive" | "negative" | "neutral";
-  confidence: number;
-  categories: string[];
-  entities: Array<{
-    name: string;
-    type: string;
-    confidence: number;
-  }>;
-}
+// ContentAnalysisResult is imported from ai.types.ts
 
 /**
  * Text classification result interface

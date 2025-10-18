@@ -100,6 +100,10 @@ export class WebSocketService {
       const webSocketPair = new WebSocketPair();
       const [clientSocket, serverSocket] = Object.values(webSocketPair);
 
+      if (!serverSocket) {
+        throw new Error("Failed to create WebSocket pair");
+      }
+
       // Accept the WebSocket connection
       serverSocket.accept();
 

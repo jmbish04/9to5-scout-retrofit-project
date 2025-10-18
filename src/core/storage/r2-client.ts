@@ -1,3 +1,4 @@
+/// <reference path="../../worker-configuration.d.ts" />
 /**
  * Centralized R2 Storage Module
  *

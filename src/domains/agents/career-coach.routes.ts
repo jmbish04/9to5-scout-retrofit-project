@@ -35,7 +35,7 @@ const ProfileCreateSchema = z.object({
 
 const ProfileUpdateSchema = z.object({
   user_id: z.string().min(1),
-  updates: z.record(z.any()),
+  updates: z.record(z.string(), z.any()),
 });
 
 const DocumentAnalysisSchema = z.object({
@@ -56,7 +56,7 @@ const InterviewPrepSchema = z.object({
 
 const LinkedInConsultationSchema = z.object({
   linkedin_url: z.string().url(),
-  current_profile: z.record(z.any()).optional(),
+  current_profile: z.record(z.string(), z.any()).optional(),
 });
 
 const ApproveChangesSchema = z.object({
@@ -68,7 +68,7 @@ const ApproveChangesSchema = z.object({
 const ChatSchema = z.object({
   message: z.string().min(1),
   user_id: z.string().min(1),
-  context: z.record(z.any()).optional(),
+  context: z.record(z.string(), z.any()).optional(),
 });
 
 /**
@@ -109,7 +109,6 @@ careerCoachRoutes.get("/api/career-coach/profile", async (c) => {
     if (error instanceof z.ZodError) {
       return c.json(
         ResponseUtils.validationError(
-          "Invalid query parameters",
           error.issues.map((issue) => ({
             field: issue.path.join("."),
             message: issue.message,
@@ -160,7 +159,6 @@ careerCoachRoutes.post("/api/career-coach/profile", async (c) => {
     if (error instanceof z.ZodError) {
       return c.json(
         ResponseUtils.validationError(
-          "Invalid request body",
           error.issues.map((issue) => ({
             field: issue.path.join("."),
             message: issue.message,
@@ -211,7 +209,6 @@ careerCoachRoutes.put("/api/career-coach/profile", async (c) => {
     if (error instanceof z.ZodError) {
       return c.json(
         ResponseUtils.validationError(
-          "Invalid request body",
           error.issues.map((issue) => ({
             field: issue.path.join("."),
             message: issue.message,
@@ -267,7 +264,6 @@ careerCoachRoutes.delete("/api/career-coach/profile", async (c) => {
     if (error instanceof z.ZodError) {
       return c.json(
         ResponseUtils.validationError(
-          "Invalid query parameters",
           error.issues.map((issue) => ({
             field: issue.path.join("."),
             message: issue.message,
@@ -320,7 +316,6 @@ careerCoachRoutes.post("/api/career-coach/analyze-document", async (c) => {
     if (error instanceof z.ZodError) {
       return c.json(
         ResponseUtils.validationError(
-          "Invalid request body",
           error.issues.map((issue) => ({
             field: issue.path.join("."),
             message: issue.message,
@@ -373,7 +368,6 @@ careerCoachRoutes.post("/api/career-coach/interview-prep", async (c) => {
     if (error instanceof z.ZodError) {
       return c.json(
         ResponseUtils.validationError(
-          "Invalid request body",
           error.issues.map((issue) => ({
             field: issue.path.join("."),
             message: issue.message,
@@ -426,7 +420,6 @@ careerCoachRoutes.post("/api/career-coach/linkedin-consultation", async (c) => {
     if (error instanceof z.ZodError) {
       return c.json(
         ResponseUtils.validationError(
-          "Invalid request body",
           error.issues.map((issue) => ({
             field: issue.path.join("."),
             message: issue.message,
@@ -477,7 +470,6 @@ careerCoachRoutes.post("/api/career-coach/approve-changes", async (c) => {
     if (error instanceof z.ZodError) {
       return c.json(
         ResponseUtils.validationError(
-          "Invalid request body",
           error.issues.map((issue) => ({
             field: issue.path.join("."),
             message: issue.message,
@@ -528,7 +520,6 @@ careerCoachRoutes.post("/api/career-coach/chat", async (c) => {
     if (error instanceof z.ZodError) {
       return c.json(
         ResponseUtils.validationError(
-          "Invalid request body",
           error.issues.map((issue) => ({
             field: issue.path.join("."),
             message: issue.message,

@@ -63,7 +63,7 @@ const IssueSubmissionSchema = z.object({
   expected_behavior: z.string().min(1),
   actual_behavior: z.string().min(1),
   reproduction_steps: z.array(z.string()),
-  environment: z.record(z.any()),
+  environment: z.record(z.string(), z.any()),
 });
 
 /**
@@ -99,11 +99,11 @@ fastapiRoutes.get("/api/v1/poll-for-jobs", async (c) => {
     if (error instanceof z.ZodError) {
       return c.json(
         ResponseUtils.validationError(
-          "Invalid query parameters",
           error.issues.map((issue) => ({
             field: issue.path.join("."),
             message: issue.message,
-          }))
+          })),
+          "Validation error"
         ),
         400
       );
@@ -157,11 +157,11 @@ fastapiRoutes.post("/api/v1/submit-job", async (c) => {
     if (error instanceof z.ZodError) {
       return c.json(
         ResponseUtils.validationError(
-          "Invalid request body",
           error.issues.map((issue) => ({
             field: issue.path.join("."),
             message: issue.message,
-          }))
+          })),
+          "Validation error"
         ),
         400
       );
@@ -190,7 +190,7 @@ fastapiRoutes.post("/api/v1/jobs/:jobId/status", async (c) => {
   try {
     const jobId = c.req.param("jobId");
     if (!jobId) {
-      return c.json(ResponseUtils.badRequest("Job ID is required"), 400);
+      return c.json(ResponseUtils.badRequest("Invalid request"), 400);
     }
 
     const body = await c.req.json();
@@ -251,11 +251,11 @@ fastapiRoutes.post("/api/v1/jobs/:jobId/status", async (c) => {
     if (error instanceof z.ZodError) {
       return c.json(
         ResponseUtils.validationError(
-          "Invalid request body",
           error.issues.map((issue) => ({
             field: issue.path.join("."),
             message: issue.message,
-          }))
+          })),
+          "Validation error"
         ),
         400
       );
@@ -362,11 +362,11 @@ fastapiRoutes.post("/api/v1/issues", async (c) => {
     if (error instanceof z.ZodError) {
       return c.json(
         ResponseUtils.validationError(
-          "Invalid request body",
           error.issues.map((issue) => ({
             field: issue.path.join("."),
             message: issue.message,
-          }))
+          })),
+          "Validation error"
         ),
         400
       );
@@ -423,15 +423,12 @@ fastapiRoutes.get("/ws", async (c) => {
   try {
     const upgradeHeader = c.req.header("upgrade");
     if (upgradeHeader !== "websocket") {
-      return c.json(
-        ResponseUtils.badRequest("Expected WebSocket upgrade"),
-        400
-      );
+      return c.json(ResponseUtils.badRequest("Invalid request"), 400);
     }
 
     const client = c.req.query("client");
     if (client !== "python") {
-      return c.json(ResponseUtils.badRequest("Invalid client type"), 400);
+      return c.json(ResponseUtils.badRequest("Invalid request"), 400);
     }
 
     // Use WebSocket service to handle the connection

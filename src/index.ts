@@ -1,6 +1,7 @@
 import type { Env } from './domains/config/env/env.config';
 
 // Import all agents for Cloudflare Agents SDK
+import { CareerCoachAgent } from "./domains/agents/career-coach-agent";
 import { CompanyIntelligenceAgent } from "./domains/agents/company-intelligence-agent";
 import { EmailProcessorAgent } from "./domains/agents/email-processor-agent";
 import { GenericAgent } from "./domains/agents/generic_agent";
@@ -50,7 +51,7 @@ export * from './domains/config';
 export * from './domains/ui';
 
 // Export all Cloudflare Agents SDK agents
-export { CompanyIntelligenceAgent, EmailProcessorAgent, GenericAgent, InterviewPreparationAgent, JobMonitorAgent, ResumeOptimizationAgent };
+export { CareerCoachAgent, CompanyIntelligenceAgent, EmailProcessorAgent, GenericAgent, InterviewPreparationAgent, JobMonitorAgent, ResumeOptimizationAgent };
 
   export type { Env };
 

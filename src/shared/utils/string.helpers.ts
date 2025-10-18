@@ -10,6 +10,20 @@
  */
 
 /**
+ * Builds an R2 URL from bucket base URL and key
+ * @param bucketBaseUrl Base URL of the R2 bucket
+ * @param key Object key in the bucket
+ * @returns Full R2 URL
+ */
+export function buildR2Url(bucketBaseUrl: string, key: string): string {
+  const baseUrl = bucketBaseUrl.endsWith("/")
+    ? bucketBaseUrl.slice(0, -1)
+    : bucketBaseUrl;
+  const cleanKey = key.startsWith("/") ? key.slice(1) : key;
+  return `${baseUrl}/${cleanKey}`;
+}
+
+/**
  * String utility functions
  */
 export class StringUtils {

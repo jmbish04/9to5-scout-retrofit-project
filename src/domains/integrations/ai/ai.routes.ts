@@ -19,6 +19,7 @@ import {
   validateBody,
 } from "../../../core/validation/hono-validation";
 import { createAIService } from "./ai.service";
+import type { AIServiceEnv } from "./ai.types";
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -59,7 +60,7 @@ const VectorSearchRequestSchema = z.object({
 
 const StoreEmbeddingRequestSchema = z.object({
   text: z.string().min(1),
-  metadata: z.record(z.any()),
+  metadata: z.record(z.string(), z.any()),
 });
 
 // Routes
@@ -73,7 +74,7 @@ app.post(
   async (c) => {
     try {
       const { html, url, site } = getValidatedBody(c);
-      const service = createAIService(c.env);
+      const service = createAIService(c.env as AIServiceEnv);
       const result = await service.extractJob(html, url, site);
 
       if (!result) {
@@ -114,7 +115,7 @@ app.post(
   async (c) => {
     try {
       const { content, contentType } = getValidatedBody(c);
-      const service = createAIService(c.env);
+      const service = createAIService(c.env as AIServiceEnv);
       const result = await service.analyzeContent(content, contentType);
 
       return c.json({
@@ -145,7 +146,7 @@ app.post(
   async (c) => {
     try {
       const { text, categories } = getValidatedBody(c);
-      const service = createAIService(c.env);
+      const service = createAIService(c.env as AIServiceEnv);
       const result = await service.classifyText(text, categories);
 
       return c.json({
@@ -176,7 +177,7 @@ app.post(
   async (c) => {
     try {
       const { text, maxLength } = getValidatedBody(c);
-      const service = createAIService(c.env);
+      const service = createAIService(c.env as AIServiceEnv);
       const result = await service.summarizeText(text, maxLength);
 
       return c.json({
@@ -206,7 +207,7 @@ app.post(
 app.post("/embed-text", validateBody(EmbeddingRequestSchema), async (c) => {
   try {
     const { text } = getValidatedBody(c);
-    const service = createAIService(c.env);
+    const service = createAIService(c.env as AIServiceEnv);
     const embedding = await service.embedText(text);
 
     if (!embedding) {
@@ -247,7 +248,7 @@ app.post(
   async (c) => {
     try {
       const { query, topK } = getValidatedBody(c);
-      const service = createAIService(c.env);
+      const service = createAIService(c.env as AIServiceEnv);
       const results = await service.searchSimilar(query, topK);
 
       return c.json({
@@ -280,7 +281,7 @@ app.post(
   async (c) => {
     try {
       const { text, metadata } = getValidatedBody(c);
-      const service = createAIService(c.env);
+      const service = createAIService(c.env as AIServiceEnv);
       const result = await service.storeEmbedding(text, metadata);
 
       if (!result.success) {
@@ -369,7 +370,7 @@ app.get("/status", async (c) => {
 app.get("/health", async (c) => {
   try {
     // Test AI service availability
-    const service = createAIService(c.env);
+    const service = createAIService(c.env as AIServiceEnv);
     const testEmbedding = await service.embedText("test");
 
     const health = {

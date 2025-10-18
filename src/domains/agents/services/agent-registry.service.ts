@@ -1,28 +1,25 @@
 /**
  * @fileoverview Agent Registry Service
- * 
+ *
  * Centralized registry for managing agent configurations, types, and metadata.
  * Provides discovery, registration, and lookup capabilities for all available agents.
- * 
+ *
  * @author 9to5 Scout AI Team
  * @version 1.0.0
  * @since 2024-01-01
  */
 
 import type { Env } from "../../../config/env";
-import type {
-  AgentConfig,
-  AgentRegistryEntry,
-  AgentType,
-} from "../types/agent.types";
+import type { AgentRegistryEntry } from "../types/agent.types";
+import { AgentType } from "../types/agent.types";
 
 /**
  * Agent Registry Service
- * 
+ *
  * Manages the registration, discovery, and metadata of all available agents
  * in the system. Provides a centralized way to manage agent configurations
  * and capabilities.
- * 
+ *
  * @class AgentRegistry
  */
 export class AgentRegistry {
@@ -31,7 +28,7 @@ export class AgentRegistry {
 
   /**
    * Creates a new AgentRegistry instance
-   * 
+   *
    * @param env - Cloudflare Workers environment configuration
    */
   constructor(env: Env) {
@@ -41,7 +38,7 @@ export class AgentRegistry {
 
   /**
    * Registers a new agent in the registry
-   * 
+   *
    * @param entry - Agent registry entry
    * @returns Promise resolving when agent is registered
    */
@@ -52,7 +49,9 @@ export class AgentRegistry {
 
       // Check for conflicts
       if (this.registry.has(entry.config.id)) {
-        throw new Error(`Agent with ID '${entry.config.id}' is already registered`);
+        throw new Error(
+          `Agent with ID '${entry.config.id}' is already registered`
+        );
       }
 
       // Register agent
@@ -61,13 +60,17 @@ export class AgentRegistry {
       // Store in database if needed
       await this.persistAgentRegistration(entry);
     } catch (error) {
-      throw new Error(`Failed to register agent: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to register agent: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`
+      );
     }
   }
 
   /**
    * Gets an agent registry entry by ID
-   * 
+   *
    * @param agentId - Agent ID
    * @returns Agent registry entry or undefined
    */
@@ -77,7 +80,7 @@ export class AgentRegistry {
 
   /**
    * Gets all registered agents
-   * 
+   *
    * @returns Array of all agent registry entries
    */
   getAllAgents(): AgentRegistryEntry[] {
@@ -86,45 +89,48 @@ export class AgentRegistry {
 
   /**
    * Gets agents by type
-   * 
+   *
    * @param type - Agent type
    * @returns Array of agents of specified type
    */
   getAgentsByType(type: AgentType): AgentRegistryEntry[] {
-    return this.getAllAgents().filter(agent => agent.config.type === type);
+    return this.getAllAgents().filter((agent) => agent.config.type === type);
   }
 
   /**
    * Gets agents by capability
-   * 
+   *
    * @param capability - Required capability
    * @returns Array of agents with specified capability
    */
   getAgentsByCapability(capability: string): AgentRegistryEntry[] {
-    return this.getAllAgents().filter(agent => 
+    return this.getAllAgents().filter((agent) =>
       agent.config.parameters.capabilities?.includes(capability)
     );
   }
 
   /**
    * Searches agents by query
-   * 
+   *
    * @param query - Search query
    * @returns Array of matching agents
    */
   searchAgents(query: string): AgentRegistryEntry[] {
     const lowercaseQuery = query.toLowerCase();
-    
-    return this.getAllAgents().filter(agent => 
-      agent.config.name.toLowerCase().includes(lowercaseQuery) ||
-      agent.config.description.toLowerCase().includes(lowercaseQuery) ||
-      agent.metadata.tags.some(tag => tag.toLowerCase().includes(lowercaseQuery))
+
+    return this.getAllAgents().filter(
+      (agent) =>
+        agent.config.name.toLowerCase().includes(lowercaseQuery) ||
+        agent.config.description.toLowerCase().includes(lowercaseQuery) ||
+        agent.metadata.tags.some((tag) =>
+          tag.toLowerCase().includes(lowercaseQuery)
+        )
     );
   }
 
   /**
    * Updates an agent registry entry
-   * 
+   *
    * @param agentId - Agent ID
    * @param updates - Partial updates to apply
    * @returns Promise resolving when agent is updated
@@ -155,13 +161,17 @@ export class AgentRegistry {
       // Persist changes
       await this.persistAgentRegistration(updated);
     } catch (error) {
-      throw new Error(`Failed to update agent: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to update agent: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`
+      );
     }
   }
 
   /**
    * Unregisters an agent from the registry
-   * 
+   *
    * @param agentId - Agent ID
    * @returns Promise resolving when agent is unregistered
    */
@@ -178,25 +188,29 @@ export class AgentRegistry {
       // Remove from database
       await this.removeAgentRegistration(agentId);
     } catch (error) {
-      throw new Error(`Failed to unregister agent: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to unregister agent: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`
+      );
     }
   }
 
   /**
    * Gets agent statistics
-   * 
+   *
    * @returns Agent registry statistics
    */
   getStatistics() {
     const agents = this.getAllAgents();
-    
+
     const byType = agents.reduce((acc, agent) => {
       acc[agent.config.type] = (acc[agent.config.type] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);
 
     const byStatus = agents.reduce((acc, agent) => {
-      const status = agent.config.active ? 'active' : 'inactive';
+      const status = agent.config.active ? "active" : "inactive";
       acc[status] = (acc[status] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);
@@ -218,13 +232,20 @@ export class AgentRegistry {
         config: {
           id: "email-processor",
           name: "Email Processor Agent",
-          description: "Processes and classifies incoming emails, extracts job links and OTP codes",
+          description:
+            "Processes and classifies incoming emails, extracts job links and OTP codes",
           type: AgentType.EMAIL_PROCESSOR,
           model: {
-            id: this.env.DEFAULT_MODEL_REASONING || "@cf/meta/llama-3.1-8b-instruct",
+            id:
+              this.env.DEFAULT_MODEL_REASONING ||
+              "@cf/meta/llama-3.1-8b-instruct",
           },
           parameters: {
-            capabilities: ["email_processing", "job_extraction", "otp_detection"],
+            capabilities: [
+              "email_processing",
+              "job_extraction",
+              "otp_detection",
+            ],
             max_emails_per_batch: 10,
             processing_timeout_ms: 30000,
           },
@@ -250,10 +271,16 @@ export class AgentRegistry {
           description: "Monitors job postings for changes and updates",
           type: AgentType.JOB_MONITOR,
           model: {
-            id: this.env.DEFAULT_MODEL_REASONING || "@cf/meta/llama-3.1-8b-instruct",
+            id:
+              this.env.DEFAULT_MODEL_REASONING ||
+              "@cf/meta/llama-3.1-8b-instruct",
           },
           parameters: {
-            capabilities: ["job_monitoring", "change_detection", "status_updates"],
+            capabilities: [
+              "job_monitoring",
+              "change_detection",
+              "status_updates",
+            ],
             check_interval_minutes: 60,
             max_jobs_per_check: 100,
           },
@@ -279,10 +306,16 @@ export class AgentRegistry {
           description: "Optimizes resumes for specific job postings using AI",
           type: AgentType.RESUME_OPTIMIZATION,
           model: {
-            id: this.env.DEFAULT_MODEL_REASONING || "@cf/meta/llama-3.1-8b-instruct",
+            id:
+              this.env.DEFAULT_MODEL_REASONING ||
+              "@cf/meta/llama-3.1-8b-instruct",
           },
           parameters: {
-            capabilities: ["resume_optimization", "ats_analysis", "content_generation"],
+            capabilities: [
+              "resume_optimization",
+              "ats_analysis",
+              "content_generation",
+            ],
             max_resume_length: 2000,
             optimization_timeout_ms: 60000,
           },
@@ -305,13 +338,20 @@ export class AgentRegistry {
         config: {
           id: "company-intelligence",
           name: "Company Intelligence Agent",
-          description: "Analyzes companies and extracts intelligence about culture, benefits, and opportunities",
+          description:
+            "Analyzes companies and extracts intelligence about culture, benefits, and opportunities",
           type: AgentType.COMPANY_INTELLIGENCE,
           model: {
-            id: this.env.DEFAULT_MODEL_REASONING || "@cf/meta/llama-3.1-8b-instruct",
+            id:
+              this.env.DEFAULT_MODEL_REASONING ||
+              "@cf/meta/llama-3.1-8b-instruct",
           },
           parameters: {
-            capabilities: ["company_analysis", "benefits_extraction", "culture_analysis"],
+            capabilities: [
+              "company_analysis",
+              "benefits_extraction",
+              "culture_analysis",
+            ],
             analysis_depth: "comprehensive",
             data_sources: ["web", "job_postings", "reviews"],
           },
@@ -334,13 +374,20 @@ export class AgentRegistry {
         config: {
           id: "interview-preparation",
           name: "Interview Preparation Agent",
-          description: "Prepares interview questions and provides coaching based on job requirements",
+          description:
+            "Prepares interview questions and provides coaching based on job requirements",
           type: AgentType.INTERVIEW_PREPARATION,
           model: {
-            id: this.env.DEFAULT_MODEL_REASONING || "@cf/meta/llama-3.1-8b-instruct",
+            id:
+              this.env.DEFAULT_MODEL_REASONING ||
+              "@cf/meta/llama-3.1-8b-instruct",
           },
           parameters: {
-            capabilities: ["question_generation", "interview_coaching", "feedback_analysis"],
+            capabilities: [
+              "question_generation",
+              "interview_coaching",
+              "feedback_analysis",
+            ],
             question_categories: ["technical", "behavioral", "situational"],
             coaching_style: "supportive",
           },
@@ -362,14 +409,14 @@ export class AgentRegistry {
     ];
 
     // Register default agents
-    defaultAgents.forEach(agent => {
+    defaultAgents.forEach((agent) => {
       this.registry.set(agent.config.id, agent);
     });
   }
 
   /**
    * Validates a registry entry
-   * 
+   *
    * @param entry - Registry entry to validate
    * @throws Error if entry is invalid
    */
@@ -389,10 +436,12 @@ export class AgentRegistry {
 
   /**
    * Persists agent registration to database
-   * 
+   *
    * @param entry - Agent registry entry to persist
    */
-  private async persistAgentRegistration(entry: AgentRegistryEntry): Promise<void> {
+  private async persistAgentRegistration(
+    entry: AgentRegistryEntry
+  ): Promise<void> {
     // This would store the agent configuration in D1 database
     // For now, we'll just log the action
     console.log(`Persisting agent registration: ${entry.config.id}`);
@@ -400,7 +449,7 @@ export class AgentRegistry {
 
   /**
    * Removes agent registration from database
-   * 
+   *
    * @param agentId - Agent ID to remove
    */
   private async removeAgentRegistration(agentId: string): Promise<void> {

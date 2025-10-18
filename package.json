@@ -39,9 +39,9 @@
     "demo:email-agent": "node scripts/demo-email-agent.js",
     "test:all": "pnpm test && pnpm test:python && pnpm test:browser-rendering",
     "test:comprehensive": "./tests/run-all-tests.sh",
-    "schema:export": "pnpm dlx wrangler@latest d1 execute DB --command=\"SELECT sql FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name;\" --local > docs/d1_schemas/local-schema-$(date +%Y-%m-%dT%H:%M:%S).sql",
+    "schema:export:local": "pnpm dlx wrangler@latest d1 execute DB --command=\"SELECT sql FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name;\" --local > docs/d1_schemas/local-schema-$(date +%Y-%m-%dT%H:%M:%S).sql",
     "schema:export:remote": "pnpm dlx wrangler@latest d1 execute DB --command=\"SELECT sql FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name;\" --remote > docs/d1_schemas/remote-schema-$(date +%Y-%m-%dT%H:%M:%S).sql",
-    "schema:export:both": "pnpm schema:export && pnpm schema:export:remote",
+    "schema:export": "pnpm schema:export:local && pnpm schema:export:remote",
     "schema:check": "node scripts/schema-check.js",
     "python:install": "cd python-node/JobSpy && pip install -r requirements.txt",
     "python:dev": "cd python-node/JobSpy && python -m uvicorn main:app --reload --port 8002",
@@ -51,7 +51,8 @@
     "logs:tail": "pnpm dlx wrangler@latest tail --format=pretty",
     "logs:tail:errors": "pnpm dlx wrangler@latest tail --format=pretty | grep -i error",
     "clean": "rm -rf dist/ .wrangler/ node_modules/.cache/",
-    "clean:all": "pnpm clean && rm -rf node_modules/ python-node/JobSpy/__pycache__/ python-node/JobSpy/.pytest_cache/"
+    "clean:all": "pnpm clean && rm -rf node_modules/ python-node/JobSpy/__pycache__/ python-node/JobSpy/.pytest_cache/",
+    "secret:bulk": "npx wrangler secret bulk .dev.vars"
   },
   "devDependencies": {
     "@cloudflare/puppeteer": "^1.0.4",

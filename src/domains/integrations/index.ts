@@ -11,14 +11,30 @@
  */
 
 // Re-export browser integration
-export * from "./browser/browser-rendering.service";
 export { browserRoutes } from "./browser/browser.routes";
 export * from "./browser/browser.types";
 
 // Re-export render-api integration (All 8 Cloudflare Browser Rendering endpoints)
 export { renderApiRoutes } from "./browser/render-api.routes";
 export * from "./browser/render-api.service";
-export * from "./browser/render-api.types";
+export type {
+  BaseRenderOptions,
+  ContentResponse,
+  HealthCheckResponse,
+  JsonOptions,
+  JsonResponse,
+  Link,
+  LinksOptions,
+  LinksResponse,
+  MarkdownResponse,
+  PDFOptions,
+  PDFResponse,
+  RenderAPIEnv,
+  RenderAPIError,
+  RenderAPISuccess,
+  ScrapeOptions,
+  SnapshotResponse,
+} from "./browser/render-api.types";
 
 // Re-export AI integration
 export { aiRoutes } from "./ai/ai.routes";

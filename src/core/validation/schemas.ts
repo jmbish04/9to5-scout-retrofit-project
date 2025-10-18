@@ -118,7 +118,9 @@ export const SiteDataSchema = z.object({
   base_url: z.string().url(),
   robots_txt: z.string().optional(),
   sitemap_url: z.string().url().optional(),
-  discovery_strategy: z.enum(["sitemap", "list", "search", "custom"]).optional(),
+  discovery_strategy: z
+    .enum(["sitemap", "list", "search", "custom"])
+    .optional(),
   last_discovered_at: z.string().optional(),
   created_at: z.string().optional(),
   updated_at: z.string().optional(),
@@ -139,7 +141,7 @@ export const ApplicantDataSchema = z.object({
   education: z.string().optional(),
   resume_url: z.string().url().optional(),
   cover_letter_url: z.string().url().optional(),
-  preferences: z.record(z.unknown()).optional(),
+  preferences: z.record(z.string(), z.unknown()).optional(),
   created_at: z.string().optional(),
   updated_at: z.string().optional(),
 });
@@ -167,14 +169,14 @@ export const EmailDataSchema = z.object({
   body: z.string(),
   category: z.enum([
     "SPAM",
-    "JOB_ALERT", 
+    "JOB_ALERT",
     "MESSAGE",
     "RECRUITER",
     "NETWORKING",
     "MARKETING_SPAM",
     "OTP",
     "SYSTEM",
-    "UNKNOWN"
+    "UNKNOWN",
   ]),
   category_reasoning: z.string(),
   job_links: z.array(z.string().url()),

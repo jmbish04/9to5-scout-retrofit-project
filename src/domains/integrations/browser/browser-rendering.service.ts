@@ -10,7 +10,22 @@
  * @since 2024-01-01
  */
 
-import { R2Storage } from "../../../core/storage/r2-storage.service";
+import { R2StorageService } from "../../../core/storage/r2-storage.service";
+import type {
+  AuthenticationOptions,
+  BrowserRenderingOptions,
+  BrowserRenderingResult,
+  ContentResult,
+  GotoOptions,
+  JsonResult,
+  LinksResult,
+  MarkdownResult,
+  ScrapeElement,
+  ScrapeResult,
+  ScreenshotOptions,
+  SnapshotResult,
+  ViewportOptions,
+} from "./browser.types";
 
 // Environment interface for Browser Rendering
 export interface BrowserRenderingEnv {
@@ -28,162 +43,31 @@ export interface BrowserRenderingResponse<T = any> {
   errors?: string[];
 }
 
-export interface ScreenshotOptions {
-  fullPage?: boolean;
-  omitBackground?: boolean;
-  quality?: number;
-  type?: "png" | "jpeg";
-  clip?: {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-  };
-}
+// ScreenshotOptions is imported from browser.types.ts
 
-export interface ViewportOptions {
-  width: number;
-  height: number;
-  deviceScaleFactor?: number;
-  isMobile?: boolean;
-  hasTouch?: boolean;
-  isLandscape?: boolean;
-}
+// ViewportOptions is imported from browser.types.ts
 
-export interface GotoOptions {
-  waitUntil?: "load" | "domcontentloaded" | "networkidle0" | "networkidle2";
-  timeout?: number;
-}
+// GotoOptions is imported from browser.types.ts
 
-export interface ScrapeElement {
-  selector: string;
-  attribute?: string;
-  text?: boolean;
-  html?: boolean;
-}
+// ScrapeElement is imported from browser.types.ts
 
-export interface AuthenticationOptions {
-  username?: string;
-  password?: string;
-  apiKey?: string;
-  cookies?: string;
-  headers?: Record<string, string>;
-}
+// AuthenticationOptions is exported from browser.types.ts
 
-export interface BrowserRenderingOptions {
-  url?: string;
-  html?: string;
-  userAgent?: string;
-  viewport?: ViewportOptions;
-  screenshotOptions?: ScreenshotOptions;
-  gotoOptions?: GotoOptions;
-  authenticate?: AuthenticationOptions;
-  rejectResourceTypes?: string[];
-  rejectRequestPattern?: string[];
-  allowResourceTypes?: string[];
-  allowRequestPattern?: string[];
-  visibleLinksOnly?: boolean;
-  addScriptTag?: Array<{ content: string } | { url: string }>;
-  addStyleTag?: Array<{ content: string } | { url: string }>;
-  setJavaScriptEnabled?: boolean;
-}
+// BrowserRenderingOptions is imported from browser.types.ts
 
-export interface ScrapedElement {
-  text: string;
-  html: string;
-  attributes: Record<string, string>;
-  height: number;
-  width: number;
-  top: number;
-  left: number;
-}
+// ScrapedElement is imported from browser.types.ts
 
-export interface ScrapeResult {
-  selector: string;
-  results: ScrapedElement[];
-}
+// ScrapeResult is imported from browser.types.ts
 
-export interface SnapshotResult {
-  screenshot: string; // Base64 encoded
-  content: string; // HTML content
-}
+// SnapshotResult is imported from browser.types.ts
 
-export interface LinksResult {
-  links: string[];
-}
+// All result interfaces are imported from browser.types.ts
 
-export interface MarkdownResult {
-  markdown: string;
-}
-
-export interface JsonResult {
-  output: any;
-}
-
-export interface ContentResult {
-  content: string; // HTML content
-}
-
-export interface PdfResult {
-  pdf: ArrayBuffer;
-}
-
-export interface BrowserRenderingResult {
-  id: string;
-  url: string;
-  timestamp: string;
-  html?: {
-    r2Key: string;
-    r2Url: string;
-    size: number;
-  };
-  screenshot?: {
-    r2Key: string;
-    r2Url: string;
-    size: number;
-  };
-  pdf?: {
-    r2Key: string;
-    r2Url: string;
-    size: number;
-  };
-  markdown?: {
-    r2Key: string;
-    r2Url: string;
-    size: number;
-  };
-  json?: {
-    r2Key: string;
-    r2Url: string;
-    size: number;
-    data: any;
-  };
-  links?: {
-    r2Key: string;
-    r2Url: string;
-    size: number;
-    links: string[];
-  };
-  snapshot?: {
-    r2Key: string;
-    r2Url: string;
-    size: number;
-    screenshot: string;
-    content: string;
-  };
-  scraped?: {
-    r2Key: string;
-    r2Url: string;
-    size: number;
-    results: ScrapeResult[];
-  };
-  httpStatus?: number;
-  error?: string;
-}
+// BrowserRenderingResult is imported from browser.types.ts
 
 /**
  * Browser Rendering Service Class
- * 
+ *
  * Provides comprehensive web scraping capabilities using Cloudflare's Browser Rendering REST API.
  * Handles authentication, content extraction, screenshots, PDF generation, and structured data extraction.
  */
@@ -191,13 +75,16 @@ export class BrowserRenderingService {
   private baseUrl: string;
   private accountId: string;
   private apiToken: string;
-  private r2Storage: R2Storage;
+  private r2Storage: R2StorageService;
 
   constructor(env: BrowserRenderingEnv) {
     this.baseUrl = "https://api.cloudflare.com/client/v4/accounts";
     this.accountId = env.CLOUDFLARE_ACCOUNT_ID;
     this.apiToken = env.BROWSER_RENDERING_TOKEN;
-    this.r2Storage = new R2Storage(env.R2, env.BUCKET_BASE_URL);
+    this.r2Storage = new R2StorageService({
+      R2: env.R2,
+      BUCKET_BASE_URL: env.BUCKET_BASE_URL,
+    });
   }
 
   /**
@@ -459,12 +346,15 @@ export class BrowserRenderingService {
       if (includeHtml) {
         operations.push(
           this.getContent(baseOptions).then(async (content) => {
-            const htmlFile = await this.r2Storage.uploadFile(content, {
-              type: "scraped-content",
-              originalName: `content-${resultId}.html`,
-              contentType: "text/html",
-              timestamp,
-            });
+            const htmlFile = await this.r2Storage.uploadFile(
+              new TextEncoder().encode(content).buffer,
+              {
+                type: "scraped-content",
+                originalName: `content-${resultId}.html`,
+                contentType: "text/html",
+                timestamp,
+              }
+            );
             result.html = {
               r2Key: htmlFile.key,
               r2Url: htmlFile.url,
@@ -520,12 +410,15 @@ export class BrowserRenderingService {
       if (includeMarkdown) {
         operations.push(
           this.extractMarkdown(baseOptions).then(async (markdown) => {
-            const markdownFile = await this.r2Storage.uploadFile(markdown, {
-              type: "scraped-content",
-              originalName: `markdown-${resultId}.md`,
-              contentType: "text/markdown",
-              timestamp,
-            });
+            const markdownFile = await this.r2Storage.uploadFile(
+              new TextEncoder().encode(markdown).buffer,
+              {
+                type: "scraped-content",
+                originalName: `markdown-${resultId}.md`,
+                contentType: "text/markdown",
+                timestamp,
+              }
+            );
             result.markdown = {
               r2Key: markdownFile.key,
               r2Url: markdownFile.url,
@@ -546,12 +439,15 @@ export class BrowserRenderingService {
             },
           }).then(async (jsonData) => {
             const jsonString = JSON.stringify(jsonData, null, 2);
-            const jsonFile = await this.r2Storage.uploadFile(jsonString, {
-              type: "scraped-content",
-              originalName: `data-${resultId}.json`,
-              contentType: "application/json",
-              timestamp,
-            });
+            const jsonFile = await this.r2Storage.uploadFile(
+              new TextEncoder().encode(jsonString).buffer,
+              {
+                type: "scraped-content",
+                originalName: `data-${resultId}.json`,
+                contentType: "application/json",
+                timestamp,
+              }
+            );
             result.json = {
               r2Key: jsonFile.key,
               r2Url: jsonFile.url,
@@ -566,12 +462,15 @@ export class BrowserRenderingService {
         operations.push(
           this.getLinks(baseOptions).then(async (links) => {
             const linksString = JSON.stringify(links, null, 2);
-            const linksFile = await this.r2Storage.uploadFile(linksString, {
-              type: "scraped-content",
-              originalName: `links-${resultId}.json`,
-              contentType: "application/json",
-              timestamp,
-            });
+            const linksFile = await this.r2Storage.uploadFile(
+              new TextEncoder().encode(linksString).buffer,
+              {
+                type: "scraped-content",
+                originalName: `links-${resultId}.json`,
+                contentType: "application/json",
+                timestamp,
+              }
+            );
             result.links = {
               r2Key: linksFile.key,
               r2Url: linksFile.url,
@@ -587,7 +486,7 @@ export class BrowserRenderingService {
           this.takeSnapshot(baseOptions).then(async (snapshot) => {
             const snapshotString = JSON.stringify(snapshot, null, 2);
             const snapshotFile = await this.r2Storage.uploadFile(
-              snapshotString,
+              new TextEncoder().encode(snapshotString).buffer,
               {
                 type: "scraped-content",
                 originalName: `snapshot-${resultId}.json`,
@@ -613,12 +512,15 @@ export class BrowserRenderingService {
             elements: scrapeElements,
           }).then(async (scrapedResults) => {
             const scrapedString = JSON.stringify(scrapedResults, null, 2);
-            const scrapedFile = await this.r2Storage.uploadFile(scrapedString, {
-              type: "scraped-content",
-              originalName: `scraped-${resultId}.json`,
-              contentType: "application/json",
-              timestamp,
-            });
+            const scrapedFile = await this.r2Storage.uploadFile(
+              new TextEncoder().encode(scrapedString).buffer,
+              {
+                type: "scraped-content",
+                originalName: `scraped-${resultId}.json`,
+                contentType: "application/json",
+                timestamp,
+              }
+            );
             result.scraped = {
               r2Key: scrapedFile.key,
               r2Url: scrapedFile.url,

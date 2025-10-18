@@ -1,5 +1,10 @@
 import { Agent } from "agents";
-import { EmbeddingsManager, RAGQuery, RAGResult } from "./embeddings";
+import {
+  EmbeddingsManager,
+  RAGQuery,
+  RAGResult,
+  createEmbeddingsManager,
+} from "./embeddings";
 
 export interface RAGAgentEnv {
   AI: Ai;
@@ -17,7 +22,11 @@ export class RAGAgent extends Agent<RAGAgentEnv> {
 
   constructor(state: DurableObjectState, env: RAGAgentEnv) {
     super(state, env);
-    this.embeddingsManager = new EmbeddingsManager(env);
+    this.embeddingsManager = createEmbeddingsManager(
+      env.AI,
+      env.GENERAL_CONTENT_INDEX,
+      env.EMBEDDING_MODEL
+    );
   }
 
   /**
@@ -39,12 +48,14 @@ export class RAGAgent extends Agent<RAGAgentEnv> {
       try {
         const ragQuery: RAGQuery = {
           query,
-          vectorizeIndex: contentType,
           limit: Math.ceil(limit / contentTypes.length),
         };
 
-        const result = await this.embeddingsManager.performRAGQuery(ragQuery);
-        results.push(result);
+        const result = await this.embeddingsManager.querySimilar(
+          query,
+          ragQuery.limit || 10
+        );
+        results.push(...result);
       } catch (error) {
         console.error(`Error searching ${contentType}:`, error);
         // Continue with other content types even if one fails
@@ -64,11 +75,11 @@ export class RAGAgent extends Agent<RAGAgentEnv> {
   ): Promise<RAGResult> {
     const ragQuery: RAGQuery = {
       query,
-      vectorizeIndex: contentType,
       limit,
     };
 
-    return await this.embeddingsManager.performRAGQuery(ragQuery);
+    const results = await this.embeddingsManager.querySimilar(query, limit);
+    return results[0] || { id: "", content: "", score: 0 };
   }
 
   /**
@@ -89,7 +100,7 @@ export class RAGAgent extends Agent<RAGAgentEnv> {
 
       // Combine all context
       const combinedContext = searchResults
-        .map((result) => result.context)
+        .map((result) => result.content)
         .join("\n\n---\n\n");
 
       // Generate answer using AI with context
@@ -139,7 +150,7 @@ export class RAGAgent extends Agent<RAGAgentEnv> {
       );
 
       // Get full job details from database
-      const jobIds = result.results.map((r) => r.id);
+      const jobIds = [result.id];
       if (jobIds.length === 0) return [];
 
       const placeholders = jobIds.map(() => "?").join(",");
@@ -177,7 +188,7 @@ export class RAGAgent extends Agent<RAGAgentEnv> {
       );
 
       // Get full resume details from database
-      const resumeIds = result.results.map((r) => r.id);
+      const resumeIds = [result.id];
       if (resumeIds.length === 0) return [];
 
       const placeholders = resumeIds.map(() => "?").join(",");
@@ -222,10 +233,10 @@ export class RAGAgent extends Agent<RAGAgentEnv> {
 
       const combinedContext = `
 Job Context:
-${jobContext.context}
+${jobContext.content}
 
 Resume Context:
-${resumeContext.context}
+${resumeContext.content}
       `.trim();
 
       const response = await this.env.AI.run(this.env.DEFAULT_MODEL_REASONING, {
@@ -268,12 +279,12 @@ Please provide:
       // Search across all job openings
       const jobResults = await this.searchContentType(query, "job_opening", 20);
 
-      if (jobResults.results.length === 0) {
+      if (!jobResults || !jobResults.content) {
         return "I don't have enough job data to provide insights on this topic.";
       }
 
       // Analyze the job data
-      const jobIds = jobResults.results.map((r) => r.id);
+      const jobIds = [jobResults.id];
       const placeholders = jobIds.map(() => "?").join(",");
 
       const jobs = await this.env.DB.prepare(
@@ -342,7 +353,7 @@ Please provide:
   ): Promise<void> {
     try {
       const interactionId = crypto.randomUUID();
-      const queryIds = searchResults.map((r) => r.queryId).join(",");
+      const queryIds = searchResults.map((r) => r.id).join(",");
       const agentId = "main-rag-agent"; // Use a consistent agent ID
 
       await this.env.DB.prepare(
@@ -357,7 +368,7 @@ Please provide:
           agentId,
           queryIds,
           answer,
-          JSON.stringify(searchResults.map((r) => r.context))
+          JSON.stringify(searchResults.map((r) => r.content))
         )
         .run();
     } catch (error) {

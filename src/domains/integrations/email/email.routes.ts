@@ -38,7 +38,7 @@ const EmailClassificationRequestSchema = z.object({
     subject: z.string(),
     body: z.string(),
     html: z.string().optional(),
-    headers: z.record(z.string()),
+    headers: z.record(z.string(), z.string()),
     messageId: z.string(),
     date: z.string(),
   }),
@@ -46,7 +46,7 @@ const EmailClassificationRequestSchema = z.object({
 
 const EmailGenerationRequestSchema = z.object({
   templateName: z.string().min(1),
-  data: z.record(z.any()),
+  data: z.record(z.string(), z.any()),
 });
 
 const EmailSearchRequestSchema = z.object({
@@ -61,7 +61,7 @@ const EmailStoreRequestSchema = z.object({
     subject: z.string(),
     body: z.string(),
     html: z.string().optional(),
-    headers: z.record(z.string()),
+    headers: z.record(z.string(), z.string()),
     messageId: z.string(),
     date: z.string(),
     attachments: z.array(

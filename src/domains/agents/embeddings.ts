@@ -10,7 +10,11 @@
 
 export interface EmbeddingsManager {
   generateEmbedding(text: string): Promise<number[]>;
-  storeEmbedding(id: string, text: string, metadata?: Record<string, any>): Promise<void>;
+  storeEmbedding(
+    id: string,
+    text: string,
+    metadata?: Record<string, any>
+  ): Promise<void>;
   querySimilar(content: string, limit?: number): Promise<RAGResult[]>;
 }
 
@@ -36,44 +40,51 @@ export class EmbeddingsManagerImpl implements EmbeddingsManager {
   ) {}
 
   async generateEmbedding(text: string): Promise<number[]> {
-    const response = await this.ai.run(this.embeddingModel, {
-      text: text
+    const response = await this.ai.run(this.embeddingModel as any, {
+      text: text,
     });
-    
-    if (response && Array.isArray(response)) {
-      return response;
+
+    if (response && "data" in response && Array.isArray(response.data)) {
+      return response.data[0] || [];
     }
-    
-    throw new Error('Failed to generate embedding');
+
+    throw new Error("Failed to generate embedding");
   }
 
-  async storeEmbedding(id: string, text: string, metadata?: Record<string, any>): Promise<void> {
+  async storeEmbedding(
+    id: string,
+    text: string,
+    metadata?: Record<string, any>
+  ): Promise<void> {
     const embedding = await this.generateEmbedding(text);
-    
+
     await this.vectorizeIndex.insert([
       {
         id: id,
         values: embedding,
         metadata: {
           content: text,
-          ...metadata
-        }
-      }
+          ...metadata,
+        },
+      },
     ]);
   }
 
-  async querySimilar(content: string, limit: number = 10): Promise<RAGResult[]> {
+  async querySimilar(
+    content: string,
+    limit: number = 10
+  ): Promise<RAGResult[]> {
     const queryEmbedding = await this.generateEmbedding(content);
-    
+
     const results = await this.vectorizeIndex.query(queryEmbedding, {
-      topK: limit
+      topK: limit,
     });
-    
-    return results.matches.map(match => ({
+
+    return results.matches.map((match: any) => ({
       id: match.id,
-      content: match.metadata?.content || '',
+      content: match.metadata?.content || "",
       score: match.score,
-      metadata: match.metadata
+      metadata: match.metadata,
     }));
   }
 }

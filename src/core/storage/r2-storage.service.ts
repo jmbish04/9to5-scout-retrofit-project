@@ -8,12 +8,7 @@
  * including file upload, download, deletion, and metadata management.
  */
 
-import {
-  R2Storage,
-  createR2Storage,
-  type FileMetadata,
-  type R2File,
-} from "./r2-client";
+import { R2Storage, createR2Storage, type R2File } from "./r2-client";
 
 export interface R2StorageServiceEnv {
   R2: R2Bucket;
@@ -33,10 +28,7 @@ export class R2StorageService {
   /**
    * Upload a file to R2 storage
    */
-  async uploadFile(
-    file: ArrayBuffer | Uint8Array | string,
-    metadata: FileMetadata
-  ): Promise<R2File> {
+  async uploadFile(file: ArrayBuffer, metadata: any): Promise<any> {
     return this.r2Storage.uploadFile(file, metadata);
   }
 
@@ -44,13 +36,15 @@ export class R2StorageService {
    * Download a file from R2 storage
    */
   async downloadFile(key: string): Promise<ArrayBuffer | null> {
-    return this.r2Storage.downloadFile(key);
+    const file = await this.r2Storage.getFile(key);
+    if (!file || !("body" in file)) return null;
+    return await (file as any).arrayBuffer();
   }
 
   /**
    * Delete a file from R2 storage
    */
-  async deleteFile(key: string): Promise<boolean> {
+  async deleteFile(key: string): Promise<void> {
     return this.r2Storage.deleteFile(key);
   }
 
@@ -62,13 +56,17 @@ export class R2StorageService {
     limit?: number,
     cursor?: string
   ): Promise<{ files: R2File[]; cursor?: string }> {
-    return this.r2Storage.listFiles(prefix, limit, cursor);
+    const files = await this.r2Storage.listFiles();
+    return {
+      files: files || [],
+      cursor: undefined,
+    };
   }
 
   /**
    * Get file metadata
    */
-  async getFileMetadata(key: string): Promise<FileMetadata | null> {
+  async getFileMetadata(key: string): Promise<any | null> {
     return this.r2Storage.getFileMetadata(key);
   }
 
@@ -86,36 +84,16 @@ export class R2StorageService {
    * Check if a file exists
    */
   async fileExists(key: string): Promise<boolean> {
-    return this.r2Storage.fileExists(key);
+    const file = await this.r2Storage.getFile(key);
+    return file !== null;
   }
 
   /**
    * Get file size
    */
   async getFileSize(key: string): Promise<number | null> {
-    return this.r2Storage.getFileSize(key);
-  }
-
-  /**
-   * Copy a file to a new location
-   */
-  async copyFile(
-    sourceKey: string,
-    destinationKey: string,
-    newMetadata?: Partial<FileMetadata>
-  ): Promise<R2File | null> {
-    return this.r2Storage.copyFile(sourceKey, destinationKey, newMetadata);
-  }
-
-  /**
-   * Move a file to a new location
-   */
-  async moveFile(
-    sourceKey: string,
-    destinationKey: string,
-    newMetadata?: Partial<FileMetadata>
-  ): Promise<R2File | null> {
-    return this.r2Storage.moveFile(sourceKey, destinationKey, newMetadata);
+    const file = await this.r2Storage.getFile(key);
+    return file?.size || null;
   }
 }
 

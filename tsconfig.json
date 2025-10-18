@@ -9,10 +9,13 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "outDir": "./dist",
-    "rootDir": "./src",
-    "types": ["./src/worker-configuration", "node"],
-    "lib": ["ES2022", "dom", "webworker"]
+    "rootDir": "./",
+    "types": ["./worker-configuration.d.ts", "node"],
+    "lib": ["ES2022", "dom", "webworker"],
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "typeRoots": ["./", "./node_modules/@types"]
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "worker-configuration.d.ts"],
   "exclude": ["node_modules", "dist"]
 }

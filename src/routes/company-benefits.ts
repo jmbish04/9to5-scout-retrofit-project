@@ -8,7 +8,7 @@ import {
   getLatestStatsForCompany,
   getTopHighlights,
   getValuations,
-} from "../stats/compute";
+} from "../domains/stats/services/legacy-compute";
 
 const RATE_LIMIT_WINDOW = 60_000;
 const RATE_LIMIT_DEFAULT = 60;

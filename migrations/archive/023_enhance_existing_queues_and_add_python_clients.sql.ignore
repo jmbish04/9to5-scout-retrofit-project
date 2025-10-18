@@ -8,7 +8,8 @@ PRAGMA foreign_keys=ON;
 -- We'll add missing fields to the existing scrape_queue table
 
 -- Add missing fields to scrape_queue (if they don't exist)
--- Note: SQLite doesn't support ALTER COLUMN, so we'll add new columns
+-- Based on PRAGMA table_info, the table already has: id, urls, status, priority, payload, available_at, last_claimed_at, completed_at, error_message, created_at, updated_at
+-- We need to add: job_id, job_type, context, max_tasks, started_at, retry_count, max_retries, metadata
 
 -- Add job_id field to scrape_queue if it doesn't exist
 ALTER TABLE scrape_queue ADD COLUMN job_id TEXT;
@@ -16,18 +17,17 @@ ALTER TABLE scrape_queue ADD COLUMN job_type TEXT CHECK(job_type IN ('scrape_job
 ALTER TABLE scrape_queue ADD COLUMN context TEXT;
 ALTER TABLE scrape_queue ADD COLUMN max_tasks INTEGER DEFAULT 1;
 ALTER TABLE scrape_queue ADD COLUMN started_at TEXT;
-ALTER TABLE scrape_queue ADD COLUMN completed_at TEXT;
-ALTER TABLE scrape_queue ADD COLUMN error_message TEXT;
 ALTER TABLE scrape_queue ADD COLUMN retry_count INTEGER DEFAULT 0;
 ALTER TABLE scrape_queue ADD COLUMN max_retries INTEGER DEFAULT 3;
 ALTER TABLE scrape_queue ADD COLUMN metadata TEXT; -- JSON metadata
-ALTER TABLE scrape_queue ADD COLUMN last_claimed_at TEXT;
 
 -- Add foreign key constraint for job_id if it doesn't exist
 -- Note: SQLite doesn't support adding foreign keys after table creation
 -- This would need to be handled in application code
 
 -- Enhance job_processing_queue with additional fields
+-- Based on PRAGMA table_info, the table already has: id, url, source, source_id, status, job_id, error, metadata, created_at, updated_at
+-- We need to add: priority, retry_count, max_retries, started_at, completed_at, processing_time_ms
 ALTER TABLE job_processing_queue ADD COLUMN priority INTEGER DEFAULT 0;
 ALTER TABLE job_processing_queue ADD COLUMN retry_count INTEGER DEFAULT 0;
 ALTER TABLE job_processing_queue ADD COLUMN max_retries INTEGER DEFAULT 3;

@@ -629,14 +629,198 @@ export class MyAgent extends Agent {
    - AI-powered profile optimization suggestions
    - Integration with existing job matching system
 
-### Phase 16: Cleanup & Update Imports (Week 8-9)
+### Phase 12: Meticulous Cleanup & Verification (Week 8-9) - REVISED
 
-1. Remove old `src/lib/` directory
-2. Remove old `src/routes/` directory
-3. Update `src/index.ts` imports
-4. Update all internal imports across the codebase
-5. Update test files
-6. Update documentation
+**CRITICAL**: This phase ensures no functionality is lost during migration by systematically verifying all old code has been replicated in the new modular structure.
+
+#### Phase 12A: Audit & Document Old Code (Week 8, Days 1-2)
+
+**Goal**: Create comprehensive inventory of all functionality in old `lib/` and `routes/` directories
+
+1. **Create Migration Audit Spreadsheet**:
+
+   - List every file in `src/lib/` and `src/routes/`
+   - Document each function, class, and exported item
+   - Note file size and complexity
+   - Track migration status (migrated/partially migrated/not migrated)
+
+2. **Function-Level Inventory**:
+
+   - For each file, list all exported functions, classes, types, and constants
+   - Document function signatures and purposes
+   - Note dependencies and imports
+   - Identify any unique functionality not found elsewhere
+
+3. **Create Verification Checklist**:
+   - For each function/class, verify it exists in new modular structure
+   - Document the new location if migrated
+   - Flag any missing functionality
+
+#### Phase 12B: Code Verification & Migration (Week 8, Days 3-5)
+
+**Goal**: Ensure every piece of functionality is accounted for in the new structure
+
+1. **Systematic File Review**:
+
+   - Process each file in `src/lib/` and `src/routes/` one by one
+   - For each code block (function, class, etc.):
+     - **If replicated in new structure**: Add docstring and comment out
+     - **If not replicated**: Migrate to appropriate domain, then comment out
+     - **If deprecated**: Mark as deprecated and comment out
+
+2. **Code Block Documentation Pattern**:
+
+   ```typescript
+   /**
+    * MIGRATED: This function has been moved to src/domains/jobs/services/job-storage.service.ts
+    * New location: JobStorageService.getJobById()
+    * Migration date: 2025-01-18
+    * Status: VERIFIED - Functionality preserved
+    */
+   // export async function getJobById(id: string, env: Env): Promise<Job | null> {
+   //   // Original implementation commented out
+   // }
+   ```
+
+3. **Migration Verification Process**:
+   - Test each migrated function to ensure it works identically
+   - Verify all imports are updated
+   - Ensure no breaking changes in API contracts
+   - Document any behavioral differences
+
+#### Phase 12C: Gradual File Cleanup (Week 8, Days 6-7)
+
+**Goal**: Systematically remove old files after verification
+
+1. **File-by-File Cleanup**:
+
+   - Start with smallest, simplest files
+   - Verify all functionality is preserved
+   - Remove file only after 100% verification
+   - Update all import references
+
+2. **Import Update Process**:
+
+   - Search codebase for any remaining references to old paths
+   - Update all imports to use new modular structure
+   - Verify no broken imports remain
+
+3. **Testing After Each File Removal**:
+   - Run tests after each file removal
+   - Verify no functionality is broken
+   - Rollback if any issues are found
+
+#### Phase 12D: Final Verification & Documentation (Week 9, Days 1-2)
+
+**Goal**: Ensure complete migration with no functionality loss
+
+1. **Comprehensive Testing**:
+
+   - Run full test suite
+   - Test all API endpoints
+   - Verify all Durable Objects work
+   - Test all workflows and agents
+
+2. **Documentation Update**:
+
+   - Update all documentation to reflect new structure
+   - Create migration guide for future reference
+   - Document any breaking changes
+
+3. **Final Cleanup**:
+   - Remove empty directories
+   - Clean up any remaining old imports
+   - Update README and project documentation
+
+#### Phase 12E: Legacy Code Preservation (Week 9, Days 3-5)
+
+**Goal**: Preserve old code for reference while maintaining clean codebase
+
+1. **Create Legacy Archive**:
+
+   - Move all commented-out old files to `legacy/` directory
+   - Organize by original directory structure
+   - Add comprehensive README explaining what was migrated where
+
+2. **Legacy Documentation**:
+
+   - Create migration map showing old → new paths
+   - Document any functionality that was consolidated or refactored
+   - Note any behavioral changes or improvements
+
+3. **Cleanup Verification**:
+   - Ensure no old `lib/` or `routes/` directories remain
+   - Verify all imports use new modular structure
+   - Confirm no dead code or unused files
+
+### Detailed File-by-File Cleanup Plan
+
+#### `src/lib/` Directory Cleanup
+
+**Files to Process** (in order of complexity):
+
+1. **Simple Utility Files** (process first):
+
+   - `src/lib/hash.ts` → `src/shared/utils/hash.ts` ✅
+   - `src/lib/routing.ts` → `src/shared/utils/routing.ts` ✅
+   - `src/lib/content.ts` → `src/shared/utils/content.ts` ✅
+
+2. **Medium Complexity Files**:
+
+   - `src/lib/env.ts` → `src/domains/config/env/env.config.ts` ✅
+   - `src/lib/types.ts` → Split across multiple domain type files ✅
+   - `src/lib/validation.ts` → `src/core/validation/hono-validation.ts` ✅
+   - `src/lib/schemas.ts` → `src/core/validation/schemas.ts` ✅
+
+3. **Complex Files** (process last):
+   - `src/lib/storage.ts` (811 lines) → Split across multiple domain services
+   - `src/lib/documents.ts` (922 lines) → `src/domains/documents/services/`
+   - `src/lib/steel.ts` (1009 lines) → `src/domains/scraping/services/steel.ts` (DEFERRED)
+   - `src/lib/browser-rendering.ts` (688 lines) → `src/domains/integrations/browser/`
+   - `src/lib/openapi.ts` (701 lines) → `src/api/openapi.ts`
+
+#### `src/routes/` Directory Cleanup
+
+**Files to Process** (in order of complexity):
+
+1. **Simple Route Files**:
+
+   - `src/routes/pages.ts` → `src/domains/ui/routes/pages.routes.ts` ✅
+   - `src/routes/files.ts` → `src/domains/ui/routes/files.routes.ts` ✅
+   - `src/routes/configs.ts` → `src/domains/config/routes/configs.routes.ts` ✅
+
+2. **Medium Complexity Route Files**:
+
+   - `src/routes/jobs.ts` → `src/domains/jobs/routes/jobs.routes.ts` ✅
+   - `src/routes/sites.ts` → `src/domains/sites/routes/sites.routes.ts` ✅
+   - `src/routes/documents.ts` → `src/domains/documents/routes/documents.routes.ts` ✅
+   - `src/routes/company-benefits.ts` → `src/domains/companies/routes/company-benefits.routes.ts` ✅
+
+3. **Complex Route Files**:
+   - `src/routes/api.ts` (694 lines) → `src/api/router.ts` + domain route aggregation
+   - `src/routes/scraper.ts` (985 lines) → `src/domains/scraping/routes/scraper.routes.ts`
+   - `src/routes/steel-scraper.ts` (993 lines) → `src/domains/scraping/routes/steel-scraper.routes.ts`
+   - `src/routes/browser-testing.ts` (891 lines) → `src/domains/integrations/browser/routes/`
+
+#### Verification Checklist Template
+
+For each file being cleaned up:
+
+- [ ] **Function Inventory**: All functions/classes documented
+- [ ] **Migration Verification**: Each function verified in new location
+- [ ] **Import Updates**: All references updated to new paths
+- [ ] **Testing**: Functionality verified through testing
+- [ ] **Documentation**: Migration documented with docstrings
+- [ ] **Code Commenting**: Old code commented out with migration notes
+- [ ] **File Removal**: File safely removed after verification
+
+#### Risk Mitigation
+
+1. **Backup Strategy**: Create git branch before each file cleanup
+2. **Rollback Plan**: Keep commented code until full verification
+3. **Testing Strategy**: Run tests after each file removal
+4. **Documentation**: Maintain detailed migration log
+5. **Gradual Process**: Don't rush - verify each step thoroughly
 
 ## New Services from docs/todo/\*
 
@@ -818,7 +1002,11 @@ All refactoring work must adhere to the following standards to ensure code quali
 - [x] Phase 9: Migrate integrations (browser, AI, email, talent API) - COMPLETED
 - [x] Phase 10: Create shared utilities and API layer - COMPLETED
 - [x] Phase 11: Create UI and config modules - COMPLETED
-- [ ] Phase 12: Cleanup old directories and update all imports - IN PROGRESS
+- [ ] Phase 12A: Audit & Document Old Code - PENDING
+- [ ] Phase 12B: Code Verification & Migration - PENDING
+- [ ] Phase 12C: Gradual File Cleanup - PENDING
+- [ ] Phase 12D: Final Verification & Documentation - PENDING
+- [ ] Phase 12E: Legacy Code Preservation - PENDING
 - [x] Phase 13: NEW - Implement stats & analytics domain (Market Pulse) - COMPLETED
 - [x] Phase 14: NEW - Implement interview services - COMPLETED
 - [x] Phase 15: NEW - Implement additional services from docs/todo/\* - COMPLETED

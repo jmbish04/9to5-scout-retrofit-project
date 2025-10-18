@@ -131,7 +131,9 @@ export class SiteCrawler {
       console.log(`🔗 Processing ${urls.length} job URLs from ${source}...`);
 
       // Use the new generic job processing service
-      const { submitJobUrlsForProcessing } = await import("../../../lib/job-processing");
+      const { submitJobUrlsForProcessing } = await import(
+        "../../../lib/job-processing"
+      );
       const result = await submitJobUrlsForProcessing(this.env, {
         urls,
         source,

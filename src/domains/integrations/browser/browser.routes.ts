@@ -71,7 +71,7 @@ const ScreenshotRequestSchema = z.object({
         password: z.string().optional(),
         apiKey: z.string().optional(),
         cookies: z.string().optional(),
-        headers: z.record(z.string()).optional(),
+        headers: z.record(z.string(), z.string()).optional(),
       })
       .optional(),
   }),
@@ -104,7 +104,7 @@ const ContentRequestSchema = z.object({
         password: z.string().optional(),
         apiKey: z.string().optional(),
         cookies: z.string().optional(),
-        headers: z.record(z.string()).optional(),
+        headers: z.record(z.string(), z.string()).optional(),
       })
       .optional(),
   }),
@@ -137,7 +137,7 @@ const PdfRequestSchema = z.object({
         password: z.string().optional(),
         apiKey: z.string().optional(),
         cookies: z.string().optional(),
-        headers: z.record(z.string()).optional(),
+        headers: z.record(z.string(), z.string()).optional(),
       })
       .optional(),
   }),
@@ -170,7 +170,7 @@ const ScrapeRequestSchema = z.object({
         password: z.string().optional(),
         apiKey: z.string().optional(),
         cookies: z.string().optional(),
-        headers: z.record(z.string()).optional(),
+        headers: z.record(z.string(), z.string()).optional(),
       })
       .optional(),
   }),
@@ -211,7 +211,7 @@ const MarkdownRequestSchema = z.object({
         password: z.string().optional(),
         apiKey: z.string().optional(),
         cookies: z.string().optional(),
-        headers: z.record(z.string()).optional(),
+        headers: z.record(z.string(), z.string()).optional(),
       })
       .optional(),
   }),
@@ -244,7 +244,7 @@ const JsonRequestSchema = z.object({
         password: z.string().optional(),
         apiKey: z.string().optional(),
         cookies: z.string().optional(),
-        headers: z.record(z.string()).optional(),
+        headers: z.record(z.string(), z.string()).optional(),
       })
       .optional(),
   }),
@@ -282,7 +282,7 @@ const LinksRequestSchema = z.object({
         password: z.string().optional(),
         apiKey: z.string().optional(),
         cookies: z.string().optional(),
-        headers: z.record(z.string()).optional(),
+        headers: z.record(z.string(), z.string()).optional(),
       })
       .optional(),
   }),
@@ -315,7 +315,7 @@ const SnapshotRequestSchema = z.object({
         password: z.string().optional(),
         apiKey: z.string().optional(),
         cookies: z.string().optional(),
-        headers: z.record(z.string()).optional(),
+        headers: z.record(z.string(), z.string()).optional(),
       })
       .optional(),
   }),
@@ -349,7 +349,7 @@ const ComprehensiveScrapeRequestSchema = z.object({
       password: z.string().optional(),
       apiKey: z.string().optional(),
       cookies: z.string().optional(),
-      headers: z.record(z.string()).optional(),
+      headers: z.record(z.string(), z.string()).optional(),
     })
     .optional(),
   viewport: z
