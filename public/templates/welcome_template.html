@@ -1,0 +1,44 @@
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Welcome to 9to5-Scout</title>
+      <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; }
+        .container { background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); overflow: hidden; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; }
+        .content { padding: 30px; }
+        .cta-button { display: inline-block; background: #667eea; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; margin: 20px 0; }
+        .footer { background: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #666; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>🔍 Welcome to 9to5-Scout!</h1>
+          <p>Your AI-powered job search assistant</p>
+        </div>
+        <div class="content">
+          <h2>Hi {{user_name}}!</h2>
+          <p>Welcome to 9to5-Scout, your intelligent job search companion. We're excited to help you find your next career opportunity.</p>
+          
+          <h3>What you can expect:</h3>
+          <ul>
+            <li>📧 Daily job digest emails with personalized opportunities</li>
+            <li>🤖 AI-powered job matching and insights</li>
+            <li>📊 Market trends and salary data</li>
+            <li>🎯 Resume optimization and interview preparation</li>
+          </ul>
+          
+          <p>Ready to get started?</p>
+          <a href="{{WORKER_URL}}/dashboard" class="cta-button">Go to Dashboard</a>
+        </div>
+        <div class="footer">
+          <p>© 2025 9to5-Scout. All rights reserved.</p>
+        </div>
+      </div>
+    </body>
+    </html>
+  

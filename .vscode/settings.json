@@ -1,4 +1,5 @@
 {
+  "python.defaultInterpreterPath": "${workspaceFolder}/tests/venv_tests/bin/python",
   "files.associations": {
     "wrangler.toml": "toml",
     "wrangler.jsonc": "jsonc",

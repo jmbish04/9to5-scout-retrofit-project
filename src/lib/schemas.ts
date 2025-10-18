@@ -1,7 +1,7 @@
 // src/lib/schemas.ts
 import { z } from "zod";
 
-export const ProviderSchema = z.enum(["serper", "serpapi"]);
+export const ProviderSchema = z.enum(["serpapi"]);
 export type Provider = z.infer<typeof ProviderSchema>;
 
 export const FirecrawlJobSchema = z.object({
@@ -28,6 +28,7 @@ export const JobsResponseSchema = z.object({
   provider: ProviderSchema,
   count: z.number().int().nonnegative(),
   results: z.array(FirecrawlJobSchema),
+  error: z.string().optional(),
 });
 export type JobsResponse = z.infer<typeof JobsResponseSchema>;
 

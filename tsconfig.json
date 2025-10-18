@@ -9,20 +9,9 @@
     "skipLibCheck": true,
     "outDir": "./dist",
     "rootDir": "./src",
-    "types": [
-      "./worker-configuration",
-      "node"
-    ],
-    "lib": [
-      "ES2023"
-    ]
+    "types": ["./worker-configuration", "node"],
+    "lib": ["ES2023"]
   },
-  "include": [
-    "src/**/*.ts",
-    "worker-configuration.d.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+  "include": ["src/**/*.ts", "worker-configuration.d.ts"],
+  "exclude": ["node_modules", "dist"]
 }

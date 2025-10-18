@@ -1,3 +1,213 @@
+---
+alwaysApply: false
+---
+
+# Frontend Styling and Navigation Rules
+
+## CRITICAL FRONTEND ARCHITECTURE
+
+### **NEVER USE CLOUDFLARE PAGES**
+
+- **WRONG**: This project does NOT use Cloudflare Pages
+- **WRONG**: Do not suggest Pages deployment or configuration
+- **WRONG**: Do not use Pages-specific features or APIs
+- **CORRECT**: This is a Cloudflare Workers project with static assets served from the `public/` directory
+
+### **STATIC ASSETS SERVING**
+
+- **Location**: All frontend files are in the `public/` directory
+- **Serving**: Cloudflare Workers serves static assets via `env.ASSETS.fetch(request)`
+- **Configuration**: Defined in `wrangler.toml` under `[assets]` section
+- **No Build Process**: Static HTML, CSS, JS files served directly
+
+## MANDATORY STYLING REQUIREMENTS
+
+### **TAILWIND CSS CDN - NEVER REMOVE**
+
+- **CRITICAL**: Every HTML page MUST include Tailwind CSS CDN
+- **Required Script**: `<script src="https://cdn.tailwindcss.com"></script>`
+- **Location**: Must be in `<head>` section after `<title>` tag
+- **NEVER REMOVE**: This is essential for proper styling
+
+### **Correct HTML Head Structure**
+
+```html
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Page Title - 9to5-Scout</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="icon" href="/assets/icon.png" type="image/png" />
+</head>
+```
+
+### **WRONG Patterns to Avoid**
+
+```html
+<!-- WRONG - Missing Tailwind CSS CDN -->
+<head>
+  <title>Page Title</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+
+<!-- WRONG - Using Cloudflare Pages -->
+<head>
+  <title>Page Title</title>
+  <link rel="stylesheet" href="/_next/static/css/app.css" />
+</head>
+```
+
+## NAVIGATION SYSTEM REQUIREMENTS
+
+### **SHARED NAVIGATION - MANDATORY**
+
+- **File**: `public/js/nav.js` contains the shared navigation system
+- **Injection**: All pages must have `<div id="navbar-placeholder"></div>`
+- **Script**: All pages must include `<script type="module" src="/js/nav.js"></script>`
+- **NEVER**: Create static navigation in HTML files
+
+### **Correct Page Structure**
+
+```html
+<body class="bg-gray-50">
+  <div id="navbar-placeholder"></div>
+  <!-- Page content here -->
+  <script type="module" src="/js/nav.js"></script>
+</body>
+```
+
+### **Navigation JavaScript Requirements**
+
+- **Button Types**: All dropdown buttons MUST have `type="button"`
+- **Event Handling**: Use `preventDefault()` and `stopPropagation()`
+- **No Form Submission**: Prevent default button behavior
+
+```javascript
+// CORRECT - Dropdown button with proper type
+<button type="button" id="dropdownNavbarLink" data-dropdown-toggle="dropdownNavbar">
+    Documentation
+</button>
+
+// WRONG - Missing type attribute causes form submission
+<button id="dropdownNavbarLink" data-dropdown-toggle="dropdownNavbar">
+    Documentation
+</button>
+```
+
+## STYLING CONSISTENCY RULES
+
+### **Tailwind CSS Classes - MANDATORY**
+
+- **Use Tailwind**: All styling must use Tailwind CSS classes
+- **No Custom CSS**: Avoid custom CSS unless absolutely necessary
+- **Responsive Design**: Use Tailwind responsive prefixes (`md:`, `lg:`, etc.)
+- **Dark Mode**: Use Tailwind dark mode classes (`dark:bg-gray-900`)
+
+### **Common Tailwind Patterns**
+
+```html
+<!-- CORRECT - Proper Tailwind usage -->
+<div class="bg-white dark:bg-gray-900 shadow-lg rounded-lg p-6">
+  <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Page Title</h1>
+  <p class="text-gray-600 dark:text-gray-300 mt-4">Page description</p>
+</div>
+```
+
+## FILE STRUCTURE REQUIREMENTS
+
+### **Public Directory Structure**
+
+```
+public/
+├── index.html              # Home page
+├── getting-started.html    # Documentation pages
+├── api-reference.html
+├── email-integration.html
+├── browser-testing.html
+├── inbox.html
+├── agent-workflow-config.html
+├── job-history-management.html
+├── full-transparency.html
+├── prd.html
+├── css/
+│   └── styles.css          # Custom CSS (minimal)
+├── js/
+│   └── nav.js              # Shared navigation system
+└── assets/
+    └── icon.png            # Site favicon
+```
+
+### **Page Template Requirements**
+
+Every HTML page must include:
+
+1. **Tailwind CSS CDN** in head
+2. **Custom CSS link** (`/css/styles.css`)
+3. **Favicon link** (`/assets/icon.png`)
+4. **Navbar placeholder** (`<div id="navbar-placeholder"></div>`)
+5. **Navigation script** (`<script type="module" src="/js/nav.js"></script>`)
+
+## TESTING AND VALIDATION
+
+### **Before Making Frontend Changes**
+
+1. **Check Tailwind CDN**: Ensure every page has Tailwind CSS CDN
+2. **Verify Navigation**: Ensure nav.js is included and working
+3. **Test Dropdowns**: Verify dropdown buttons have `type="button"`
+4. **Check Styling**: Ensure Tailwind classes are applied correctly
+5. **Test Responsiveness**: Verify mobile and desktop layouts
+
+### **Common Issues to Prevent**
+
+- **Missing Tailwind CDN**: Causes broken styling and layout
+- **Missing nav.js**: Causes empty navigation bar
+- **Wrong button types**: Causes page jumping and form submission
+- **Static navigation**: Breaks consistency across pages
+- **Custom CSS overrides**: Conflicts with Tailwind classes
+
+## DEPLOYMENT CONSIDERATIONS
+
+### **Cloudflare Workers Static Assets**
+
+- **Configuration**: Defined in `wrangler.toml`
+- **Serving**: Handled by `env.ASSETS.fetch(request)`
+- **Caching**: Cloudflare CDN handles caching automatically
+- **No Build Step**: Files served directly from `public/` directory
+
+### **Never Suggest**
+
+- Cloudflare Pages deployment
+- Next.js or React build processes
+- Vite or Webpack configurations
+- Node.js build scripts for frontend
+- Separate frontend repositories
+
+## EMERGENCY FIXES
+
+### **If Styling is Broken**
+
+1. **Check Tailwind CDN**: Ensure it's present in all HTML files
+2. **Verify nav.js**: Ensure it's included and has correct syntax
+3. **Check Button Types**: Ensure dropdown buttons have `type="button"`
+4. **Test Navigation**: Verify dropdowns work without page jumping
+5. **Deploy Changes**: Use `pnpm run deploy` to update the worker
+
+### **Quick Fix Script**
+
+Use the provided `fix_pages.sh` script to automatically fix common issues:
+
+```bash
+chmod +x fix_pages.sh
+./fix_pages.sh
+```
+
+This script will:
+
+- Add Tailwind CSS CDN to all HTML pages
+- Ensure nav.js script is included
+- Fix common styling issues
+
 # Frontend Styling and Navigation Rules
 
 ## CRITICAL FRONTEND ARCHITECTURE

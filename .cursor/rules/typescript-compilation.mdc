@@ -1,3 +1,171 @@
+---
+alwaysApply: false
+---
+
+# TypeScript Compilation Best Practices
+
+This document outlines the critical requirements for TypeScript compilation configuration to prevent JavaScript files from being generated in the source directory.
+
+## Critical TypeScript Compilation Requirements
+
+- **ALWAYS** specify `outDir` in `tsconfig.json` to prevent in-place compilation
+- **ALWAYS** specify `rootDir` in `tsconfig.json` for proper source organization
+- **ALWAYS** exclude `node_modules` and output directories from compilation
+- **NEVER** run `tsc` without proper output directory configuration
+- **ALWAYS** verify that `.gitignore` excludes compiled JavaScript files from source directories
+
+## Required tsconfig.json Configuration
+
+```json
+{
+  "compilerOptions": {
+    "outDir": "./dist", // ✅ REQUIRED: Output compiled files to dist
+    "rootDir": "./src", // ✅ REQUIRED: Source files from src
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "isolatedModules": true,
+    "skipLibCheck": true
+  },
+  "include": ["src/**/*.ts", "worker-configuration.d.ts"],
+  "exclude": [
+    "node_modules", // ✅ REQUIRED: Exclude dependencies
+    "dist" // ✅ REQUIRED: Exclude output directory
+  ]
+}
+```
+
+## Required .gitignore Configuration
+
+```gitignore
+# Compiled JavaScript files in source directories
+src/**/*.js
+src/**/*.js.map
+
+# Output directories
+dist/
+build/
+
+# Node modules
+node_modules/
+```
+
+## Common Mistakes to Avoid
+
+### ❌ WRONG - Missing outDir Configuration
+
+```json
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext"
+    // ❌ Missing outDir - causes in-place compilation
+  }
+}
+```
+
+**Result**: JavaScript files generated alongside TypeScript files in `src/` directory
+
+### ❌ WRONG - Running tsc Without Configuration
+
+```bash
+# ❌ This compiles files in place
+tsc src/index.ts
+tsc -p tsconfig.json  # Without outDir specified
+```
+
+**Result**: Creates `src/index.js` alongside `src/index.ts`
+
+### ❌ WRONG - Missing .gitignore Entries
+
+```gitignore
+node_modules
+dist
+# ❌ Missing src/**/*.js - allows compiled files to be committed
+```
+
+**Result**: Compiled JavaScript files get committed to repository
+
+## Correct Workflow
+
+### ✅ CORRECT - Proper TypeScript Setup
+
+1. **Configure tsconfig.json** with `outDir` and `rootDir`
+2. **Update .gitignore** to exclude compiled files
+3. **Run compilation** with proper output directory
+4. **Verify** that source directory remains clean
+
+```bash
+# ✅ Correct compilation workflow
+pnpm run typecheck  # Uses tsconfig.json with outDir
+pnpm run build      # Uses wrangler build (doesn't use tsc directly)
+```
+
+## Verification Checklist
+
+- [ ] `tsconfig.json` has `outDir: "./dist"`
+- [ ] `tsconfig.json` has `rootDir: "./src"`
+- [ ] `tsconfig.json` excludes `node_modules` and `dist`
+- [ ] `.gitignore` includes `src/**/*.js` and `src/**/*.js.map`
+- [ ] No JavaScript files exist in `src/` directory
+- [ ] Compiled files appear only in `dist/` directory
+- [ ] TypeScript compilation doesn't modify source directory
+
+## Emergency Cleanup
+
+If JavaScript files are accidentally generated in `src/`:
+
+```bash
+# Remove all JavaScript files from src directory
+find src -name "*.js" -delete
+find src -name "*.js.map" -delete
+
+# Verify cleanup
+find src -name "*.js" | wc -l  # Should return 0
+```
+
+## Package.json Script Guidelines
+
+```json
+{
+  "scripts": {
+    "typecheck": "pnpm generate-types && tsc -p tsconfig.json",
+    "build": "wrangler build",
+    "dev": "wrangler dev"
+  }
+}
+```
+
+**Note**: The `typecheck` script should use `tsc -p tsconfig.json` to respect the configuration file, while `build` should use `wrangler build` for Cloudflare Workers.
+
+## Cloudflare Workers Specific Notes
+
+- **Wrangler Build**: Uses esbuild internally, doesn't generate separate JS files
+- **Type Checking**: Use `pnpm run typecheck` for type validation only
+- **Development**: Use `wrangler dev` for local development
+- **Production**: Use `wrangler deploy` for deployment
+
+## Prevention Rules
+
+1. **Before running any TypeScript compilation**:
+
+   - Verify `tsconfig.json` has proper `outDir` configuration
+   - Check that `.gitignore` excludes compiled files
+   - Ensure source directory is clean
+
+2. **After TypeScript compilation**:
+
+   - Verify no JavaScript files were created in `src/`
+   - Check that compiled files are in the correct output directory
+   - Run `git status` to ensure no unwanted files are staged
+
+3. **Regular maintenance**:
+   - Periodically check for stray JavaScript files in source directories
+   - Update `.gitignore` if new file patterns are introduced
+   - Review TypeScript configuration when adding new build steps
+
 # TypeScript Compilation Best Practices
 
 This document outlines the critical requirements for TypeScript compilation configuration to prevent JavaScript files from being generated in the source directory.

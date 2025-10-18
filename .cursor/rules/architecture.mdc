@@ -1,6 +1,4 @@
 ---
-description: Core Cloudflare Workers architecture and service usage patterns
-globs: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.mjs", "src/**"]
 alwaysApply: true
 ---
 

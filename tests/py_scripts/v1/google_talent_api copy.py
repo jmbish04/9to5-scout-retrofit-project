@@ -28,8 +28,8 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Setup logging
 def setup_logging():
-    """Setup centralized logging to logs/google_talent_api.log"""
-    log_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'logs')
+    """Setup centralized logging to tests/logs/google_talent_api.log"""
+    log_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), '..', 'logs')
     os.makedirs(log_dir, exist_ok=True)
     
     log_file = os.path.join(log_dir, 'google_talent_api.log')

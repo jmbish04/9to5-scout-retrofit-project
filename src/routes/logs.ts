@@ -244,4 +244,28 @@ logs.get("/sessions", async (c) => {
   }
 });
 
+// Individual handler functions for compatibility with api.ts
+export async function handleLogsPost(request: Request, env: Env): Promise<Response> {
+  return logs.fetch(request, env);
+}
+
+export async function handleLogsGet(request: Request, env: Env): Promise<Response> {
+  return logs.fetch(request, env);
+}
+
+export async function handleLogsMetaGet(request: Request, env: Env): Promise<Response> {
+  return logs.fetch(request, env);
+}
+
+export function handleLogsOptions(): Response {
+  return new Response(null, {
+    status: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    },
+  });
+}
+
 export { logs };

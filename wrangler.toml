@@ -32,6 +32,10 @@ EMBEDDING_MODEL = "@cf/baai/bge-large-en-v1.5" # @cf/baai/bge-large-en-v1.5
 [observability]
 enabled = true
 
+[observability.logs]
+invocation_logs = true
+head_sampling_rate = 1 # optional. default = 1.
+
 # Browser Rendering binding
 [browser]
 binding = "MYBROWSER"
@@ -89,7 +93,12 @@ bindings = [
   { name = "SITE_CRAWLER", class_name = "SiteCrawler" },
   { name = "JOB_MONITOR", class_name = "JobMonitor" },
   { name = "SCRAPE_SOCKET", class_name = "ScrapeSocket" },
-  { name = "GENERIC_AGENT", class_name = "GenericAgent" }
+  { name = "GENERIC_AGENT", class_name = "GenericAgent" },
+  { name = "EMAIL_PROCESSOR_AGENT", class_name = "EmailProcessorAgent" },
+  { name = "JOB_MONITOR_AGENT", class_name = "JobMonitorAgent" },
+  { name = "RESUME_OPTIMIZATION_AGENT", class_name = "ResumeOptimizationAgent" },
+  { name = "COMPANY_INTELLIGENCE_AGENT", class_name = "CompanyIntelligenceAgent" },
+  { name = "INTERVIEW_PREPARATION_AGENT", class_name = "InterviewPreparationAgent" }
 ]
 
 # DiscoveryWorkflow
@@ -125,6 +134,16 @@ new_sqlite_classes = ["ScrapeSocket"]  # Changed from new_classes to new_sqlite_
 tag = "v3"
 new_sqlite_classes = ["GenericAgent"]
 
+# EmailProcessorAgent for Cloudflare Agents SDK
+[[migrations]]
+tag = "v4"
+new_sqlite_classes = ["EmailProcessorAgent"]
+
+# New dedicated agents for Cloudflare Agents SDK
+[[migrations]]
+tag = "v5"
+new_sqlite_classes = ["JobMonitorAgent", "ResumeOptimizationAgent", "CompanyIntelligenceAgent", "InterviewPreparationAgent"]
+
 # Triggers
 [triggers]
 crons = [
@@ -132,8 +151,8 @@ crons = [
   "0 6 * * *"      # daily 06:00
 ]
 
-# Static assets
+# Static assets for the limited admin operational frontend pages & html email templates
 [assets]
 directory = "./public" # ./public -- directory for static assets
 binding = "ASSETS" # ASSETS -- for serving static assets
-exclude = [".DS_Store", "**/.DS_Store"] # Exclude .DS_Store files from all directories
+# exclude = [".DS_Store", "**/.DS_Store"] # THIS FIELD IS DEPRECATED, USE .assetsignore file instead; Exclude .DS_Store files from all directories

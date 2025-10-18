@@ -1,0 +1,880 @@
+{
+  "search_metadata": {
+    "id": "68f26ecfa1de12caddf9c54a",
+    "status": "Success",
+    "json_endpoint": "https://serpapi.com/searches/f59729059a9b5304/68f26ecfa1de12caddf9c54a.json",
+    "created_at": "2025-10-17 16:29:03 UTC",
+    "processed_at": "2025-10-17 16:29:03 UTC",
+    "google_jobs_url": "https://www.google.com/search?q=legal+tech&uule=w+CAIQICIvU2FuIEZyYW5jaXNjbyBCYXkgQXJlYSxDYWxpZm9ybmlhLFVuaXRlZCBTdGF0ZXM&hl=en&gl=us&udm=8",
+    "raw_html_file": "https://serpapi.com/searches/f59729059a9b5304/68f26ecfa1de12caddf9c54a.html",
+    "total_time_taken": 1.21
+  },
+  "search_parameters": {
+    "q": "legal tech",
+    "engine": "google_jobs",
+    "location_requested": "San Francisco Bay Area",
+    "location_used": "San Francisco Bay Area,California,United States",
+    "google_domain": "google.com",
+    "hl": "en",
+    "gl": "us"
+  },
+  "jobs_results": [
+    {
+      "title": "Legal Technology Product Manager",
+      "company_name": "Simpson Thacher and Bartlett LLP",
+      "location": "Palo Alto, CA",
+      "via": "ZipRecruiter",
+      "share_link": "https://www.google.com/search?ibp=htl;jobs&q=legal+tech&htidocid=k4mBX4YPROxXeqp0AAAAAA%3D%3D&hl=en-US&shndl=37&shmd=H4sIAAAAAAAA_xXNsQrCMBCAYVz7CE43i7YqiKBTdRCkQsHu5ZoeSeWaC8kJ9ZF8S-vyj9-ffRfZsSKLDA0Z54XFfqCO0r-NwgM9Woqwgbt0kAijcSAebiKWaXl2qiGdiiIlzm1S1MHkRsZCPHUyFS_p0j9tchgpMCq1-8N2yoO3q91zGEOascahcfMEfQ8XjMqkClVVw-ChRhYoWWUN1_IHu3S9iqwAAAA&shmds=v1_AdeF8KjSQPEI8JIA-_42kmJbZt7pnyU30CFKK2bmbnDKECeVaw&source=sh/x/job/li/m1/1#fpstate=tldetail&htivrt=jobs&htiq=legal+tech&htidocid=k4mBX4YPROxXeqp0AAAAAA%3D%3D",
+      "extensions": [
+        "Full-time"
+      ],
+      "detected_extensions": {
+        "schedule_type": "Full-time"
+      },
+      "description": "Job Summary & Objectives\n\nThe Legal Technology Product Manager is responsible for leading the end-to-end lifecycle of legal technology products that support Simpson Thacher & Bartlett LLP's global practice groups. This individual will be responsible for creating a roadmap of Legal Technology solutions that meet current business objectives and forecasting future product trajectory. This role blends strategic product leadership with hands-on support, acting as both a driver of innovation and the firm's subject matter expert in legal technology.\n\nThe Product Manager will maintain deep expertise in the firm's legal technology stack, acting as a key resource for both business users and technical teams. This role requires strategic thinking, service excellence, and a deep technical understanding of legal practice and change management.\n\nEssential Job Duties & Responsibilities\n\nProduct Lifecycle Management\n• Own the full product lifecycle: idea intake, discovery, requirements gathering, design, testing, implementation, adoption, and sunset.\n• Facilitate functional and technical requirements by maintaining a well-defined roadmap and collaborating with Practice Solutions Managers during scoping activities.\n• Manage 3rd party vendors where applicable to ensure the product continues to meet the Firm's needs, including influencing the product roadmap and evaluating the vendors' performance.\n• Prioritize product backlogs across products within your portfolio.\n• Manage delivery schedules and communicate progress, risks, and milestones to stakeholders.\n• Cultivate a UX-first mentality and culture when defining workflows and user interfaces for new and existing products\n• Monitor product usage and gather product feedback from users; continuously iterate on and improve solution.\n\nLegal Technology Subject Matter Expertise\n• Act as the in-house expert on firmwide and practice-specific legal technologies (e.g., CLM, document automation, AI tools, transaction platforms).\n• Stay abreast of legal tech trends, capabilities, and vendor roadmaps to inform firm direction and platform evolution.\n• Liaise between the legal teams, vendors and other Firm support teams to ensure support of practice-specific tools.\n• Work closely with IT teams including infrastructure, development, and testing teams to support releases, software/hardware upgrades, server upgrades, etc.\n\nSupport, Training & Adoption\n• Provide direct day-to-day support to attorneys, legal teams and clients; including onboarding, user provisioning, access setup, and workflow troubleshooting.\n• Lead live demos and training sessions for new users and teams adopting new technologies.\n• Develop and maintain clear user guides, training materials, job aids, FAQs, and internal documentation.\n• Promote technology adoption through targeted communications, tutorials, and ongoing engagement with practice groups.\n\nImplementation & Change Management\n• Track platform usage, impact, and satisfaction to inform optimization.\n• Continuously identify opportunities to improve legal operations through automation or innovation.\n\nPerform other duties as assigned\n\nEducation\n• Bachelor's degree - required\n• Agile or Scrum certification is a plus\n\nSkills and Experience\n• 5+ years' experience in product management implementing and/or supporting software (AI solutions preferred); development, including experience leading Agile ceremonies, such as sprint planning, backlog grooming and retrospectives.\n• Broad technical fluency across multiple product types and platforms; familiarity with legal technology or law firm environments is a strong plus.\n• Strong project management capabilities, with the ability to manage multiple time-sensitive priorities simultaneously.\n• Self-motivated and proactive, with exceptional analytical, organizational, and problem-solving skills.\n• Demonstrated ability to write clear and effective product documentation, including user stories, training guides, and release notes.\n• Exceptional verbal and written communication skills, with the ability to collaborate professionally and confidently with a diverse range of stakeholders, including attorneys, senior leadership, IT teams, and external vendors.\n• Flexible and resilient, able to adapt to shifting priorities and maintain a calm, focused approach in high-pressure situations.\n• Proven ability to work independently with minimal supervision, while also thriving in collaborative, team-oriented environments.\n• Strong client service orientation, committed to delivering high-quality support to both internal stakeholders and external clients.\n• Strong learning agility with a demonstrated ability to quickly master new technologies, tools, and platforms.\n• Skilled in communicating complex technical concepts and developing compelling, user-centric messaging that promotes understanding and adoption.\n• Exercises sound judgment and discretion in all interactions and decision-making processes.\n\nSalary Information\n\nNY Only: The estimated base salary range for this position is $175,000 to $210,000 at the time of posting.\n\nThe actual salary offered will depend on a variety of factors, including without limitation, the qualifications of the individual applicant for the position, years of relevant experience, level of education attained, certifications or other professional licenses held, and if applicable, the location in which the applicant lives and/or from which they will be performing the job. This role is exempt meaning it is not overtime pay eligible.\n\nPrivacy Notice\n\nFor information about how Simpson Thacher & Bartlett LLP collects and processes your personal information, please refer to our Privacy Notice available athttps://www.stblaw.com/other/privacy-notice.\n\nSimpson Thacher & Bartlett is committed to a collegial work environment in which all individuals are treated with respect and dignity.The Firm prohibits discrimination or harassment based upon race, color, religion, gender, gender identity or expression, age, national origin, citizenship status, disability, marital or partnership status, sexual orientation, veteran's status or any other legally protected status. This Policy pertains to every aspect of an individual's relationship with the Firm, including but not limited to recruitment, hiring, compensation, benefits, training and development, promotion, transfer, discipline, termination, and all other privileges, terms and conditions of employment.\n\n#LI-Hybrid",
+      "job_highlights": [
+        {
+          "title": "Qualifications",
+          "items": [
+            "Act as the in-house expert on firmwide and practice-specific legal technologies (e.g., CLM, document automation, AI tools, transaction platforms)",
+            "Bachelor's degree - required",
+            "Broad technical fluency across multiple product types and platforms; familiarity with legal technology or law firm environments is a strong plus",
+            "Strong project management capabilities, with the ability to manage multiple time-sensitive priorities simultaneously",
+            "Self-motivated and proactive, with exceptional analytical, organizational, and problem-solving skills",
+            "Demonstrated ability to write clear and effective product documentation, including user stories, training guides, and release notes",
+            "Exceptional verbal and written communication skills, with the ability to collaborate professionally and confidently with a diverse range of stakeholders, including attorneys, senior leadership, IT teams, and external vendors",
+            "Flexible and resilient, able to adapt to shifting priorities and maintain a calm, focused approach in high-pressure situations",
+            "Proven ability to work independently with minimal supervision, while also thriving in collaborative, team-oriented environments",
+            "Strong client service orientation, committed to delivering high-quality support to both internal stakeholders and external clients",
+            "Strong learning agility with a demonstrated ability to quickly master new technologies, tools, and platforms",
+            "Skilled in communicating complex technical concepts and developing compelling, user-centric messaging that promotes understanding and adoption",
+            "Exercises sound judgment and discretion in all interactions and decision-making processes"
+          ]
+        },
+        {
+          "title": "Benefits",
+          "items": [
+            "NY Only: The estimated base salary range for this position is $175,000 to $210,000 at the time of posting",
+            "The actual salary offered will depend on a variety of factors, including without limitation, the qualifications of the individual applicant for the position, years of relevant experience, level of education attained, certifications or other professional licenses held, and if applicable, the location in which the applicant lives and/or from which they will be performing the job",
+            "This role is exempt meaning it is not overtime pay eligible"
+          ]
+        },
+        {
+          "title": "Responsibilities",
+          "items": [
+            "This individual will be responsible for creating a roadmap of Legal Technology solutions that meet current business objectives and forecasting future product trajectory",
+            "This role blends strategic product leadership with hands-on support, acting as both a driver of innovation and the firm's subject matter expert in legal technology",
+            "The Product Manager will maintain deep expertise in the firm's legal technology stack, acting as a key resource for both business users and technical teams",
+            "This role requires strategic thinking, service excellence, and a deep technical understanding of legal practice and change management",
+            "Product Lifecycle Management",
+            "Own the full product lifecycle: idea intake, discovery, requirements gathering, design, testing, implementation, adoption, and sunset",
+            "Facilitate functional and technical requirements by maintaining a well-defined roadmap and collaborating with Practice Solutions Managers during scoping activities",
+            "Manage 3rd party vendors where applicable to ensure the product continues to meet the Firm's needs, including influencing the product roadmap and evaluating the vendors' performance",
+            "Prioritize product backlogs across products within your portfolio",
+            "Manage delivery schedules and communicate progress, risks, and milestones to stakeholders",
+            "Cultivate a UX-first mentality and culture when defining workflows and user interfaces for new and existing products",
+            "Monitor product usage and gather product feedback from users; continuously iterate on and improve solution",
+            "Stay abreast of legal tech trends, capabilities, and vendor roadmaps to inform firm direction and platform evolution",
+            "Liaise between the legal teams, vendors and other Firm support teams to ensure support of practice-specific tools",
+            "Work closely with IT teams including infrastructure, development, and testing teams to support releases, software/hardware upgrades, server upgrades, etc",
+            "Support, Training & Adoption",
+            "Provide direct day-to-day support to attorneys, legal teams and clients; including onboarding, user provisioning, access setup, and workflow troubleshooting",
+            "Lead live demos and training sessions for new users and teams adopting new technologies",
+            "Develop and maintain clear user guides, training materials, job aids, FAQs, and internal documentation",
+            "Promote technology adoption through targeted communications, tutorials, and ongoing engagement with practice groups",
+            "Implementation & Change Management",
+            "Track platform usage, impact, and satisfaction to inform optimization",
+            "Continuously identify opportunities to improve legal operations through automation or innovation",
+            "Perform other duties as assigned"
+          ]
+        }
+      ],
+      "apply_options": [
+        {
+          "title": "ZipRecruiter",
+          "link": "https://www.ziprecruiter.com/c/Simpson-Thacher-and-Bartlett-LLP/Job/Legal-Technology-Product-Manager/-in-Palo-Alto,CA?jid=ba9d69d82c5abef5&utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        },
+        {
+          "title": "Ladders",
+          "link": "https://www.theladders.com/job/legal-technology-product-manager-simpson-thacher-and-bartlett-llp-palo-alto-ca_82663484?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        },
+        {
+          "title": "WhatJobs",
+          "link": "https://www.whatjobs.com/jobs/technology-management?id=2183291994&utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        },
+        {
+          "title": "BeBee",
+          "link": "https://us.bebee.com/job/497ae22d1c3f043af84e7d203e78e3e8?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        },
+        {
+          "title": "Jobrapido",
+          "link": "https://us.jobrapido.com/jobpreview/3302461963052777472?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        },
+        {
+          "title": "Dr. Job Pro",
+          "link": "https://www.drjobpro.com/job/view/MCBCE8TU6XT5W1W?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        },
+        {
+          "title": "Learn4Good",
+          "link": "https://www.learn4good.com/jobs/palo-alto/california/info_technology/4508145741/e/?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        }
+      ],
+      "job_id": "eyJqb2JfdGl0bGUiOiJMZWdhbCBUZWNobm9sb2d5IFByb2R1Y3QgTWFuYWdlciIsImNvbXBhbnlfbmFtZSI6IlNpbXBzb24gVGhhY2hlciBhbmQgQmFydGxldHQgTExQIiwiYWRkcmVzc19jaXR5IjoiUGFsbyBBbHRvLCBDQSIsImh0aWRvY2lkIjoiazRtQlg0WVBST3hYZXFwMEFBQUFBQT09IiwidXVsZSI6IncrQ0FJUUlDSXZVMkZ1SUVaeVlXNWphWE5qYnlCQ1lYa2dRWEpsWVN4RFlXeHBabTl5Ym1saExGVnVhWFJsWkNCVGRHRjBaWE0iLCJnbCI6InVzIiwiaGwiOiJlbiJ9"
+    },
+    {
+      "title": "Customer Success Manager (Legal AI Solutions) - Courts",
+      "company_name": "Thomson Reuters",
+      "location": "San Francisco, CA (+12 others)",
+      "via": "Thomson Reuters Careers",
+      "share_link": "https://www.google.com/search?ibp=htl;jobs&q=legal+tech&htidocid=xdcHGS1Bmo6S1wdSAAAAAA%3D%3D&hl=en-US&shndl=37&shmd=H4sIAAAAAAAA_xWMMQrCQBAAsc0TrLawUNFEBButQkBRTGPsw-ZYLieX23C7B3mXLzQ2w0wz2XeR1VUS5YEiNMkYEoEaA9q510-y6KG8Q8M-qeMgG9hDxSmqzPLgDoQwmh44wI3ZelpeetVRzkUh4nMriupMbngoOFDHU_HhTv5opcdIo0el9ng6TPkY7Hb17nmQefaipBQFXIAGA1wjBuPE8A6q8gdqANbatQAAAA&shmds=v1_AdeF8Kj98SSwIHPm1WyfW-yomrBwVpfE1x4IyewMWOJkEZhKRA&source=sh/x/job/li/m1/1#fpstate=tldetail&htivrt=jobs&htiq=legal+tech&htidocid=xdcHGS1Bmo6S1wdSAAAAAA%3D%3D",
+      "extensions": [
+        "10 days ago",
+        "Full-time",
+        "Health insurance",
+        "Dental insurance",
+        "Paid time off"
+      ],
+      "detected_extensions": {
+        "posted_at": "10 days ago",
+        "schedule_type": "Full-time",
+        "health_insurance": true,
+        "dental_coverage": true,
+        "paid_time_off": true
+      },
+      "description": "About the Role:\n\nThe Customer Success Manager will engage with customers to understand their business goals, develop tailored strategies and drive successful adoption of Thomson Reuters' legal AI solutions. The Customer Success Manager will typically focus on a portfolio of customers, actively prioritizing customers based on adoption, health and other key parameters. The Customer Success Manager will use a standard CSM playbook to proactively engage throughout the customer lifecycle to grow adoption and deliver value.\n\nThis role will be specifically aimed at supporting Federal or State and Local courts and/or government customers in their adoption and use of TR Legal AI solutions. It is critical to understand the type of work performed by Federal or State and Local government customers to help these clients identify the right use cases for TR Legal AI solutions.\n \n\nIn this role as a Customer Success Manager, you will:\n• Strategic Relationships: Engage regularly with Government executives to understand their goals and provide strategic guidance, acting as their trusted advisor throughout the customer journey.\n• Customer Success Plan: Jointly create success plans with government personnel to deliver value and outcomes from Thomson Reuters’s legal AI solutions.\n• Transform Legal Workflows with AI: Collaborate with government personnel to identify their specific business challenges and design tailored workflows / use cases that deliver sustained value from Thomson Reuters' legal AI solutions.\n• Change Management: Partner with government customers to help gain executive sponsorship, identify champions and define change management strategies to help transform the work of government personnel.\n• Drive Adoption: Partner with customers to ensure users are trained appropriately (leveraging TR customer education managers) and define mutual strategies to grow adoption of the TR Legal AI solutions.\n• Lead Executive Business Reviews: Capture value delivered to government customers from TR Legal AI solutions, lead executive business reviews and develop the joint roadmap for success with customers.\n• Enhance Retention and Satisfaction: Proactively address customer needs, identify opportunities for expansion, and develop strategies to reduce churn and drive satisfaction.\n• Advocate for Customer Needs: Serve as the voice of the customer by sharing feedback with internal teams, including Product and Engineering, to influence future enhancements and features.\n\nAbout You\n\nYou're a fit for the Customer Success Manager role if your background includes:\n• Formal legal education (JD) or substantial experience working with legal technology, attorneys, or legal professionals. For this role, we are specifically looking for those with experience with state and local courts and/or government customers.\n• You have 5+ years of experience in Customer Success, Consulting with legal technology, Account Management, or a related role, with leading legal tech consulting organizations or SaaS firms.\n• Curiosity in technology/AI developments: Familiarity with legal technology or AI-driven platforms, with a willingness to stay ahead of advancements in legal tech.\n• Relationship Building: Strong interpersonal and communication skills, with a proven ability to build trusted relationships and act as a strategic advisor to customers.\n• Customer-Centric Mindset: A proactive, personable approach to problem-solving, with a focus on delivering measurable outcomes and ensuring customer satisfaction.\n• Collaboration: Experience working cross-functionally with Sales, Product, Marketing, and Support teams to achieve mutual goals and enhance the customer journey.\n\n#LI-BS1\n\nWhat’s in it For You?\n• Flexibility & Work-Life Balance: Flex My Way is a set of supportive workplace policies designed to help manage personal and professional responsibilities, whether caring for family, giving back to the community, or finding time to refresh and reset. This builds upon our flexible work arrangements, including work from anywhere for up to 8 weeks per year, empowering employees to achieve a better work-life balance.\n• Career Development and Growth: By fostering a culture of continuous learning and skill development, we prepare our talent to tackle tomorrow’s challenges and deliver real-world solutions. Our Grow My Way programming and skills-first approach ensures you have the tools and knowledge to grow, lead, and thrive in an AI-enabled future.\n• Industry Competitive Benefits: We offer comprehensive benefit plans to include flexible vacation, two company-wide Mental Health Days off, access to the Headspace app, retirement savings, tuition reimbursement, employee incentive programs, and resources for mental, physical, and financial wellbeing.\n• Culture: Globally recognized, award-winning reputation for inclusion and belonging, flexibility, work-life balance, and more. We live by our values: Obsess over our Customers, Compete to Win, Challenge (Y)our Thinking, Act Fast / Learn Fast, and Stronger Together.\n• Social Impact: Make an impact in your community with our Social Impact Institute. We offer employees two paid volunteer days off annually and opportunities to get involved with pro-bono consulting projects and Environmental, Social, and Governance (ESG) initiatives.\n• Making a Real-World Impact: We are one of the few companies globally that helps its customers pursue justice, truth, and transparency. Together, with the professionals and institutions we serve, we help uphold the rule of law, turn the wheels of commerce, catch bad actors, report the facts, and provide trusted, unbiased information to people all over the world.\n\nIn the United States, Thomson Reuters offers a comprehensive benefits package to our employees. Our benefit package includes market competitive health, dental, vision, disability, and life insurance programs, as well as a competitive 401k plan with company match. In addition, Thomson Reuters offers market leading work life benefits with competitive vacation, sick and safe paid time off, paid holidays (including two company mental health days off), parental leave, sabbatical leave. These benefits meet or exceeds the requirements of paid time off in accordance with any applicable state or municipal laws. Finally, Thomson Reuters offers the following additional benefits: optional hospital, accident and sickness insurance paid 100% by the employee; optional life and AD&D insurance paid 100% by the employee; Flexible Spending and Health Savings Accounts; fitness reimbursement; access to Employee Assistance Program; Group Legal Identity Theft Protection benefit paid 100% by employee; access to 529 Plan; commuter benefits; Adoption & Surrogacy Assistance; Tuition Reimbursement; and access to Employee Stock Purchase Plan.\n\nThomson Reuters complies with local laws that require upfront disclosure of the expected pay range for a position. The target total cash compensation range varies across locations.\nFor any eligible US locations, unless otherwise noted, the target total cash compensation range for this role is $143,500 - $266,500.\nThis is inclusive of both base pay and any target sales incentive.\nPay is positioned within the range based on several factors including an individual’s knowledge, skills and experience with consideration given to internal equity. Base pay and any target sales incentive are part of a comprehensive Total Reward program which also includes flexible and supportive benefits and other wellbeing programs.\n\nThis job posting will close 11/08/2025.\n\nAbout Us\n\nThomson Reuters informs the way forward by bringing together the trusted content and technology that people and organizations need to make the right decisions. We serve professionals across legal, tax, accounting, compliance, government, and media. Our products combine highly specialized software and insights to empower professionals with the data, intelligence, and solutions needed to make informed decisions, and to help institutions in their pursuit of justice, truth, and transparency. Reuters, part of Thomson Reuters, is a world leading provider of trusted journalism and news.\n\nWe are powered by the talents of 26,000 employees across more than 70 countries, where everyone has a chance to contribute and grow professionally in flexible work environments. At a time when objectivity, accuracy, fairness, and transparency are under attack, we consider it our duty to pursue them. Sound exciting? Join us and help shape the industries that move society forward.\n\nAs a global business, we rely on the unique backgrounds, perspectives, and experiences of all employees to deliver on our business goals. To ensure we can do that, we seek talented, qualified employees in all our operations around the world regardless of race, color, sex/gender, including pregnancy, gender identity and expression, national origin, religion, sexual orientation, disability, age, marital status, citizen status, veteran status, or any other protected classification under applicable law. Thomson Reuters is proud to be an Equal Employment Opportunity Employer providing a drug-free workplace.\n\nWe also make reasonable accommodations for qualified individuals with disabilities and for sincerely held religious beliefs in accordance with applicable law. More information on requesting an accommodation here.\n\nLearn more on how to protect yourself from fraudulent job postings here.\n\nMore information about Thomson Reuters can be found on thomsonreuters.com.",
+      "job_highlights": [
+        {
+          "title": "Qualifications",
+          "items": [
+            "You're a fit for the Customer Success Manager role if your background includes:",
+            "Formal legal education (JD) or substantial experience working with legal technology, attorneys, or legal professionals",
+            "For this role, we are specifically looking for those with experience with state and local courts and/or government customers",
+            "You have 5+ years of experience in Customer Success, Consulting with legal technology, Account Management, or a related role, with leading legal tech consulting organizations or SaaS firms",
+            "Curiosity in technology/AI developments: Familiarity with legal technology or AI-driven platforms, with a willingness to stay ahead of advancements in legal tech",
+            "Relationship Building: Strong interpersonal and communication skills, with a proven ability to build trusted relationships and act as a strategic advisor to customers",
+            "Customer-Centric Mindset: A proactive, personable approach to problem-solving, with a focus on delivering measurable outcomes and ensuring customer satisfaction"
+          ]
+        },
+        {
+          "title": "Benefits",
+          "items": [
+            "Flexibility & Work-Life Balance: Flex My Way is a set of supportive workplace policies designed to help manage personal and professional responsibilities, whether caring for family, giving back to the community, or finding time to refresh and reset",
+            "This builds upon our flexible work arrangements, including work from anywhere for up to 8 weeks per year, empowering employees to achieve a better work-life balance",
+            "Career Development and Growth: By fostering a culture of continuous learning and skill development, we prepare our talent to tackle tomorrow’s challenges and deliver real-world solutions",
+            "Industry Competitive Benefits: We offer comprehensive benefit plans to include flexible vacation, two company-wide Mental Health Days off, access to the Headspace app, retirement savings, tuition reimbursement, employee incentive programs, and resources for mental, physical, and financial wellbeing",
+            "Culture: Globally recognized, award-winning reputation for inclusion and belonging, flexibility, work-life balance, and more",
+            "Social Impact: Make an impact in your community with our Social Impact Institute",
+            "We offer employees two paid volunteer days off annually and opportunities to get involved with pro-bono consulting projects and Environmental, Social, and Governance (ESG) initiatives",
+            "Our benefit package includes market competitive health, dental, vision, disability, and life insurance programs, as well as a competitive 401k plan with company match",
+            "In addition, Thomson Reuters offers market leading work life benefits with competitive vacation, sick and safe paid time off, paid holidays (including two company mental health days off), parental leave, sabbatical leave",
+            "These benefits meet or exceeds the requirements of paid time off in accordance with any applicable state or municipal laws",
+            "Finally, Thomson Reuters offers the following additional benefits: optional hospital, accident and sickness insurance paid 100% by the employee; optional life and AD&D insurance paid 100% by the employee; Flexible Spending and Health Savings Accounts; fitness reimbursement; access to Employee Assistance Program; Group Legal Identity Theft Protection benefit paid 100% by employee; access to 529 Plan; commuter benefits; Adoption & Surrogacy Assistance; Tuition Reimbursement; and access to Employee Stock Purchase Plan",
+            "Thomson Reuters complies with local laws that require upfront disclosure of the expected pay range for a position",
+            "The target total cash compensation range varies across locations",
+            "For any eligible US locations, unless otherwise noted, the target total cash compensation range for this role is $143,500 - $266,500",
+            "This is inclusive of both base pay and any target sales incentive",
+            "Pay is positioned within the range based on several factors including an individual’s knowledge, skills and experience with consideration given to internal equity",
+            "Base pay and any target sales incentive are part of a comprehensive Total Reward program which also includes flexible and supportive benefits and other wellbeing programs"
+          ]
+        },
+        {
+          "title": "Responsibilities",
+          "items": [
+            "The Customer Success Manager will engage with customers to understand their business goals, develop tailored strategies and drive successful adoption of Thomson Reuters' legal AI solutions",
+            "The Customer Success Manager will typically focus on a portfolio of customers, actively prioritizing customers based on adoption, health and other key parameters",
+            "The Customer Success Manager will use a standard CSM playbook to proactively engage throughout the customer lifecycle to grow adoption and deliver value",
+            "This role will be specifically aimed at supporting Federal or State and Local courts and/or government customers in their adoption and use of TR Legal AI solutions",
+            "It is critical to understand the type of work performed by Federal or State and Local government customers to help these clients identify the right use cases for TR Legal AI solutions",
+            "Strategic Relationships: Engage regularly with Government executives to understand their goals and provide strategic guidance, acting as their trusted advisor throughout the customer journey",
+            "Customer Success Plan: Jointly create success plans with government personnel to deliver value and outcomes from Thomson Reuters’s legal AI solutions",
+            "Transform Legal Workflows with AI: Collaborate with government personnel to identify their specific business challenges and design tailored workflows / use cases that deliver sustained value from Thomson Reuters' legal AI solutions",
+            "Change Management: Partner with government customers to help gain executive sponsorship, identify champions and define change management strategies to help transform the work of government personnel",
+            "Drive Adoption: Partner with customers to ensure users are trained appropriately (leveraging TR customer education managers) and define mutual strategies to grow adoption of the TR Legal AI solutions",
+            "Lead Executive Business Reviews: Capture value delivered to government customers from TR Legal AI solutions, lead executive business reviews and develop the joint roadmap for success with customers",
+            "Enhance Retention and Satisfaction: Proactively address customer needs, identify opportunities for expansion, and develop strategies to reduce churn and drive satisfaction",
+            "Advocate for Customer Needs: Serve as the voice of the customer by sharing feedback with internal teams, including Product and Engineering, to influence future enhancements and features",
+            "Collaboration: Experience working cross-functionally with Sales, Product, Marketing, and Support teams to achieve mutual goals and enhance the customer journey"
+          ]
+        }
+      ],
+      "apply_options": [
+        {
+          "title": "Thomson Reuters Careers",
+          "link": "https://careers.thomsonreuters.com/us/en/job/JREQ195058/Customer-Success-Manager-Legal-AI-Solutions-Courts?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        },
+        {
+          "title": "Glassdoor",
+          "link": "https://www.glassdoor.com/job-listing/customer-success-manager-legal-ai-solutions-courts-thomson-reuters-JV_IC1162274_KO0,50_KE51,66.htm?jl=1009901898005&utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        },
+        {
+          "title": "Talent.com",
+          "link": "https://www.talent.com/view?id=785e8c8c8108&utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        },
+        {
+          "title": "RevFinders",
+          "link": "https://revfinders.com/career/70105/customer-success-manager-legal-ai-solutions-courts-minnesota-eagan?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        }
+      ],
+      "job_id": "eyJqb2JfdGl0bGUiOiJDdXN0b21lciBTdWNjZXNzIE1hbmFnZXIgKExlZ2FsIEFJIFNvbHV0aW9ucykgLSBDb3VydHMiLCJjb21wYW55X25hbWUiOiJUaG9tc29uIFJldXRlcnMiLCJhZGRyZXNzX2NpdHkiOiJTYW4gRnJhbmNpc2NvLCBDQSIsImh0aWRvY2lkIjoieGRjSEdTMUJtbzZTMXdkU0FBQUFBQT09IiwidXVsZSI6IncrQ0FJUUlDSXZVMkZ1SUVaeVlXNWphWE5qYnlCQ1lYa2dRWEpsWVN4RFlXeHBabTl5Ym1saExGVnVhWFJsWkNCVGRHRjBaWE0iLCJnbCI6InVzIiwiaGwiOiJlbiJ9"
+    },
+    {
+      "title": "Practice Innovation Advisor",
+      "company_name": "Kirkland & Ellis LLP",
+      "location": "Los Angeles, CA",
+      "via": "Dice",
+      "share_link": "https://www.google.com/search?ibp=htl;jobs&q=legal+tech&htidocid=V7PWHTRttQjsAt5xAAAAAA%3D%3D&hl=en-US&shndl=37&shmd=H4sIAAAAAAAA_xXLMQrCQBBAUWxzBKupFESzErAxVRARNUVuEDabYbM6zoSdJeQsntbY_OLBz76rrGiidSk4hDuzTDYFYaj6KahEOMBDOlC00Q2w-E3EE67LIaVRz8aoUu41LZPLnXyMMHYym5d0-k-rg404kk3YFqfjnI_sd9tniG-y3MMGrkRBoa4bCAy1KFTskVD3cKl-mcgTZZ0AAAA&shmds=v1_AdeF8KjI-2b7VeAkm693cPMMSOgKCucNWI7NbrntpJOvLchlgQ&source=sh/x/job/li/m1/1#fpstate=tldetail&htivrt=jobs&htiq=legal+tech&htidocid=V7PWHTRttQjsAt5xAAAAAA%3D%3D",
+      "thumbnail": "https://serpapi.com/searches/68f26ecfa1de12caddf9c54a/images/4ec013299767b714a1e1511c827a52d71e5749c1b0f019077f4a062ec13ebd30.jpeg",
+      "extensions": [
+        "208K a year",
+        "Full-time",
+        "Dental insurance",
+        "Paid time off",
+        "Health insurance"
+      ],
+      "detected_extensions": {
+        "salary": "208K a year",
+        "schedule_type": "Full-time",
+        "dental_coverage": true,
+        "paid_time_off": true,
+        "health_insurance": true
+      },
+      "description": "About Kirkland & Ellis\n\nAt Kirkland & Ellis, we don't just meet the standard for legal excellence - we set it. Our culture is built on teamwork, ingenuity and an unwavering commitment to continuous growth. We tackle the most sophisticated legal challenges with bold ideas and innovative solutions, powered by the exceptional experience and ambition of our 7,000+ people, including 4,000+ attorneys, across 22 offices worldwide. Our dedicated professionals share our lawyers' commitment to excellence and show up each day to do meaningful work that helps drive global business, investment and innovation forward.\n\nWhat You'll Do\n\nAre you passionate about shaping the future of legal services through innovation and technology? As a Practice Innovation Advisor at Kirkland & Ellis, you'll join our Practice Innovation team, working at the intersection of law and technology to enhance client service, efficiency, and profitability. You'll partner with attorneys, knowledge management professionals, and firm leadership to design and implement tech-enabled solutions that optimize workflows and elevate client outcomes. This is a high-impact role for someone eager to drive change and champion innovation in a fast-paced, collaborative environment.\n\nAssess and Improve Workflows - Partner with legal teams to evaluate current processes, identify challenges, and analyze the feasibility and impact of potential innovations.\nLead Technology Pilots - Design, launch, and manage pilots from scoping through execution, overseeing objectives, budgets, risks, and success measures.\nDrive Adoption and Change - Collaborate with practice groups to introduce new technology, build buy-in, and facilitate smooth adoption.\nEngage and Influence - Act as the face of Innovation at practice group meetings, trainings, and strategic initiatives, aligning with knowledge management attorneys and firm leadership.\nBridge Strategy and Execution - Ensure alignment between practice-specific needs and firmwide innovation initiatives, connecting attorneys, innovation teams, and leadership.\nAdvance Legal Process Optimization - Map workflows to uncover opportunities for automation, artificial intelligence (AI), and custom solutions.\nManage Vendor Partnerships - Build and maintain strong relationships with external technology providers to ensure impactful collaboration.\nPromote Ethical Innovation - Partner with Applied Innovation and Responsible AI personnel to implement emerging technologies responsibly and effectively.\nChampion a Culture of Innovation - Share best practices, lessons learned, and market insights to foster continuous learning across the firm.\nSupport Strategic Growth - Contribute to the development of the firm's innovation strategy, roadmap, and portfolio while collaborating cross-functionally on evolving priorities.\n\nWhat You'll Bring\n\nEducation - Juris Doctor (JD) or Master of Laws (LLM), required.\nExperience - 5+ years in a law firm or customer-facing role with a legal technology vendor, required.\nTechnology Leadership - Proven experience leading enterprise software implementations from evaluation to deployment.\nPlatform Knowledge - Familiarity with legal tech platforms, generative artificial intelligence (GenAI), automation, contract lifecycle management (CLM), and business intelligence tools.\nProcess Improvement Skills - Background in legal practice process optimization and workflow automation; no-code or low-code platform experience preferred.\nChange Management - Experience with structured change management approaches preferred.\nCommunication Excellence - Strong interpersonal, written, and verbal communication skills with confidence presenting to attorney audiences.\nProfessionalism and Collaboration - High degree of accuracy, accountability, and ability to work effectively with stakeholders at all levels.\nMindset - Self-starter with excellent analytical, problem-solving, and organizational skills; able to exercise independent judgment and critical thinking.\n\nCompensation\n\nThe base salary range below represents the low and high end of the salary range for this position in New York, Los Angeles, Chicago and Houston. This range may differ based on your geographic location and cost of living considerations. At Kirkland & Ellis, we consider compensation more than just a base salary. We offer an exceptional range of flexible benefits including comprehensive healthcare, paid time off, and retirement. We also offer personal support and tailored learning and development opportunities all designed to help you realize your full potential both in life and at work.\n\nCompensation Range:\n\nNew York: $193,000 - $208,000\n\nLos Angeles: $175,000 - 190,000.00\n\nChicago: $175,000 - 190,000.00\n\nHow to Apply\n\nThank you for your interest in Kirkland & Ellis LLP. To complete an application and submit your resume, please click \"Apply Now.\"\n\nDon't meet every job requirement? That's okay! If you're excited about this role but your experience doesn't perfectly fit every qualification, we encourage you to apply anyway. You may be just the right person for this role or others at Kirkland.\n\nEqual Employment Opportunity\n\nAll employment decisions, including the recruiting, hiring, placement, training availability, promotion, compensation, evaluation, disciplinary actions, and termination of employment (if necessary) are made without regard to the employee's race, color, creed, religion, sex, pregnancy or childbirth, personal appearance, family responsibilities, sexual orientation or preference, gender identity, political affiliation, source of income, place of residence, national or ethnic origin, ancestry, age, marital status, military veteran status, unfavorable discharge from military service, physical or mental disability, or on any other basis prohibited by applicable law. #LI-Hybrid #LI-AR1",
+      "job_highlights": [
+        {
+          "title": "Qualifications",
+          "items": [
+            "Education - Juris Doctor (JD) or Master of Laws (LLM), required",
+            "Experience - 5+ years in a law firm or customer-facing role with a legal technology vendor, required",
+            "Technology Leadership - Proven experience leading enterprise software implementations from evaluation to deployment",
+            "Platform Knowledge - Familiarity with legal tech platforms, generative artificial intelligence (GenAI), automation, contract lifecycle management (CLM), and business intelligence tools",
+            "Communication Excellence - Strong interpersonal, written, and verbal communication skills with confidence presenting to attorney audiences",
+            "Professionalism and Collaboration - High degree of accuracy, accountability, and ability to work effectively with stakeholders at all levels",
+            "Mindset - Self-starter with excellent analytical, problem-solving, and organizational skills; able to exercise independent judgment and critical thinking"
+          ]
+        },
+        {
+          "title": "Benefits",
+          "items": [
+            "The base salary range below represents the low and high end of the salary range for this position in New York, Los Angeles, Chicago and Houston",
+            "This range may differ based on your geographic location and cost of living considerations",
+            "We offer an exceptional range of flexible benefits including comprehensive healthcare, paid time off, and retirement",
+            "We also offer personal support and tailored learning and development opportunities all designed to help you realize your full potential both in life and at work",
+            "New York: $193,000 - $208,000"
+          ]
+        },
+        {
+          "title": "Responsibilities",
+          "items": [
+            "You'll partner with attorneys, knowledge management professionals, and firm leadership to design and implement tech-enabled solutions that optimize workflows and elevate client outcomes",
+            "This is a high-impact role for someone eager to drive change and champion innovation in a fast-paced, collaborative environment",
+            "Assess and Improve Workflows - Partner with legal teams to evaluate current processes, identify challenges, and analyze the feasibility and impact of potential innovations",
+            "Lead Technology Pilots - Design, launch, and manage pilots from scoping through execution, overseeing objectives, budgets, risks, and success measures",
+            "Drive Adoption and Change - Collaborate with practice groups to introduce new technology, build buy-in, and facilitate smooth adoption",
+            "Engage and Influence - Act as the face of Innovation at practice group meetings, trainings, and strategic initiatives, aligning with knowledge management attorneys and firm leadership",
+            "Bridge Strategy and Execution - Ensure alignment between practice-specific needs and firmwide innovation initiatives, connecting attorneys, innovation teams, and leadership",
+            "Advance Legal Process Optimization - Map workflows to uncover opportunities for automation, artificial intelligence (AI), and custom solutions",
+            "Manage Vendor Partnerships - Build and maintain strong relationships with external technology providers to ensure impactful collaboration",
+            "Promote Ethical Innovation - Partner with Applied Innovation and Responsible AI personnel to implement emerging technologies responsibly and effectively",
+            "Support Strategic Growth - Contribute to the development of the firm's innovation strategy, roadmap, and portfolio while collaborating cross-functionally on evolving priorities"
+          ]
+        }
+      ],
+      "apply_options": [
+        {
+          "title": "Dice",
+          "link": "https://www.dice.com/job-detail/bbde38c4-60ff-4380-bc7c-95333abc23f0?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        },
+        {
+          "title": "Indeed",
+          "link": "https://www.indeed.com/viewjob?jk=2b620817086fe259&utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        },
+        {
+          "title": "ZipRecruiter",
+          "link": "https://www.ziprecruiter.com/c/Kirkland-&-Ellis-LLP./Job/Practice-Innovation-Advisor-(Transactional-Practice)/-in-Houston,TX?jid=0183d0995a398540&utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        },
+        {
+          "title": "Glassdoor",
+          "link": "https://www.glassdoor.com/job-listing/practice-innovation-advisor-kirkland-and-ellis-JV_IC1140171_KO0,27_KE28,46.htm?jl=1009882324692&utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        },
+        {
+          "title": "LinkedIn",
+          "link": "https://www.linkedin.com/jobs/view/practice-innovation-advisor-transactional-practice-at-kirkland-ellis-4297029288?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        },
+        {
+          "title": "Ladders",
+          "link": "https://www.theladders.com/job/practice-innovation-advisor-kirklandellisllp-houston-tx_83481350?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        },
+        {
+          "title": "BeBee",
+          "link": "https://us.bebee.com/job/cd6a1d6307a5dbfd5edca9406d912116?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        },
+        {
+          "title": "JobLeads",
+          "link": "https://www.jobleads.com/us/job/practice-innovation-advisor-transactional-practice--houston--e833df596eb8d41a87c5b2d1b9b67909a?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        }
+      ],
+      "job_id": "eyJqb2JfdGl0bGUiOiJQcmFjdGljZSBJbm5vdmF0aW9uIEFkdmlzb3IiLCJjb21wYW55X25hbWUiOiJLaXJrbGFuZCBcdTAwMjYgRWxsaXMgTExQIiwiYWRkcmVzc19jaXR5IjoiTG9zIEFuZ2VsZXMsIENBIiwiaHRpZG9jaWQiOiJWN1BXSFRSdHRRanNBdDV4QUFBQUFBPT0iLCJ1dWxlIjoidytDQUlRSUNJdlUyRnVJRVp5WVc1amFYTmpieUJDWVhrZ1FYSmxZU3hEWVd4cFptOXlibWxoTEZWdWFYUmxaQ0JUZEdGMFpYTSIsImdsIjoidXMiLCJobCI6ImVuIn0="
+    },
+    {
+      "title": "Legal Solutions and Tech Strategy Leader",
+      "company_name": "Intuit",
+      "location": "Atlanta, GA",
+      "via": "LinkedIn",
+      "share_link": "https://www.google.com/search?ibp=htl;jobs&q=legal+tech&htidocid=pWV9p9rsD_iOZPA0AAAAAA%3D%3D&hl=en-US&shndl=37&shmd=H4sIAAAAAAAA_xXMsQ6CQAyA4biyuzh1NsoZExcdDBPRsOFOCjTHkbMl15Lgg_i-4vIvX_Jn3012r8hjhFribEFYAbmHF3UD1JbQyH-gIuwpwRGe0oISphWFoRTxkXa3wWzSq3OqMfdqaKHLO3k7YWplcaO0-k-jAyaa4vpszpfTkk_s99sH2xwMAkNhEdnwAGXxAzSas1eYAAAA&shmds=v1_AdeF8Kic-CMsUjEsX9CKNnUmCkmqXY_f5tnwcSb_Hf6y5V_5rA&source=sh/x/job/li/m1/1#fpstate=tldetail&htivrt=jobs&htiq=legal+tech&htidocid=pWV9p9rsD_iOZPA0AAAAAA%3D%3D",
+      "thumbnail": "https://serpapi.com/searches/68f26ecfa1de12caddf9c54a/images/4ec013299767b714f23e3364bb80edbed167510284a6029d200b0c1b4c49595f.jpeg",
+      "extensions": [
+        "2 days ago",
+        "198K–278K a year",
+        "Full-time",
+        "Health insurance"
+      ],
+      "detected_extensions": {
+        "posted_at": "2 days ago",
+        "salary": "198K–278K a year",
+        "schedule_type": "Full-time",
+        "health_insurance": true
+      },
+      "description": "Overview\n\nIntuit is seeking a visionary and results-oriented Legal Solutions and Tech Strategy Leader to spearhead a new era of efficiency, innovation, and strategic partnership within our 250+ person in-house legal department. This is a unique opportunity for a seasoned leader to enable the technology to empower how our legal team operates and delivers value to the company.\n\nAre you passionate about building the legal department of the future? Do you thrive on driving impactful change and empowering legal professionals with cutting-edge tools and processes? If so, we invite you to lead this critical transformation.\n\nThe Opportunity\n\nReporting to the Deputy General Counsel, Chief of Staff, Head of Legal Solutions and Strategy, the Legal Solutions & Tech Strategy will be a key member of the legal team. You will be responsible for developing and executing a comprehensive strategy to optimize our legal service delivery, implement transformative technologies, and foster a culture of continuous improvement. Your work will directly impact the scalability, efficiency, and effectiveness of our entire legal function, enabling our talented team to focus on high-value strategic work.\n\nWhat you'll bring\n• Bachelor's degree required; JD, MBA, or other relevant advanced degree is highly preferred or equivalent experience.\n• Minimum of 10-12+ years of experience in legal operations, legal technology, or a related field within a large in-house legal department or a leading legal services provider.\n• Proven track record of successfully leading large-scale transformation initiatives and driving significant improvements in legal department performance and efficiency.\n• Deep understanding of legal technology solutions (CLM, matter management, e-billing, AI, analytics, etc.) and experience managing their selection, implementation, and optimization.\n• Strong experience in process mapping, re-engineering, and implementing legal operational best practices.\n• Demonstrated ability to develop and execute strategic plans, manage complex projects, and deliver results in a fast-paced environment.\n• Excellent financial acumen with experience managing budgets and vendor relationships.\n• Exceptional leadership, communication, and interpersonal skills, with the ability to influence and collaborate effectively with stakeholders at all levels, including senior executives and legal professionals.\n• Strong change management skills and the ability to drive adoption of new tools and processes across a large and diverse team.\n• Data-driven mindset with proficiency in legal analytics and reporting.\n\nDesired Attributes\n• A visionary leader with a passion for innovation in the legal field.\n• Strategic thinker with a hands-on, execution-oriented approach.\n• Highly organized, detail-oriented, and able to manage multiple priorities simultaneously.\n• A strong collaborator and team player who can build consensus and drive collective success.\n• Resilient, adaptable, and comfortable with ambiguity.\n• Committed to fostering a positive, inclusive, and high-performing team environment.\n\nHow you will lead\n\nStrategic Leadership & Transformation\n• Develop and champion a long-term vision and roadmap for legal operations and technology, aligned with the department's and the company's strategic objectives.\n• Lead large-scale change management initiatives, driving adoption of new processes, technologies, and a data-driven mindset across a large and diverse legal team.\n• Serve as a strategic advisor to legal leadership and other stakeholders on key initiatives, identifying opportunities for innovation and operational excellence.\n• Foster a culture of collaboration, transparency, and continuous improvement within the legal department.\n\nTechnology & Digital Transformation\n• Oversee the selection, implementation, integration, and optimization of a comprehensive legal technology ecosystem (e.g., matter management, e-billing, contract lifecycle management (CLM), knowledge management, e-discovery, AI-powered tools, and analytics platforms).\n• Drive the automation of routine legal tasks and workflows to enhance efficiency and reduce administrative burden.\n• Ensure the legal department leverages data analytics to provide actionable insights, measure performance, manage risk, and inform decision-making.\n• Partner closely with IT, security, and other relevant departments to ensure seamless and secure technology solutions.\n\nProcess Optimization & Efficiency\n• Analyze existing legal processes and workflows, identifying inefficiencies and implementing streamlined, best-practice solutions.\n• Develop and implement standardized playbooks, templates, and self-service tools to empower legal professionals and business partners.\n• Establish and monitor key performance indicators (KPIs) to measure the effectiveness of legal operations and identify areas for improvement.\n\nVendor & Budget Management\n• Develop and manage the legal department's technology and operations budget, ensuring cost-effectiveness and value for investment.\n• Oversee relationships with legal technology vendors and service providers, including negotiation, performance management, and optimization of services.\n• Implement and manage outside counsel spend management strategies and tools.\n\nKnowledge Management & Collaboration\n• Champion and implement robust knowledge management strategies and systems to ensure the capture, sharing, and leveraging of legal expertise and precedents.\n• Promote effective collaboration and communication within the legal department and with cross-functional partners.\n\nTeam Leadership & Development\n• Build, mentor, and lead a high-performing legal operations and technology team.\n• Champion professional development and training for legal team members on new technologies and processes.\n\nIntuit Provides a Competitive Compensation Package With a Strong Pay For Performance Rewards Approach. The Expected Base Pay Range For This Position Is\n\nBay Area California $205,500 - $278,000\n\nSouthern California $198,500 - $269,000\n\nThis position will be eligible for a cash bonus, equity rewards and benefits, in accordance with our applicable plans and programs (see more about our compensation and benefits at Intuit®: Careers | Benefits).Pay offered is based on factors such as job-related knowledge, skills, experience, and work location. To drive ongoing pay equity for employees, Intuit conducts regular comparisons across categories of ethnicity and gender.",
+      "job_highlights": [
+        {
+          "title": "Qualifications",
+          "items": [
+            "Minimum of 10-12+ years of experience in legal operations, legal technology, or a related field within a large in-house legal department or a leading legal services provider",
+            "Proven track record of successfully leading large-scale transformation initiatives and driving significant improvements in legal department performance and efficiency",
+            "Deep understanding of legal technology solutions (CLM, matter management, e-billing, AI, analytics, etc.) and experience managing their selection, implementation, and optimization",
+            "Strong experience in process mapping, re-engineering, and implementing legal operational best practices",
+            "Demonstrated ability to develop and execute strategic plans, manage complex projects, and deliver results in a fast-paced environment",
+            "Excellent financial acumen with experience managing budgets and vendor relationships",
+            "Exceptional leadership, communication, and interpersonal skills, with the ability to influence and collaborate effectively with stakeholders at all levels, including senior executives and legal professionals",
+            "Strong change management skills and the ability to drive adoption of new tools and processes across a large and diverse team",
+            "Data-driven mindset with proficiency in legal analytics and reporting",
+            "Champion and implement robust knowledge management strategies and systems to ensure the capture, sharing, and leveraging of legal expertise and precedents"
+          ]
+        },
+        {
+          "title": "Benefits",
+          "items": [
+            "Intuit Provides a Competitive Compensation Package With a Strong Pay For Performance Rewards Approach",
+            "This position will be eligible for a cash bonus, equity rewards and benefits, in accordance with our applicable plans and programs (see more about our compensation and benefits at Intuit®: Careers | Benefits)",
+            "Pay offered is based on factors such as job-related knowledge, skills, experience, and work location"
+          ]
+        },
+        {
+          "title": "Responsibilities",
+          "items": [
+            "Reporting to the Deputy General Counsel, Chief of Staff, Head of Legal Solutions and Strategy, the Legal Solutions & Tech Strategy will be a key member of the legal team",
+            "You will be responsible for developing and executing a comprehensive strategy to optimize our legal service delivery, implement transformative technologies, and foster a culture of continuous improvement",
+            "Develop and champion a long-term vision and roadmap for legal operations and technology, aligned with the department's and the company's strategic objectives",
+            "Lead large-scale change management initiatives, driving adoption of new processes, technologies, and a data-driven mindset across a large and diverse legal team",
+            "Serve as a strategic advisor to legal leadership and other stakeholders on key initiatives, identifying opportunities for innovation and operational excellence",
+            "Foster a culture of collaboration, transparency, and continuous improvement within the legal department",
+            "Oversee the selection, implementation, integration, and optimization of a comprehensive legal technology ecosystem (e.g., matter management, e-billing, contract lifecycle management (CLM), knowledge management, e-discovery, AI-powered tools, and analytics platforms)",
+            "Drive the automation of routine legal tasks and workflows to enhance efficiency and reduce administrative burden",
+            "Ensure the legal department leverages data analytics to provide actionable insights, measure performance, manage risk, and inform decision-making",
+            "Partner closely with IT, security, and other relevant departments to ensure seamless and secure technology solutions",
+            "Process Optimization & Efficiency",
+            "Analyze existing legal processes and workflows, identifying inefficiencies and implementing streamlined, best-practice solutions",
+            "Develop and implement standardized playbooks, templates, and self-service tools to empower legal professionals and business partners",
+            "Establish and monitor key performance indicators (KPIs) to measure the effectiveness of legal operations and identify areas for improvement",
+            "Vendor & Budget Management",
+            "Develop and manage the legal department's technology and operations budget, ensuring cost-effectiveness and value for investment",
+            "Oversee relationships with legal technology vendors and service providers, including negotiation, performance management, and optimization of services",
+            "Implement and manage outside counsel spend management strategies and tools",
+            "Knowledge Management & Collaboration",
+            "Promote effective collaboration and communication within the legal department and with cross-functional partners",
+            "Build, mentor, and lead a high-performing legal operations and technology team"
+          ]
+        }
+      ],
+      "apply_options": [
+        {
+          "title": "LinkedIn",
+          "link": "https://www.linkedin.com/jobs/view/legal-solutions-and-tech-strategy-leader-at-intuit-4315162109?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        },
+        {
+          "title": "Indeed",
+          "link": "https://www.indeed.com/viewjob?jk=38159ac3c9bf8b00&utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        },
+        {
+          "title": "ZipRecruiter",
+          "link": "https://www.ziprecruiter.com/c/Intuit/Job/Legal-Solutions-and-Tech-Strategy-Leader/-in-Atlanta,GA?jid=d8fcd05d1dbac9b9&utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        },
+        {
+          "title": "Glassdoor",
+          "link": "https://www.glassdoor.com/job-listing/legal-solutions-and-tech-strategy-leader-intuit-JV_IC1155583_KO0,40_KE41,47.htm?jl=1009908276888&utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        },
+        {
+          "title": "SimplyHired",
+          "link": "https://www.simplyhired.com/job/SZEoDeX8c9Ybe2V6wL6EqDE1Maog_RqH3wlj0J-aEYG5bywFOViuIQ?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        },
+        {
+          "title": "BeBee",
+          "link": "https://us.bebee.com/job/23cda6c23f999cfa937ff5d6e65bdc19?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        }
+      ],
+      "job_id": "eyJqb2JfdGl0bGUiOiJMZWdhbCBTb2x1dGlvbnMgYW5kIFRlY2ggU3RyYXRlZ3kgTGVhZGVyIiwiY29tcGFueV9uYW1lIjoiSW50dWl0IiwiYWRkcmVzc19jaXR5IjoiQXRsYW50YSwgR0EiLCJodGlkb2NpZCI6InBXVjlwOXJzRF9pT1pQQTBBQUFBQUE9PSIsInV1bGUiOiJ3K0NBSVFJQ0l2VTJGdUlFWnlZVzVqYVhOamJ5QkNZWGtnUVhKbFlTeERZV3hwWm05eWJtbGhMRlZ1YVhSbFpDQlRkR0YwWlhNIiwiZ2wiOiJ1cyIsImhsIjoiZW4ifQ=="
+    },
+    {
+      "title": "Marketing Manager- Legal AI",
+      "company_name": "RELX Inc. Company",
+      "location": "United States",
+      "via": "Workday",
+      "share_link": "https://www.google.com/search?ibp=htl;jobs&q=legal+tech&htidocid=fv2WCz4xCUNamAxFAAAAAA%3D%3D&hl=en-US&shndl=37&shmd=H4sIAAAAAAAA_xXMsQrCMBAAUFz7CU6Ho2AiBRedREQq7aIIbuVajzSa3oVchvoh_q-6vPEVn1lRNphelD07aJDRUVpBTQ4D7CtYwVk6UMLUDyAMJxEXaL4bco66tVY1GKcZs-9NL6MVpk4m-5RO_7Q6YKIYMFNbbtaTieyWi8uxvkPFvYGDjBH5DZ7hxj7TA66_i_QLsodlFZgAAAA&shmds=v1_AdeF8Ki3qMKhfdOuRN-bgQWog-2CbHKQGvjAj5VA2rBs9Z-hPQ&source=sh/x/job/li/m1/1#fpstate=tldetail&htivrt=jobs&htiq=legal+tech&htidocid=fv2WCz4xCUNamAxFAAAAAA%3D%3D",
+      "extensions": [
+        "2 days ago",
+        "Full-time",
+        "Dental insurance",
+        "Paid time off",
+        "Health insurance"
+      ],
+      "detected_extensions": {
+        "posted_at": "2 days ago",
+        "schedule_type": "Full-time",
+        "dental_coverage": true,
+        "paid_time_off": true,
+        "health_insurance": true
+      },
+      "description": "Are you an experienced, results-driven legal tech marketer? Do you have a passion for creating marketing strategies for driving awareness, demand and adoption of AI software solutions? About our Team: LexisNexis Legal & Professional, which serves customers in more than 150 countries with 11,800 employees worldwide, is part of RELX, a global provider of information-based analytics and decision tools for professional and business customers. Our company has been a long-time leader in deploying AI and advanced technologies to the legal market to improve productivity and transform the overall business and practice of law, deploying ethical and powerful generative AI solutions with a flexible, multi-model approach that prioritizes using the best model from today’s top model creators for each individual legal use case. About the Role LexisNexis is seeking an experienced, results-driven B2B Marketing Manager to lead marketing strategy and execution for our AI legal research platform for large law firms. This is a high-visibility role at the intersection of product, sales, and marketing—tasked with building awareness, shaping perception, and driving demand. The ideal candidate will bring a deep understanding of the legal sector or B2B AI software, proven success in enterprise sales, and the ability to independently build and execute strategic marketing programs. This role requires both strategic vision and hands-on execution, as well as strong collaboration across cross-functional teams. Responsibilities Developing and owning the go-to-market marketing strategy for our AI legal research solution in the large law sector. Positioning LexisNexis as a trusted partner for legal AI, differentiating us in a competitive and rapidly evolving market. Building and executing integrated, ABM campaigns to generate awareness, engagement, and qualified leads for the sales team. Partnering with the sales organization to create targeted, account-based strategies for client acquisition and expansion. Collaborating with other team members on events, webinars, thought leadership, and digital programs to showcase our differentiators and position LexisNexis as the leader in legal AI Collaboration & Partnerships Working closely with Product Marketing to understand the product roadmap, competitive differentiators and develop messaging for communicating new features and functionality Partnering with Sales to translate pipeline priorities into actionable marketing programs. Collaborating with other marketing teams to leverage broader LexisNexis channels, branding, and resources. Content & Messaging Developing compelling messaging and content tailored for large law firms, including case studies, whitepapers, blog posts and sales collateral. Ensuring consistent, on-brand communication that reinforces LexisNexis’ legal AI leadership position Analytics & Optimization Establishing KPIs, track campaign performance, and deliver regular reporting to stakeholders. Optimizing programs based on performance data and feedback from sales and clients. Requirements: Have a proven track record of creating and executing B2B marketing strategies that drive awareness and leads. Have experience partnering with sales teams to align marketing programs with business objectives. Have the ability to work independently, prioritize, and manage multiple projects simultaneously. Have excellent communication, storytelling, and stakeholder management skills. Be comfortable using marketing automation, CRM (Salesforce preferable), and analytics tools to track and optimize performance. Have a Bachelor’s degree in Marketing, Business, Communications, or related field (MBA a plus). Possess a growth mindset and looking to engage with colleagues on new ideas as we lead in the legal AI market. Work in a way that works for you: We promote a healthy work/life balance across the organization. We offer an appealing working prospect for our people. With numerous wellbeing initiatives, shared parental leave, study assistance and sabbaticals, we will help you meet your immediate responsibilities and your long-term goals. About the business: LexisNexis Legal & Professional® provides legal, regulatory, and business information and analytics that help customers increase their productivity, improve decision-making, achieve better outcomes, and advance the rule of law around the world. As a digital pioneer, the company was the first to bring legal and business information online with its Lexis® and Nexis® services. U.S. National Base Pay Range: $70,200 - $117,100. Geographic differentials may apply in some locations to better reflect local market rates. If performed in Ohio, the pay range is $66,800 - $111,300. This job is eligible for an annual incentive bonus. We know that your wellbeing and happiness are key to a long and successful career. These are some of the benefits we are delighted to offer: ● Health Benefits: Comprehensive, multi-carrier program for medical, dental and vision benefits ● Retirement Benefits: 401(k) with match and an Employee Share Purchase Plan ● Wellbeing: Wellness platform with incentives, Headspace app subscription, Employee Assistance and Time-off Programs ● Short-and-Long Term Disability, Life and Accidental Death Insurance, Critical Illness, and Hospital Indemnity ● Family Benefits, including bonding and family care leaves, adoption and surrogacy benefits ● Health Savings, Health Care, Dependent Care and Commuter Spending Accounts ● In addition to annual Paid Time Off, we offer up to two days of paid leave each to participate in Employee Resource Groups and to volunteer with your charity of choice We are committed to providing a fair and accessible hiring process. If you have a disability or other need that requires accommodation or adjustment, please let us know by completing our Applicant Request Support Form or please contact 1-855-833-5120. Criminals may pose as recruiters asking for money or personal information. We never request money or banking details from job applicants. Learn more about spotting and avoiding scams here. Please read our Candidate Privacy Policy. We are an equal opportunity employer: qualified applicants are considered for and treated during employment without regard to race, color, creed, religion, sex, national origin, citizenship status, disability status, protected veteran status, age, marital status, sexual orientation, gender identity, genetic information, or any other characteristic protected by law. USA Job Seekers: EEO Know Your Rights. RELX is a global provider of information-based analytics and decision tools for professional and business customers, enabling them to make better decisions, get better results and be more productive. Our purpose is to benefit society by developing products that help researchers advance scientific knowledge; doctors and nurses improve the lives of patients; lawyers promote the rule of law and achieve justice and fair results for their clients; businesses and governments prevent fraud; consumers access financial services and get fair prices on insurance; and customers learn about markets and complete transactions. Our purpose guides our actions beyond the products that we develop. It defines us as a company. Every day across RELX our employees are inspired to undertake initiatives that make unique contributions to society and the communities in which we operate.",
+      "apply_options": [
+        {
+          "title": "Workday",
+          "link": "https://relx.wd3.myworkdayjobs.com/en-US/relx/job/Home-based-Ohio/Marketing-Manager--Legal-AI_R103241-1?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        },
+        {
+          "title": "ZipRecruiter",
+          "link": "https://www.ziprecruiter.com/c/RELX/Job/Marketing-Manager-Legal-AI/-in-Raleigh,NC?jid=45c5cc1b4280c916&utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        },
+        {
+          "title": "Indeed",
+          "link": "https://www.indeed.com/viewjob?jk=8f08af3fd19a0534&utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        },
+        {
+          "title": "Jobright",
+          "link": "https://jobright.ai/jobs/info/68f15855f462172a5a7d6b13?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        }
+      ],
+      "job_id": "eyJqb2JfdGl0bGUiOiJNYXJrZXRpbmcgTWFuYWdlci0gTGVnYWwgQUkiLCJjb21wYW55X25hbWUiOiJSRUxYIEluYy4gQ29tcGFueSIsImFkZHJlc3NfY2l0eSI6IlVuaXRlZCBTdGF0ZXMiLCJodGlkb2NpZCI6ImZ2MldDejR4Q1VOYW1BeEZBQUFBQUE9PSIsInV1bGUiOiJ3K0NBSVFJQ0l2VTJGdUlFWnlZVzVqYVhOamJ5QkNZWGtnUVhKbFlTeERZV3hwWm05eWJtbGhMRlZ1YVhSbFpDQlRkR0YwWlhNIiwiZ2wiOiJ1cyIsImhsIjoiZW4ifQ=="
+    },
+    {
+      "title": "SEO + Content Strategy Expert for Fast-Growing Legal Tech Platform (Organic Growth Only)",
+      "company_name": "Upwork",
+      "location": "Anywhere",
+      "via": "Upwork",
+      "share_link": "https://www.google.com/search?ibp=htl;jobs&q=legal+tech&htidocid=3J6TccR5nCnaH2JsAAAAAA%3D%3D&hl=en-US&shndl=37&shmd=H4sIAAAAAAAA_xXOwWoCQRAEULz6A0JOdUwM7oZALnqUVZDABoxnmV3b2UnG7mG6wfUL_S3HS13qQdX0PpnKvmnxjrWwERv2lp2Rv6EZE2XDWTI2Tm2xzXIN7PFN3kX8Uj_gJzor_QWvbfaOQ48nsgEtx9sbFthJByWXixXGVsRHelkNZkmXda0aK6_mLPRVL5damDoZ6z_p9BlHHVymVDbo-Pn1MVaJ_Xx2SFfJ_wiMAwejUzlcgD4ASBCobMoAAAA&shmds=v1_AdeF8KjFnq5H_csuZ3nFIH8aCpyoJ3H2LqV13Jcy2HUgFCrwMg&source=sh/x/job/li/m1/1#fpstate=tldetail&htivrt=jobs&htiq=legal+tech&htidocid=3J6TccR5nCnaH2JsAAAAAA%3D%3D",
+      "extensions": [
+        "7 days ago",
+        "Work from home",
+        "Contractor",
+        "No degree mentioned"
+      ],
+      "detected_extensions": {
+        "posted_at": "7 days ago",
+        "work_from_home": true,
+        "schedule_type": "Contractor",
+        "qualifications": "No degree mentioned"
+      },
+      "description": "is a fast-growing legal tech company redefining how people find lawyers — and how lawyers build visibility online.\n\nWe’re not another lead-gen platform.\n\nWe’re a visibility engine — helping lawyers build lasting discovery, authority, and search presence without relying on ads or Google’s pay-to-play system.\n\nOur mission: make finding a lawyer effortless for users, and make visibility permanent for lawyers.\n\n🧠 The Role\n\nWe’re looking for an SEO and content architecture expert who can help us dominate organic visibility across North America — both for lawyers and users.\n\nThis is not about keyword stuffing or generic backlinks.\n\nIt’s about building a sustainable SEO ecosystem that aligns with our message:\n\n“Stop renting visibility. Build what lasts.”\n\n🚀 Your Mission\n\nYou’ll audit our current SEO, then design and implement a plan that:\n\nBuilds keyword maps for users (finding a lawyer) and lawyers (visibility marketing).\n\nOptimizes our Webflow site structure, meta data, schema, and internal linking.\n\nImproves AI discoverability (Google SGE, Bing, ChatGPT, Perplexity).\n\nDesigns a content SEO system for our Blawg and Ask-a-Lawyer series.\n\nCreates a clear backlink and citation plan aligned with our ethical, organic model.\n\n🧩 What We’re Looking For\n\nProven SEO success with SaaS, marketplaces, or legal tech sites.\n\nStrong understanding of Webflow SEO best practices.\n\nExperience implementing Schema Markup, E-E-A-T strategies, and internal linking frameworks.\n\nFamiliar with AI search optimization (how AI crawlers index and summarize).\n\nExcellent communication — must deliver reports and plans clearly, not just data dumps.\n\nBonus: experience with PR, AI content optimization, or backlink building in the legal industry.\n\n🛠️ Tools You Likely Use\n\nAhrefs, SEMrush, Screaming Frog, SurferSEO, Frase, Google Search Console, GA4, and a solid understanding of AI indexing (ChatGPT Browse / Bing Copilot).\n\n📅 Scope\n\nFull SEO Audit (technical, on-page, off-page).\n\nKeyword & content map creation.\n\n90-day SEO roadmap with priorities.\n\nOptional: continued monthly collaboration.\n\n💬 To Apply\n\nPlease include:\n\n1–2 examples of SEO projects for SaaS or marketplace companies.\n\nA brief note on how you’d approach SEO for a brand that’s intentionally anti-Google-Ads.\n\n(Optional) One quick idea for improving our visibility today.",
+      "job_highlights": [
+        {
+          "title": "Qualifications",
+          "items": [
+            "Proven SEO success with SaaS, marketplaces, or legal tech sites",
+            "Strong understanding of Webflow SEO best practices",
+            "Experience implementing Schema Markup, E-E-A-T strategies, and internal linking frameworks",
+            "Familiar with AI search optimization (how AI crawlers index and summarize)",
+            "Excellent communication — must deliver reports and plans clearly, not just data dumps",
+            "Bonus: experience with PR, AI content optimization, or backlink building in the legal industry",
+            "🛠️ Tools You Likely Use",
+            "Ahrefs, SEMrush, Screaming Frog, SurferSEO, Frase, Google Search Console, GA4, and a solid understanding of AI indexing (ChatGPT Browse / Bing Copilot)"
+          ]
+        },
+        {
+          "title": "Responsibilities",
+          "items": [
+            "You’ll audit our current SEO, then design and implement a plan that:",
+            "Builds keyword maps for users (finding a lawyer) and lawyers (visibility marketing)",
+            "Optimizes our Webflow site structure, meta data, schema, and internal linking"
+          ]
+        }
+      ],
+      "apply_options": [
+        {
+          "title": "Upwork",
+          "link": "https://www.upwork.com/freelance-jobs/apply/SEO-Content-Strategy-Expert-for-Fast-Growing-Legal-Tech-Platform-Organic-Growth-Only_~021976785132512390886/?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        },
+        {
+          "title": "BeBee",
+          "link": "https://us.bebee.com/job/b987b90b39bfafee0dd46fe9840c6c19?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        }
+      ],
+      "job_id": "eyJqb2JfdGl0bGUiOiJTRU8gKyBDb250ZW50IFN0cmF0ZWd5IEV4cGVydCBmb3IgRmFzdC1Hcm93aW5nIExlZ2FsIFRlY2ggUGxhdGZvcm0gKE9yZ2FuaWMgR3Jvd3RoIE9ubHkpIiwiY29tcGFueV9uYW1lIjoiVXB3b3JrIiwiYWRkcmVzc19jaXR5IjoiVW5pdGVkIFN0YXRlcyIsImh0aWRvY2lkIjoiM0o2VGNjUjVuQ25hSDJKc0FBQUFBQT09IiwidXVsZSI6IncrQ0FJUUlDSXZVMkZ1SUVaeVlXNWphWE5qYnlCQ1lYa2dRWEpsWVN4RFlXeHBabTl5Ym1saExGVnVhWFJsWkNCVGRHRjBaWE0iLCJnbCI6InVzIiwiaGwiOiJlbiJ9"
+    },
+    {
+      "title": "Legal Technology Analyst",
+      "company_name": "Huxley",
+      "location": "Boston, MA",
+      "via": "LinkedIn",
+      "share_link": "https://www.google.com/search?ibp=htl;jobs&q=legal+tech&htidocid=J6MBjKW8eZ_ztuTdAAAAAA%3D%3D&hl=en-US&shndl=37&shmd=H4sIAAAAAAAA_xXEsQoCMQwAUFxvdnLKLNqK4KLTuSiim_vRltCexKRcIlx3P1x8w-u-i87fMQeCJ6bCQpIb9ByoqcEWbhJBMUypgDBcRDLh6lTMqh69VyWX1YKNySV5e2GMMvuXRP03aAkTVgqGw_6wm13lvF5ePzNhg5HhLGrCG3j0Pz6XmAmHAAAA&shmds=v1_AdeF8Kg8d7qGp0E8fFQZjDYgWtvWCRWRMSk1RqdjgfIP-1hlRw&source=sh/x/job/li/m1/1#fpstate=tldetail&htivrt=jobs&htiq=legal+tech&htidocid=J6MBjKW8eZ_ztuTdAAAAAA%3D%3D",
+      "thumbnail": "https://serpapi.com/searches/68f26ecfa1de12caddf9c54a/images/4ec013299767b714c5712eade3f56eaf98c98631203b6a55f82ce832c79f74ec.jpeg",
+      "extensions": [
+        "8 days ago",
+        "130K–145K a year",
+        "Full-time",
+        "Health insurance",
+        "Dental insurance"
+      ],
+      "detected_extensions": {
+        "posted_at": "8 days ago",
+        "salary": "130K–145K a year",
+        "schedule_type": "Full-time",
+        "health_insurance": true,
+        "dental_coverage": true
+      },
+      "description": "Job - Legal Technology Support\n\nSalary - $130,000 - $145,000\n\nLocation - Boston, MA | Hybrid (3 days on site, 2 remote)\n\nA highly respected professional services firm headquarters in Boston is seeking an experienced Application Support Engineer to join their technology team.\n\nThis newly created role is focused on enhancing legal work flows through the strategic implementation of AI-powered tools and systems. You will be joining an established IT team and will either experience in the niche applications or worked with very similar technologies.This role requires someone who excellent at talking in laymen terms and helping nontechnical users understand/ use technology.\n\nKey Responsibilities:\n• Analyze and integrate AI-powered applications to improve legal and business operations\n• Lead end-user experience initiatives for firm wide and practice-specific technologies\n• Monitor software updates and communicate their impact to stakeholders\n• Conduct training sessions and gather feedback to optimize technology adoption\n• Support the deployment and testing of document management systems and other legal tech solutions\n• Collaborate with IT Operations, Security, and practice groups throughout project life cycles\n• Partner with vendors to resolve complex technical issues\n• Contribute to change management and software rollout strategies\n• Stay current on emerging legal technologies and their practical applications\n\nTechnical Knowledge:\n• Minimum 5+ years of experience in a law firm or professionals services, ideally in IT support or knowledge management.\n• Proficiency in Microsoft Office 365, iManage Work 10, Litera Desktop, HighQ, vi by Aderant - or similar bespoke technologies used in law firms.\n• Advanced skills in text editing and Excel\n• Solid understanding of Generative AI and its applications in legal practice (e.g., contract analysis, legal research, document automation)\n• Ability to work independently and collaboratively across teams\n• Strong communication and project management skills\n\nMust have a valid US Green Card or US Citizenship - No sponsorship offered with this role\n\nEOE Statement: Specialist Staffing Group is an equal opportunity employer. All qualified applicants will receive consideration for employment without regard to race, color, religion, sex, sexual orientation, gender identity, national origin, disability, or veteran status.\n\nIn addition to base pay, direct-hire employees may be eligible for client offered benefits such as medical, dental, and vision coverage, and paid leave where required by applicable law. Eligibility may vary based on factors such as location and hire date and is subject to change.\n\nTo find out more about Huxley, please visit www.huxley.com",
+      "job_highlights": [
+        {
+          "title": "Qualifications",
+          "items": [
+            "This role requires someone who excellent at talking in laymen terms and helping nontechnical users understand/ use technology",
+            "Minimum 5+ years of experience in a law firm or professionals services, ideally in IT support or knowledge management",
+            "Proficiency in Microsoft Office 365, iManage Work 10, Litera Desktop, HighQ, vi by Aderant - or similar bespoke technologies used in law firms",
+            "Advanced skills in text editing and Excel",
+            "Solid understanding of Generative AI and its applications in legal practice (e.g., contract analysis, legal research, document automation)",
+            "Ability to work independently and collaboratively across teams",
+            "Strong communication and project management skills",
+            "Must have a valid US Green Card or US Citizenship - No sponsorship offered with this role"
+          ]
+        },
+        {
+          "title": "Benefits",
+          "items": [
+            "Salary - $130,000 - $145,000",
+            "In addition to base pay, direct-hire employees may be eligible for client offered benefits such as medical, dental, and vision coverage, and paid leave where required by applicable law"
+          ]
+        },
+        {
+          "title": "Responsibilities",
+          "items": [
+            "You will be joining an established IT team and will either experience in the niche applications or worked with very similar technologies",
+            "Analyze and integrate AI-powered applications to improve legal and business operations",
+            "Lead end-user experience initiatives for firm wide and practice-specific technologies",
+            "Monitor software updates and communicate their impact to stakeholders",
+            "Conduct training sessions and gather feedback to optimize technology adoption",
+            "Support the deployment and testing of document management systems and other legal tech solutions",
+            "Collaborate with IT Operations, Security, and practice groups throughout project life cycles",
+            "Partner with vendors to resolve complex technical issues",
+            "Contribute to change management and software rollout strategies",
+            "Stay current on emerging legal technologies and their practical applications"
+          ]
+        }
+      ],
+      "apply_options": [
+        {
+          "title": "LinkedIn",
+          "link": "https://www.linkedin.com/jobs/view/legal-technology-analyst-at-huxley-4312726375?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        },
+        {
+          "title": "Daybook",
+          "link": "https://www.daybook.com/jobs/4LDfdxhASye87FFSw?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        },
+        {
+          "title": "Ladders",
+          "link": "https://www.theladders.com/job/legal-technology-analyst-huxley-boston-ma_83832595?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        },
+        {
+          "title": "Talents By Vaia",
+          "link": "https://talents.vaia.com/companies/jobleads-us/legal-technology-analyst-10711229/?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        },
+        {
+          "title": "BeBee",
+          "link": "https://us.bebee.com/job/fdd1562b906b99fe4730f6d4e2687521?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        },
+        {
+          "title": "Boston",
+          "link": "https://boston-ma.americanlisted.com/jobs/legal-technology-analyst_9040053590.html?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        }
+      ],
+      "job_id": "eyJqb2JfdGl0bGUiOiJMZWdhbCBUZWNobm9sb2d5IEFuYWx5c3QiLCJjb21wYW55X25hbWUiOiJIdXhsZXkiLCJhZGRyZXNzX2NpdHkiOiJCb3N0b24sIE1BIiwiaHRpZG9jaWQiOiJKNk1CaktXOGVaX3p0dVRkQUFBQUFBPT0iLCJ1dWxlIjoidytDQUlRSUNJdlUyRnVJRVp5WVc1amFYTmpieUJDWVhrZ1FYSmxZU3hEWVd4cFptOXlibWxoTEZWdWFYUmxaQ0JUZEdGMFpYTSIsImdsIjoidXMiLCJobCI6ImVuIn0="
+    },
+    {
+      "title": "Senior Backend Engineer |  Startup Transforming legal tech with AI",
+      "company_name": "Tram Case",
+      "location": "Anywhere",
+      "via": "Himalayas.app",
+      "share_link": "https://www.google.com/search?ibp=htl;jobs&q=legal+tech&htidocid=xxXg1tm5SQc1E8QRAAAAAA%3D%3D&hl=en-US&shndl=37&shmd=H4sIAAAAAAAA_xWOsQ4BURBFo_UJqltL7IpEQ4WI0KJQyewabx9vZzZvRih8lg9Ec4rTnNP_9PqnPUvUjCXVd5YL1hKiMGe8gb1T9keHQyaxq-Y2SkDiQAnOdYNn9AaLLUbYaQVjyj-pgo1qSDyYN-6dzcrSLBXBnDzWRa1tqcKVvsqbVvbH2RrK3CVyPk-m41fRSRgOftEWKzJGFBwlOl_-Q872Bb1eIei3AAAA&shmds=v1_AdeF8KisFbLSIGnZU-KtAhDu5PRJBCZJOfZqveoqzW2kLsGiAQ&source=sh/x/job/li/m1/1#fpstate=tldetail&htivrt=jobs&htiq=legal+tech&htidocid=xxXg1tm5SQc1E8QRAAAAAA%3D%3D",
+      "extensions": [
+        "1 month ago",
+        "Work from home",
+        "Full-time",
+        "Paid time off"
+      ],
+      "detected_extensions": {
+        "posted_at": "1 month ago",
+        "work_from_home": true,
+        "schedule_type": "Full-time",
+        "paid_time_off": true
+      },
+      "description": "About Us\n\nTram Case is revolutionizing legal technology with AI-driven tools that enhance efficiency and accessibility for legal professionals. We're undertaking high-impact technology transformation, partnering with a high-volume immigration law firm to optimize workflows and streamline processes. Join us in building the future of legal tech, where impactful innovation meets user-centric design.\nRole Overview\n\nAs a Senior Backend Engineer, you will design and develop core backend services that enable our platform’s functionality, including efficient data management and real-time communication support. This role will focus on building resilient APIs, ensuring data integrity, and optimizing backend services for performance. You’ll work closely with front-end engineers, product managers, and other stakeholders to deliver a cohesive, high-quality product experience, ensuring it meets the needs of our large-scale user base.\nKey Responsibilities\n• Backend Development: Design, implement, and maintain high-quality backend services and APIs, focusing on scalability, reliability, and performance.\n• Real-Time Communication Support: Develop backend capabilities for real-time, bidirectional communication using WebSockets, enabling browser-based voice interactions.\n• System Design & Architecture: Participate in architectural decisions, ensuring backend systems are scalable and optimized for high availability in a high-volume environment.\n• Data Management: Create efficient data storage and processing solutions, with an emphasis on data integrity, security, and compliance.\n• Collaboration: Work closely with front-end engineers, product managers, and other teams to deliver integrated solutions that align with user needs and product goals.\n• Troubleshooting & Optimization: Diagnose and resolve backend performance bottlenecks, ensuring reliable service and enhancing system efficiency.\nTechnical Proficiency\n\nMust have experience with several of the following:\n• Programming Languages: Proficiency in backend languages such as Python, Go, or Node.js.\n• API Development: Strong experience with RESTful, gRPC, or GraphQL API design and implementation for secure, efficient, and scalable applications.\n• Data Management: Experience with SQL (PostgreSQL, MySQL) and NoSQL (e.g., MongoDB, Redis) databases, focusing on data modeling, indexing, and performance optimization.\n• Real-Time Communication: Hands-on experience with WebSocket implementation for enabling real-time, bidirectional communication.\n• Cloud Platforms: Familiarity with AWS, GCP, or Azure for deploying and managing backend services.\n• Infrastructure as Code (IaC): Experience with Terraform, CloudFormation, or Pulumi for infrastructure automation.\n• Containerization & Orchestration: Working knowledge of Docker and Kubernetes for managing and orchestrating microservices.\n• Testing & CI/CD: Experience with CI/CD pipelines (e.g., Jenkins, GitLab CI/CD) and automated testing frameworks for backend systems.\nQualifications\n• Experience: 4–6 years in backend development, with a strong foundation in building and maintaining high-quality, production-grade backend systems.\n• Technical Problem Solving: Solid problem-solving skills with the ability to troubleshoot complex backend issues and optimize for performance and scalability.\n• System Design Skills: Familiarity with distributed system design and microservices architecture, with a focus on data integrity and high availability.\n• Collaboration: Effective communicator who can work cross-functionally, collaborating with front-end teams, product managers, and stakeholders.\n• User-Centric Approach: Passionate about delivering backend solutions that enhance user experience and support business goals.\nPerks and Benefits\n• Remote-First Work Environment: Enjoy the flexibility to work from anywhere, with a remote-first setup that supports work-life balance and productivity.\n• Competitive Salary: We offer a competitive salary to recognize and reward your skills and contributions.\n• Unlimited Paid Time Off: Take the time you need with an unlimited PTO policy, empowering you to recharge and maintain balance.\n• Professional Development: Access resources for growth, including conference passes, online courses, and training programs to support your career advancement.\n• Home Office Stipend: We provide a budget for setting up your home office with high-quality equipment and tools.\n• Latest Tech Gear: Receive a top-of-the-line laptop and any necessary peripherals to ensure you have the best tools to do your best work.\n• Team Retreats and Virtual Events: Participate in team-building retreats and regular virtual gatherings to connect with colleagues and strengthen our culture.\n• Parental Leave: We offer paid parental leave to support you and your family during this important time.",
+      "job_highlights": [
+        {
+          "title": "Qualifications",
+          "items": [
+            "Must have experience with several of the following:",
+            "Programming Languages: Proficiency in backend languages such as Python, Go, or Node.js",
+            "API Development: Strong experience with RESTful, gRPC, or GraphQL API design and implementation for secure, efficient, and scalable applications",
+            "Data Management: Experience with SQL (PostgreSQL, MySQL) and NoSQL (e.g., MongoDB, Redis) databases, focusing on data modeling, indexing, and performance optimization",
+            "Real-Time Communication: Hands-on experience with WebSocket implementation for enabling real-time, bidirectional communication",
+            "Cloud Platforms: Familiarity with AWS, GCP, or Azure for deploying and managing backend services",
+            "Infrastructure as Code (IaC): Experience with Terraform, CloudFormation, or Pulumi for infrastructure automation",
+            "Containerization & Orchestration: Working knowledge of Docker and Kubernetes for managing and orchestrating microservices",
+            "Testing & CI/CD: Experience with CI/CD pipelines (e.g., Jenkins, GitLab CI/CD) and automated testing frameworks for backend systems",
+            "Experience: 4–6 years in backend development, with a strong foundation in building and maintaining high-quality, production-grade backend systems",
+            "Technical Problem Solving: Solid problem-solving skills with the ability to troubleshoot complex backend issues and optimize for performance and scalability",
+            "System Design Skills: Familiarity with distributed system design and microservices architecture, with a focus on data integrity and high availability",
+            "Collaboration: Effective communicator who can work cross-functionally, collaborating with front-end teams, product managers, and stakeholders",
+            "User-Centric Approach: Passionate about delivering backend solutions that enhance user experience and support business goals"
+          ]
+        },
+        {
+          "title": "Benefits",
+          "items": [
+            "Remote-First Work Environment: Enjoy the flexibility to work from anywhere, with a remote-first setup that supports work-life balance and productivity",
+            "Competitive Salary: We offer a competitive salary to recognize and reward your skills and contributions",
+            "Unlimited Paid Time Off: Take the time you need with an unlimited PTO policy, empowering you to recharge and maintain balance",
+            "Professional Development: Access resources for growth, including conference passes, online courses, and training programs to support your career advancement",
+            "Home Office Stipend: We provide a budget for setting up your home office with high-quality equipment and tools",
+            "Latest Tech Gear: Receive a top-of-the-line laptop and any necessary peripherals to ensure you have the best tools to do your best work",
+            "Team Retreats and Virtual Events: Participate in team-building retreats and regular virtual gatherings to connect with colleagues and strengthen our culture",
+            "Parental Leave: We offer paid parental leave to support you and your family during this important time"
+          ]
+        },
+        {
+          "title": "Responsibilities",
+          "items": [
+            "As a Senior Backend Engineer, you will design and develop core backend services that enable our platform’s functionality, including efficient data management and real-time communication support",
+            "This role will focus on building resilient APIs, ensuring data integrity, and optimizing backend services for performance",
+            "You’ll work closely with front-end engineers, product managers, and other stakeholders to deliver a cohesive, high-quality product experience, ensuring it meets the needs of our large-scale user base",
+            "Backend Development: Design, implement, and maintain high-quality backend services and APIs, focusing on scalability, reliability, and performance",
+            "Real-Time Communication Support: Develop backend capabilities for real-time, bidirectional communication using WebSockets, enabling browser-based voice interactions",
+            "System Design & Architecture: Participate in architectural decisions, ensuring backend systems are scalable and optimized for high availability in a high-volume environment",
+            "Data Management: Create efficient data storage and processing solutions, with an emphasis on data integrity, security, and compliance",
+            "Collaboration: Work closely with front-end engineers, product managers, and other teams to deliver integrated solutions that align with user needs and product goals",
+            "Troubleshooting & Optimization: Diagnose and resolve backend performance bottlenecks, ensuring reliable service and enhancing system efficiency"
+          ]
+        }
+      ],
+      "apply_options": [
+        {
+          "title": "Himalayas.app",
+          "link": "https://himalayas.app/companies/tram-case/jobs/senior-backend-engineer-startup-transforming-legal-tech-with-ai?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        }
+      ],
+      "job_id": "eyJqb2JfdGl0bGUiOiJTZW5pb3IgQmFja2VuZCBFbmdpbmVlciB8ICBTdGFydHVwIFRyYW5zZm9ybWluZyBsZWdhbCB0ZWNoIHdpdGggQUkiLCJjb21wYW55X25hbWUiOiJUcmFtIENhc2UiLCJhZGRyZXNzX2NpdHkiOiJVbml0ZWQgU3RhdGVzIiwiaHRpZG9jaWQiOiJ4eFhnMXRtNVNRYzFFOFFSQUFBQUFBPT0iLCJ1dWxlIjoidytDQUlRSUNJdlUyRnVJRVp5WVc1amFYTmpieUJDWVhrZ1FYSmxZU3hEWVd4cFptOXlibWxoTEZWdWFYUmxaQ0JUZEdGMFpYTSIsImdsIjoidXMiLCJobCI6ImVuIn0="
+    },
+    {
+      "title": "Associate General Counsel, Employment - Legal",
+      "company_name": "CoreWeave",
+      "location": "Sunnyvale, CA (+3 others)",
+      "via": "Built In San Francisco",
+      "share_link": "https://www.google.com/search?ibp=htl;jobs&q=legal+tech&htidocid=uJsCpfiCo6VyxWhrAAAAAA%3D%3D&hl=en-US&shndl=37&shmd=H4sIAAAAAAAA_xXNsQ6CMBCA4bjyCE43G6DGxEUngobEuDk4kqO5FEy5a3qFwNP4quLyL9_wZ99ddqtUxQ6YCBpiiuihlomVfA73MXhZR-IEBTzJbVbAQzpQwmh7EIZGxHnaX_uUgl6MUfWl04RpsKWV0QhTJ4v5SKf_tNpjpOC3XXs6H5cysDvsa4n0JpwJBobXxLzO6CmHuvoBHjG00aIAAAA&shmds=v1_AdeF8KhsIcWVkh5xkYCOz_ZnJqyEZXwUAd0O1lD0aq5qrbUgPA&source=sh/x/job/li/m1/1#fpstate=tldetail&htivrt=jobs&htiq=legal+tech&htidocid=uJsCpfiCo6VyxWhrAAAAAA%3D%3D",
+      "thumbnail": "https://serpapi.com/searches/68f26ecfa1de12caddf9c54a/images/4ec013299767b714b091eff5ac41e4fe6b55525d6d7995fba8a462014cf18ecc.png",
+      "extensions": [
+        "16 days ago",
+        "230K–260K a year",
+        "Full-time",
+        "Paid time off",
+        "Dental insurance",
+        "Health insurance"
+      ],
+      "detected_extensions": {
+        "posted_at": "16 days ago",
+        "salary": "230K–260K a year",
+        "schedule_type": "Full-time",
+        "paid_time_off": true,
+        "dental_coverage": true,
+        "health_insurance": true
+      },
+      "description": "CoreWeave is the AI Hyperscaler™, delivering a cloud platform of cutting edge services powering the next wave of AI. Our technology provides enterprises and leading AI labs with the most performant, efficient and resilient solutions for accelerated computing. Since 2017, CoreWeave has operated a growing footprint of data centers covering every region of the US and across Europe. CoreWeave was ranked as one of the TIME100 most influential companies of 2024.\n\nAs the leader in the industry, we thrive in an environment where adaptability and resilience are key. Our culture offers career-defining opportunities for those who excel amid change and challenge. If you’re someone who thrives in a dynamic environment, enjoys solving complex problems, and is eager to make a significant impact, CoreWeave is the place for you. Join us, and be part of a team solving some of the most exciting challenges in the industry.\n\nCoreWeave powers the creation and delivery of the intelligence that drives innovation.\n\nCoreWeave is seeking a dynamic Associate General Counsel, Employment to join our Legal team. If hired, you will work on a broad range of global employment matters, including talent acquisition, employment agreements and separations, Employers of Record (EORs) and Professional Employment Organizations (PEOs), employee handbooks and policies, leaves of absence, reasonable accommodations, performance management, organizational restructures, M&A integrations, and other matters. You will help ensure that CoreWeave’s employment strategy, programs, and policies are structured to accelerate our business while complying with applicable law in all of our jurisdictions.\n\nThe ideal candidate will have experience scaling companies in a high-growth, tech environment. You will report to the Deputy General Counsel, Corporate, partner closely with the People team, and collaborate frequently with other key stakeholders, including Accounting, Payroll, Tax, Corporate Development and Securities.\n\nYou will join a proactive and deeply engaged Legal team that values collaboration and innovative problem-solving. Our Legal and People teams take a practical, eﬃcient, solution-oriented approach to everything we do and help create the best possible experiences for CoreWeave’s workers, leaders, and the stakeholders we support. This is a great opportunity to join CoreWeave's growing Legal team and work on cutting-edge issues for a global employee population.\n\nResponsibilities:\n• Provide day-to-day and strategic advice on a variety of global employment law matters, including recruiting, hiring, and terminations, employment and separation documentation, EORs and PEOs, compensation and benefits, leaves of absence, reasonable accommodations, performance management, restrictive covenants, employee classifications, employee litigation, organizational restructures, and M&A integrations.\n• Provide timely, business-focused advice and counseling in support of our global workforce strategies and policies in accordance with evolving global laws and regulations.\n• Rapidly build trusted and inclusive partnerships with our People team and provide clear insights to address concerns and reach best outcomes.\n• Review, interpret, and draft company policies and procedures.\n• Monitor legislation, regulations, case law and government enforcement activities relating to relevant employment law areas, and provide proactive, strategic advice to relevant Legal, People, and business partners.\n• Help build a robust corporate compliance program, including enhancing and maintaining employment policies, processes, and training programs with scalable frameworks.\n• Conduct legal research on a variety of complex employment law issues.\n• Work collaboratively to prioritize business objectives and support overall company success.\n• Eﬃciently manage outside counsel.\n• Support other projects, as needed.\n\nMinimum Qualifications:\n• At least 10 years of relevant employment law experience advising on a variety of complex, global workforce issues and best practices.\n• Substantial in-house experience at a global tech and/or publicly-traded company, with relevant prior experience from a top law ﬁrm.\n• Deep subject matter expertise in employment law and experience providing support on a global scale.\n• Ability to be the primary in-house attorney on certain employment law projects, including handling multiple matters simultaneously.\n• Strong interpersonal skills, including the ability to communicate effectively with a wide variety of people, collaborate with diverse business groups, and build interdepartmental relationships at all levels, including senior-level executives and members of the Board of Directors.\n• Assertion, when appropriate, to challenge and be challenged both internally and with clients in a constructive and respectful way.\n• Advanced problem solving skills to quickly digest a problem, evaluate solutions, and then empower others to deliver.\n• Excellent drafting, written, verbal communication, project management, legal interpretation, and research skills.\n• A commitment to professional conduct, excellence and meticulous attention to detail, sometimes under time pressure.\n• Ability to balance legal risk mitigation against key business objectives and risks.\n• Ability to manage outside counsel efficiently.\n• J.D. degree & membership in at least one state bar (New York, New Jersey, California, Washington, or Washington D.C. preferred).\n\nThe base salary range for this role is $230,000 to $260,000. The starting salary will be determined based on job-related knowledge, skills, experience, and market location. We strive for both market alignment and internal equity when determining compensation. In addition to base salary, our total rewards package includes a discretionary bonus, equity awards, and a comprehensive benefits program (all based on eligibility).\n\nWhat We Offer\n\nThe range we’ve posted represents the typical compensation range for this role. To determine actual compensation, we review the market rate for each candidate which can include a variety of factors. These include qualifications, experience, interview performance, and location.\n\nIn addition to a competitive salary, we offer a variety of benefits to support your needs, including:\n• Medical, dental, and vision insurance - 100% paid for by CoreWeave\n• Company-paid Life Insurance\n• Voluntary supplemental life insurance\n• Short and long-term disability insurance\n• Flexible Spending Account\n• Health Savings Account\n• Tuition Reimbursement\n• Ability to Participate in Employee Stock Purchase Program (ESPP)\n• Mental Wellness Benefits through Spring Health\n• Family-Forming support provided by Carrot\n• Paid Parental Leave\n• Flexible, full-service childcare support with Kinside\n• 401(k) with a generous employer match\n• Flexible PTO\n• Catered lunch each day in our office and data center locations\n• A casual work environment\n• A work culture focused on innovative disruption\n\nOur Workplace\n\nWhile we prioritize a hybrid work environment, remote work may be considered for candidates located more than 30 miles from an office, based on role requirements for specialized skill sets. New hires will be invited to attend onboarding at one of our hubs within their first month. Teams also gather quarterly to support collaboration\n\nCalifornia Consumer Privacy Act - California applicants only\n\nCoreWeave is an equal opportunity employer, committed to fostering an inclusive and supportive workplace. All qualified applicants and candidates will receive consideration for employment without regard to race, color, religion, sex, disability, age, sexual orientation, gender identity, national origin, veteran status, or genetic information.\n\nAs part of this commitment and consistent with the Americans with Disabilities Act (ADA), CoreWeave will ensure that qualified applicants and candidates with disabilities are provided reasonable accommodations for the hiring process, unless such accommodation would cause an undue hardship. If reasonable accommodation is needed, please contact: careers@coreweave.com.\n\nExport Control Compliance\n\nThis position requires access to export controlled information. To conform to U.S. Government export regulations applicable to that information, applicant must either be (A) a U.S. person, defined as a (i) U.S. citizen or national, (ii) U.S. lawful permanent resident (green card holder), (iii) refugee under 8 U.S.C. § 1157, or (iv) asylee under 8 U.S.C. § 1158, (B) eligible to access the export controlled information without a required export authorization, or (C) eligible and reasonably likely to obtain the required export authorization from the applicable U.S. government agency. CoreWeave may, for legitimate business reasons, decline to pursue any export licensing process.",
+      "job_highlights": [
+        {
+          "title": "Qualifications",
+          "items": [
+            "The ideal candidate will have experience scaling companies in a high-growth, tech environment",
+            "At least 10 years of relevant employment law experience advising on a variety of complex, global workforce issues and best practices",
+            "Substantial in-house experience at a global tech and/or publicly-traded company, with relevant prior experience from a top law ﬁrm",
+            "Deep subject matter expertise in employment law and experience providing support on a global scale",
+            "Ability to be the primary in-house attorney on certain employment law projects, including handling multiple matters simultaneously",
+            "Strong interpersonal skills, including the ability to communicate effectively with a wide variety of people, collaborate with diverse business groups, and build interdepartmental relationships at all levels, including senior-level executives and members of the Board of Directors",
+            "Assertion, when appropriate, to challenge and be challenged both internally and with clients in a constructive and respectful way",
+            "Advanced problem solving skills to quickly digest a problem, evaluate solutions, and then empower others to deliver",
+            "Excellent drafting, written, verbal communication, project management, legal interpretation, and research skills",
+            "A commitment to professional conduct, excellence and meticulous attention to detail, sometimes under time pressure",
+            "Ability to balance legal risk mitigation against key business objectives and risks",
+            "Ability to manage outside counsel efficiently",
+            "This position requires access to export controlled information",
+            "To conform to U.S. Government export regulations applicable to that information, applicant must either be (A) a U.S. person, defined as a (i) U.S. citizen or national, (ii) U.S. lawful permanent resident (green card holder), (iii) refugee under 8 U.S.C. § 1157, or (iv) asylee under 8 U.S.C. § 1158, (B) eligible to access the export controlled information without a required export authorization, or (C) eligible and reasonably likely to obtain the required export authorization from the applicable U.S. government agency",
+            "CoreWeave may, for legitimate business reasons, decline to pursue any export licensing process"
+          ]
+        },
+        {
+          "title": "Benefits",
+          "items": [
+            "The base salary range for this role is $230,000 to $260,000",
+            "The starting salary will be determined based on job-related knowledge, skills, experience, and market location",
+            "We strive for both market alignment and internal equity when determining compensation",
+            "In addition to base salary, our total rewards package includes a discretionary bonus, equity awards, and a comprehensive benefits program (all based on eligibility)",
+            "The range we’ve posted represents the typical compensation range for this role",
+            "To determine actual compensation, we review the market rate for each candidate which can include a variety of factors",
+            "In addition to a competitive salary, we offer a variety of benefits to support your needs, including:",
+            "Medical, dental, and vision insurance - 100% paid for by CoreWeave",
+            "Company-paid Life Insurance",
+            "Voluntary supplemental life insurance",
+            "Short and long-term disability insurance",
+            "Flexible Spending Account",
+            "Health Savings Account",
+            "Tuition Reimbursement",
+            "Ability to Participate in Employee Stock Purchase Program (ESPP)",
+            "Mental Wellness Benefits through Spring Health",
+            "Family-Forming support provided by Carrot",
+            "Paid Parental Leave",
+            "Flexible, full-service childcare support with Kinside",
+            "401(k) with a generous employer match",
+            "Flexible PTO",
+            "Catered lunch each day in our office and data center locations",
+            "A casual work environment",
+            "A work culture focused on innovative disruption"
+          ]
+        },
+        {
+          "title": "Responsibilities",
+          "items": [
+            "You will report to the Deputy General Counsel, Corporate, partner closely with the People team, and collaborate frequently with other key stakeholders, including Accounting, Payroll, Tax, Corporate Development and Securities",
+            "Provide day-to-day and strategic advice on a variety of global employment law matters, including recruiting, hiring, and terminations, employment and separation documentation, EORs and PEOs, compensation and benefits, leaves of absence, reasonable accommodations, performance management, restrictive covenants, employee classifications, employee litigation, organizational restructures, and M&A integrations",
+            "Provide timely, business-focused advice and counseling in support of our global workforce strategies and policies in accordance with evolving global laws and regulations",
+            "Rapidly build trusted and inclusive partnerships with our People team and provide clear insights to address concerns and reach best outcomes",
+            "Review, interpret, and draft company policies and procedures",
+            "Monitor legislation, regulations, case law and government enforcement activities relating to relevant employment law areas, and provide proactive, strategic advice to relevant Legal, People, and business partners",
+            "Help build a robust corporate compliance program, including enhancing and maintaining employment policies, processes, and training programs with scalable frameworks",
+            "Conduct legal research on a variety of complex employment law issues",
+            "Work collaboratively to prioritize business objectives and support overall company success",
+            "Eﬃciently manage outside counsel",
+            "Support other projects, as needed",
+            "Export Control Compliance"
+          ]
+        }
+      ],
+      "apply_options": [
+        {
+          "title": "Built In San Francisco",
+          "link": "https://www.builtinsf.com/job/assistant-general-counsel-employment-legal/6650775?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        },
+        {
+          "title": "Built In",
+          "link": "https://builtin.com/job/assistant-general-counsel-employment-legal/6650775?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        },
+        {
+          "title": "Experteer",
+          "link": "https://us.experteer.com/career/view-jobs/associate-general-counsel-employment-legal-bellevue-wa-usa-54402581?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        }
+      ],
+      "job_id": "eyJqb2JfdGl0bGUiOiJBc3NvY2lhdGUgR2VuZXJhbCBDb3Vuc2VsLCBFbXBsb3ltZW50IC0gTGVnYWwiLCJjb21wYW55X25hbWUiOiJDb3JlV2VhdmUiLCJhZGRyZXNzX2NpdHkiOiJTdW5ueXZhbGUsIENBIiwiaHRpZG9jaWQiOiJ1SnNDcGZpQ282Vnl4V2hyQUFBQUFBPT0iLCJ1dWxlIjoidytDQUlRSUNJdlUyRnVJRVp5WVc1amFYTmpieUJDWVhrZ1FYSmxZU3hEWVd4cFptOXlibWxoTEZWdWFYUmxaQ0JUZEdGMFpYTSIsImdsIjoidXMiLCJobCI6ImVuIn0="
+    },
+    {
+      "title": "Senior Director, Legal, Technology & Commercial",
+      "company_name": "WARNERMEDIA",
+      "location": "Atlanta, GA (+3 others)",
+      "via": "WBD Careers - Warner Bros. Discovery",
+      "share_link": "https://www.google.com/search?ibp=htl;jobs&q=legal+tech&htidocid=YNgDf-iyxae97NPfAAAAAA%3D%3D&hl=en-US&shndl=37&shmd=H4sIAAAAAAAA_xXEsQrCMBAAUFz7CZ1ucpDaiOCiU7G1KOpQBcdyDUcSSXMluaF-jn8qvuFl30V2elBwHKF2kbRwLOBKBn0BT9I2sGfzgSUceRwpaoce1nDhARJh1BY4QMtsPOUHKzKlvVIp-dIkQXG61DwqDjTwrN48pH99shhp8ijUb3ebuZyCWeWvqrs33a2pzxW4AJV4DIIFtNUP3ZqrkKQAAAA&shmds=v1_AdeF8Kh3Jw01A4VeBTiP75ynPoNJlj0BSj_7adsrVSnJGFFGMA&source=sh/x/job/li/m1/1#fpstate=tldetail&htivrt=jobs&htiq=legal+tech&htidocid=YNgDf-iyxae97NPfAAAAAA%3D%3D",
+      "extensions": [
+        "Full-time",
+        "Dental insurance",
+        "Health insurance",
+        "Paid time off"
+      ],
+      "detected_extensions": {
+        "schedule_type": "Full-time",
+        "dental_coverage": true,
+        "health_insurance": true,
+        "paid_time_off": true
+      },
+      "description": "Welcome to Warner Bros. Discovery… the stuff dreams are made of.\n\nWho We Are…\n\nWhen we say, “the stuff dreams are made of,” we’re not just referring to the world of wizards, dragons and superheroes, or even to the wonders of Planet Earth. Behind WBD’s vast portfolio of iconic content and beloved brands, are the storytellers bringing our characters to life, the creators bringing them to your living rooms and the dreamers creating what’s next…\n\nFrom brilliant creatives, to technology trailblazers, across the globe, WBD offers career defining opportunities, thoughtfully curated benefits, and the tools to explore and grow into your best selves. Here you are supported, here you are celebrated, here you can thrive.\n\nYour New Role\n\nThe Warner Bros. Discovery Legal Department is seeking a technology and commercial transactional attorney. This position will be part of the Technology & Commercial legal team providing comprehensive and proactive legal support to the WBD businesses that power the company’s world renowned brands, including Warner Bros., MAX, Discovery and discovery+, HBO, CNN, DC Entertainment, HGTV, Food Network, TNT, Cartoon Network, Bleacher Report and more. This team has a particular focus on supporting the company’s enterprise technology and streaming organizations as well as its corporate and other commercial functions. The role requires close liaison with the relevant internal stakeholders and providing legal advice to the businesses on a wide range of issues.\n\nYour Role Accountabilities\n• Lead attorney for the negotiation and drafting of complex and strategic technology and commercial agreements and other legal documents in support of the company’s businesses and corporate functions, including software and technology license/development agreements, SaaS agreements, data licensing agreements, consulting agreements, purchase agreements, proof of concept agreements, statements of work, and NDAs. Advise on the structure of transactions.\n• Primary areas supported in the enterprise technology and streaming business units include technology and operations infrastructure and platforms and services that support WBD’s theatrical and television studio productions, linear broadcasting, digital products, and direct-to-consumer and streaming platforms; software and application licensing and development; data science and data strategy; distribution technologies; production and post-production technologies; media supply chain (content workflow and management); enterprise systems and solutions; IT and telecom; information security; advertising and marketing technology; payment processing technologies; AI technologies; and more.\n• Have deep knowledge in areas of responsibility and related areas to develop, implement, and direct programs. Interpret and provide advice to internal clients regarding the company’s rights, obligations, restrictions, and all other contractual provisions included in the company’s tech and commercial contracts.\n• Regularly liaise with EVP level independently, and provide leadership and counsel to large, diverse teams of senior employees (i.e., Directors). Provide strategic legal advice and counsel on a variety of licensing, technology, commercial, and other legal topics, with an emphasis on AI. Provide guidance on AI governance issues and the establishment and maintenance of AI policies. Evaluate and provide advice to internal clients on the use of AI, including identifying risks and ensuring appropriate contract protections. Have a deep understanding of AI and legal issues associated with the use of AI. Keep current with market standard AI contractual provisions, and developments and changes in laws applicable to AI.\n• Coordinate with Information Security and the Privacy office on data security and privacy issues, and other stakeholders (e.g., Tax, Risk Management, Business Resiliency, Ethics & Compliance, etc.) related contract negotiations.\n• Complete projects and tasks as assigned and provide general support for the team.\n• Assist with the development and maintenance of contract templates and standard contract provisions utilized by the team.\n\nQualifications & Experience\n• 12 years of technology and commercial transactional experience at a law firm and/or in-house legal department. (Some prior law firm experience is highly preferred.)\n• JD and active member of at least one US state bar, in good standing.\n• Technically very proficient lawyer with substantial experience with technology and commercial transactions. Prior experience with contracting for AI technologies and advising on AI related matters is preferred.\n• Superior drafting skills along with substantial experience with contract negotiations to deliver both proper legal protection for the company and excellent commercial results.\n• Clear and concise communicator (both orally and written) with ability to present and distill legally complex issues into legally compliant but practical and commercial solutions, in a way that engages the key stakeholders.\n• Highly motivated self-starter with strong work ethic and ability to work under pressure in a fast-paced environment and juggle competing priorities effectively and efficiently.\n• Strategic thinker with excellent judgment and decision-making skills.\n• Strong interpersonal skills with the ability to work effectively at all levels within the company combined with a cooperative and collaborative team-oriented attitude.\n• Strong organizational skills with great attention to detail.\n• Excellent academic credentials and references:\n\nHow We Get Things Done…\n\nThis last bit is probably the most important! Here at WBD, our guiding principles are the core values by which we operate and are central to how we get things done. You can find them at www.wbd.com/guiding-principles/ along with some insights from the team on what they mean and how they show up in their day to day. We hope they resonate with you and look forward to discussing them during your interview.\n\nChampioning Inclusion at WBD\nWarner Bros. Discovery embraces the opportunity to build a workforce that reflects a wide array of perspectives, backgrounds and experiences. Being an equal opportunity employer means that we take seriously our responsibility to consider qualified candidates on the basis of merit, without regard to race, color, religion, national origin, gender, sexual orientation, gender identity or expression, age, mental or physical disability, and genetic information, marital status, citizenship status, military status, protected veteran status or any other category protected by law.\n\nIf you’re a qualified candidate with a disability and you require adjustments or accommodations during the job application and/or recruitment process, please visit our accessibility page for instructions to submit your request.\n\nIn compliance with local law, we are disclosing the compensation, or a range thereof, for roles in locations where legally required. Actual salaries will vary based on several factors, including but not limited to external market data, internal equity, location, skill set, experience, and/or performance. Base pay is just one component of Warner Bros. Discovery’s total compensation package for employees. Pay Range: $157,500.00 - $292,500.00 salary per year. Other rewards may include annual bonuses, short- and long-term incentives, and program-specific awards. In addition, Warner Bros. Discovery provides a variety of benefits to employees, including health insurance coverage, an employee wellness program, life and disability insurance, a retirement savings plan, paid holidays and sick time and vacation.",
+      "job_highlights": [
+        {
+          "title": "Qualifications",
+          "items": [
+            "Keep current with market standard AI contractual provisions, and developments and changes in laws applicable to AI",
+            "12 years of technology and commercial transactional experience at a law firm and/or in-house legal department"
+          ]
+        },
+        {
+          "title": "Benefits",
+          "items": [
+            "Base pay is just one component of Warner Bros",
+            "Discovery’s total compensation package for employees",
+            "Pay Range: $157,500.00 - $292,500.00 salary per year",
+            "Other rewards may include annual bonuses, short- and long-term incentives, and program-specific awards",
+            "Discovery provides a variety of benefits to employees, including health insurance coverage, an employee wellness program, life and disability insurance, a retirement savings plan, paid holidays and sick time and vacation"
+          ]
+        },
+        {
+          "title": "Responsibilities",
+          "items": [
+            "The role requires close liaison with the relevant internal stakeholders and providing legal advice to the businesses on a wide range of issues",
+            "Lead attorney for the negotiation and drafting of complex and strategic technology and commercial agreements and other legal documents in support of the company’s businesses and corporate functions, including software and technology license/development agreements, SaaS agreements, data licensing agreements, consulting agreements, purchase agreements, proof of concept agreements, statements of work, and NDAs",
+            "Advise on the structure of transactions",
+            "Primary areas supported in the enterprise technology and streaming business units include technology and operations infrastructure and platforms and services that support WBD’s theatrical and television studio productions, linear broadcasting, digital products, and direct-to-consumer and streaming platforms; software and application licensing and development; data science and data strategy; distribution technologies; production and post-production technologies; media supply chain (content workflow and management); enterprise systems and solutions; IT and telecom; information security; advertising and marketing technology; payment processing technologies; AI technologies; and more",
+            "Have deep knowledge in areas of responsibility and related areas to develop, implement, and direct programs",
+            "Interpret and provide advice to internal clients regarding the company’s rights, obligations, restrictions, and all other contractual provisions included in the company’s tech and commercial contracts",
+            "Regularly liaise with EVP level independently, and provide leadership and counsel to large, diverse teams of senior employees (i.e., Directors)",
+            "Provide strategic legal advice and counsel on a variety of licensing, technology, commercial, and other legal topics, with an emphasis on AI",
+            "Provide guidance on AI governance issues and the establishment and maintenance of AI policies",
+            "Evaluate and provide advice to internal clients on the use of AI, including identifying risks and ensuring appropriate contract protections",
+            "Have a deep understanding of AI and legal issues associated with the use of AI",
+            "Coordinate with Information Security and the Privacy office on data security and privacy issues, and other stakeholders (e.g., Tax, Risk Management, Business Resiliency, Ethics & Compliance, etc.) related contract negotiations",
+            "Complete projects and tasks as assigned and provide general support for the team",
+            "Assist with the development and maintenance of contract templates and standard contract provisions utilized by the team"
+          ]
+        }
+      ],
+      "apply_options": [
+        {
+          "title": "WBD Careers - Warner Bros. Discovery",
+          "link": "https://careers.wbd.com/fr/fr/job/R000096228/Senior-Director-Legal-Technology-Commercial?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        },
+        {
+          "title": "GoInhouse.com",
+          "link": "https://www.goinhouse.com/jobs/436296945-senior-director-legal-technology-commercial-at-warnermedia?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        },
+        {
+          "title": "LinkedIn",
+          "link": "https://www.linkedin.com/jobs/view/senior-director-legal-technology-commercial-at-warner-bros-discovery-4294690576?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        },
+        {
+          "title": "SalesJobs.com",
+          "link": "https://www.salesjobs.com/sales-job/51084737?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        },
+        {
+          "title": "Attorney Jobs In USA",
+          "link": "https://www.ajiu.live/jobdetail-senior-director-legal-technology-commercial-hybrid-job-miami-fl-warner-bros-discovery-inc?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        },
+        {
+          "title": "Paralegal Jobs",
+          "link": "https://www.goparalegals.com/jobs/435800222-senior-director-legal-technology-commercial-at-warnermedia?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        },
+        {
+          "title": "Ladders",
+          "link": "https://www.theladders.com/job/senior-director-legal-technology-commercial-warner-bros-group-miami-fl_83164160?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        },
+        {
+          "title": "JobGet",
+          "link": "https://www.jobget.com/jobs/job/b93feeb8-f4ef-47a2-9881-37a928dbafca?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        }
+      ],
+      "job_id": "eyJqb2JfdGl0bGUiOiJTZW5pb3IgRGlyZWN0b3IsIExlZ2FsLCBUZWNobm9sb2d5IFx1MDAyNiBDb21tZXJjaWFsIiwiY29tcGFueV9uYW1lIjoiV0FSTkVSTUVESUEiLCJhZGRyZXNzX2NpdHkiOiJBdGxhbnRhLCBHQSIsImh0aWRvY2lkIjoiWU5nRGYtaXl4YWU5N05QZkFBQUFBQT09IiwidXVsZSI6IncrQ0FJUUlDSXZVMkZ1SUVaeVlXNWphWE5qYnlCQ1lYa2dRWEpsWVN4RFlXeHBabTl5Ym1saExGVnVhWFJsWkNCVGRHRjBaWE0iLCJnbCI6InVzIiwiaGwiOiJlbiJ9"
+    }
+  ],
+  "serpapi_pagination": {
+    "next_page_token": "eyJmYyI6IkVvc0ZDc3dFUVV4cmRGOTJSVWN3Y2paMFJWRlNSbTVQU0RaaE9YWjVTekpoTmpZeU5sQndibk55TjFwU2VHcG9SSEZPV1Y5elNuSjJiMGR0VGtGeFppMVFTV3h3ZGpjM2QyUktMWFJWVFRKa2IySlRUVmQyTTJwSU4yRkxhazB3Y0RkUVdVRjViMWhxY25kRVoyVTJVMjl3V25aWFRVWlJWREIwUmtJM2IwRTVXVTEyZFcxSE1qUTJTMVJKWWpGSmFFbFRjbE5HZGxwSWNtZFdhamRSWmxZMk1uUTNUM3BRU2pneVdrUldPVE0wWjI5cFNHUXRPRTVKUTFsMFpYSnpWemh1Vkcxd2QwSlJkRmMxWlcxR0xYZzVkVWxYV0UwelJGazRRVVp2VTBoelRGbHVaalZqY201R1ptaDFORmRCWW5SQ2QyUkZTRlpXYm0xaFFtVnNjVkJ6UVVWUFNVbEJhbTlCT0UxemIwVmlTMmhpZURCTGR5MDNWM3B4WTI5aU9IWlJabFJzVTBKd2NEVmxhbkF6WkhFMlZuTmFhR1ZxVW01U1NIVkZWMnBqWms4M2NURTVjSGRpTkZCUVUxbG5NazQxWkhONk1taGpZeTFuUVUxS1dWVTNWbGsxTFVsRFZHTkJVbDlZYWxkYWMxWnRjMmczVTFRelkyaG1ObTE1ZURFelYxQjFkblo1T0hkUVFYbDJYMGd3VUd4M01Vc3lka2xZZUZKZldWWjVRM00xUTJVMFNXZFFhVlpTZDBScVpXMXZkbWxYYmt0RVJXNXJXVWRmVGpaVGNISXhWamR4U0d4SVIzQlljRzB4UzFGU01rOXZZMXBIZFVkM2MweHlhMnRrY0hoRGRVODRNVWhVUm1GblMzcGpYMHQwYVd0RVEyWlhWVXRzWVRod2FtMW5RM1ZQZVZVeExXMVVVSE5SYldwRWJrcFVVakEwZFRGQlowMW9iMHRUU1Y5M1RXbFhVekZ5Ym5FM1JHcDFhbmMxYjBGV1puTkZSbE56TFVWa056WnRiVlpoUTBadVNqQlNWRkpFWWtKTUVoWXdSemQ1WVU1R1F6SndZVkU0WjE5Q05WcDFRa04zR2lKQlJrMUJSMGR3Ym1Sd1lYY3lYek5tUW13eE55MWxWamhPTmtWb01WaGxjV3QzIiwiZmN2IjoiMyJ9",
+    "next": "https://serpapi.com/search.json?engine=google_jobs&gl=us&google_domain=google.com&hl=en&location=San+Francisco+Bay+Area&next_page_token=eyJmYyI6IkVvc0ZDc3dFUVV4cmRGOTJSVWN3Y2paMFJWRlNSbTVQU0RaaE9YWjVTekpoTmpZeU5sQndibk55TjFwU2VHcG9SSEZPV1Y5elNuSjJiMGR0VGtGeFppMVFTV3h3ZGpjM2QyUktMWFJWVFRKa2IySlRUVmQyTTJwSU4yRkxhazB3Y0RkUVdVRjViMWhxY25kRVoyVTJVMjl3V25aWFRVWlJWREIwUmtJM2IwRTVXVTEyZFcxSE1qUTJTMVJKWWpGSmFFbFRjbE5HZGxwSWNtZFdhamRSWmxZMk1uUTNUM3BRU2pneVdrUldPVE0wWjI5cFNHUXRPRTVKUTFsMFpYSnpWemh1Vkcxd2QwSlJkRmMxWlcxR0xYZzVkVWxYV0UwelJGazRRVVp2VTBoelRGbHVaalZqY201R1ptaDFORmRCWW5SQ2QyUkZTRlpXYm0xaFFtVnNjVkJ6UVVWUFNVbEJhbTlCT0UxemIwVmlTMmhpZURCTGR5MDNWM3B4WTI5aU9IWlJabFJzVTBKd2NEVmxhbkF6WkhFMlZuTmFhR1ZxVW01U1NIVkZWMnBqWms4M2NURTVjSGRpTkZCUVUxbG5NazQxWkhONk1taGpZeTFuUVUxS1dWVTNWbGsxTFVsRFZHTkJVbDlZYWxkYWMxWnRjMmczVTFRelkyaG1ObTE1ZURFelYxQjFkblo1T0hkUVFYbDJYMGd3VUd4M01Vc3lka2xZZUZKZldWWjVRM00xUTJVMFNXZFFhVlpTZDBScVpXMXZkbWxYYmt0RVJXNXJXVWRmVGpaVGNISXhWamR4U0d4SVIzQlljRzB4UzFGU01rOXZZMXBIZFVkM2MweHlhMnRrY0hoRGRVODRNVWhVUm1GblMzcGpYMHQwYVd0RVEyWlhWVXRzWVRod2FtMW5RM1ZQZVZVeExXMVVVSE5SYldwRWJrcFVVakEwZFRGQlowMW9iMHRUU1Y5M1RXbFhVekZ5Ym5FM1JHcDFhbmMxYjBGV1puTkZSbE56TFVWa056WnRiVlpoUTBadVNqQlNWRkpFWWtKTUVoWXdSemQ1WVU1R1F6SndZVkU0WjE5Q05WcDFRa04zR2lKQlJrMUJSMGR3Ym1Sd1lYY3lYek5tUW13eE55MWxWamhPTmtWb01WaGxjV3QzIiwiZmN2IjoiMyJ9&q=legal+tech"
+  }
+}

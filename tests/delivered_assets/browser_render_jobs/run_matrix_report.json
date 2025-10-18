@@ -1,0 +1,282 @@
+[
+  {
+    "url": "https://www.indeed.com/jobs?q=product%20operations&l=Remote&fromage=7&sort=date",
+    "mode": "json",
+    "status": "error",
+    "reason": "NETWORK_ERROR",
+    "details": "400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/content",
+    "latency": 1.7501540184020996
+  },
+  {
+    "url": "https://www.indeed.com/jobs?q=product%20operations&l=Remote&fromage=7&sort=date",
+    "mode": "markdown",
+    "status": "error",
+    "reason": "NETWORK_ERROR",
+    "details": "400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/content",
+    "latency": 0.23660588264465332
+  },
+  {
+    "url": "https://www.indeed.com/jobs?q=product%20operations&l=Remote&fromage=7&sort=date",
+    "mode": "snapshot",
+    "status": "error",
+    "reason": "NETWORK_ERROR",
+    "details": "400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/content",
+    "latency": 0.2392430305480957
+  },
+  {
+    "url": "https://www.indeed.com/jobs?q=product%20operations&l=Remote&fromage=7&sort=date",
+    "mode": "screenshot",
+    "status": "error",
+    "reason": "NETWORK_ERROR",
+    "details": "400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/screenshot",
+    "latency": 0.3398561477661133
+  },
+  {
+    "url": "https://www.indeed.com/jobs?q=product%20operations&l=Remote&fromage=7&sort=date",
+    "mode": "pdf",
+    "status": "error",
+    "reason": "NETWORK_ERROR",
+    "details": "400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/pdf",
+    "latency": 0.5612401962280273
+  },
+  {
+    "url": "https://www.linkedin.com/jobs/search/?keywords=Cloudflare%20Workers&location=Remote&f_TPR=r604800",
+    "mode": "json",
+    "status": "error",
+    "reason": "NETWORK_ERROR",
+    "details": "400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/content",
+    "latency": 0.19751286506652832
+  },
+  {
+    "url": "https://www.linkedin.com/jobs/search/?keywords=Cloudflare%20Workers&location=Remote&f_TPR=r604800",
+    "mode": "markdown",
+    "status": "error",
+    "reason": "NETWORK_ERROR",
+    "details": "400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/content",
+    "latency": 0.36931896209716797
+  },
+  {
+    "url": "https://www.linkedin.com/jobs/search/?keywords=Cloudflare%20Workers&location=Remote&f_TPR=r604800",
+    "mode": "snapshot",
+    "status": "error",
+    "reason": "NETWORK_ERROR",
+    "details": "400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/content",
+    "latency": 0.2315809726715088
+  },
+  {
+    "url": "https://www.linkedin.com/jobs/search/?keywords=Cloudflare%20Workers&location=Remote&f_TPR=r604800",
+    "mode": "screenshot",
+    "status": "error",
+    "reason": "NETWORK_ERROR",
+    "details": "400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/screenshot",
+    "latency": 0.2235581874847412
+  },
+  {
+    "url": "https://www.linkedin.com/jobs/search/?keywords=Cloudflare%20Workers&location=Remote&f_TPR=r604800",
+    "mode": "pdf",
+    "status": "error",
+    "reason": "NETWORK_ERROR",
+    "details": "400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/pdf",
+    "latency": 0.3260989189147949
+  },
+  {
+    "url": "https://www.cloudflare.com/careers/jobs/",
+    "mode": "json",
+    "status": "error",
+    "reason": "NETWORK_ERROR",
+    "details": "400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/content",
+    "latency": 0.23805809020996094
+  },
+  {
+    "url": "https://www.cloudflare.com/careers/jobs/",
+    "mode": "markdown",
+    "status": "error",
+    "reason": "NETWORK_ERROR",
+    "details": "400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/content",
+    "latency": 0.2136378288269043
+  },
+  {
+    "url": "https://www.cloudflare.com/careers/jobs/",
+    "mode": "snapshot",
+    "status": "error",
+    "reason": "NETWORK_ERROR",
+    "details": "400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/content",
+    "latency": 0.15937185287475586
+  },
+  {
+    "url": "https://www.cloudflare.com/careers/jobs/",
+    "mode": "screenshot",
+    "status": "error",
+    "reason": "NETWORK_ERROR",
+    "details": "400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/screenshot",
+    "latency": 0.21266508102416992
+  },
+  {
+    "url": "https://www.cloudflare.com/careers/jobs/",
+    "mode": "pdf",
+    "status": "error",
+    "reason": "NETWORK_ERROR",
+    "details": "400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/pdf",
+    "latency": 0.21153998374938965
+  },
+  {
+    "url": "https://openai.com/careers/search/",
+    "mode": "json",
+    "status": "error",
+    "reason": "NETWORK_ERROR",
+    "details": "400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/content",
+    "latency": 0.27657604217529297
+  },
+  {
+    "url": "https://openai.com/careers/search/",
+    "mode": "markdown",
+    "status": "error",
+    "reason": "NETWORK_ERROR",
+    "details": "400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/content",
+    "latency": 0.23102402687072754
+  },
+  {
+    "url": "https://openai.com/careers/search/",
+    "mode": "snapshot",
+    "status": "error",
+    "reason": "NETWORK_ERROR",
+    "details": "400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/content",
+    "latency": 0.24836373329162598
+  },
+  {
+    "url": "https://openai.com/careers/search/",
+    "mode": "screenshot",
+    "status": "error",
+    "reason": "NETWORK_ERROR",
+    "details": "400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/screenshot",
+    "latency": 0.26428818702697754
+  },
+  {
+    "url": "https://openai.com/careers/search/",
+    "mode": "pdf",
+    "status": "error",
+    "reason": "NETWORK_ERROR",
+    "details": "400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/pdf",
+    "latency": 0.1884911060333252
+  },
+  {
+    "url": "https://jobs.lever.co/asana",
+    "mode": "json",
+    "status": "error",
+    "reason": "NETWORK_ERROR",
+    "details": "400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/content",
+    "latency": 0.25131916999816895
+  },
+  {
+    "url": "https://jobs.lever.co/asana",
+    "mode": "markdown",
+    "status": "error",
+    "reason": "NETWORK_ERROR",
+    "details": "400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/content",
+    "latency": 0.3015270233154297
+  },
+  {
+    "url": "https://jobs.lever.co/asana",
+    "mode": "snapshot",
+    "status": "error",
+    "reason": "NETWORK_ERROR",
+    "details": "400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/content",
+    "latency": 0.19511699676513672
+  },
+  {
+    "url": "https://jobs.lever.co/asana",
+    "mode": "screenshot",
+    "status": "error",
+    "reason": "NETWORK_ERROR",
+    "details": "400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/screenshot",
+    "latency": 0.23275494575500488
+  },
+  {
+    "url": "https://jobs.lever.co/asana",
+    "mode": "pdf",
+    "status": "error",
+    "reason": "NETWORK_ERROR",
+    "details": "400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/pdf",
+    "latency": 0.26169824600219727
+  },
+  {
+    "url": "https://netflix.wd5.myworkdayjobs.com/en-US/Netflix_Jobs/job/Los-Gatos-CA/Software-Engineer--L4---Studio-Engineering_JR22-07761",
+    "mode": "json",
+    "status": "error",
+    "reason": "NETWORK_ERROR",
+    "details": "400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/content",
+    "latency": 0.18802499771118164
+  },
+  {
+    "url": "https://netflix.wd5.myworkdayjobs.com/en-US/Netflix_Jobs/job/Los-Gatos-CA/Software-Engineer--L4---Studio-Engineering_JR22-07761",
+    "mode": "markdown",
+    "status": "error",
+    "reason": "NETWORK_ERROR",
+    "details": "400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/content",
+    "latency": 0.2143712043762207
+  },
+  {
+    "url": "https://netflix.wd5.myworkdayjobs.com/en-US/Netflix_Jobs/job/Los-Gatos-CA/Software-Engineer--L4---Studio-Engineering_JR22-07761",
+    "mode": "snapshot",
+    "status": "error",
+    "reason": "NETWORK_ERROR",
+    "details": "400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/content",
+    "latency": 0.49802708625793457
+  },
+  {
+    "url": "https://netflix.wd5.myworkdayjobs.com/en-US/Netflix_Jobs/job/Los-Gatos-CA/Software-Engineer--L4---Studio-Engineering_JR22-07761",
+    "mode": "screenshot",
+    "status": "error",
+    "reason": "NETWORK_ERROR",
+    "details": "400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/screenshot",
+    "latency": 0.23917102813720703
+  },
+  {
+    "url": "https://netflix.wd5.myworkdayjobs.com/en-US/Netflix_Jobs/job/Los-Gatos-CA/Software-Engineer--L4---Studio-Engineering_JR22-07761",
+    "mode": "pdf",
+    "status": "error",
+    "reason": "NETWORK_ERROR",
+    "details": "400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/pdf",
+    "latency": 0.28240418434143066
+  },
+  {
+    "url": "https://www.mongodb.com/careers/positions",
+    "mode": "json",
+    "status": "error",
+    "reason": "NETWORK_ERROR",
+    "details": "400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/content",
+    "latency": 0.28082704544067383
+  },
+  {
+    "url": "https://www.mongodb.com/careers/positions",
+    "mode": "markdown",
+    "status": "error",
+    "reason": "NETWORK_ERROR",
+    "details": "400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/content",
+    "latency": 0.2502472400665283
+  },
+  {
+    "url": "https://www.mongodb.com/careers/positions",
+    "mode": "snapshot",
+    "status": "error",
+    "reason": "NETWORK_ERROR",
+    "details": "400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/content",
+    "latency": 0.28732895851135254
+  },
+  {
+    "url": "https://www.mongodb.com/careers/positions",
+    "mode": "screenshot",
+    "status": "error",
+    "reason": "NETWORK_ERROR",
+    "details": "400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/screenshot",
+    "latency": 0.29861903190612793
+  },
+  {
+    "url": "https://www.mongodb.com/careers/positions",
+    "mode": "pdf",
+    "status": "error",
+    "reason": "NETWORK_ERROR",
+    "details": "400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/pdf",
+    "latency": 0.2386631965637207
+  }
+]

@@ -1,0 +1,46 @@
+export interface Env {
+  AI: any;
+  DB: any;
+  KV: any;
+  R2: any;
+  RESUME_BUCKET?: any;
+  VECTORIZE_INDEX: any;
+  EMBEDDING_MODEL: string;
+  DEFAULT_MODEL_REASONING: string;
+  DEFAULT_MODEL_WEB_BROWSER: string;
+  MYBROWSER?: any;
+  BROWSER?: any;
+  ASSETS: any;
+  API_AUTH_TOKEN: string;
+  BROWSER_RENDERING_TOKEN: string;
+  CLOUDFLARE_ACCOUNT_ID: string;
+  SERPAPI_API_KEY: string; // SerpAPI for job search (replaces Google Jobs API)
+  USAGE_TRACKER: KVNamespace;
+  SCRAPE_QUEUE: Queue;
+  FORWARD_EMAIL_ADDRESS?: string;
+  NOTIFICATION_EMAIL_ADDRESS?: string;
+  BUCKET_BASE_URL: string;
+  SLACK_WEBHOOK_URL: string;
+  SMTP_ENDPOINT: string;
+  SMTP_USERNAME: string;
+  SMTP_PASSWORD: string;
+  ADMIN_TOKEN?: string;
+  ENABLE_LLM?: string;
+  WORKER_URL: string;
+  SITE_CRAWLER: any;
+  JOB_MONITOR: any;
+  DISCOVERY_WORKFLOW: any;
+  JOB_MONITOR_WORKFLOW: any;
+  CHANGE_ANALYSIS_WORKFLOW: any;
+  SCRAPE_SOCKET: any;
+  AGENTS?: any;
+  EMAIL_SENDER?: any;
+  OTP_FORWARD_EMAIL?: string;
+  JOB_QUEUE?: any;
+  EMAIL_PROCESSOR_AGENT?: any;
+  JOB_MONITOR_AGENT?: any;
+  RESUME_OPTIMIZATION_AGENT?: any;
+  COMPANY_INTELLIGENCE_AGENT?: any;
+  INTERVIEW_PREPARATION_AGENT?: any;
+  GENERIC_AGENT?: any;
+}

@@ -1,7 +1,12 @@
-import type { Env } from './lib/env';
+import type { Env } from './domains/config/env/env.config';
 
-// Import GenericAgent for Cloudflare Agents SDK - retained from older branch context
-import { GenericAgent } from "./lib/generic_agent";
+// Import all agents for Cloudflare Agents SDK
+import { CompanyIntelligenceAgent } from "./domains/agents/company-intelligence-agent";
+import { EmailProcessorAgent } from "./domains/agents/email-processor-agent";
+import { GenericAgent } from "./domains/agents/generic_agent";
+import { InterviewPreparationAgent } from "./domains/agents/interview-preparation-agent";
+import { JobMonitorAgent } from "./domains/agents/job-monitor-agent";
+import { ResumeOptimizationAgent } from "./domains/agents/resume-optimization-agent";
 
 /**
  * Central entry point for the 9to5-scout Cloudflare Worker.
@@ -12,36 +17,50 @@ import { GenericAgent } from "./lib/generic_agent";
  */
 
 // Imports from the refactored main branch
-import { handleApiRequest } from './routes/api';
-import { handlePageRequest } from './routes/pages';
-import { handleScrapeSocket } from './routes/socket';
-import { isEmailIngestRequest, handleEmailIngest } from './routes/email-ingest';
-import { processEmailEvent } from './lib/email-event';
 import { handleScheduledEvent } from './lib/scheduled';
+import { handleApiRequest } from './routes/api';
+// Note: Email ingestion is now handled by EmailProcessorAgent
+import { handlePageRequest } from './domains/ui/routes/pages.routes';
+import { handleScrapeSocket } from './routes/socket';
 
 // Re-exports of Durable Objects and Workflows from the refactored main branch
-export { SiteCrawler } from './lib/durable-objects/site-crawler';
-export { JobMonitor } from './lib/durable-objects/job-monitor';
-export { ScrapeSocket } from './lib/durable-objects/scrape-socket';
-export { DiscoveryWorkflow } from './lib/workflows/discovery-workflow';
-export { JobMonitorWorkflow } from './lib/workflows/job-monitor-workflow';
-export { ChangeAnalysisWorkflow } from './lib/workflows/change-analysis-workflow';
-export type { Env };
+export { JobMonitor } from './domains/scraping/durable-objects/job-monitor';
+export { ScrapeSocket } from './domains/scraping/durable-objects/scrape-socket';
+export { SiteCrawler } from './domains/scraping/durable-objects/site-crawler';
+export { ChangeAnalysisWorkflow } from './domains/workflows/workflow-classes/change-analysis-workflow';
+export { DiscoveryWorkflow } from './domains/workflows/workflow-classes/discovery-workflow';
+export { JobMonitorWorkflow } from './domains/workflows/workflow-classes/job-monitor-workflow';
 
-// Export GenericAgent for Cloudflare Agents SDK
-export { GenericAgent };
+// Re-exports of domain modules (specific exports to avoid conflicts)
+export * from './domains/agents';
+export * from './domains/companies';
+export * from './domains/documents';
+export * from './domains/monitoring';
+export * from './domains/scraping';
+export * from './domains/sites';
+export * from './domains/workflows';
+
+// Re-exports of shared utilities
+export * from './shared';
+
+// Export UI and Config domains
+export * from './domains/config';
+export * from './domains/ui';
+
+// Export all Cloudflare Agents SDK agents
+export { CompanyIntelligenceAgent, EmailProcessorAgent, GenericAgent, InterviewPreparationAgent, JobMonitorAgent, ResumeOptimizationAgent };
+
+  export type { Env };
 
 export default {
-  async fetch(request: Request, env: Env): Promise<Response> {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
     console.log(`🌐 Request received: ${request.method} ${url.pathname}`);
 
     // High-level routing adopted from 'main'
 
     // 1. Email ingestion for Cloudflare Email Workers
-    if (isEmailIngestRequest(request)) {
-      return handleEmailIngest(request, env);
-    }
+    // Note: Email ingestion is now handled by EmailProcessorAgent
 
     // 2. WebSocket connection handling
     if (
@@ -53,7 +72,7 @@ export default {
 
     // 3. API and Page routing
     if (url.pathname.startsWith('/api/')) {
-      return handleApiRequest(request, env);
+      return handleApiRequest(request, env, ctx);
     }
 
     return handlePageRequest(request, env);
@@ -61,9 +80,21 @@ export default {
 
   /**
    * Email handler for Cloudflare Email Routing.
+   * Uses the EmailProcessorAgent for AI-powered email processing.
    */
   async email(message: ForwardableEmailMessage, env: Env, _ctx: ExecutionContext): Promise<void> {
-    await processEmailEvent(message, env);
+    try {
+      // Create a new instance of the EmailProcessorAgent
+      const agentId = env.EMAIL_PROCESSOR_AGENT.newUniqueId();
+      const agent = env.EMAIL_PROCESSOR_AGENT.get(agentId);
+      
+      // Process the email using the agent
+      await agent.email(message, env);
+    } catch (error) {
+      console.error("❌ Email processing failed:", error);
+      // Log error but don't process email if agent fails
+      console.error("Email processing failed, email will be rejected");
+    }
   },
 
   /**

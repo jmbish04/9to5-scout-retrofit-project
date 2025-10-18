@@ -1,0 +1,184 @@
+# Package.json Test Scripts Rules
+
+## CRITICAL TEST SCRIPT REQUIREMENTS
+
+### Test Script Naming Conventions
+
+- **Core Tests**: Use `test:` prefix for main test categories
+- **Specific Tests**: Use `test:category:type` for specific test types
+- **Python Tests**: Use `python:` prefix for Python-related commands
+- **Schema Tests**: Use `schema:` prefix for database schema operations
+- **Utility Scripts**: Use descriptive names without prefixes
+
+### Required Test Scripts
+
+#### Core Testing Scripts
+
+```json
+{
+  "test": "vitest",
+  "test:comprehensive": "./tests/run-all-tests.sh",
+  "test:all": "pnpm test && pnpm test:python && pnpm test:browser-rendering"
+}
+```
+
+#### Python Testing Scripts
+
+```json
+{
+  "test:python": "cd python-node/JobSpy && python -m pytest tests/ -v",
+  "test:python:unit": "cd python-node/JobSpy && python -m pytest tests/unit/ -v",
+  "test:python:integration": "cd python-node/JobSpy && python -m pytest tests/integration/ -v",
+  "test:python:coverage": "cd python-node/JobSpy && python -m pytest tests/ --cov=jobspy --cov-report=html --cov-report=term"
+}
+```
+
+#### Specific Test Types
+
+```json
+{
+  "test:browser-rendering": "node tests/browser-rendering-api.test.js",
+  "test:email": "node tests/email-processing.test.js"
+}
+```
+
+#### Schema Management Scripts
+
+```json
+{
+  "schema:export": "pnpm dlx wrangler@latest d1 execute DB --command=\"SELECT sql FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name;\" --local > schemas/local-schema.sql",
+  "schema:export:remote": "pnpm dlx wrangler@latest d1 execute DB --command=\"SELECT sql FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name;\" --remote > schemas/remote-schema.sql",
+  "schema:export:both": "pnpm schema:export && pnpm schema:export:remote",
+  "schema:check": "node scripts/schema-check.js"
+}
+```
+
+#### Python Development Scripts
+
+```json
+{
+  "python:install": "cd python-node/JobSpy && pip install -r requirements.txt",
+  "python:dev": "cd python-node/JobSpy && python -m uvicorn main:app --reload --port 8002",
+  "python:test:setup": "cd python-node/JobSpy && python -m pip install pytest pytest-cov uvicorn fastapi"
+}
+```
+
+#### Database Management Scripts
+
+```json
+{
+  "db:backup": "pnpm dlx wrangler@latest d1 export DB --output=backups/db-backup-$(date +%Y%m%d-%H%M%S).sql --remote",
+  "db:restore": "pnpm dlx wrangler@latest d1 import DB --file=backups/latest-backup.sql --remote"
+}
+```
+
+#### Logging and Monitoring Scripts
+
+```json
+{
+  "logs:tail": "pnpm dlx wrangler@latest tail --format=pretty",
+  "logs:tail:errors": "pnpm dlx wrangler@latest tail --format=pretty | grep -i error"
+}
+```
+
+#### Cleanup Scripts
+
+```json
+{
+  "clean": "rm -rf dist/ .wrangler/ node_modules/.cache/",
+  "clean:all": "pnpm clean && rm -rf node_modules/ python-node/JobSpy/__pycache__/ python-node/JobSpy/.pytest_cache/"
+}
+```
+
+## CRITICAL SCRIPT REQUIREMENTS
+
+### Path Consistency
+
+- **ALWAYS** use relative paths from project root
+- **NEVER** use absolute paths in scripts
+- **ALWAYS** use `cd` commands for directory changes
+- **ALWAYS** use `pnpm` instead of `npm` or `yarn`
+
+### Error Handling
+
+- **ALWAYS** include proper error handling in test scripts
+- **ALWAYS** use appropriate exit codes (0 for success, 1 for failure)
+- **ALWAYS** provide meaningful error messages
+
+### Dependencies
+
+- **ALWAYS** use `pnpm dlx wrangler@latest` for Wrangler commands
+- **ALWAYS** specify full paths for test files
+- **ALWAYS** use proper Python virtual environment activation
+
+### Test Organization
+
+- **ALWAYS** organize tests by category and type
+- **ALWAYS** provide both individual and comprehensive test runners
+- **ALWAYS** include coverage reporting for Python tests
+- **ALWAYS** include schema validation and comparison
+
+### Documentation
+
+- **ALWAYS** include descriptive comments in complex scripts
+- **ALWAYS** provide usage examples in README files
+- **ALWAYS** document environment variable requirements
+
+## FORBIDDEN PATTERNS
+
+### ❌ WRONG - Incorrect Script Patterns
+
+```json
+{
+  "test": "npm test", // ❌ Wrong package manager
+  "test-python": "python test.py", // ❌ Wrong naming convention
+  "schema": "wrangler d1 execute", // ❌ Missing pnpm dlx
+  "test:all": "test && test:python" // ❌ Missing pnpm prefix
+}
+```
+
+### ✅ CORRECT - Proper Script Patterns
+
+```json
+{
+  "test": "vitest", // ✅ Correct test runner
+  "test:python": "cd python-node/JobSpy && python -m pytest tests/ -v", // ✅ Correct naming and path
+  "schema:export": "pnpm dlx wrangler@latest d1 execute DB --command=\"...\" --local > schemas/local-schema.sql", // ✅ Correct Wrangler usage
+  "test:all": "pnpm test && pnpm test:python" // ✅ Correct pnpm usage
+}
+```
+
+## TEST SCRIPT VALIDATION
+
+### Before Adding New Test Scripts
+
+1. **Check naming convention** - follows established patterns
+2. **Verify path correctness** - uses relative paths from project root
+3. **Ensure error handling** - includes proper exit codes
+4. **Test execution** - verify script runs without errors
+5. **Update documentation** - add to tests/README.md
+
+### Required Test Categories
+
+- **Unit Tests**: TypeScript/JavaScript unit tests
+- **Integration Tests**: Cross-service integration tests
+- **Python Tests**: JobSpy and Python integration tests
+- **Schema Tests**: Database schema validation tests
+- **Browser Tests**: Browser rendering API tests
+- **Email Tests**: Email processing and AI classification tests
+
+### Test Script Dependencies
+
+- **Vitest**: For TypeScript/JavaScript unit tests
+- **Pytest**: For Python unit and integration tests
+- **Wrangler**: For Cloudflare Workers and D1 operations
+- **Node.js**: For JavaScript test execution
+- **Python 3**: For Python test execution
+
+## ENFORCEMENT
+
+- **MANDATORY**: All test scripts must follow these naming conventions
+- **MANDATORY**: All scripts must use `pnpm` package manager
+- **MANDATORY**: All paths must be relative to project root
+- **MANDATORY**: All test scripts must include proper error handling
+- **MANDATORY**: All new test scripts must be documented in tests/README.md

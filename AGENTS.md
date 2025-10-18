@@ -2066,3 +2066,257 @@ The rules specifically prevent the violations you just caught:
 - ✅ Integrated with AGENTS.md as mandatory requirements
 
 **🎯 Result**: Every AI agent interaction is now automatically bound by these mandatory rules, ensuring consistent adherence to project guidelines and Cloudflare Workers best practices!
+
+# Worker AI Agent Integration Status
+
+## Current Integration Status (Updated 2025-01-17)
+
+### FastAPI Server Status
+
+- **Server**: ✅ Running and healthy at https://local-scraper.hacolby.app
+- **Polling Service**: ⚠️ Running but failing due to missing worker endpoints
+- **WebSocket**: ⚠️ FastAPI WebSocket working, Worker WebSocket needs implementation
+
+### Current Integration Issues
+
+1. **404 Error**: `/api/v1/poll-for-jobs` endpoint not found
+2. **WebSocket Error**: Worker WebSocket connection failing with [object Event]
+3. **Authentication**: API key authentication not working for some endpoints
+4. **Missing Feedback Loop**: No way to report job completion back to worker
+
+### FastAPI Capabilities
+
+The FastAPI server can:
+
+- Scrape jobs from multiple sites (LinkedIn, Indeed, etc.)
+- Process autonomous AI-driven scraping requests
+- Send real-time logs via WebSocket
+- Handle authentication via API keys
+- Provide comprehensive diagnostics
+
+## Required Worker Endpoints (Priority Order)
+
+### 1. Polling Endpoint (CRITICAL)
+
+**Endpoint**: `GET /api/v1/poll-for-jobs`
+**Purpose**: Allow FastAPI polling service to check for queued scraping jobs
+**Authentication**: Bearer token (API key: 6502241638)
+**Expected Response**:
+
+```json
+{
+  "action": "scrape_job" | "autonomous_scrape" | "no_action",
+  "job": {
+    "job_id": "string",
+    "url": "string",
+    "site_id": "string"
+  },
+  "params": {
+    "context": "string",
+    "max_tasks": "number"
+  }
+}
+```
+
+### 2. WebSocket Endpoint (IMPORTANT)
+
+**Endpoint**: `WSS /ws`
+**Purpose**: Real-time communication between worker and FastAPI
+**Authentication**: Query parameter `?client=python` or Bearer token
+**Expected Messages**:
+
+- From Worker: Job requests, autonomous scrape triggers
+- To Worker: Scraped data, job completion status
+
+### 3. Job Status Update Endpoint (RECOMMENDED)
+
+**Endpoint**: `POST /api/v1/jobs/{job_id}/status`
+**Purpose**: Update job status after scraping completion
+**Authentication**: Bearer token
+**Expected Payload**:
+
+```json
+{
+  "status": "completed" | "failed" | "in_progress",
+  "results": {
+    "jobs_found": "number",
+    "scraped_at": "datetime"
+  },
+  "error": "string (if failed)"
+}
+```
+
+## Integration Testing Protocol
+
+### 1. Pre-Implementation Testing
+
+- Verify worker health endpoint responds
+- Check authentication works with provided API key
+- Test WebSocket connection capability
+
+### 2. Implementation Testing
+
+- Implement endpoints in priority order
+- Test each endpoint with provided test commands
+- Verify response formats match specifications
+
+### 3. Integration Testing
+
+- Test full polling cycle (worker → FastAPI → worker)
+- Verify WebSocket bidirectional communication
+- Test error handling and edge cases
+
+### 4. Validation Testing
+
+- Run FastAPI diagnostic tests
+- Verify all required endpoints are functional
+- Confirm integration status shows "healthy"
+
+## Required Worker Endpoints (Priority Order)
+
+### CRITICAL - Polling Endpoint
+
+- **URL**: `GET /api/v1/poll-for-jobs`
+- **Auth**: Bearer token (API key: 6502241638)
+- **Purpose**: Allow FastAPI to check for queued scraping jobs
+- **Response**: JSON with action, job details, and parameters
+
+### IMPORTANT - WebSocket Endpoint
+
+- **URL**: `WSS /ws`
+- **Auth**: Query parameter `?client=python` or Bearer token
+- **Purpose**: Real-time bidirectional communication
+- **Messages**: Job requests, autonomous scrape triggers, status updates
+
+### RECOMMENDED - Job Status Update
+
+- **URL**: `POST /api/v1/jobs/{job_id}/status`
+- **Auth**: Bearer token
+- **Purpose**: Report job completion back to worker
+- **Payload**: Status, results, error details
+
+## Issue Reporting System
+
+### Submit Issues to FastAPI Team
+
+If you encounter issues that need fixing on the FastAPI side, use:
+
+**Submit Issue:**
+
+```bash
+curl -X POST https://local-scraper.hacolby.app/worker-issues \
+  -H "Content-Type: application/json" \
+  -d '{
+    "agent_name": "worker-ai-agent",
+    "priority": "high|medium|low",
+    "category": "integration|api|websocket|authentication",
+    "issue": "Brief issue title",
+    "description": "Detailed description",
+    "expected_behavior": "What should happen",
+    "actual_behavior": "What actually happens",
+    "reproduction_steps": ["step1", "step2", "step3"],
+    "environment": {"worker_version": "1.0.0", "region": "us-east-1"}
+  }'
+```
+
+**List Submitted Issues:**
+
+```bash
+curl https://local-scraper.hacolby.app/worker-issues
+```
+
+## Integration Testing Protocol
+
+### 1. Pre-Implementation Testing
+
+- Verify worker health endpoint responds
+- Check authentication works with provided API key
+- Test WebSocket connection capability
+
+### 2. Implementation Testing
+
+- Implement endpoints in priority order
+- Test each endpoint with provided test commands
+- Verify response formats match specifications
+
+### 3. Integration Testing
+
+- Test full polling cycle (worker → FastAPI → worker)
+- Verify WebSocket bidirectional communication
+- Test error handling and edge cases
+
+### 4. Validation Testing
+
+- Run FastAPI diagnostic tests
+- Verify all required endpoints are functional
+- Confirm integration status shows "healthy"
+
+## Communication Channels
+
+### FastAPI Team Contact
+
+- **Diagnostic Dashboard**: https://local-scraper.hacolby.app
+- **Issue Submission**: POST to `/worker-issues`
+- **Requirements**: GET from `/worker-fixes`
+- **Status Monitoring**: GET from `/diagnostics`
+
+### Worker Team Resources
+
+- **Worker Health**: https://9to5-scout.hacolby.workers.dev/api/health
+- **OpenAPI Spec**: https://9to5-scout.hacolby.workers.dev/openapi.json
+- **Your AGENTS.md**: Update with integration status
+
+## Success Criteria
+
+### Phase 1 - Basic Integration
+
+- [ ] `/api/v1/poll-for-jobs` endpoint implemented and tested
+- [ ] Authentication working with provided API key
+- [ ] FastAPI polling service no longer shows 404 errors
+
+### Phase 2 - Real-time Communication
+
+- [ ] WebSocket endpoint `/ws` implemented and tested
+- [ ] Bidirectional communication working
+- [ ] FastAPI diagnostic dashboard shows worker connection
+
+### Phase 3 - Full Integration
+
+- [ ] Job status update endpoint implemented
+- [ ] Complete feedback loop working
+- [ ] All integration tests passing
+- [ ] FastAPI shows "healthy" integration status
+
+## Monitoring and Maintenance
+
+### Regular Checks
+
+- Monitor FastAPI `/worker-fixes` endpoint for requirement updates
+- Check `/worker-issues` for any reported problems
+- Verify integration health via `/diagnostics`
+
+### Issue Escalation
+
+- **High Priority**: Submit to `/worker-issues` immediately
+- **Medium Priority**: Document in your AGENTS.md, monitor
+- **Low Priority**: Add to backlog, address in next cycle
+
+## Next Steps
+
+1. **Immediately**: Check the three FastAPI endpoints listed above
+2. **Within 1 hour**: Update your AGENTS.md with integration status
+3. **Within 4 hours**: Implement the CRITICAL polling endpoint
+4. **Within 24 hours**: Complete Phase 1 integration
+5. **Ongoing**: Monitor and maintain integration health
+
+## Emergency Contacts
+
+If critical issues arise:
+
+- Submit urgent issue via `/worker-issues` with priority "high"
+- Include detailed error logs and reproduction steps
+- Monitor FastAPI logs at https://local-scraper.hacolby.app
+
+---
+
+**Remember**: The FastAPI team is ready to assist. Use the issue submission system for any problems you encounter, and always check the `/worker-fixes` endpoint for the latest requirements.

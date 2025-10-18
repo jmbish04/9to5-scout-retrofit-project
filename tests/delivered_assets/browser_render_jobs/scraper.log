@@ -1,0 +1,80 @@
+2025-10-17 09:33:12,390 - INFO - No specific mode/URL provided. Running default test matrix.
+2025-10-17 09:33:12,390 - INFO - Running test matrix from: /Volumes/Projects/workers/9to5-scout/tests/py_scripts/examples/run_matrix.json
+2025-10-17 09:33:12,390 - INFO - --- Processing URL: https://www.indeed.com/jobs?q=product%20operations&l=Remote&fromage=7&sort=date ---
+2025-10-17 09:33:12,390 - INFO - Starting render for mode 'json' on URL: https://www.indeed.com/jobs?q=product%20operations&l=Remote&fromage=7&sort=date
+2025-10-17 09:33:14,140 - ERROR - Request failed for https://www.indeed.com/jobs?q=product%20operations&l=Remote&fromage=7&sort=date: 400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/content
+2025-10-17 09:33:15,146 - INFO - Starting render for mode 'markdown' on URL: https://www.indeed.com/jobs?q=product%20operations&l=Remote&fromage=7&sort=date
+2025-10-17 09:33:15,383 - ERROR - Request failed for https://www.indeed.com/jobs?q=product%20operations&l=Remote&fromage=7&sort=date: 400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/content
+2025-10-17 09:33:16,385 - INFO - Starting render for mode 'snapshot' on URL: https://www.indeed.com/jobs?q=product%20operations&l=Remote&fromage=7&sort=date
+2025-10-17 09:33:16,625 - ERROR - Request failed for https://www.indeed.com/jobs?q=product%20operations&l=Remote&fromage=7&sort=date: 400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/content
+2025-10-17 09:33:17,629 - INFO - Starting render for mode 'screenshot' on URL: https://www.indeed.com/jobs?q=product%20operations&l=Remote&fromage=7&sort=date
+2025-10-17 09:33:17,970 - ERROR - Request failed for https://www.indeed.com/jobs?q=product%20operations&l=Remote&fromage=7&sort=date: 400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/screenshot
+2025-10-17 09:33:18,972 - INFO - Starting render for mode 'pdf' on URL: https://www.indeed.com/jobs?q=product%20operations&l=Remote&fromage=7&sort=date
+2025-10-17 09:33:19,534 - ERROR - Request failed for https://www.indeed.com/jobs?q=product%20operations&l=Remote&fromage=7&sort=date: 400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/pdf
+2025-10-17 09:33:20,536 - INFO - --- Processing URL: https://www.linkedin.com/jobs/search/?keywords=Cloudflare%20Workers&location=Remote&f_TPR=r604800 ---
+2025-10-17 09:33:20,537 - INFO - Starting render for mode 'json' on URL: https://www.linkedin.com/jobs/search/?keywords=Cloudflare%20Workers&location=Remote&f_TPR=r604800
+2025-10-17 09:33:20,734 - ERROR - Request failed for https://www.linkedin.com/jobs/search/?keywords=Cloudflare%20Workers&location=Remote&f_TPR=r604800: 400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/content
+2025-10-17 09:33:21,741 - INFO - Starting render for mode 'markdown' on URL: https://www.linkedin.com/jobs/search/?keywords=Cloudflare%20Workers&location=Remote&f_TPR=r604800
+2025-10-17 09:33:22,111 - ERROR - Request failed for https://www.linkedin.com/jobs/search/?keywords=Cloudflare%20Workers&location=Remote&f_TPR=r604800: 400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/content
+2025-10-17 09:33:23,114 - INFO - Starting render for mode 'snapshot' on URL: https://www.linkedin.com/jobs/search/?keywords=Cloudflare%20Workers&location=Remote&f_TPR=r604800
+2025-10-17 09:33:23,346 - ERROR - Request failed for https://www.linkedin.com/jobs/search/?keywords=Cloudflare%20Workers&location=Remote&f_TPR=r604800: 400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/content
+2025-10-17 09:33:24,352 - INFO - Starting render for mode 'screenshot' on URL: https://www.linkedin.com/jobs/search/?keywords=Cloudflare%20Workers&location=Remote&f_TPR=r604800
+2025-10-17 09:33:24,576 - ERROR - Request failed for https://www.linkedin.com/jobs/search/?keywords=Cloudflare%20Workers&location=Remote&f_TPR=r604800: 400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/screenshot
+2025-10-17 09:33:25,584 - INFO - Starting render for mode 'pdf' on URL: https://www.linkedin.com/jobs/search/?keywords=Cloudflare%20Workers&location=Remote&f_TPR=r604800
+2025-10-17 09:33:25,911 - ERROR - Request failed for https://www.linkedin.com/jobs/search/?keywords=Cloudflare%20Workers&location=Remote&f_TPR=r604800: 400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/pdf
+2025-10-17 09:33:26,916 - INFO - --- Processing URL: https://www.cloudflare.com/careers/jobs/ ---
+2025-10-17 09:33:26,916 - INFO - Starting render for mode 'json' on URL: https://www.cloudflare.com/careers/jobs/
+2025-10-17 09:33:27,154 - ERROR - Request failed for https://www.cloudflare.com/careers/jobs/: 400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/content
+2025-10-17 09:33:28,161 - INFO - Starting render for mode 'markdown' on URL: https://www.cloudflare.com/careers/jobs/
+2025-10-17 09:33:28,375 - ERROR - Request failed for https://www.cloudflare.com/careers/jobs/: 400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/content
+2025-10-17 09:33:29,377 - INFO - Starting render for mode 'snapshot' on URL: https://www.cloudflare.com/careers/jobs/
+2025-10-17 09:33:29,537 - ERROR - Request failed for https://www.cloudflare.com/careers/jobs/: 400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/content
+2025-10-17 09:33:30,544 - INFO - Starting render for mode 'screenshot' on URL: https://www.cloudflare.com/careers/jobs/
+2025-10-17 09:33:30,756 - ERROR - Request failed for https://www.cloudflare.com/careers/jobs/: 400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/screenshot
+2025-10-17 09:33:31,763 - INFO - Starting render for mode 'pdf' on URL: https://www.cloudflare.com/careers/jobs/
+2025-10-17 09:33:31,978 - ERROR - Request failed for https://www.cloudflare.com/careers/jobs/: 400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/pdf
+2025-10-17 09:33:32,978 - INFO - --- Processing URL: https://openai.com/careers/search/ ---
+2025-10-17 09:33:32,979 - INFO - Starting render for mode 'json' on URL: https://openai.com/careers/search/
+2025-10-17 09:33:33,255 - ERROR - Request failed for https://openai.com/careers/search/: 400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/content
+2025-10-17 09:33:34,258 - INFO - Starting render for mode 'markdown' on URL: https://openai.com/careers/search/
+2025-10-17 09:33:34,489 - ERROR - Request failed for https://openai.com/careers/search/: 400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/content
+2025-10-17 09:33:35,495 - INFO - Starting render for mode 'snapshot' on URL: https://openai.com/careers/search/
+2025-10-17 09:33:35,744 - ERROR - Request failed for https://openai.com/careers/search/: 400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/content
+2025-10-17 09:33:36,750 - INFO - Starting render for mode 'screenshot' on URL: https://openai.com/careers/search/
+2025-10-17 09:33:37,015 - ERROR - Request failed for https://openai.com/careers/search/: 400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/screenshot
+2025-10-17 09:33:38,021 - INFO - Starting render for mode 'pdf' on URL: https://openai.com/careers/search/
+2025-10-17 09:33:38,210 - ERROR - Request failed for https://openai.com/careers/search/: 400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/pdf
+2025-10-17 09:33:39,216 - INFO - --- Processing URL: https://jobs.lever.co/asana ---
+2025-10-17 09:33:39,216 - INFO - Starting render for mode 'json' on URL: https://jobs.lever.co/asana
+2025-10-17 09:33:39,467 - ERROR - Request failed for https://jobs.lever.co/asana: 400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/content
+2025-10-17 09:33:40,474 - INFO - Starting render for mode 'markdown' on URL: https://jobs.lever.co/asana
+2025-10-17 09:33:40,776 - ERROR - Request failed for https://jobs.lever.co/asana: 400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/content
+2025-10-17 09:33:41,782 - INFO - Starting render for mode 'snapshot' on URL: https://jobs.lever.co/asana
+2025-10-17 09:33:41,979 - ERROR - Request failed for https://jobs.lever.co/asana: 400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/content
+2025-10-17 09:33:42,985 - INFO - Starting render for mode 'screenshot' on URL: https://jobs.lever.co/asana
+2025-10-17 09:33:43,218 - ERROR - Request failed for https://jobs.lever.co/asana: 400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/screenshot
+2025-10-17 09:33:44,222 - INFO - Starting render for mode 'pdf' on URL: https://jobs.lever.co/asana
+2025-10-17 09:33:44,484 - ERROR - Request failed for https://jobs.lever.co/asana: 400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/pdf
+2025-10-17 09:33:45,487 - INFO - --- Processing URL: https://netflix.wd5.myworkdayjobs.com/en-US/Netflix_Jobs/job/Los-Gatos-CA/Software-Engineer--L4---Studio-Engineering_JR22-07761 ---
+2025-10-17 09:33:45,487 - INFO - Starting render for mode 'json' on URL: https://netflix.wd5.myworkdayjobs.com/en-US/Netflix_Jobs/job/Los-Gatos-CA/Software-Engineer--L4---Studio-Engineering_JR22-07761
+2025-10-17 09:33:45,676 - ERROR - Request failed for https://netflix.wd5.myworkdayjobs.com/en-US/Netflix_Jobs/job/Los-Gatos-CA/Software-Engineer--L4---Studio-Engineering_JR22-07761: 400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/content
+2025-10-17 09:33:46,678 - INFO - Starting render for mode 'markdown' on URL: https://netflix.wd5.myworkdayjobs.com/en-US/Netflix_Jobs/job/Los-Gatos-CA/Software-Engineer--L4---Studio-Engineering_JR22-07761
+2025-10-17 09:33:46,893 - ERROR - Request failed for https://netflix.wd5.myworkdayjobs.com/en-US/Netflix_Jobs/job/Los-Gatos-CA/Software-Engineer--L4---Studio-Engineering_JR22-07761: 400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/content
+2025-10-17 09:33:47,895 - INFO - Starting render for mode 'snapshot' on URL: https://netflix.wd5.myworkdayjobs.com/en-US/Netflix_Jobs/job/Los-Gatos-CA/Software-Engineer--L4---Studio-Engineering_JR22-07761
+2025-10-17 09:33:48,393 - ERROR - Request failed for https://netflix.wd5.myworkdayjobs.com/en-US/Netflix_Jobs/job/Los-Gatos-CA/Software-Engineer--L4---Studio-Engineering_JR22-07761: 400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/content
+2025-10-17 09:33:49,396 - INFO - Starting render for mode 'screenshot' on URL: https://netflix.wd5.myworkdayjobs.com/en-US/Netflix_Jobs/job/Los-Gatos-CA/Software-Engineer--L4---Studio-Engineering_JR22-07761
+2025-10-17 09:33:49,635 - ERROR - Request failed for https://netflix.wd5.myworkdayjobs.com/en-US/Netflix_Jobs/job/Los-Gatos-CA/Software-Engineer--L4---Studio-Engineering_JR22-07761: 400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/screenshot
+2025-10-17 09:33:50,641 - INFO - Starting render for mode 'pdf' on URL: https://netflix.wd5.myworkdayjobs.com/en-US/Netflix_Jobs/job/Los-Gatos-CA/Software-Engineer--L4---Studio-Engineering_JR22-07761
+2025-10-17 09:33:50,923 - ERROR - Request failed for https://netflix.wd5.myworkdayjobs.com/en-US/Netflix_Jobs/job/Los-Gatos-CA/Software-Engineer--L4---Studio-Engineering_JR22-07761: 400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/pdf
+2025-10-17 09:33:51,929 - INFO - --- Processing URL: https://www.mongodb.com/careers/positions ---
+2025-10-17 09:33:51,929 - INFO - Starting render for mode 'json' on URL: https://www.mongodb.com/careers/positions
+2025-10-17 09:33:52,210 - ERROR - Request failed for https://www.mongodb.com/careers/positions: 400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/content
+2025-10-17 09:33:53,211 - INFO - Starting render for mode 'markdown' on URL: https://www.mongodb.com/careers/positions
+2025-10-17 09:33:53,462 - ERROR - Request failed for https://www.mongodb.com/careers/positions: 400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/content
+2025-10-17 09:33:54,469 - INFO - Starting render for mode 'snapshot' on URL: https://www.mongodb.com/careers/positions
+2025-10-17 09:33:54,756 - ERROR - Request failed for https://www.mongodb.com/careers/positions: 400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/content
+2025-10-17 09:33:55,760 - INFO - Starting render for mode 'screenshot' on URL: https://www.mongodb.com/careers/positions
+2025-10-17 09:33:56,059 - ERROR - Request failed for https://www.mongodb.com/careers/positions: 400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/screenshot
+2025-10-17 09:33:57,065 - INFO - Starting render for mode 'pdf' on URL: https://www.mongodb.com/careers/positions
+2025-10-17 09:33:57,304 - ERROR - Request failed for https://www.mongodb.com/careers/positions: 400 Client Error: Bad Request for url: https://api.cloudflare.com/client/v4/accounts/b3304b14848de15c72c24a14b0cd187d/browser-rendering/pdf
+2025-10-17 09:33:58,311 - INFO - Matrix run complete. Report saved to /Volumes/Projects/workers/9to5-scout/tests/delivered_assets/browser_render_jobs/run_matrix_report.json

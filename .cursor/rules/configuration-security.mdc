@@ -1,7 +1,6 @@
 ---
 description: Configuration and security best practices
-globs: ["wrangler.*", "**/*.ts", "**/*.js", "src/**"]
-alwaysApply: true
+alwaysApply: false
 ---
 
 # Configuration and Security Rules

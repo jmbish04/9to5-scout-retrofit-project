@@ -1,0 +1,31 @@
+
+[
+  {
+    "description": "Indeed search for 'product operations' in 'Remote'",
+    "url": "https://www.indeed.com/jobs?q=product%20operations&l=Remote&fromage=7&sort=date"
+  },
+  {
+    "description": "LinkedIn search for 'Cloudflare Workers' (expect auth block)",
+    "url": "https://www.linkedin.com/jobs/search/?keywords=Cloudflare%20Workers&location=Remote&f_TPR=r604800"
+  },
+  {
+    "description": "Cloudflare Careers Page",
+    "url": "https://www.cloudflare.com/careers/jobs/"
+  },
+  {
+    "description": "OpenAI Careers Page",
+    "url": "https://openai.com/careers/search/"
+  },
+  {
+    "description": "Lever job board for a tech company (example: Asana)",
+    "url": "https://jobs.lever.co/asana"
+  },
+  {
+    "description": "Workday job posting (example: Netflix)",
+    "url": "https://netflix.wd5.myworkdayjobs.com/en-US/Netflix_Jobs/job/Los-Gatos-CA/Software-Engineer--L4---Studio-Engineering_JR22-07761"
+  },
+  {
+    "description": "Generic company careers page",
+    "url": "https://www.mongodb.com/careers/positions"
+  }
+]

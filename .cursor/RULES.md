@@ -295,14 +295,14 @@ export class MyAgent extends Agent<Env, AgentState> {
 ```json
 {
   "compilerOptions": {
-    "outDir": "./dist",           // ✅ REQUIRED: Output to dist
-    "rootDir": "./src",           // ✅ REQUIRED: Source from src
+    "outDir": "./dist", // ✅ REQUIRED: Output to dist
+    "rootDir": "./src", // ✅ REQUIRED: Source from src
     "target": "ES2022",
     "module": "ESNext"
   },
   "exclude": [
-    "node_modules",               // ✅ REQUIRED: Exclude dependencies
-    "dist"                        // ✅ REQUIRED: Exclude output directory
+    "node_modules", // ✅ REQUIRED: Exclude dependencies
+    "dist" // ✅ REQUIRED: Exclude output directory
   ]
 }
 ```

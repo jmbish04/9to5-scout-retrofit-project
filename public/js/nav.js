@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                             <a href="/openapi.json" target="_blank" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">OpenAPI Spec</a>
                                         </li>
                                         <li>
-                                            <a href="/prd.html" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">PRD Vision</a>
+                                            <a href="/frontend-mocks.html" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Frontend Vision</a>
                                         </li>
                                     </ul>
                                 </div>

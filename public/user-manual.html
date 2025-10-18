@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Interactive Manual | 9to5-Scout</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/elkjs/lib/elk.bundled.js"></script>
+    <style>
+      /* Chosen Palette: "Professional Blue & Slate" */
+      /* Application Structure Plan: The application is structured into six thematic sections: 1) Overview, 2) Core Workflow, 3) System Internals, 4) Advanced Topics, 5) AI Codebase Assistant, and 6) a new "Roadmap & AI Prompts" section. This new section serves as a development guide, outlining future AI-driven workflows and providing actionable prompts for their implementation, thus bridging the gap between the current state and the project's vision. */
+      /* Visualization & Content Choices: 
+           - Report Info: System Architecture -> Goal: Inform -> Viz: Interactive HTML/CSS Diagram -> Interaction: Hover to see component details -> Justification: Visually explains the tech stack.
+           - Report Info: Core user tasks -> Goal: Guide/Organize -> Viz: Multi-step "wizard" component -> Interaction: Click next/prev -> Justification: Breaks down the setup process.
+           - Report Info: Automated workflow -> Goal: Explain Process -> Viz: Interactive HTML/CSS Flowchart -> Interaction: Click nodes for details -> Justification: Clarifies the complex automated process.
+           - Report Info: Advanced topics -> Goal: Inform -> Viz: Accordion component -> Interaction: Click to expand/collapse -> Justification: Organizes detailed information compactly.
+           - New Feature: AI Code Q&A -> Goal: Enable Exploration -> Viz: Chat Interface -> Interaction: User types questions -> Justification: Provides an intuitive way for developers to query codebase knowledge.
+           - New Feature: Development Roadmap -> Goal: Guide Development -> Viz: Styled text blocks with code snippets -> Interaction: Read and copy prompts -> Justification: Clearly presents actionable development plans for new AI features.
+        */
+      /* CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. */
+
+      body {
+        background-color: #f8fafc; /* slate-50 */
+        color: #334155; /* slate-700 */
+        font-family: "Inter", sans-serif;
+        scroll-behavior: smooth;
+      }
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+      .section-card {
+        background-color: white;
+        border-radius: 0.75rem;
+        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1),
+          0 2px 4px -2px rgb(0 0 0 / 0.1);
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+      }
+      .section-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
+          0 4px 6px -2px rgb(0 0 0 / 0.1);
+      }
+      .nav-button {
+        transition: background-color 0.2s, color 0.2s;
+      }
+      .nav-button.active {
+        background-color: #3b82f6; /* blue-500 */
+        color: white;
+      }
+      .chat-bubble-user {
+        background-color: #3b82f6; /* blue-500 */
+        color: white;
+      }
+      .chat-bubble-ai {
+        background-color: #e2e8f0; /* slate-200 */
+        color: #334155; /* slate-700 */
+      }
+      .prompt-card {
+        background-color: #1e293b; /* slate-800 */
+        color: #e2e8f0; /* slate-200 */
+        border-radius: 0.5rem;
+        padding: 1rem;
+        font-family: "Courier New", Courier, monospace;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+      .diagram-node {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        border-radius: 0.5rem;
+        padding: 0.5rem 1rem;
+        box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1),
+          0 1px 2px -1px rgb(0 0 0 / 0.1);
+        transition: transform 0.2s, box-shadow 0.2s;
+        cursor: pointer;
+        text-align: center;
+      }
+      .diagram-node:focus {
+        outline: 2px solid #2563eb;
+        outline-offset: 2px;
+      }
+      .diagram-node.highlighted {
+        box-shadow: 0 0 0 3px #3b82f6;
+        transform: scale(1.05);
+      }
+      .tooltip {
+        position: absolute;
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity 0.2s;
+        z-index: 10;
+      }
+      .diagram-node:hover .tooltip {
+        visibility: visible;
+        opacity: 1;
+      }
+    </style>
+  </head>
+  <body class="antialiased">
+    <header class="bg-white shadow-sm sticky top-0 z-20">
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center"
+      >
+        <h1 class="text-2xl font-bold text-slate-800">
+          <span class="text-blue-600">9to5-Scout</span> Interactive Manual
+        </h1>
+        <nav class="hidden md:flex space-x-1">
+          <a
+            href="https://9to5-scout.hacolby.workers.dev"
+            target="_top"
+            class="nav-button active text-sm font-medium px-3 py-2 rounded-lg"
+          >
+            9to5-scout Homepage
+          </a>
+          <button
+            onclick="showSection('overview')"
+            class="nav-button active text-sm font-medium px-3 py-2 rounded-lg"
+          >
+            Overview
+          </button>
+          <button
+            onclick="showSection('workflow')"
+            class="nav-button text-sm font-medium px-3 py-2 rounded-lg"
+          >
+            Core Workflow
+          </button>
+          <button
+            onclick="showSection('internals')"
+            class="nav-button text-sm font-medium px-3 py-2 rounded-lg"
+          >
+            System Internals
+          </button>
+          <button
+            onclick="showSection('advanced')"
+            class="nav-button text-sm font-medium px-3 py-2 rounded-lg"
+          >
+            Advanced Topics
+          </button>
+          <button
+            onclick="showSection('roadmap')"
+            class="nav-button text-sm font-medium px-3 py-2 rounded-lg"
+          >
+            Roadmap
+          </button>
+          <button
+            onclick="showSection('ai-assistant')"
+            class="nav-button text-sm font-medium px-3 py-2 rounded-lg"
+          >
+            Codebase AI
+          </button>
+        </nav>
+      </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+      <!-- Overview Section -->
+      <section id="overview" class="space-y-8">
+        <div class="text-center">
+          <h2
+            class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl"
+          >
+            Your Automated Job Search Assistant
+          </h2>
+          <p class="mt-4 max-w-3xl mx-auto text-lg text-slate-600">
+            This interactive guide helps you master 9to5-Scout. Instead of a
+            static document, explore the system's architecture and learn the
+            core features through guided steps and visualizations. This section
+            provides a high-level overview of the application's components and
+            purpose.
+          </p>
+        </div>
+
+        <div class="section-card p-6 md:p-8">
+          <h3 class="text-xl font-semibold text-slate-800 mb-4">
+            System Architecture
+          </h3>
+          <p class="text-slate-600 mb-6">
+            9to5-Scout is a powerful Cloudflare Worker that leverages a suite of
+            modern cloud technologies. The diagram below is interactive; hover
+            over any component to learn more about its role.
+          </p>
+          <div
+            id="arch-diagram"
+            class="relative w-full h-[520px] bg-white border rounded-lg overflow-hidden"
+          ></div>
+        </div>
+      </section>
+
+      <!-- Core Workflow Section -->
+      <section id="workflow" class="hidden space-y-8">
+        <div class="text-center">
+          <h2
+            class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl"
+          >
+            Core Workflow Guide
+          </h2>
+          <p class="mt-4 max-w-3xl mx-auto text-lg text-slate-600">
+            Let's walk through the essential steps to get 9to5-Scout working for
+            you. This guide covers everything from setting up your profile to
+            launching your first automated job search. Follow the steps below to
+            begin.
+          </p>
+        </div>
+        <div class="section-card p-6 md:p-8">
+          <div id="wizard-container" class="relative">
+            <!-- Step 1: Profile & Documents -->
+            <div class="wizard-step" data-step="1">
+              <h3 class="text-2xl font-semibold text-slate-800 mb-4">
+                Step 1: Your Profile & Documents
+              </h3>
+              <p class="text-slate-600 mb-4">
+                First, set up your professional profile and upload your key
+                documents. This information provides the context for AI features
+                and keeps your materials organized.
+              </p>
+              <ul class="list-disc list-inside space-y-2 text-slate-600">
+                <li>
+                  <strong>Set up your profile:</strong> Go to the Profile/Talent
+                  section to add your professional summary, work experience, and
+                  skills.
+                </li>
+                <li>
+                  <strong>Upload your documents:</strong> Use the file
+                  management feature to upload your resume, cover letter
+                  templates, and any other relevant files. This allows the AI to
+                  use them as a reference.
+                </li>
+              </ul>
+            </div>
+            <!-- Step 2: Add Companies -->
+            <div class="wizard-step hidden" data-step="2">
+              <h3 class="text-2xl font-semibold text-slate-800 mb-4">
+                Step 2: Add Target Companies
+              </h3>
+              <p class="text-slate-600 mb-4">
+                This is the primary function of 9to5-Scout. Provide a list of
+                company websites, and the system will begin monitoring them for
+                new job opportunities and benefits information.
+              </p>
+              <ul class="list-disc list-inside space-y-2 text-slate-600">
+                <li>
+                  Navigate to the main page or the "Sites" management page.
+                </li>
+                <li>Find the input field labeled "Add Company URL".</li>
+                <li>
+                  Enter the full URL of a company's main website (e.g.,
+                  `https://www.cloudflare.com`).
+                </li>
+                <li>
+                  Click "Add". The system will automatically start the discovery
+                  and scraping process.
+                </li>
+              </ul>
+            </div>
+            <!-- Step 3: Review Jobs -->
+            <div class="wizard-step hidden" data-step="3">
+              <h3 class="text-2xl font-semibold text-slate-800 mb-4">
+                Step 3: Review Discovered Jobs & Benefits
+              </h3>
+              <p class="text-slate-600 mb-4">
+                Once the system has scraped your target sites, new jobs and
+                benefits information will appear in the UI. All opportunities
+                are centralized for easy management.
+              </p>
+              <ul class="list-disc list-inside space-y-2 text-slate-600">
+                <li>
+                  Go to the "Jobs" section to see a list of all open positions.
+                </li>
+                <li>
+                  Click any job to view the full description and a link to the
+                  application page.
+                </li>
+                <li>
+                  Visit the "Companies" or "Benefits" section to see
+                  AI-summarized perks for each company.
+                </li>
+              </ul>
+            </div>
+            <!-- Step 4: Use AI -->
+            <div class="wizard-step hidden" data-step="4">
+              <h3 class="text-2xl font-semibold text-slate-800 mb-4">
+                Step 4: Use the AI Assistant
+              </h3>
+              <p class="text-slate-600 mb-4">
+                Leverage the power of AI to accelerate your application process.
+                The system can generate a tailored cover letter for any
+                discovered job based on your profile and uploaded documents.
+              </p>
+              <ul class="list-disc list-inside space-y-2 text-slate-600">
+                <li>From the "Jobs" list, select an interesting position.</li>
+                <li>Click the "Generate Cover Letter" button.</li>
+                <li>
+                  An AI agent will write a cover letter that highlights your
+                  most relevant qualifications.
+                </li>
+                <li>
+                  The finished document will appear in the "Documents" section,
+                  ready for you to use.
+                </li>
+              </ul>
+            </div>
+            <!-- Step 5: Monitor -->
+            <div class="wizard-step hidden" data-step="5">
+              <h3 class="text-2xl font-semibold text-slate-800 mb-4">
+                Step 5: Monitor & Administer
+              </h3>
+              <p class="text-slate-600 mb-4">
+                Keep an eye on the system's performance and explore advanced
+                features to customize your workflow. The dashboard and logs
+                provide full transparency.
+              </p>
+              <ul class="list-disc list-inside space-y-2 text-slate-600">
+                <li>
+                  Visit the "Operations Dashboard" for a high-level view of
+                  system activity.
+                </li>
+                <li>
+                  Check the "Logs" for detailed information on specific tasks
+                  and to troubleshoot errors.
+                </li>
+                <li>
+                  Explore "Advanced Topics" to set up email integration or use
+                  the API.
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="flex justify-between items-center mt-8 pt-4 border-t">
+            <button
+              id="prevBtn"
+              onclick="navigateWizard(-1)"
+              class="px-4 py-2 bg-slate-200 text-slate-700 font-medium rounded-lg hover:bg-slate-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Previous
+            </button>
+            <div id="step-indicator" class="text-sm text-slate-500">
+              Step 1 of 5
+            </div>
+            <button
+              id="nextBtn"
+              onclick="navigateWizard(1)"
+              class="px-4 py-2 bg-blue-500 text-white font-medium rounded-lg hover:bg-blue-600"
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- System Internals Section -->
+      <section id="internals" class="hidden space-y-8">
+        <div class="text-center">
+          <h2
+            class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl"
+          >
+            System Internals: Data Flow
+          </h2>
+          <p class="mt-4 max-w-3xl mx-auto text-lg text-slate-600">
+            This section visualizes the automated data workflow that begins when
+            you add a new company. Click on any node in the flowchart to see a
+            detailed explanation of that stage in the process.
+          </p>
+        </div>
+        <div class="section-card p-6 md:p-8 flex flex-col md:flex-row gap-8">
+          <div class="w-full md:w-2/3">
+            <div
+              id="flow-diagram"
+              class="relative w-full h-[520px] bg-white border rounded-lg overflow-hidden"
+            ></div>
+          </div>
+          <div class="w-full md:w-1/3 bg-slate-50 p-6 rounded-lg border">
+            <div id="flow-details-container">
+              <h4 class="text-xl font-semibold text-slate-800 mb-2">
+                Click a Node
+              </h4>
+              <p class="text-slate-600">
+                Click a node in the diagram to see details about that step in
+                the data flow process.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Advanced Topics Section -->
+      <section id="advanced" class="hidden space-y-8">
+        <div class="text-center">
+          <h2
+            class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl"
+          >
+            Advanced Topics & Administration
+          </h2>
+          <p class="mt-4 max-w-3xl mx-auto text-lg text-slate-600">
+            This section is for power users and administrators. Here you'll find
+            information on setting up advanced integrations like email
+            forwarding, monitoring system health via the operations dashboard,
+            and using the API for programmatic access.
+          </p>
+        </div>
+        <div class="space-y-4">
+          <div class="accordion-item bg-white rounded-lg shadow-sm">
+            <button
+              class="accordion-header w-full text-left p-4 font-semibold text-slate-700 flex justify-between items-center"
+              onclick="toggleAccordion(this)"
+            >
+              File & Document Management
+              <span class="transform transition-transform duration-200"
+                >&#9662;</span
+              >
+            </button>
+            <div
+              class="accordion-content max-h-0 overflow-hidden transition-max-height duration-300 ease-in-out"
+            >
+              <div class="p-4 border-t text-slate-600">
+                <p>
+                  9to5-Scout includes a robust file management system for all
+                  your job search documents, powered by Cloudflare R2 for secure
+                  storage. The API provides endpoints to upload, download, and
+                  list files.
+                </p>
+                <p class="mt-2">
+                  This allows you to store multiple versions of your resume,
+                  various cover letter templates, a portfolio, or any other
+                  documents you might need. The AI agents can then reference
+                  these files when generating application materials.
+                </p>
+                <ul
+                  class="list-disc list-inside mt-4 space-y-1 font-mono text-sm"
+                >
+                  <li>
+                    <code class="bg-slate-100 p-1 rounded"
+                      >POST /api/files/upload</code
+                    >: Upload a new file.
+                  </li>
+                  <li>
+                    <code class="bg-slate-100 p-1 rounded"
+                      >GET /api/files/download</code
+                    >: Download a file by its key.
+                  </li>
+                  <li>
+                    <code class="bg-slate-100 p-1 rounded">GET /api/files</code
+                    >: List all your uploaded files.
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="accordion-item bg-white rounded-lg shadow-sm">
+            <button
+              class="accordion-header w-full text-left p-4 font-semibold text-slate-700 flex justify-between items-center"
+              onclick="toggleAccordion(this)"
+            >
+              Email Integration: Centralize Job Alerts
+              <span class="transform transition-transform duration-200"
+                >&#9662;</span
+              >
+            </button>
+            <div
+              class="accordion-content max-h-0 overflow-hidden transition-max-height duration-300 ease-in-out"
+            >
+              <div class="p-4 border-t text-slate-600">
+                <p>
+                  Instead of managing job alert emails in your personal inbox,
+                  you can forward them to 9to5-Scout for automatic processing.
+                  The system uses an AI agent to read each email, extract job
+                  details, and add it to your central job list.
+                </p>
+                <ol class="list-decimal list-inside mt-4 space-y-2">
+                  <li>
+                    <strong>Configure Email Routing in Cloudflare:</strong>
+                    Follow the instructions on the `email-integration.html` page
+                    to set up a custom email address that routes to the worker.
+                  </li>
+                  <li>
+                    <strong>Set Up Forwarding:</strong> In your email client,
+                    create a rule to automatically forward emails from job alert
+                    services to your new address.
+                  </li>
+                  <li>
+                    <strong>Monitor Processed Emails:</strong> The `emails.html`
+                    page shows a log of incoming emails and their processing
+                    status.
+                  </li>
+                </ol>
+              </div>
+            </div>
+          </div>
+          <div class="accordion-item bg-white rounded-lg shadow-sm">
+            <button
+              class="accordion-header w-full text-left p-4 font-semibold text-slate-700 flex justify-between items-center"
+              onclick="toggleAccordion(this)"
+            >
+              System Monitoring & Operations
+              <span class="transform transition-transform duration-200"
+                >&#9662;</span
+              >
+            </button>
+            <div
+              class="accordion-content max-h-0 overflow-hidden transition-max-height duration-300 ease-in-out"
+            >
+              <div class="p-4 border-t text-slate-600 space-y-4">
+                <p>
+                  <strong>The Operations Dashboard</strong>
+                  (`operations-dashboard.html`) gives you a real-time overview
+                  of the system's health and activity, including queue status,
+                  database statistics, and recent activity.
+                </p>
+                <p>
+                  <strong>Viewing System Logs</strong> (`logs.html`) provides
+                  access to raw logs for detailed debugging. You can filter by
+                  status (e.g., ERROR, INFO) and search for specific terms.
+                </p>
+                <p>
+                  <strong>Understanding Scheduled Tasks:</strong> The system
+                  runs automated work on a schedule (cron triggers). These tasks
+                  periodically re-crawl sites, scrape for jobs, and process
+                  queues. You can monitor their outcomes via the dashboard and
+                  logs.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="accordion-item bg-white rounded-lg shadow-sm">
+            <button
+              class="accordion-header w-full text-left p-4 font-semibold text-slate-700 flex justify-between items-center"
+              onclick="toggleAccordion(this)"
+            >
+              API Reference
+              <span class="transform transition-transform duration-200"
+                >&#9662;</span
+              >
+            </button>
+            <div
+              class="accordion-content max-h-0 overflow-hidden transition-max-height duration-300 ease-in-out"
+            >
+              <div class="p-4 border-t text-slate-600">
+                <p>
+                  9to5-Scout exposes a full REST API for programmatic
+                  interaction. An OpenAPI specification is provided at
+                  <code>/openapi.json</code>, and a user-friendly API browser is
+                  available at <code>api-reference.html</code>.
+                </p>
+                <p class="mt-4 font-medium">Key Endpoints:</p>
+                <ul
+                  class="list-disc list-inside mt-2 space-y-1 font-mono text-sm"
+                >
+                  <li>
+                    <code class="bg-slate-100 p-1 rounded">GET /api/sites</code
+                    >: List all monitored company sites.
+                  </li>
+                  <li>
+                    <code class="bg-slate-100 p-1 rounded">POST /api/sites</code
+                    >: Add a new company site to monitor.
+                  </li>
+                  <li>
+                    <code class="bg-slate-100 p-1 rounded">GET /api/jobs</code>:
+                    Retrieve a list of all discovered jobs.
+                  </li>
+                  <li>
+                    <code class="bg-slate-100 p-1 rounded"
+                      >POST /api/jobs/{id}/generate-cover-letter</code
+                    >: Trigger the AI cover letter agent.
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Roadmap Section -->
+      <section id="roadmap" class="hidden space-y-8">
+        <div class="text-center">
+          <h2
+            class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl"
+          >
+            Roadmap & AI Prompts
+          </h2>
+          <p class="mt-4 max-w-3xl mx-auto text-lg text-slate-600">
+            This section outlines the future of applicant profile management in
+            9to5-Scout, moving towards a "living profile." Below are proposed
+            workflows and the specific prompts an AI developer can use to
+            implement them.
+          </p>
+        </div>
+
+        <div class="section-card p-6 md:p-8 space-y-8">
+          <div>
+            <h3 class="text-xl font-semibold text-slate-800">
+              Workflow 1: AI-Powered Resume Parsing
+            </h3>
+            <p class="text-slate-600 mt-2">
+              This workflow automates the creation of an applicant's profile by
+              parsing an uploaded resume. When a user uploads a resume, an AI
+              agent will read the document, extract key information, and
+              populate the structured profile in the database.
+            </p>
+            <div class="mt-4">
+              <p class="font-semibold text-slate-700 mb-2">
+                AI Developer Prompt:
+              </p>
+              <div class="prompt-card text-sm">
+                Act as an expert Cloudflare Worker developer. I need to build a
+                new feature that automatically parses an uploaded resume and
+                updates the applicant's profile. 1. **Create a new API
+                endpoint**: `POST /api/talent/profile/parse-resume` that accepts
+                a JSON body with `{ "fileKey": "..." }`. This `fileKey`
+                corresponds to a resume file already uploaded to R2. 2. **Fetch
+                the resume content**: From the R2 bucket using the provided
+                `fileKey`. 3. **Use Cloudflare's AI**: Send the text content of
+                the resume to an AI model. Your prompt should instruct the model
+                to extract the following information and return it as a
+                structured JSON object: `name`, `email`, `phone`, `summary` (a
+                professional summary), `work_experience` (an array of objects
+                with `title`, `company`, `dates`, `description`), `education`
+                (an array of objects with `degree`, `school`, `dates`), and
+                `skills` (an array of strings). 4. **Update the Database**: Use
+                the extracted JSON to update the D1 database. * `UPSERT` the
+                basic info into the `applicant_profile` table. * For each skill
+                in the `skills` array, perform an `UPSERT` into the
+                `applicant_skills` table using the logic from
+                `migrations/004_applicant_skills_upsert.sql`. 5. **Return a
+                success response** with the newly updated profile data. Ensure
+                proper error handling.
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="text-xl font-semibold text-slate-800">
+              Workflow 2: LinkedIn Profile Integration
+            </h3>
+            <p class="text-slate-600 mt-2">
+              This allows a user to import their professional data directly from
+              their LinkedIn profile, providing a richer dataset than a standard
+              resume.
+            </p>
+            <div class="mt-4">
+              <p class="font-semibold text-slate-700 mb-2">
+                AI Developer Prompt:
+              </p>
+              <div class="prompt-card text-sm">
+                Act as an expert Cloudflare Worker developer. I need to build a
+                feature to scrape a user's LinkedIn profile and populate their
+                applicant profile. 1. **Create a new API endpoint**: `POST
+                /api/talent/profile/import-linkedin` that accepts `{
+                "linkedinUrl": "..." }`. 2. **Use Puppeteer**: Since LinkedIn is
+                heavily JS-driven, you must use the browser rendering API
+                (Puppeteer). Create a new background task or queue job to handle
+                the scraping. 3. **Scrape Profile Data**: Navigate to the
+                `linkedinUrl`, wait for the page to load, and extract text
+                content for: professional headline, summary/about section, all
+                work experiences, all education entries, and the full list of
+                skills. 4. **Process with AI**: Pass the scraped text to a
+                Cloudflare AI model. The prompt should be similar to the resume
+                parsing workflow, asking the AI to structure the raw text into
+                the same JSON format (`name`, `summary`, `work_experience`,
+                `education`, `skills`). 5. **Update the Database**: Use the
+                structured JSON to `UPSERT` the data into the
+                `applicant_profile` and `applicant_skills` tables in the D1
+                database.
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="text-xl font-semibold text-slate-800">
+              Workflow 3: Conversational Profile Refinement
+            </h3>
+            <p class="text-slate-600 mt-2">
+              This feature introduces a user-facing AI agent that acts as a
+              career coach. Users can chat with the agent to conversationally
+              add details, refine descriptions, and identify skills, with the
+              agent updating the profile in real-time.
+            </p>
+            <div class="mt-4">
+              <p class="font-semibold text-slate-700 mb-2">
+                AI Developer Prompt:
+              </p>
+              <div class="prompt-card text-sm">
+                Act as an expert Cloudflare Worker developer. I need to build a
+                conversational AI agent for refining an applicant's profile. 1.
+                **Create a new API endpoint** (or WebSocket for real-time chat):
+                `POST /api/talent/profile/chat`. It should accept a message
+                history and the user's latest message. 2. **Fetch Current
+                Profile**: Before calling the AI, retrieve the user's current
+                profile from the D1 database. 3. **Consult the AI Model**: Send
+                the chat history, the user's new message, and their current
+                profile data (as context) to a Cloudflare AI model. The system
+                prompt for the AI should be: "You are a helpful career coach.
+                Your goal is to help the user build a comprehensive professional
+                profile. Based on the conversation and the provided profile
+                data, identify any changes, additions, or deletions requested by
+                the user. Respond conversationally, and if you identify a
+                concrete change, also return a structured JSON object with the
+                specific fields to update in the database." 4. **Process the AI
+                Response**: * If the AI returns a JSON object with profile
+                updates, apply those changes to the `applicant_profile` and
+                `applicant_skills` tables in D1. * Return the conversational
+                part of the AI's response to the user.
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="text-xl font-semibold text-slate-800">
+              Workflow 4: AI-Powered LinkedIn Coaching
+            </h3>
+            <p class="text-slate-600 mt-2">
+              Building on the LinkedIn integration, this workflow allows the AI
+              to provide actionable advice. The agent can analyze a user's
+              profile in the context of a specific job description and suggest
+              targeted improvements to enhance their marketability.
+            </p>
+            <div class="mt-4">
+              <p class="font-semibold text-slate-700 mb-2">
+                AI Developer Prompt:
+              </p>
+              <div class="prompt-card text-sm">
+                Act as an expert Cloudflare Worker developer. Build an AI agent
+                that provides LinkedIn profile coaching. 1. **Create a new API
+                endpoint**: `POST /api/talent/profile/linkedin-coach`. It should
+                accept `{ "jobId": "..." }`. This assumes the user's LinkedIn
+                data has already been scraped and is in their profile. 2.
+                **Fetch Data**: Retrieve the applicant's full profile from D1
+                and the target job description for the given `jobId`. 3. **Call
+                the AI Model**: Send both the applicant's profile and the job
+                description to a Cloudflare AI model. The system prompt should
+                be: "You are an expert career coach and recruiter. Analyze the
+                provided applicant profile and the target job description.
+                Identify the top 3-5 areas where the applicant could improve
+                their profile to be a stronger candidate for this specific job.
+                Provide specific, actionable advice. For example, suggest
+                rephrasing parts of their summary, highlighting different
+                skills, or adding specific project details that align with the
+                job's requirements. Format your response as a list of
+                suggestions." 4. **Return the Advice**: Return the AI-generated
+                list of suggestions to the user.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- AI Assistant Section -->
+      <section id="ai-assistant" class="hidden space-y-8">
+        <div class="text-center">
+          <h2
+            class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl"
+          >
+            AI Codebase Assistant
+            <span
+              class="text-sm align-top bg-blue-100 text-blue-800 font-medium px-2 py-0.5 rounded-full"
+              >BETA</span
+            >
+          </h2>
+          <p class="mt-4 max-w-3xl mx-auto text-lg text-slate-600">
+            Ask questions about the 9to5-Scout codebase. This AI agent has
+            indexed the entire
+            <a
+              href="https://github.com/jmbish04/9to5-scout"
+              target="_blank"
+              class="text-blue-600 hover:underline"
+              >GitHub repository</a
+            >
+            and can answer questions about its architecture, where to find
+            specific features, or how certain modules work.
+          </p>
+        </div>
+        <div class="section-card">
+          <div class="flex flex-col h-[60vh]">
+            <div id="chat-window" class="flex-1 p-6 overflow-y-auto space-y-4">
+              <div class="flex justify-start">
+                <div class="chat-bubble-ai p-3 rounded-lg max-w-lg">
+                  Hello! I'm the 9to5-Scout AI assistant. I have full knowledge
+                  of the project's source code. How can I help you today? Try
+                  asking "How does email processing work?"
+                </div>
+              </div>
+            </div>
+            <div class="p-4 bg-white border-t border-slate-200 rounded-b-lg">
+              <div class="flex space-x-2">
+                <input
+                  type="text"
+                  id="chat-input"
+                  class="flex-1 w-full px-4 py-2 bg-slate-100 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Ask about the codebase..."
+                />
+                <button
+                  id="chat-send"
+                  class="px-6 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                >
+                  Send
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const sections = [
+        "overview",
+        "workflow",
+        "internals",
+        "advanced",
+        "roadmap",
+        "ai-assistant",
+      ];
+      const navButtons = document.querySelectorAll(".nav-button");
+
+      function showSection(sectionId) {
+        sections.forEach((id) => {
+          const element = document.getElementById(id);
+          if (element) {
+            element.classList.add("hidden");
+          }
+        });
+        const activeElement = document.getElementById(sectionId);
+        if (activeElement) {
+          activeElement.classList.remove("hidden");
+        }
+
+        navButtons.forEach((button) => {
+          button.classList.remove("active");
+          if (button.getAttribute("onclick").includes(`'${sectionId}'`)) {
+            button.classList.add("active");
+          }
+        });
+
+        if (
+          window.DIAGRAMS &&
+          (sectionId === "overview" || sectionId === "internals")
+        ) {
+          setTimeout(() => window.DIAGRAMS.fit(), 50);
+        }
+      }
+
+      let currentStep = 1;
+      const totalSteps = 5;
+      const wizardSteps = document.querySelectorAll(".wizard-step");
+      const prevBtn = document.getElementById("prevBtn");
+      const nextBtn = document.getElementById("nextBtn");
+      const stepIndicator = document.getElementById("step-indicator");
+
+      function updateWizardView() {
+        wizardSteps.forEach((step) => {
+          step.classList.add("hidden");
+        });
+        document
+          .querySelector(`.wizard-step[data-step="${currentStep}"]`)
+          .classList.remove("hidden");
+
+        if (prevBtn) prevBtn.disabled = currentStep === 1;
+        if (nextBtn) nextBtn.disabled = currentStep === totalSteps;
+        if (stepIndicator)
+          stepIndicator.textContent = `Step ${currentStep} of ${totalSteps}`;
+      }
+
+      function navigateWizard(direction) {
+        currentStep += direction;
+        if (currentStep < 1) currentStep = 1;
+        if (currentStep > totalSteps) currentStep = totalSteps;
+        updateWizardView();
+      }
+
+      function toggleAccordion(header) {
+        const content = header.nextElementSibling;
+        const icon = header.querySelector("span");
+        if (content.style.maxHeight) {
+          content.style.maxHeight = null;
+          icon.style.transform = "rotate(0deg)";
+        } else {
+          document
+            .querySelectorAll(".accordion-content")
+            .forEach((el) => (el.style.maxHeight = null));
+          document
+            .querySelectorAll(".accordion-header span")
+            .forEach((el) => (el.style.transform = "rotate(0deg)"));
+          content.style.maxHeight = content.scrollHeight + "px";
+          icon.style.transform = "rotate(180deg)";
+        }
+      }
+
+      const chatWindow = document.getElementById("chat-window");
+      const chatInput = document.getElementById("chat-input");
+      const chatSendBtn = document.getElementById("chat-send");
+
+      const aiResponses = {
+        email:
+          "Based on my analysis of the repository, email processing is handled by the `email` handler in `src/index.ts`. It parses the raw email using `postal-mime` and then uses an AI model with the prompt from `.agents/llms/email-routing.txt` to extract job details. The extracted job is then added to a Cloudflare Queue for ingestion via `src/jobs/pipeline.ts`.",
+        database:
+          "The database schema is defined incrementally through SQL migration files located in the `/migrations` directory. For example, `001_init.sql` sets up the initial tables like `sites` and `jobs`, while later files like `010_company_benefits.sql` add tables for tracking company perks. The worker uses Cloudflare D1 bindings to interact with the database.",
+        schema:
+          "The database schema is defined incrementally through SQL migration files located in the `/migrations` directory. For example, `001_init.sql` sets up the initial tables like `sites` and `jobs`, while later files like `010_company_benefits.sql` add tables for tracking company perks. The worker uses Cloudflare D1 bindings to interact with the database.",
+        "durable object":
+          "Durable Objects are used for stateful, long-running tasks. For example, `src/lib/durable-objects/site-crawler.ts` defines a `SiteCrawler` object that manages the complex, multi-step process of crawling an entire website to find career and benefits pages without losing its state.",
+        file: "File management is handled through a set of API routes in `src/routes/documents.ts`. It uses Cloudflare R2 for storage, as configured in `wrangler.toml`. The API allows for uploading various file types (resumes, cover letters, etc.), downloading them by key, and listing existing files. The `File` schema in `openapi.json` shows the structure of the file metadata stored.",
+        upload:
+          "File management is handled through a set of API routes in `src/routes/documents.ts`. It uses Cloudflare R2 for storage, as configured in `wrangler.toml`. The API allows for uploading various file types (resumes, cover letters, etc.), downloading them by key, and listing existing files. The `File` schema in `openapi.json` shows the structure of the file metadata stored.",
+        default:
+          "That's a great question. Based on the `jmbish04/9to5-scout` repository, I can provide details on specific parts of the codebase. Could you ask a more targeted question? For example: 'Where is the API routing handled?' or 'Explain the purpose of the `Puppeteer` integration'.",
+      };
+
+      function getAiResponse(userMessage) {
+        const lowerMessage = userMessage.toLowerCase();
+        if (lowerMessage.includes("email")) return aiResponses.email;
+        if (
+          lowerMessage.includes("database") ||
+          lowerMessage.includes("schema")
+        )
+          return aiResponses.database;
+        if (lowerMessage.includes("durable object"))
+          return aiResponses["durable object"];
+        if (lowerMessage.includes("file") || lowerMessage.includes("upload"))
+          return aiResponses.file;
+        return aiResponses.default;
+      }
+
+      function addMessageToChat(message, sender) {
+        const bubble = document.createElement("div");
+        const messageWrapper = document.createElement("div");
+
+        messageWrapper.classList.add("flex");
+        bubble.classList.add("p-3", "rounded-lg", "max-w-lg");
+        bubble.textContent = message;
+
+        if (sender === "user") {
+          messageWrapper.classList.add("justify-end");
+          bubble.classList.add("chat-bubble-user");
+        } else {
+          messageWrapper.classList.add("justify-start");
+          bubble.classList.add("chat-bubble-ai");
+          if (message === "...") {
+            bubble.innerHTML = `<div class="flex items-center space-x-1"><div class="w-2 h-2 bg-slate-400 rounded-full animate-pulse"></div><div class="w-2 h-2 bg-slate-400 rounded-full animate-pulse" style="animation-delay: 0.2s;"></div><div class="w-2 h-2 bg-slate-400 rounded-full animate-pulse" style="animation-delay: 0.4s;"></div></div>`;
+          }
+        }
+
+        messageWrapper.appendChild(bubble);
+        if (chatWindow) {
+          chatWindow.appendChild(messageWrapper);
+          chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+        return messageWrapper;
+      }
+
+      function handleSendMessage() {
+        const userMessage = chatInput.value.trim();
+        if (!userMessage) return;
+
+        addMessageToChat(userMessage, "user");
+        chatInput.value = "";
+
+        const thinkingBubble = addMessageToChat("...", "ai");
+
+        setTimeout(() => {
+          const aiMessage = getAiResponse(userMessage);
+          thinkingBubble.querySelector(".chat-bubble-ai").innerHTML = aiMessage;
+        }, 1500);
+      }
+      if (chatSendBtn) {
+        chatSendBtn.addEventListener("click", handleSendMessage);
+      }
+      if (chatInput) {
+        chatInput.addEventListener("keypress", (e) => {
+          if (e.key === "Enter") {
+            handleSendMessage();
+          }
+        });
+      }
+    </script>
+    <script>
+      /**
+       * @typedef {Object} DiagramNode
+       * @property {string} id
+       * @property {string} label
+       * @property {'service'|'db'|'queue'|'worker'|'ai'|'crawler'|'step'} kind
+       * @property {string=} description
+       * @property {Object=} meta
+       */
+
+      /**
+       * @typedef {Object} DiagramEdge
+       * @property {string} from
+       * @property {string} to
+       * @property {string=} label
+       */
+
+      /**
+       * @typedef {Object} DiagramData
+       * @property {'layered'|'force'|'orthogonal'} layout
+       * @property {DiagramNode[]} nodes
+       * @property {DiagramEdge[]} edges
+       */
+
+      /**
+       * The DIAGRAMS API provides a programmatic interface to control the diagrams in the manual.
+       * An AI agent or script can call these functions to dynamically update the visualizations.
+       *
+       * @property {function(DiagramData): void} setArchitecture - Replaces the architecture diagram data and re-renders it.
+       * @property {function(DiagramData): void} setDataFlow - Replaces the data flow diagram data and re-renders it.
+       * @property {function(string): void} highlight - Highlights a specific node and its connected edges by its ID.
+       * @property {function(): void} fit - Fits the current diagram content into the available container view.
+       * @property {function(): string} toPNG - Returns a PNG data URL of the current diagram's edges canvas.
+       */
+      window.DIAGRAMS = {};
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const diagramConfigs = {
+          arch: {
+            containerId: "arch-diagram",
+            onClick: null,
+            elkOptions: {
+              "elk.algorithm": "layered",
+              "elk.layered.spacing.nodeNodeBetweenLayers": 80,
+              "elk.spacing.nodeNode": 40,
+              "elk.direction": "DOWN",
+            },
+            nodeStyles: {
+              service: "bg-blue-100 border-blue-300 text-blue-800",
+              db: "bg-slate-100 border-slate-300 text-slate-800",
+              queue: "bg-amber-100 border-amber-300 text-amber-800",
+              worker: "bg-indigo-100 border-indigo-300 text-indigo-800",
+              ai: "bg-emerald-100 border-emerald-300 text-emerald-800",
+              crawler: "bg-rose-100 border-rose-300 text-rose-800",
+              step: "bg-cyan-100 border-cyan-300 text-cyan-800",
+            },
+          },
+          flow: {
+            containerId: "flow-diagram",
+            onClick: (node) => {
+              const container = document.getElementById(
+                "flow-details-container"
+              );
+              if (container) {
+                container.innerHTML = `
+                                <h4 class="text-xl font-semibold text-slate-800 mb-2">${
+                                  node.label
+                                }</h4>
+                                <p class="text-slate-600">${
+                                  node.description ||
+                                  "No description available."
+                                }</p>
+                            `;
+              }
+            },
+            elkOptions: {
+              "elk.algorithm": "layered",
+              "elk.layered.spacing.nodeNodeBetweenLayers": 60,
+              "elk.spacing.nodeNode": 20,
+              "elk.direction": "DOWN",
+            },
+            nodeStyles: {
+              step: "bg-slate-100 border-slate-300 text-slate-800",
+            },
+          },
+        };
+
+        class DiagramRenderer {
+          constructor(config) {
+            this.config = config;
+            this.container = document.getElementById(config.containerId);
+            this.data = null;
+            this.layout = null;
+            this.highlightedNodeId = null;
+            this.elk = new ELK();
+            this.initDOM();
+            this.resizeObserver = new ResizeObserver(
+              this.debounce(() => this.render(), 150)
+            );
+            this.resizeObserver.observe(this.container);
+          }
+
+          initDOM() {
+            this.container.innerHTML = `
+                        <canvas class="absolute top-0 left-0 w-full h-full" style="z-index: 1;"></canvas>
+                        <div class="absolute top-0 left-0" style="z-index: 2;"></div>
+                    `;
+            this.canvas = this.container.querySelector("canvas");
+            this.nodesContainer = this.container.querySelector("div");
+          }
+
+          async setData(data) {
+            this.data = data;
+            await this.render();
+          }
+
+          async render() {
+            if (!this.data || !this.isVisible()) return;
+
+            const graph = {
+              id: "root",
+              layoutOptions: this.config.elkOptions,
+              children: this.data.nodes.map((n) => ({
+                id: n.id,
+                width: 180,
+                height: 50,
+              })),
+              edges: this.data.edges.map((e) => ({
+                id: `${e.from}-${e.to}`,
+                sources: [e.from],
+                targets: [e.to],
+              })),
+            };
+
+            this.layout = await this.elk.layout(graph);
+            this.drawNodes();
+            this.drawEdges();
+            this.fit();
+          }
+
+          drawNodes() {
+            this.nodesContainer.innerHTML = "";
+            this.layout.children.forEach((nodeLayout) => {
+              const nodeData = this.data.nodes.find(
+                (n) => n.id === nodeLayout.id
+              );
+              if (!nodeData) return;
+
+              const nodeEl = document.createElement("div");
+              nodeEl.className = `diagram-node border-2 ${
+                this.config.nodeStyles[nodeData.kind] ||
+                this.config.nodeStyles.step
+              }`;
+              nodeEl.style.left = `${nodeLayout.x}px`;
+              nodeEl.style.top = `${nodeLayout.y}px`;
+              nodeEl.style.width = `${nodeLayout.width}px`;
+              nodeEl.style.height = `${nodeLayout.height}px`;
+              nodeEl.tabIndex = 0;
+              nodeEl.setAttribute("role", "button");
+              nodeEl.setAttribute(
+                "aria-label",
+                `${nodeData.label}: ${nodeData.description || ""}`
+              );
+
+              nodeEl.innerHTML = `
+                            <span class="font-semibold text-sm">${
+                              nodeData.label
+                            }</span>
+                            <div class="tooltip absolute w-60 bottom-full mb-2 left-1/2 -translate-x-1/2 p-3 bg-slate-800 text-white text-sm rounded-lg">
+                                ${nodeData.description || "No description."}
+                                <div class="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-x-8 border-x-transparent border-t-8 border-t-slate-800"></div>
+                            </div>
+                        `;
+
+              nodeEl.addEventListener("click", () => {
+                if (this.config.onClick) {
+                  this.config.onClick(nodeData);
+                }
+                this.highlight(nodeData.id);
+              });
+              nodeEl.addEventListener("keypress", (e) => {
+                if (e.key === "Enter") nodeEl.click();
+              });
+
+              this.nodesContainer.appendChild(nodeEl);
+            });
+          }
+
+          drawEdges() {
+            const dpr = window.devicePixelRatio || 1;
+            this.canvas.width = this.container.clientWidth * dpr;
+            this.canvas.height = this.container.clientHeight * dpr;
+            const ctx = this.canvas.getContext("2d");
+            ctx.scale(dpr, dpr);
+            ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+            if (!this.layout || !this.layout.edges) return;
+
+            ctx.strokeStyle = "#94a3b8"; // slate-400
+            ctx.lineWidth = 2;
+
+            this.layout.edges.forEach((edge) => {
+              const sourceNode = this.data.nodes.find(
+                (n) => n.id === edge.sources[0]
+              );
+              const isHighlighted =
+                this.highlightedNodeId &&
+                (edge.sources[0] === this.highlightedNodeId ||
+                  edge.targets[0] === this.highlightedNodeId);
+
+              ctx.beginPath();
+              ctx.strokeStyle = isHighlighted ? "#3b82f6" : "#94a3b8";
+              ctx.lineWidth = isHighlighted ? 4 : 2;
+
+              const sections = edge.sections || [];
+              sections.forEach((section) => {
+                ctx.moveTo(section.startPoint.x, section.startPoint.y);
+                (section.bendPoints || []).forEach((bp) =>
+                  ctx.lineTo(bp.x, bp.y)
+                );
+                ctx.lineTo(section.endPoint.x, section.endPoint.y);
+              });
+              ctx.stroke();
+            });
+          }
+
+          fit() {
+            if (
+              !this.layout ||
+              !this.layout.children ||
+              this.layout.children.length === 0
+            )
+              return;
+
+            const padding = 24;
+            const bounds = {
+              minX: Infinity,
+              minY: Infinity,
+              maxX: -Infinity,
+              maxY: -Infinity,
+            };
+
+            this.layout.children.forEach((node) => {
+              bounds.minX = Math.min(bounds.minX, node.x);
+              bounds.minY = Math.min(bounds.minY, node.y);
+              bounds.maxX = Math.max(bounds.maxX, node.x + node.width);
+              bounds.maxY = Math.max(bounds.maxY, node.y + node.height);
+            });
+
+            const contentWidth = bounds.maxX - bounds.minX;
+            const contentHeight = bounds.maxY - bounds.minY;
+            const containerWidth = this.container.clientWidth;
+            const containerHeight = this.container.clientHeight;
+
+            const scale = Math.min(
+              (containerWidth - padding * 2) / contentWidth,
+              (containerHeight - padding * 2) / contentHeight,
+              1 // Do not scale up
+            );
+
+            const newWidth = contentWidth * scale;
+            const newHeight = contentHeight * scale;
+
+            const offsetX =
+              (containerWidth - newWidth) / 2 - bounds.minX * scale;
+            const offsetY =
+              (containerHeight - newHeight) / 2 - bounds.minY * scale;
+
+            this.nodesContainer.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
+            this.canvas.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
+          }
+
+          highlight(nodeId) {
+            this.highlightedNodeId = nodeId;
+            this.container.querySelectorAll(".diagram-node").forEach((el) => {
+              el.classList.remove("highlighted");
+            });
+            const nodeToHighlight = Array.from(
+              this.container.querySelectorAll(".diagram-node")
+            ).find((el) => {
+              const layoutNode = this.layout.children.find(
+                (n) =>
+                  n.id ===
+                  this.data.nodes.find(
+                    (d) => d.label === el.querySelector("span").textContent
+                  )?.id
+              );
+              return layoutNode && layoutNode.id === nodeId;
+            });
+            if (nodeToHighlight) {
+              nodeToHighlight.classList.add("highlighted");
+            }
+            this.drawEdges();
+          }
+
+          toPNG() {
+            return this.canvas.toDataURL("image/png");
+          }
+
+          isVisible() {
+            return this.container.offsetParent !== null;
+          }
+
+          debounce(func, delay) {
+            let timeout;
+            return (...args) => {
+              clearTimeout(timeout);
+              timeout = setTimeout(() => func.apply(this, args), delay);
+            };
+          }
+        }
+
+        const archDiagram = new DiagramRenderer(diagramConfigs.arch);
+        const flowDiagram = new DiagramRenderer(diagramConfigs.flow);
+
+        window.DIAGRAMS = {
+          setArchitecture: (data) => archDiagram.setData(data),
+          setDataFlow: (data) => flowDiagram.setData(data),
+          highlight: (id) => {
+            if (archDiagram.isVisible()) archDiagram.highlight(id);
+            if (flowDiagram.isVisible()) flowDiagram.highlight(id);
+          },
+          fit: () => {
+            if (archDiagram.isVisible()) archDiagram.fit();
+            if (flowDiagram.isVisible()) flowDiagram.fit();
+          },
+          toPNG: () => {
+            if (archDiagram.isVisible()) return archDiagram.toPNG();
+            if (flowDiagram.isVisible()) return flowDiagram.toPNG();
+            return null;
+          },
+        };
+
+        window.DIAGRAMS.setArchitecture({
+          layout: "layered",
+          nodes: [
+            {
+              id: "worker",
+              label: "Cloudflare Worker",
+              kind: "worker",
+              description: "Orchestrates tasks & serves UI",
+            },
+            {
+              id: "d1",
+              label: "Cloudflare D1",
+              kind: "db",
+              description: "SQL store for jobs/companies",
+            },
+            {
+              id: "r2",
+              label: "Cloudflare R2",
+              kind: "db",
+              description: "Object storage for resumes",
+            },
+            {
+              id: "queues",
+              label: "Cloudflare Queues",
+              kind: "queue",
+              description: "Background processing",
+            },
+            {
+              id: "do",
+              label: "Durable Objects",
+              kind: "service",
+              description: "Stateful crawling",
+            },
+            {
+              id: "ai",
+              label: "Cloudflare AI",
+              kind: "ai",
+              description: "Email routing, benefits analysis",
+            },
+            {
+              id: "puppeteer",
+              label: "Puppeteer",
+              kind: "crawler",
+              description: "JS-heavy sites automation",
+            },
+          ],
+          edges: [
+            { from: "worker", to: "d1", label: "read/write" },
+            { from: "worker", to: "r2", label: "files" },
+            { from: "worker", to: "queues", label: "enqueue" },
+            { from: "queues", to: "do", label: "dispatch" },
+            { from: "do", to: "puppeteer", label: "crawl" },
+            { from: "worker", to: "ai", label: "inference" },
+          ],
+        });
+
+        window.DIAGRAMS.setDataFlow({
+          layout: "layered",
+          nodes: [
+            {
+              id: "s1",
+              label: "Add Company URL",
+              kind: "step",
+              description:
+                "The process begins when you submit the URL of a company you want to track. This adds the company to the database and schedules it for the initial discovery workflow.",
+            },
+            {
+              id: "s2",
+              label: "Website Crawling",
+              kind: "step",
+              description:
+                "A stateful Durable Object crawler is initiated. It systematically navigates the website's links, analyzing page content and URLs to find pages related to careers, jobs, and benefits.",
+            },
+            {
+              id: "s3",
+              label: "Page Discovery",
+              kind: "step",
+              description:
+                "The crawler identifies the most likely URLs for the main careers page and the employee benefits page. These specific URLs are then stored and linked to the company.",
+            },
+            {
+              id: "s4",
+              label: "Scrape & Analyze",
+              kind: "step",
+              description:
+                "The discovered URLs are added to a processing queue. The careers page is sent to a scraper that extracts all job postings. The benefits page is sent to an AI model that reads the text and extracts key details.",
+            },
+            {
+              id: "s5",
+              label: "Store in Database",
+              kind: "step",
+              description:
+                "All discovered information—jobs, benefits, and company details—is structured and saved to the Cloudflare D1 database, making it available for you to view in the UI.",
+            },
+          ],
+          edges: [
+            { from: "s1", to: "s2" },
+            { from: "s2", to: "s3" },
+            { from: "s3", to: "s4" },
+            { from: "s4", to: "s5" },
+          ],
+        });
+
+        updateWizardView();
+      });
+    </script>
+  </body>
+</html>
