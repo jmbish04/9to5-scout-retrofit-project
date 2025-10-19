@@ -5,7 +5,8 @@
 
 // Cloudflare Playwright imports
 import { Browser, chromium, Page } from "@cloudflare/playwright";
-import { createSnapshot, saveJob } from "../../../lib/storage";
+import { saveJob } from "../../jobs/services/job-storage.service";
+import { createSnapshot } from "../../monitoring/services/monitoring-storage.service";
 import type { Job, Snapshot } from "../../../lib/types";
 
 export interface SteelEnv {

@@ -3,7 +3,13 @@
  * Monitors all active jobs for changes and updates tracking history.
  */
 
-import { getJobsForMonitoring, updateJobStatus, createJobTrackingHistory, createSnapshot, saveJobMarketStats } from './storage';
+import {
+  getJobsForMonitoring,
+  updateJobStatus,
+  createJobTrackingHistory,
+  saveJobMarketStats,
+} from "../domains/jobs/services/job-storage.service";
+import { createSnapshot } from "../domains/monitoring/services/monitoring-storage.service";
 import { crawlJobWithSnapshot } from './crawl';
 import type { Job, DailyMonitoringResult, JobTrackingHistory } from './types';
 

@@ -5,7 +5,7 @@
  */
 
 import type { Env } from "../index";
-import { generateOpenAPISpec } from "../lib/openapi";
+import { generateOpenAPISpec } from "../api/openapi-generator";
 
 /**
  * Handle OpenAPI specification requests

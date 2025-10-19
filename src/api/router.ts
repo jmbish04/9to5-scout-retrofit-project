@@ -2,15 +2,15 @@ import type { Env } from "../domains/config/env/env.config";
 import { ensureAgentTools } from "../lib/agents";
 import { requireApiAuth, type RouteGuard } from "../lib/auth";
 import { parsePathParams } from "../lib/routing";
-import { handleAgentQuery } from "./agent";
+import { handleAgentQuery } from "../routes/agent";
 import {
   handleAgentDelete,
   handleAgentGet,
   handleAgentPut,
   handleAgentsGet,
   handleAgentsPost,
-} from "./agents";
-import { handleCoverLetterPost, handleResumePost } from "./ai-documents";
+} from "../routes/agents";
+import { handleCoverLetterPost, handleResumePost } from "../routes/ai-documents";
 import {
   handleBenefitsCompareGet,
   handleCompaniesGet,
@@ -18,9 +18,9 @@ import {
   handleCompanyScrapePost,
   handleStatsHighlightsGet,
   handleStatsValuationsGet,
-} from "./company-benefits";
-import { handleConfigsGet, handleConfigsPost } from "./configs";
-import { handleManualCrawlPost } from "./crawl";
+} from "../routes/company-benefits";
+import { handleConfigsGet, handleConfigsPost } from "../routes/configs";
+import { handleManualCrawlPost } from "../routes/crawl";
 import {
   handleAtsEvaluate,
   handleDocsApplyPatches,
@@ -30,38 +30,38 @@ import {
   handleDocsSearch,
   handleDocsUpdate,
   handleDocumentGenerate,
-} from "./documents";
+} from "../routes/documents";
 import {
   handleEmailConfigsGet,
   handleEmailConfigsPut,
   handleEmailInsightsSend,
   handleEmailLogsGet,
-} from "./email";
+} from "../routes/email";
 // Note: AI-powered email processing is now handled by EmailProcessorAgent
-import { handleTestEmail } from "./email/test-email";
-import { handleEmailGet, handleEmailsGet } from "./emails";
+import { handleTestEmail } from "../routes/email/test-email";
+import { handleEmailGet, handleEmailsGet } from "../routes/emails";
 import {
   handleJobHistoryGet,
   handleJobHistoryPost,
   handleJobRatingPost,
   handleJobRatingsGet,
-} from "./job-history";
+} from "../routes/job-history";
 import {
   handleJobProcessingStatus,
   handleJobProcessingSubmit,
-} from "./job-processing";
-import { handleJobGet, handleJobsExportGet, handleJobsGet } from "./jobs";
+} from "../routes/job-processing";
+import { handleJobGet, handleJobsExportGet, handleJobsGet } from "../routes/jobs";
 import {
   handleLogsGet,
   handleLogsMetaGet,
   handleLogsOptions,
   handleLogsPost,
-} from "./logs";
+} from "../routes/logs";
 import {
   handleDiscoveryRunPost,
   handleMonitorRunPost,
   handleRunsGet,
-} from "./runs";
+} from "../routes/runs";
 import {
   handleScrapedJobDetailsPost,
   handleScrapeQueuePendingGet,
@@ -70,15 +70,15 @@ import {
   handleScraperIntakePost,
   handleScraperMonitoredJobsGet,
   handleScraperOptions,
-} from "./scraper";
-import { handleScrapeDispatch } from "./socket";
+} from "../routes/scraper";
+import { handleScrapeDispatch } from "../routes/socket";
 import {
   handleTaskDelete,
   handleTaskGet,
   handleTaskPut,
   handleTasksGet,
   handleTasksPost,
-} from "./tasks";
+} from "../routes/tasks";
 import {
   handleDailyMonitoringPost,
   handleJobMonitoringPut,
@@ -86,8 +86,8 @@ import {
   handleMonitoringQueueGet,
   handleMonitoringStatusGet,
   handleSnapshotContentGet,
-} from "./tracking";
-import { handleWebhookTest } from "./webhooks";
+} from "../routes/tracking";
+import { handleWebhookTest } from "./routes/webhooks.routes";
 import {
   handleWorkflowDelete,
   handleWorkflowExecute,
@@ -95,7 +95,7 @@ import {
   handleWorkflowPut,
   handleWorkflowsGet,
   handleWorkflowsPost,
-} from "./workflows";
+} from "../routes/workflows";
 
 export async function handleApiRequest(
   request: Request,

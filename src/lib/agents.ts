@@ -1,5 +1,6 @@
 import type { Env } from './env';
-import { evaluateDocumentAgainstJob, generateDocumentForJob } from './documents';
+import { evaluateDocumentAgainstJob } from '../domains/documents/services/document-processing.service';
+import { generateDocumentForJob } from '../domains/documents/services/document-generation.service';
 
 let registered = false;
 

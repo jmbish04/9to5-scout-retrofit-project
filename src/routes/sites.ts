@@ -5,7 +5,7 @@ import {
   getSiteById,
   getSites,
   updateSite,
-} from "../lib/storage";
+} from "../domains/sites/services/site-storage.service";
 import type { Site } from "../lib/types";
 
 function parsePagination(searchParams: URLSearchParams): {

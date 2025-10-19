@@ -29,7 +29,7 @@ import { Context, Hono } from "hono";
 import {
   createBrowserRenderingClient,
   type BrowserRenderingEnv,
-} from "../lib/browser-rendering";
+} from "../integrations/browser/browser-rendering.service";
 import {
   cors,
   errorHandler,

@@ -1,19 +1,23 @@
 import type { Env } from "../domains/config/env/env.config";
 import {
-  applyDocumentPatches,
   createApplicantDocument,
   deleteApplicantDocument,
-  evaluateDocumentAgainstJob,
-  generateDocumentForJob,
   getApplicantDocument,
-  searchApplicantDocuments,
   updateApplicantDocument,
-  type DocumentCreateInput,
-  type DocumentGenerationInput,
-  type DocumentPatch,
-  type DocumentUpdateInput,
-  type VectorSearchRequest,
-} from "../lib/documents";
+} from "../domains/documents/services/document-storage.service";
+import { generateDocumentForJob } from "../domains/documents/services/document-generation.service";
+import {
+  applyDocumentPatches,
+  evaluateDocumentAgainstJob,
+} from "../domains/documents/services/document-processing.service";
+import { searchApplicantDocuments } from "../domains/documents/services/document-search.service";
+import type {
+  DocumentCreateInput,
+  DocumentGenerationInput,
+  DocumentPatch,
+  DocumentUpdateInput,
+  VectorSearchRequest,
+} from "../domains/documents/types/documents.types";
 
 function jsonResponse(data: unknown, status = 200): Response {
   return new Response(JSON.stringify(data), {
