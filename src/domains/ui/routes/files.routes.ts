@@ -1,40 +1,14 @@
 /**
- * UI Files Routes
+ * File Management Routes
  *
  * Handles file upload, download, and management operations using the centralized R2 module.
- * Provides comprehensive file management capabilities for the 9to5 Scout application.
- *
- * @fileoverview This module manages file operations including upload, download, listing,
- * deletion, and metadata retrieval for various file types stored in R2 storage.
  */
 
-import {
-  FileType,
-  createFileMetadata,
-  createR2Storage,
-} from "../../../core/storage/r2-client";
-import type { Env } from "../../config/env";
+import type { Env } from "../../config/env/env.config";
+import { FileType, createFileMetadata, createR2Storage } from "../../../core/storage/r2-client";
 
 /**
- * Handles file upload requests with metadata tracking
- *
- * @param request - The incoming HTTP request containing file data
- * @param env - Cloudflare Workers environment bindings
- * @returns Response with upload result or error details
- *
- * @description This function:
- * 1. Extracts file type, user ID, job ID, and site ID from query parameters
- * 2. Validates required file type parameter
- * 3. Creates file metadata with contextual information
- * 4. Uploads file to R2 storage with proper metadata
- * 5. Returns success response with file details
- *
- * @example
- * ```typescript
- * // POST /files/upload?type=resume&userId=user123&jobId=job456
- * // Content-Type: multipart/form-data
- * // Body: file data
- * ```
+ * Handle file upload requests
  */
 export async function handleFileUpload(
   request: Request,
@@ -84,24 +58,7 @@ export async function handleFileUpload(
 }
 
 /**
- * Handles file download requests with proper headers
- *
- * @param request - The incoming HTTP request with file key parameter
- * @param env - Cloudflare Workers environment bindings
- * @returns Response with file content or error details
- *
- * @description This function:
- * 1. Extracts file key from query parameters
- * 2. Validates required key parameter
- * 3. Retrieves file from R2 storage
- * 4. Sets appropriate content type and disposition headers
- * 5. Returns file content or 404 if not found
- *
- * @example
- * ```typescript
- * // GET /files/download?key=resumes/user123/resume.pdf
- * // Returns: file content with proper headers
- * ```
+ * Handle file download requests
  */
 export async function handleFileDownload(
   request: Request,
@@ -161,22 +118,7 @@ export async function handleFileDownload(
 }
 
 /**
- * Handles file listing requests with filtering options
- *
- * @param request - The incoming HTTP request with optional filter parameters
- * @param env - Cloudflare Workers environment bindings
- * @returns Response with file list or error details
- *
- * @description This function:
- * 1. Extracts filter parameters (type, userId, limit) from query string
- * 2. Calls R2 storage to list files with applied filters
- * 3. Returns paginated list of files with metadata
- *
- * @example
- * ```typescript
- * // GET /files/list?type=resume&userId=user123&limit=50
- * // Returns: { success: true, files: [...], count: 25 }
- * ```
+ * Handle file listing requests
  */
 export async function handleFileList(
   request: Request,
@@ -212,23 +154,7 @@ export async function handleFileList(
 }
 
 /**
- * Handles file deletion requests
- *
- * @param request - The incoming HTTP request with file key parameter
- * @param env - Cloudflare Workers environment bindings
- * @returns Response with deletion result or error details
- *
- * @description This function:
- * 1. Extracts file key from query parameters
- * 2. Validates required key parameter
- * 3. Deletes file from R2 storage
- * 4. Returns success confirmation
- *
- * @example
- * ```typescript
- * // DELETE /files/delete?key=resumes/user123/resume.pdf
- * // Returns: { success: true, message: "File deleted successfully" }
- * ```
+ * Handle file deletion requests
  */
 export async function handleFileDelete(
   request: Request,
@@ -268,23 +194,7 @@ export async function handleFileDelete(
 }
 
 /**
- * Handles bulk file deletion requests with filtering criteria
- *
- * @param request - The incoming HTTP request with deletion criteria in body
- * @param env - Cloudflare Workers environment bindings
- * @returns Response with deletion count and result
- *
- * @description This function:
- * 1. Extracts deletion criteria from request body (type, userId, olderThan)
- * 2. Calls R2 storage to delete files matching criteria
- * 3. Returns count of deleted files
- *
- * @example
- * ```typescript
- * // POST /files/bulk-delete
- * // Body: { type: "resume", userId: "user123", olderThan: "2024-01-01" }
- * // Returns: { success: true, deletedCount: 15, message: "Deleted 15 files" }
- * ```
+ * Handle bulk file deletion requests
  */
 export async function handleBulkFileDelete(
   request: Request,
@@ -326,21 +236,7 @@ export async function handleBulkFileDelete(
 }
 
 /**
- * Handles storage statistics requests
- *
- * @param request - The incoming HTTP request
- * @param env - Cloudflare Workers environment bindings
- * @returns Response with storage statistics or error details
- *
- * @description This function:
- * 1. Calls R2 storage to get comprehensive statistics
- * 2. Returns storage usage, file counts, and other metrics
- *
- * @example
- * ```typescript
- * // GET /files/stats
- * // Returns: { success: true, stats: { totalFiles: 1000, totalSize: "500MB", ... } }
- * ```
+ * Handle storage statistics requests
  */
 export async function handleStorageStats(
   request: Request,
@@ -370,23 +266,7 @@ export async function handleStorageStats(
 }
 
 /**
- * Handles file metadata requests
- *
- * @param request - The incoming HTTP request with file key parameter
- * @param env - Cloudflare Workers environment bindings
- * @returns Response with file metadata or error details
- *
- * @description This function:
- * 1. Extracts file key from query parameters
- * 2. Validates required key parameter
- * 3. Retrieves file metadata from R2 storage
- * 4. Returns formatted metadata information
- *
- * @example
- * ```typescript
- * // GET /files/metadata?key=resumes/user123/resume.pdf
- * // Returns: { success: true, metadata: { key, size, uploadedAt, contentType, ... } }
- * ```
+ * Handle file metadata requests
  */
 export async function handleFileMetadata(
   request: Request,
@@ -439,25 +319,8 @@ export async function handleFileMetadata(
 }
 
 /**
- * Handles R2 asset upload requests for browser rendering tests
- *
- * @param request - The incoming HTTP request with file data and authentication
- * @param env - Cloudflare Workers environment bindings
- * @returns Response with upload result or error details
- *
- * @description This function:
- * 1. Validates API key authentication
- * 2. Extracts R2 key and content type from request
- * 3. Uploads file directly to R2 bucket with metadata
- * 4. Returns upload confirmation with file details
- *
- * @example
- * ```typescript
- * // POST /files/r2-upload?key=test/file.pdf
- * // Headers: { Authorization: "Bearer <API_KEY>", Content-Type: "application/pdf" }
- * // Body: file data
- * // Returns: { success: true, key: "test/file.pdf", size: 1024, ... }
- * ```
+ * Handle R2 asset upload requests for browser rendering tests
+ * This endpoint allows uploading files directly to R2 with authentication
  */
 export async function handleR2AssetUpload(
   request: Request,
@@ -466,7 +329,7 @@ export async function handleR2AssetUpload(
   try {
     // Check authentication
     const authHeader = request.headers.get("Authorization");
-    const expectedAuth = `Bearer ${env.API_AUTH_TOKEN}`;
+    const expectedAuth = `Bearer ${env.WORKER_API_KEY}`;
 
     if (!authHeader || authHeader !== expectedAuth) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {

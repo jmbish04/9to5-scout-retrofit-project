@@ -19,7 +19,7 @@ import { ResumeOptimizationAgent } from "./domains/agents/resume-optimization-ag
 
 // Imports from the refactored main branch
 import { handleScheduledEvent } from './lib/scheduled';
-import { handleApiRequest } from './routes/api';
+import { handleApiRequest } from './api/router';
 // Note: Email ingestion is now handled by EmailProcessorAgent
 import { handlePageRequest } from './domains/ui/routes/pages.routes';
 import { handleScrapeSocket } from './routes/socket';

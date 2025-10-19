@@ -2,8 +2,8 @@
  * Webhook notifications for job scraping events.
  */
 
-import type { Env } from "../index";
-import type { Job } from "../lib/types";
+import type { Env } from "../../domains/config/env/env.config";
+import type { Job } from "../../lib/types";
 
 export async function handleWebhookTest(
   request: Request,

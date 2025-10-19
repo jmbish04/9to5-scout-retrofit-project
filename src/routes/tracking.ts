@@ -7,7 +7,7 @@ import {
   getJobTrackingTimeline,
   runDailyJobMonitoring,
 } from "../lib/monitoring";
-import { getJobsForMonitoring } from "../lib/storage";
+import { getJobsForMonitoring } from "../domains/jobs/services/job-storage.service";
 
 /**
  * GET /api/jobs/:jobId/tracking

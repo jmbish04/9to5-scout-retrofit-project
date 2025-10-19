@@ -7,17 +7,17 @@ import type { Env } from "../index";
 import {
   createApplicantProfile,
   getApplicantProfile,
-  getJobById,
   getJobHistoryByApplicant,
   getJobHistorySubmissions,
-  getJobRatingsByApplicant,
   saveJobHistoryEntry,
   saveJobHistorySubmission,
-  saveJobRating,
   updateApplicantProfile,
   updateJobHistorySubmission,
-  type StorageEnv,
-} from "../lib/storage";
+  getJobRatingsByApplicant,
+  saveJobRating,
+} from "../domains/applicants/services/applicant-storage.service";
+import { getJobById } from "../domains/jobs/services/job-storage.service";
+import type { StorageEnv } from "../lib/types";
 import {
   ApplicantProfile,
   JobHistoryEntry,

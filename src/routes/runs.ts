@@ -3,7 +3,10 @@
  */
 
 import type { Env } from "../index";
-import { createRun, getRuns } from "../lib/storage";
+import {
+  createRun,
+  getRuns,
+} from "../domains/monitoring/services/monitoring-storage.service";
 
 export async function handleRunsGet(
   request: Request,
