@@ -176,11 +176,18 @@ def main() -> int:
         return 1
     print(f"[create-pr] Base branch: {base}")
 
-    # Ensure we are up-to-date with base
+    # Ensure we are up-to-date with base, without switching away from current branch
+    # This avoids disrupting worktrees and prevents detached HEAD surprises.
     try:
         run(["git", "fetch", "origin", base], check=False)
-        run(["git", "checkout", "-q", base], check=False)
-        run(["git", "pull", "--ff-only", "origin", base], check=False)
+        # Create/update a local tracking ref for the base without checkout
+        # Ensure local base exists
+        try:
+            git("show-ref", "--verify", "--quiet", f"refs/heads/{base}")
+        except subprocess.CalledProcessError:
+            run(["git", "branch", base, f"origin/{base}"], check=False)
+        # Fast-forward local base to origin/base
+        run(["git", "update-ref", f"refs/heads/{base}", f"refs/remotes/origin/{base}"], check=False)
     except Exception as e:
         print(f"[create-pr] Warning: Failed to update base branch '{base}'. Continuing anyway. Error: {e}", file=sys.stderr)
 
@@ -190,8 +197,8 @@ def main() -> int:
     except subprocess.CalledProcessError:
         short_sha = "00000000"
     branch = f"auto/pr/{ts}-{short_sha}"
-    # Create new branch
-    run(["git", "checkout", "-qb", branch])
+    # Create new branch off the fetched base ref
+    run(["git", "checkout", "-qb", branch, f"origin/{base}"])
 
     # Stage and commit
     run(["git", "add", "-A"])  # always add
@@ -208,8 +215,16 @@ def main() -> int:
         commit_message = os.environ.get("COMMIT_MESSAGE", "chore: batch commit for automated PR")
         run(["git", "commit", "-m", commit_message])
 
-    # Push
-    run(["git", "push", "-u", "origin", branch], check=True)
+    # Push branch. If remote branch exists, set upstream without failing.
+    try:
+        run(["git", "push", "-u", "origin", branch], check=True)
+    except subprocess.CalledProcessError:
+        # Try setting upstream and force-with-lease only if necessary
+        try:
+            run(["git", "push", "--set-upstream", "origin", branch], check=True)
+        except subprocess.CalledProcessError as e:
+            print(f"[create-pr] Error pushing branch '{branch}': {e}", file=sys.stderr)
+            return 1
 
     title = os.environ.get("PR_TITLE", f"Automated PR: {branch}")
     body = os.environ.get("PR_BODY", (
@@ -242,4 +257,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
-
