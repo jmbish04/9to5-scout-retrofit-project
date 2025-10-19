@@ -4,7 +4,8 @@
  */
 
 import { extractJob } from "./ai";
-import { createSnapshot, saveJob } from "./storage";
+import { saveJob } from "../domains/jobs/services/job-storage.service";
+import { createSnapshot } from "../domains/monitoring/services/monitoring-storage.service";
 import { searchJobs } from "./talent";
 import type { Job } from "./types";
 

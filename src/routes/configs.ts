@@ -2,7 +2,10 @@
  * Configurations API routes for managing search configurations.
  */
 
-import { getSearchConfigs, saveSearchConfig } from '../lib/storage';
+import {
+  getSearchConfigs,
+  saveSearchConfig,
+} from "../domains/monitoring/services/monitoring-storage.service";
 import type { SearchConfig } from '../lib/types';
 
 export async function handleConfigsGet(request: Request, env: any): Promise<Response> {

@@ -1,443 +1,215 @@
-/**
- * Document Generation Service
- *
- * Handles AI-powered document generation, including resume and cover letter creation,
- * document templates, and content optimization.
- */
-
-import type { Env } from "../../../config/env";
+import type { Env } from "../../../lib/env";
+import { createApplicantDocument } from "./document-storage.service";
 import type {
   ApplicantDocumentWithSections,
   DocumentGenerationInput,
-  DocumentPurpose,
-  DocumentTemplate,
-  DocumentType,
   ResumeSections,
-} from "../types/document.types";
+} from "../types/documents.types";
 
-export class DocumentGenerationService {
-  constructor(private env: Env) {}
-
-  /**
-   * Generate a document for a specific job
-   */
-  async generateDocumentForJob(
-    input: DocumentGenerationInput
-  ): Promise<ApplicantDocumentWithSections> {
-    const { user_id, doc_type, job_id, purpose, title, prompt, sections } =
-      input;
-
-    // Get job details if job_id is provided
-    let jobDetails = null;
-    if (job_id) {
-      jobDetails = await this.env.DB.prepare(
-        `
-        SELECT * FROM jobs WHERE id = ?
-      `
-      )
-        .bind(job_id)
-        .first();
-    }
-
-    // Generate content based on document type
-    let generatedContent: string;
-    let generatedSections: ResumeSections | null = null;
-
-    if (doc_type === "resume") {
-      const result = await this.generateResumeContent(
-        jobDetails,
-        prompt,
-        sections
-      );
-      generatedContent = result.content;
-      generatedSections = result.sections;
-    } else if (doc_type === "cover_letter") {
-      generatedContent = await this.generateCoverLetterContent(
-        jobDetails,
-        prompt
-      );
-    } else {
-      throw new Error(`Unsupported document type: ${doc_type}`);
-    }
-
-    // Create the document
-    const documentInput = {
-      user_id,
-      doc_type,
-      purpose: purpose || "job_related",
-      job_id: job_id || null,
-      title: title || this.generateDocumentTitle(doc_type, jobDetails),
-      content_md: generatedContent,
-      sections: generatedSections,
-    };
-
-    // Use the document storage service to create the document
-    const { createDocumentStorageService } = await import(
-      "./document-storage.service"
-    );
-    const storageService = createDocumentStorageService(this.env);
-
-    return await storageService.createDocument(documentInput);
+export function serialiseEditorJson(editor: unknown): string {
+  if (!editor) {
+    return "";
   }
 
-  /**
-   * Generate resume content using AI
-   */
-  private async generateResumeContent(
-    jobDetails: any,
-    prompt?: string | null,
-    existingSections?: ResumeSections | null
-  ): Promise<{ content: string; sections: ResumeSections }> {
-    const systemPrompt = this.buildResumeSystemPrompt(jobDetails);
-    const userPrompt =
-      prompt || this.buildResumeUserPrompt(jobDetails, existingSections);
-
-    const response = await this.env.AI.run(
-      this.env.DEFAULT_MODEL_REASONING as any,
-      {
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: userPrompt },
-        ],
-      }
-    );
-
-    const generatedContent = response.response || "";
-
-    // Parse sections from generated content
-    const sections = this.parseResumeSections(generatedContent);
-
-    return {
-      content: generatedContent,
-      sections,
-    };
+  if (typeof editor === "string") {
+    return editor;
   }
 
-  /**
-   * Generate cover letter content using AI
-   */
-  private async generateCoverLetterContent(
-    jobDetails: any,
-    prompt?: string | null
-  ): Promise<string> {
-    const systemPrompt = this.buildCoverLetterSystemPrompt(jobDetails);
-    const userPrompt = prompt || this.buildCoverLetterUserPrompt(jobDetails);
+  try {
+    const nodes: string[] = [];
 
-    const response = await this.env.AI.run(
-      this.env.DEFAULT_MODEL_REASONING as any,
-      {
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: userPrompt },
-        ],
-      }
-    );
-
-    return response.response || "";
-  }
-
-  /**
-   * Build system prompt for resume generation
-   */
-  private buildResumeSystemPrompt(jobDetails: any): string {
-    const jobContext = jobDetails
-      ? `
-Job Title: ${jobDetails.title || "N/A"}
-Company: ${jobDetails.company || "N/A"}
-Location: ${jobDetails.location || "N/A"}
-Description: ${jobDetails.description || "N/A"}
-`
-      : "";
-
-    return `You are an expert resume writer and career coach. Generate a professional, ATS-friendly resume that highlights the candidate's qualifications and matches the job requirements.
-
-${jobContext}
-
-Guidelines:
-- Use strong action verbs and quantifiable achievements
-- Include relevant keywords from the job description
-- Structure content with clear sections (Summary, Experience, Education, Skills, etc.)
-- Keep formatting clean and professional
-- Ensure ATS compatibility
-- Focus on accomplishments, not just responsibilities
-- Use industry-standard section headers
-
-Return the resume in markdown format with clear section headers.`;
-  }
-
-  /**
-   * Build user prompt for resume generation
-   */
-  private buildResumeUserPrompt(
-    jobDetails: any,
-    existingSections?: ResumeSections | null
-  ): string {
-    let prompt =
-      "Please generate a professional resume based on the following information:\n\n";
-
-    if (existingSections) {
-      prompt += "Existing resume sections:\n";
-      Object.entries(existingSections).forEach(([key, value]) => {
-        if (value) {
-          prompt += `${key}: ${value}\n`;
-        }
-      });
-      prompt += "\nPlease enhance and improve these sections.\n\n";
-    } else {
-      prompt +=
-        "Please create a comprehensive resume with the following sections:\n";
-      prompt += "- Professional Summary\n";
-      prompt += "- Work Experience\n";
-      prompt += "- Education\n";
-      prompt += "- Skills\n";
-      prompt += "- Projects (if applicable)\n\n";
-    }
-
-    if (jobDetails) {
-      prompt += `Target job requirements:\n`;
-      prompt += `Title: ${jobDetails.title}\n`;
-      prompt += `Company: ${jobDetails.company}\n`;
-      prompt += `Key requirements: ${jobDetails.description?.substring(
-        0,
-        500
-      )}...\n\n`;
-    }
-
-    prompt +=
-      "Please generate a professional, ATS-optimized resume in markdown format.";
-
-    return prompt;
-  }
-
-  /**
-   * Build system prompt for cover letter generation
-   */
-  private buildCoverLetterSystemPrompt(jobDetails: any): string {
-    const jobContext = jobDetails
-      ? `
-Job Title: ${jobDetails.title || "N/A"}
-Company: ${jobDetails.company || "N/A"}
-Location: ${jobDetails.location || "N/A"}
-Description: ${jobDetails.description || "N/A"}
-`
-      : "";
-
-    return `You are an expert cover letter writer. Generate a compelling, personalized cover letter that demonstrates the candidate's enthusiasm and qualifications for the position.
-
-${jobContext}
-
-Guidelines:
-- Write in a professional but engaging tone
-- Show knowledge of the company and role
-- Highlight relevant experience and achievements
-- Demonstrate enthusiasm and cultural fit
-- Keep it concise (3-4 paragraphs)
-- Use specific examples when possible
-- Address the hiring manager directly
-- End with a strong call to action
-
-Return the cover letter in markdown format.`;
-  }
-
-  /**
-   * Build user prompt for cover letter generation
-   */
-  private buildCoverLetterUserPrompt(jobDetails: any): string {
-    let prompt =
-      "Please generate a compelling cover letter for the following position:\n\n";
-
-    if (jobDetails) {
-      prompt += `Job Title: ${jobDetails.title}\n`;
-      prompt += `Company: ${jobDetails.company}\n`;
-      prompt += `Location: ${jobDetails.location}\n`;
-      prompt += `Description: ${jobDetails.description?.substring(
-        0,
-        1000
-      )}...\n\n`;
-    }
-
-    prompt += "Please create a personalized cover letter that:\n";
-    prompt += "- Demonstrates enthusiasm for the role\n";
-    prompt += "- Highlights relevant qualifications\n";
-    prompt += "- Shows knowledge of the company\n";
-    prompt += "- Includes specific examples of achievements\n";
-    prompt += "- Maintains a professional yet engaging tone\n\n";
-    prompt += "Return the cover letter in markdown format.";
-
-    return prompt;
-  }
-
-  /**
-   * Parse resume sections from generated content
-   */
-  private parseResumeSections(content: string): ResumeSections {
-    const sections: ResumeSections = {};
-
-    // Common section headers
-    const sectionPatterns = {
-      summary: /(?:summary|profile|about|overview)/i,
-      contact: /(?:contact|personal|info)/i,
-      skills: /(?:skills|technical|technologies)/i,
-      experience: /(?:experience|work|employment|career)/i,
-      education: /(?:education|academic|qualifications)/i,
-      projects: /(?:projects|portfolio|work)/i,
-      certifications: /(?:certifications|certificates|credentials)/i,
-      extras: /(?:additional|other|extras|interests)/i,
-    };
-
-    const lines = content.split("\n");
-    let currentSection: keyof ResumeSections | null = null;
-    let sectionContent: string[] = [];
-
-    for (const line of lines) {
-      const trimmedLine = line.trim();
-
-      // Check if this line is a section header
-      let foundSection = false;
-      for (const [sectionName, pattern] of Object.entries(sectionPatterns)) {
-        if (pattern.test(trimmedLine) && trimmedLine.length < 50) {
-          // Save previous section
-          if (currentSection && sectionContent.length > 0) {
-            sections[currentSection] = sectionContent.join("\n").trim();
-          }
-
-          // Start new section
-          currentSection = sectionName as keyof ResumeSections;
-          sectionContent = [];
-          foundSection = true;
-          break;
-        }
+    const visit = (node: any, depth: number = 0) => {
+      if (!node) {
+        return;
       }
 
-      if (!foundSection && currentSection && trimmedLine) {
-        sectionContent.push(line);
+      if (typeof node === "string") {
+        nodes.push(node);
+        return;
       }
-    }
 
-    // Save the last section
-    if (currentSection && sectionContent.length > 0) {
-      sections[currentSection] = sectionContent.join("\n").trim();
-    }
+      const type = node.type || node.name;
+      const content = node.content || [];
 
-    return sections;
-  }
+      if (type === "text" && typeof node.text === "string") {
+        nodes.push(node.text);
+        return;
+      }
 
-  /**
-   * Generate a document title
-   */
-  private generateDocumentTitle(docType: string, jobDetails: any): string {
-    const timestamp = new Date().toLocaleDateString();
+      if (type === "paragraph") {
+        const text = Array.isArray(content)
+          ? content
+              .map((child: any) =>
+                typeof child?.text === "string" ? child.text : ""
+              )
+              .join("")
+          : "";
+        nodes.push(text);
+        nodes.push("");
+        return;
+      }
 
-    if (jobDetails) {
-      return `${docType.replace("_", " ")} - ${jobDetails.company} - ${
-        jobDetails.title
-      } - ${timestamp}`;
-    }
+      if (type === "heading") {
+        const level = node.attrs?.level || 1;
+        const text = Array.isArray(content)
+          ? content
+              .map((child: any) =>
+                typeof child?.text === "string" ? child.text : ""
+              )
+              .join("")
+          : "";
+        nodes.push(`${"#".repeat(Math.min(6, Math.max(1, level)))} ${text}`);
+        nodes.push("");
+        return;
+      }
 
-    return `${docType.replace("_", " ")} - ${timestamp}`;
-  }
+      if (type === "bulletList" || type === "orderedList") {
+        const prefix = type === "orderedList" ? "1." : "-";
+        (content || []).forEach((item: any) => {
+          const line = Array.isArray(item?.content)
+            ? item.content
+                .map((child: any) =>
+                  typeof child?.text === "string" ? child.text : ""
+                )
+                .join("")
+            : "";
+          nodes.push(`${prefix} ${line}`.trim());
+        });
+        nodes.push("");
+        return;
+      }
 
-  /**
-   * Get available document templates
-   */
-  async getDocumentTemplates(docType?: string): Promise<DocumentTemplate[]> {
-    let whereClause = "WHERE is_public = 1";
-    const params: any[] = [];
-
-    if (docType) {
-      whereClause += " AND doc_type = ?";
-      params.push(docType);
-    }
-
-    const templates = await this.env.DB.prepare(
-      `
-      SELECT * FROM document_templates 
-      ${whereClause}
-      ORDER BY created_at DESC
-    `
-    )
-      .bind(...params)
-      .all();
-
-    return templates || [];
-  }
-
-  /**
-   * Create a document from a template
-   */
-  async createDocumentFromTemplate(
-    templateId: string,
-    userId: string,
-    jobId?: string
-  ): Promise<ApplicantDocumentWithSections> {
-    const template = await this.env.DB.prepare(
-      `
-      SELECT * FROM document_templates WHERE id = ?
-    `
-    )
-      .bind(templateId)
-      .first();
-
-    if (!template) {
-      throw new Error("Template not found");
-    }
-
-    // Get job details if provided
-    let jobDetails = null;
-    if (jobId) {
-      jobDetails = await this.env.DB.prepare(
-        `
-        SELECT * FROM jobs WHERE id = ?
-      `
-      )
-        .bind(jobId)
-        .first();
-    }
-
-    // Generate content using the template
-    const generatedContent = await this.generateContentFromTemplate(
-      template,
-      jobDetails
-    );
-    const generatedSections = template.sections;
-
-    // Create the document
-    const documentInput = {
-      user_id: userId,
-      doc_type: template.doc_type as DocumentType,
-      purpose: "job_related" as DocumentPurpose,
-      job_id: jobId || null,
-      title: `${template.name} - ${new Date().toLocaleDateString()}`,
-      content_md: generatedContent,
-      sections: generatedSections,
+      if (Array.isArray(content)) {
+        content.forEach((child) => visit(child, depth + 1));
+      }
     };
 
-    const { createDocumentStorageService } = await import(
-      "./document-storage.service"
+    visit(editor);
+
+    const markdown = nodes.join("\n");
+    return markdown.trim().length > 0
+      ? markdown.trim()
+      : JSON.stringify(editor, null, 2);
+  } catch (error) {
+    console.warn(
+      "Failed to serialise editor JSON; falling back to JSON string.",
+      error
     );
-    const storageService = createDocumentStorageService(this.env);
-
-    return await storageService.createDocument(documentInput);
-  }
-
-  /**
-   * Generate content from a template
-   */
-  private async generateContentFromTemplate(
-    template: DocumentTemplate,
-    jobDetails: any
-  ): Promise<string> {
-    // For now, return the template content as-is
-    // In a more sophisticated implementation, you might want to customize it based on job details
-    return template.template_content;
+    return JSON.stringify(editor, null, 2);
   }
 }
 
-/**
- * Create a document generation service instance
- */
-export function createDocumentGenerationService(
-  env: Env
-): DocumentGenerationService {
-  return new DocumentGenerationService(env);
+async function fetchJobMarkdown(env: Env, jobId: string): Promise<string> {
+  const job: {
+    description_md: string;
+    requirements_md: string;
+    title: string;
+    company: string;
+  } | null = await env.DB.prepare(
+    "SELECT description_md, requirements_md, title, company FROM jobs WHERE id = ?1"
+  )
+    .bind(jobId)
+    .first();
+  if (!job) {
+    throw new Error("Job not found");
+  }
+  const parts = [
+    job.title && `# ${job.title}`,
+    job.company && `**Company:** ${job.company}`,
+    job.description_md,
+    job.requirements_md,
+  ].filter((value): value is string => Boolean(value));
+  return parts.join("\n\n");
+}
+
+async function buildUserProfileSummary(
+  env: Env,
+  userId: string
+): Promise<string> {
+  const profile: {
+    name: string;
+    current_title: string;
+    target_roles: string;
+    skills: string;
+  } | null = await env.DB.prepare(
+    "SELECT name, current_title, target_roles, skills FROM applicant_profiles WHERE user_id = ?1"
+  )
+    .bind(userId)
+    .first();
+
+  const lines: string[] = [];
+  if (profile?.name) {
+    lines.push(`Name: ${profile.name}`);
+  }
+  if (profile?.current_title) {
+    lines.push(`Current Title: ${profile.current_title}`);
+  }
+  if (profile?.target_roles) {
+    lines.push(`Target Roles: ${profile.target_roles}`);
+  }
+  if (profile?.skills) {
+    lines.push(`Skills: ${profile.skills}`);
+  }
+
+  return lines.join("\n");
+}
+
+async function callDocumentGenerator(
+  env: Env,
+  prompt: string
+): Promise<string> {
+  const response = await env.AI.run("@cf/meta/llama-3.1-8b-instruct", {
+    messages: [
+      {
+        role: "system",
+        content:
+          "You craft ATS-friendly professional documents using Markdown formatting.",
+      },
+      { role: "user", content: prompt },
+    ],
+  });
+
+  return (response as any)?.response || "";
+}
+
+export async function generateDocumentForJob(
+  env: Env,
+  input: DocumentGenerationInput
+): Promise<ApplicantDocumentWithSections> {
+  const documentTypeLabel =
+    input.doc_type === "resume" ? "resume" : "cover letter";
+  const jobMarkdown = await fetchJobMarkdown(env, input.job_id);
+  const profileSummary = await buildUserProfileSummary(env, input.user_id);
+
+  const prompt = [
+    `Create a tailored ${documentTypeLabel} in Markdown.`,
+    "",
+    "User Profile:",
+    profileSummary,
+    "",
+    "Job Description:",
+    jobMarkdown,
+  ].join("\n");
+
+  const generatedMarkdown = await callDocumentGenerator(env, prompt);
+
+  let sections: ResumeSections | undefined;
+  if (input.doc_type === "resume") {
+    const splitter = generatedMarkdown.split("\n\n");
+    sections = {
+      summary: splitter[0] || null,
+      experience: splitter.slice(1, 4).join("\n\n") || null,
+      skills: splitter.slice(4).join("\n\n") || null,
+    };
+  }
+
+  return createApplicantDocument(env, {
+    user_id: input.user_id,
+    doc_type: input.doc_type,
+    purpose: "job_related",
+    job_id: input.job_id,
+    title: `${documentTypeLabel} for ${input.job_id}`,
+    content_md: generatedMarkdown,
+    sections,
+  });
 }
