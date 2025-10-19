@@ -30,11 +30,11 @@ def origin_url() -> str:
 
 def parse_repo_path(url: str) -> str | None:
     # git@github.com:owner/repo.git
-    m = re.match(r"^git@github.com:(.+?)(?:\.git)?$", url)
+    m = re.match(r"^git@github.com:([^/]+/[^/]+)(?:\.git)?$", url)
     if m:
         return m.group(1)
     # https://github.com/owner/repo(.git)?
-    m = re.match(r"^https?://github.com/(.+?)(?:\.git)?$", url)
+    m = re.match(r"^https?://github.com/([^/]+/[^/]+)(?:\.git)?$", url)
     if m:
         return m.group(1)
     return None
