@@ -29,21 +29,25 @@ def origin_url() -> str:
 
 
 def parse_repo_path(url: str) -> str | None:
-    m = re.match(r"^git@github.com:(.+?)(?:\.git)?$", url)
+    # git@github.com:owner/repo.git
+    m = re.match(r"^git@github.com:([^/]+/[^/]+)(?:\.git)?$", url)
     if m:
         return m.group(1)
-    m = re.match(r"^https?://github.com/(.+?)(?:\.git)?$", url)
+    # https://github.com/owner/repo(.git)?
+    m = re.match(r"^https?://github.com/([^/]+/[^/]+)(?:\.git)?$", url)
     if m:
         return m.group(1)
     return None
 
 
 def detect_default_branch() -> str:
+    # Try origin/HEAD
     try:
         ref = git("symbolic-ref", "refs/remotes/origin/HEAD", capture=True)
         return re.sub(r"^refs/remotes/origin/", "", ref)
     except subprocess.CalledProcessError:
         pass
+    # Try ls-remote HEAD
     try:
         cp = run(["git", "ls-remote", "--symref", "origin", "HEAD"], capture=True)
         for line in cp.stdout.splitlines():
@@ -52,6 +56,7 @@ def detect_default_branch() -> str:
                 return re.sub(r"^refs/heads/", "", head)
     except subprocess.CalledProcessError:
         pass
+    # Fallbacks
     for b in ("main", "master"):
         try:
             git("rev-parse", "--verify", f"origin/{b}")
@@ -72,11 +77,11 @@ def has_gh() -> bool:
         run(["gh", "--version"], check=True)
         run(["gh", "auth", "status"], check=True)
         return True
-    except Exception:
+    except (subprocess.CalledProcessError, FileNotFoundError):
         return False
 
 
-def open_pr_with_gh(repo: str, head: str, base: str, title: str, body: str, labels: list[str], draft: bool) -> tuple[str | None, str | None]:
+def open_pr_with_gh(repo: str, head: str, base: str, title: str, body: str, labels: list[str], draft: bool) -> str | None:
     args = [
         "gh", "pr", "create",
         "--head", head,
@@ -96,51 +101,9 @@ def open_pr_with_gh(repo: str, head: str, base: str, title: str, body: str, labe
     try:
         cp = run(args, capture=True)
         url = (cp.stdout or "").strip()
-        return (url or None, None)
-    except subprocess.CalledProcessError as e:
-        stderr = (e.stderr or "")
-        m = re.search(r"already exists:\s*(https?://\S+)", stderr, re.IGNORECASE)
-        if m:
-            return (m.group(1), None)
-        return (None, stderr.strip() or "gh pr create failed")
-
-
-def prompt_yes_no(question: str, default_no: bool = True) -> bool:
-    import termios, tty
-    options = ["No", "Yes"] if default_no else ["Yes", "No"]
-    idx = 0
-    def render():
-        sys.stdout.write("\r" + question + "  ")
-        for i, opt in enumerate(options):
-            if i == idx:
-                sys.stdout.write(f"[ {opt} ] ")
-            else:
-                sys.stdout.write(f"  {opt}   ")
-        sys.stdout.flush()
-    fd = sys.stdin.fileno()
-    old = termios.tcgetattr(fd)
-    try:
-        tty.setraw(fd)
-        render()
-        while True:
-            ch = sys.stdin.read(1)
-            if ch in ("\r", "\n"):
-                break
-            if ch == "\x03":
-                raise KeyboardInterrupt
-            if ch == "\x1b":
-                seq = sys.stdin.read(2)
-                if seq in ("[C", "[B"):
-                    idx = (idx + 1) % len(options)
-                    render()
-                elif seq in ("[D", "[A"):
-                    idx = (idx - 1) % len(options)
-                    render()
-        sys.stdout.write("\n")
-        sys.stdout.flush()
-        return options[idx].lower() == "yes"
-    finally:
-        termios.tcsetattr(fd, termios.TCSADRAIN, old)
+        return url or None
+    except subprocess.CalledProcessError:
+        return None
 
 
 def open_pr_with_api(repo: str, head: str, base: str, title: str, body: str, labels: list[str], draft: bool) -> str:
@@ -171,6 +134,7 @@ def open_pr_with_api(repo: str, head: str, base: str, title: str, body: str, lab
     pr_url = data.get("html_url")
     if not pr_url:
         raise RuntimeError("GitHub API did not return PR URL")
+    # Apply labels if any
     if labels:
         number = data.get("number")
         if number:
@@ -186,8 +150,8 @@ def open_pr_with_api(repo: str, head: str, base: str, title: str, body: str, lab
             )
             try:
                 urllib.request.urlopen(labels_req).read()
-            except Exception:
-                pass
+            except Exception as e:
+                print(f"[create-pr] Warning: Failed to apply labels to PR: {e}", file=sys.stderr)
     return pr_url
 
 
@@ -212,12 +176,13 @@ def main() -> int:
         return 1
     print(f"[create-pr] Base branch: {base}")
 
+    # Ensure we are up-to-date with base
     try:
         run(["git", "fetch", "origin", base], check=False)
         run(["git", "checkout", "-q", base], check=False)
         run(["git", "pull", "--ff-only", "origin", base], check=False)
-    except Exception:
-        pass
+    except Exception as e:
+        print(f"[create-pr] Warning: Failed to update base branch '{base}'. Continuing anyway. Error: {e}", file=sys.stderr)
 
     ts = datetime.utcnow().strftime("%Y%m%d-%H%M%S")
     try:
@@ -225,21 +190,25 @@ def main() -> int:
     except subprocess.CalledProcessError:
         short_sha = "00000000"
     branch = f"auto/pr/{ts}-{short_sha}"
+    # Create new branch
     run(["git", "checkout", "-qb", branch])
 
-    run(["git", "add", "-A"])
+    # Stage and commit
+    run(["git", "add", "-A"])  # always add
+    had_changes = True
     try:
         run(["git", "diff", "--cached", "--quiet"], check=True)
-        no_changes = True
+        had_changes = False
     except subprocess.CalledProcessError:
-        no_changes = False
-    if no_changes:
+        had_changes = True
+    if not had_changes:
         print("[create-pr] No staged changes; creating an empty commit.")
         run(["git", "commit", "--allow-empty", "-m", "chore(pr): open PR with no file changes"])
     else:
         commit_message = os.environ.get("COMMIT_MESSAGE", "chore: batch commit for automated PR")
         run(["git", "commit", "-m", commit_message])
 
+    # Push
     run(["git", "push", "-u", "origin", branch], check=True)
 
     title = os.environ.get("PR_TITLE", f"Automated PR: {branch}")
@@ -254,20 +223,11 @@ def main() -> int:
     draft = os.environ.get("PR_DRAFT", "false").lower() == "true"
 
     pr_url: str | None = None
-    gh_reason: str | None = None
     if has_gh():
         print("[create-pr] Using GitHub CLI (gh) to open PR...")
-        pr_url, gh_reason = open_pr_with_gh(repo, branch, base, title, body, labels, draft)
+        pr_url = open_pr_with_gh(repo, branch, base, title, body, labels, draft)
     if not pr_url:
-        if gh_reason:
-            print(f"[create-pr] gh error: {gh_reason}")
-        if os.environ.get("NONINTERACTIVE", "").lower() == "true":
-            print("[create-pr] Non-interactive mode: skipping REST API fallback.", file=sys.stderr)
-            return 1
-        proceed = prompt_yes_no("gh failed. Proceed with REST API fallback?", default_no=True)
-        if not proceed:
-            print("[create-pr] Aborted by user. No PR created via API.")
-            return 1
+        print("[create-pr] gh not available or failed; using REST API...")
         try:
             pr_url = open_pr_with_api(repo, branch, base, title, body, labels, draft)
         except Exception as e:
@@ -275,6 +235,7 @@ def main() -> int:
             return 1
 
     print(f"[create-pr] PR opened: {pr_url}")
+    # Print only the URL last for easy capture
     print(pr_url)
     return 0
 
