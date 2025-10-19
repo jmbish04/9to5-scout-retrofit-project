@@ -753,6 +753,33 @@ export class MyAgent extends Agent {
    - Verify all imports use new modular structure
    - Confirm no dead code or unused files
 
+#### Phase 12F: Final Route Consolidation (Week 9, Days 6-7)
+
+**Goal**: Consolidate all legacy route files into final, clean domain route files
+
+1. **Create Final Route Files**:
+
+   - Merge all `legacy-*-original.ts` functions into final `{domain}.routes.ts` files
+   - Remove placeholder responses
+   - Implement full functionality in final routes
+
+2. **Update Legacy Route Handlers**:
+
+   - Update `legacy-*.routes.ts` to call final route functions instead of placeholders
+   - Maintain backward compatibility
+   - Keep deprecation warnings
+
+3. **Remove Original Legacy Files**:
+
+   - Delete `legacy-*-original.ts` files
+   - Keep only `legacy-*.routes.ts` for compatibility
+   - Clean up imports and dependencies
+
+4. **Final Architecture**:
+   - Achieve clean, final domain structure
+   - Maintain legacy compatibility layer
+   - Complete modularization with zero functionality loss
+
 ### Detailed File-by-File Cleanup Plan
 
 #### `src/lib/` Directory Cleanup
