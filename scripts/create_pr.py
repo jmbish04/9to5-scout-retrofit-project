@@ -181,8 +181,8 @@ def main() -> int:
         run(["git", "fetch", "origin", base], check=False)
         run(["git", "checkout", "-q", base], check=False)
         run(["git", "pull", "--ff-only", "origin", base], check=False)
-    except Exception:
-        pass
+    except Exception as e:
+        print(f"[create-pr] Warning: Failed to update base branch '{base}'. Continuing anyway. Error: {e}", file=sys.stderr)
 
     ts = datetime.utcnow().strftime("%Y%m%d-%H%M%S")
     try:
