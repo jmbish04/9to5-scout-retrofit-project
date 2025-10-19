@@ -150,8 +150,8 @@ def open_pr_with_api(repo: str, head: str, base: str, title: str, body: str, lab
             )
             try:
                 urllib.request.urlopen(labels_req).read()
-            except Exception:
-                pass
+            except Exception as e:
+                print(f"[create-pr] Warning: Failed to apply labels to PR: {e}", file=sys.stderr)
     return pr_url
 
 
