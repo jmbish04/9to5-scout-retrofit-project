@@ -77,7 +77,7 @@ def has_gh() -> bool:
         run(["gh", "--version"], check=True)
         run(["gh", "auth", "status"], check=True)
         return True
-    except Exception:
+    except (subprocess.CalledProcessError, FileNotFoundError):
         return False
 
 
