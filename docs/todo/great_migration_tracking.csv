@@ -1,0 +1,33 @@
+phase,original_file_path,start_line,end_line,function(s) migrated,target_file,start_line,end_line
+"Phase 1: Jobs & Tracking",src/routes/jobs.ts,8,30,"handleJobsGet",src/domains/jobs/services/job-storage.service.ts,22,49
+"Phase 1: Jobs & Tracking",src/routes/jobs.ts,32,54,"handleJobGet",src/domains/jobs/services/job-storage.service.ts,51,62
+"Phase 1: Jobs & Tracking",src/routes/jobs.ts,56,94,"handleJobsExportGet",src/domains/jobs/services/job-storage.service.ts,64,91
+"Phase 1: Jobs & Tracking",src/routes/tracking.ts,11,43,"handleJobTrackingGet",src/domains/jobs/services/job-storage.service.ts,93,112
+"Phase 1: Jobs & Tracking",src/routes/tracking.ts,49,181,"handleSnapshotContentGet",src/domains/jobs/services/job-storage.service.ts,114,121
+"Phase 1: Jobs & Tracking",src/routes/tracking.ts,187,211,"handleDailyMonitoringPost",src/domains/jobs/services/job-processing.service.ts,18,31
+"Phase 1: Jobs & Tracking",src/routes/tracking.ts,304,332,"handleMonitoringQueueGet (logic via getJobsForMonitoring)",src/domains/jobs/services/job-storage.service.ts,123,139
+"Phase 1: Jobs & Tracking",src/routes/tracking.ts,338,438,"handleJobMonitoringPut",src/domains/jobs/services/job-processing.service.ts,33,61
+"Phase 2: AI & Document Generation",src/routes/ai-documents.ts,28,133,"handleCoverLetterPost",src/domains/documents/services/document-generation.service.ts,28,57
+"Phase 2: AI & Document Generation",src/routes/ai-documents.ts,135,215,"handleResumePost",src/domains/documents/services/document-generation.service.ts,62,90
+"Phase 2: AI & Document Generation",src/routes/documents.ts,23,33,"handleDocsCreate (createApplicantDocument)",src/domains/documents/services/document-storage.service.ts,29,40
+"Phase 2: AI & Document Generation",src/routes/documents.ts,35,45,"handleDocsGet (getApplicantDocument)",src/domains/documents/services/document-storage.service.ts,42,47
+"Phase 2: AI & Document Generation",src/routes/documents.ts,47,61,"handleDocsUpdate (updateApplicantDocument)",src/domains/documents/services/document-storage.service.ts,49,54
+"Phase 2: AI & Document Generation",src/routes/documents.ts,63,69,"handleDocsDelete (deleteApplicantDocument)",src/domains/documents/services/document-storage.service.ts,56,60
+"Phase 2: AI & Document Generation",src/routes/documents.ts,111,125,"handleDocumentGenerate (generateDocumentForJob)",src/domains/documents/services/document-generation.service.ts,48,73
+"Phase 2: AI & Document Generation",src/routes/documents.ts,127,141,"handleDocsApplyPatches (applyDocumentPatches)",src/domains/documents/services/document-processing.service.ts,53,81
+"Phase 3: Email Processing",src/domains/agents/email-processor-agent.ts,154,183,"email (main handler)",src/domains/email/services/email-ingestion.service.ts,25,42
+"Phase 3: Email Processing",src/domains/agents/email-processor-agent.ts,188,220,"parseEmail",src/domains/email/services/email-ingestion.service.ts,44,47
+"Phase 3: Email Processing",src/domains/agents/email-processor-agent.ts,225,281,"classifyEmail",src/domains/email/services/email-ingestion.service.ts,49,63
+"Phase 3: Email Processing",src/domains/agents/email-processor-agent.ts,286,333,"logEmail",src/domains/email/services/email-ingestion.service.ts,65,77
+"Phase 3: Email Processing",src/domains/agents/email-processor-agent.ts,338,368,"routeByClassification",src/domains/email/services/email-ingestion.service.ts,79,91
+"Phase 4: Scraping & Company Intelligence",src/routes/company-benefits.ts,188,251,"handleCompaniesGet",src/domains/scraping/services/company-intelligence.service.ts,23,42
+"Phase 4: Scraping & Company Intelligence",src/routes/company-benefits.ts,253,290,"handleCompanyBenefitsGet",src/domains/scraping/services/company-intelligence.service.ts,44,49
+"Phase 4: Scraping & Company Intelligence",src/routes/scraper.ts,604,683,"handleScrapeQueuePost",src/domains/scraping/services/scrape-queue.service.ts,22,45
+"Phase 4: Scraping & Company Intelligence",src/routes/scraper.ts,685,722,"handleScrapeQueuePendingGet",src/domains/scraping/services/scrape-queue.service.ts,47,65
+"Phase 4: Scraping & Company Intelligence",src/routes/scraper.ts,761,850,"handleScraperIntakePost",src/domains/scraping/services/scrape-queue.service.ts,67,91
+"Phase 4: Scraping & Company Intelligence",src/routes/scraper.ts,852,1024,"handleScrapedJobDetailsPost",src/domains/scraping/services/scrape-queue.service.ts,93,120
+"Phase 4: Scraping & Company Intelligence",src/routes/scraper.ts,1026,1069,"handleScraperMonitoredJobsGet",src/domains/jobs/services/job-storage.service.ts,141,152
+"Phase 5: Core Logic & Final Cleanup",src/lib/durable-objects/site-crawler.ts (git:d732f36),15,38,"fetch",src/domains/scraping/durable-objects/site-crawler.do.ts,32,48
+"Phase 5: Core Logic & Final Cleanup",src/lib/durable-objects/site-crawler.ts (git:d732f36),40,70,"startDiscovery",src/domains/scraping/durable-objects/site-crawler.do.ts,51,69
+"Phase 5: Core Logic & Final Cleanup",src/lib/durable-objects/site-crawler.ts (git:d732f36),72,111,"crawlUrls",src/domains/scraping/durable-objects/site-crawler.do.ts,71,102
+"Phase 5: Core Logic & Final Cleanup",src/lib/durable-objects/site-crawler.ts (git:d732f36),113,127,"getStatus",src/domains/scraping/durable-objects/site-crawler.do.ts,104,111
