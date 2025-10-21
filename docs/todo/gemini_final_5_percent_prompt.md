@@ -37,18 +37,21 @@ Create a **professional, comprehensive email reporting service** with the follow
 #### **Required Features:**
 
 1. **Daily Job Application Summary Reports**
+
    - Aggregate jobs applied to in last 24 hours
    - Include application status (submitted, responded, rejected)
    - Calculate success rates and response times
    - Send formatted HTML email via Cloudflare Email Routing
 
 2. **Weekly Performance Analytics**
+
    - Track total applications per week
    - Monitor response rates from companies
    - Identify top-performing job types/industries
    - Provide actionable insights and recommendations
 
 3. **Alert Notifications**
+
    - New job matches based on user preferences
    - Job posting changes (salary updates, requirements changes)
    - Interview invitations and follow-up reminders
@@ -70,7 +73,7 @@ Create a **professional, comprehensive email reporting service** with the follow
  * notifications, and personalized insights.
  */
 
-import { z } from 'zod';
+import { z } from "zod";
 
 // ============================================================================
 // Schemas and Types
@@ -78,18 +81,25 @@ import { z } from 'zod';
 
 export const EmailReportConfigSchema = z.object({
   userId: z.string().uuid(),
-  reportType: z.enum(['daily_summary', 'weekly_analytics', 'job_alerts', 'custom']),
-  frequency: z.enum(['daily', 'weekly', 'monthly', 'on_demand']),
+  reportType: z.enum([
+    "daily_summary",
+    "weekly_analytics",
+    "job_alerts",
+    "custom",
+  ]),
+  frequency: z.enum(["daily", "weekly", "monthly", "on_demand"]),
   recipients: z.array(z.string().email()),
-  format: z.enum(['html', 'pdf', 'markdown']),
+  format: z.enum(["html", "pdf", "markdown"]),
   includeCharts: z.boolean().default(true),
   includeAIInsights: z.boolean().default(true),
-  preferences: z.object({
-    jobTypes: z.array(z.string()).optional(),
-    industries: z.array(z.string()).optional(),
-    minSalary: z.number().optional(),
-    locations: z.array(z.string()).optional(),
-  }).optional(),
+  preferences: z
+    .object({
+      jobTypes: z.array(z.string()).optional(),
+      industries: z.array(z.string()).optional(),
+      minSalary: z.number().optional(),
+      locations: z.array(z.string()).optional(),
+    })
+    .optional(),
 });
 
 export type EmailReportConfig = z.infer<typeof EmailReportConfigSchema>;
@@ -175,6 +185,7 @@ export class EmailReportingService {
 ```
 
 **Quality Standards:**
+
 - ✅ Comprehensive error handling with custom error types
 - ✅ Zod validation for all inputs
 - ✅ Workers AI integration for insights
@@ -199,6 +210,7 @@ Replace the simplified scheduler with a **professional cron parsing implementati
 #### **Required Features:**
 
 1. **Full Cron Expression Support**
+
    - Parse standard cron syntax: `*/5 * * * *` (every 5 minutes)
    - Support ranges: `0-23` (hours 0 through 23)
    - Support lists: `1,3,5` (on days 1, 3, and 5)
@@ -206,12 +218,14 @@ Replace the simplified scheduler with a **professional cron parsing implementati
    - Support special characters: `*`, `-`, `,`, `/`
 
 2. **Next Run Calculation**
+
    - Calculate exact next execution time from cron expression
    - Handle timezone conversions properly
    - Account for daylight saving time
    - Support different cron formats (5-field, 6-field, 7-field)
 
 3. **Schedule Validation**
+
    - Validate cron expressions before parsing
    - Provide helpful error messages for invalid syntax
    - Detect impossible schedules (e.g., Feb 30)
@@ -231,7 +245,7 @@ Replace the simplified scheduler with a **professional cron parsing implementati
  * Production-grade monitoring service with full cron parsing capabilities.
  */
 
-import { z } from 'zod';
+import { z } from "zod";
 
 // ============================================================================
 // Cron Parser Implementation
@@ -240,13 +254,15 @@ import { z } from 'zod';
 /**
  * Zod schema for cron expression validation
  */
-export const CronExpressionSchema = z.string().regex(
-  /^(\*|([0-9]|1[0-9]|2[0-9]|3[0-9]|4[0-9]|5[0-9])|\*\/([0-9]|1[0-9]|2[0-9]|3[0-9]|4[0-9]|5[0-9])) (\*|([0-9]|1[0-9]|2[0-3])|\*\/([0-9]|1[0-9]|2[0-3])) (\*|([1-9]|1[0-9]|2[0-9]|3[0-1])|\*\/([1-9]|1[0-9]|2[0-9]|3[0-1])) (\*|([1-9]|1[0-2])|\*\/([1-9]|1[0-2])) (\*|([0-6])|\*\/([0-6]))$/,
-  'Invalid cron expression format'
-);
+export const CronExpressionSchema = z
+  .string()
+  .regex(
+    /^(\*|([0-9]|1[0-9]|2[0-9]|3[0-9]|4[0-9]|5[0-9])|\*\/([0-9]|1[0-9]|2[0-9]|3[0-9]|4[0-9]|5[0-9])) (\*|([0-9]|1[0-9]|2[0-3])|\*\/([0-9]|1[0-9]|2[0-3])) (\*|([1-9]|1[0-9]|2[0-9]|3[0-1])|\*\/([1-9]|1[0-9]|2[0-9]|3[0-1])) (\*|([1-9]|1[0-2])|\*\/([1-9]|1[0-2])) (\*|([0-6])|\*\/([0-6]))$/,
+    "Invalid cron expression format"
+  );
 
 interface CronField {
-  type: 'minute' | 'hour' | 'day' | 'month' | 'weekday';
+  type: "minute" | "hour" | "day" | "month" | "weekday";
   values: number[];
   isWildcard: boolean;
   step?: number;
@@ -259,20 +275,20 @@ export class CronParser {
   static parse(expression: string): CronField[] {
     // Validate expression
     const validated = CronExpressionSchema.parse(expression);
-    
+
     // Split into fields
-    const fields = validated.split(' ');
+    const fields = validated.split(" ");
     if (fields.length !== 5) {
-      throw new Error('Cron expression must have exactly 5 fields');
+      throw new Error("Cron expression must have exactly 5 fields");
     }
 
     // Parse each field
     return [
-      this.parseField(fields[0], 'minute', 0, 59),
-      this.parseField(fields[1], 'hour', 0, 23),
-      this.parseField(fields[2], 'day', 1, 31),
-      this.parseField(fields[3], 'month', 1, 12),
-      this.parseField(fields[4], 'weekday', 0, 6),
+      this.parseField(fields[0], "minute", 0, 59),
+      this.parseField(fields[1], "hour", 0, 23),
+      this.parseField(fields[2], "day", 1, 31),
+      this.parseField(fields[3], "month", 1, 12),
+      this.parseField(fields[4], "weekday", 0, 6),
     ];
   }
 
@@ -281,12 +297,12 @@ export class CronParser {
    */
   private static parseField(
     field: string,
-    type: CronField['type'],
+    type: CronField["type"],
     min: number,
     max: number
   ): CronField {
     // Handle wildcard
-    if (field === '*') {
+    if (field === "*") {
       return {
         type,
         values: Array.from({ length: max - min + 1 }, (_, i) => i + min),
@@ -295,22 +311,24 @@ export class CronParser {
     }
 
     // Handle step values (*/5)
-    if (field.includes('/')) {
-      const [range, stepStr] = field.split('/');
+    if (field.includes("/")) {
+      const [range, stepStr] = field.split("/");
       const step = parseInt(stepStr, 10);
-      
-      if (range === '*') {
+
+      if (range === "*") {
         return {
           type,
-          values: Array.from({ length: max - min + 1 }, (_, i) => i + min)
-            .filter((v) => (v - min) % step === 0),
+          values: Array.from(
+            { length: max - min + 1 },
+            (_, i) => i + min
+          ).filter((v) => (v - min) % step === 0),
           isWildcard: false,
           step,
         };
       }
-      
+
       // Handle range with step (0-23/2)
-      const [rangeMin, rangeMax] = range.split('-').map(Number);
+      const [rangeMin, rangeMax] = range.split("-").map(Number);
       return {
         type,
         values: Array.from(
@@ -323,8 +341,8 @@ export class CronParser {
     }
 
     // Handle ranges (0-23)
-    if (field.includes('-')) {
-      const [rangeMin, rangeMax] = field.split('-').map(Number);
+    if (field.includes("-")) {
+      const [rangeMin, rangeMax] = field.split("-").map(Number);
       return {
         type,
         values: Array.from(
@@ -336,10 +354,10 @@ export class CronParser {
     }
 
     // Handle lists (1,3,5)
-    if (field.includes(',')) {
+    if (field.includes(",")) {
       return {
         type,
-        values: field.split(',').map(Number),
+        values: field.split(",").map(Number),
         isWildcard: false,
       };
     }
@@ -357,7 +375,7 @@ export class CronParser {
    */
   static getNextRun(expression: string, currentTime: Date = new Date()): Date {
     const fields = this.parse(expression);
-    
+
     let next = new Date(currentTime);
     next.setSeconds(0, 0); // Reset seconds and milliseconds
     next.setMinutes(next.getMinutes() + 1); // Start from next minute
@@ -389,7 +407,9 @@ export class CronParser {
       iterations++;
     }
 
-    throw new Error('Unable to calculate next run time within reasonable timeframe');
+    throw new Error(
+      "Unable to calculate next run time within reasonable timeframe"
+    );
   }
 }
 
@@ -413,30 +433,35 @@ export class MonitoringService {
   private async getNextScheduledRun(): Promise<string | undefined> {
     try {
       // Read cron schedule from environment variable
-      const cronExpression = this.env.MONITORING_CRON_SCHEDULE || '0 6 * * *'; // Default: Daily at 06:00
-      
+      const cronExpression = this.env.MONITORING_CRON_SCHEDULE || "0 6 * * *"; // Default: Daily at 06:00
+
       // Validate cron expression
       CronExpressionSchema.parse(cronExpression);
-      
+
       // Calculate next run using full cron parser
       const nextRun = this.cronParser.getNextRun(cronExpression, new Date());
-      
+
       // Log for debugging
-      console.log(`Next scheduled monitoring run: ${nextRun.toISOString()} (Cron: ${cronExpression})`);
-      
+      console.log(
+        `Next scheduled monitoring run: ${nextRun.toISOString()} (Cron: ${cronExpression})`
+      );
+
       return nextRun.toISOString();
     } catch (error) {
-      console.error('Failed to calculate next scheduled run:', error);
-      
+      console.error("Failed to calculate next scheduled run:", error);
+
       // Log error to Analytics Engine for monitoring
       if (this.env.MONITORING_ANALYTICS) {
         this.env.MONITORING_ANALYTICS.writeDataPoint({
-          blobs: ['cron_parse_error', error instanceof Error ? error.message : 'Unknown error'],
+          blobs: [
+            "cron_parse_error",
+            error instanceof Error ? error.message : "Unknown error",
+          ],
           doubles: [1],
-          indexes: ['monitoring_service'],
+          indexes: ["monitoring_service"],
         });
       }
-      
+
       return undefined;
     }
   }
@@ -458,13 +483,13 @@ export class MonitoringService {
    */
   async updateSchedule(newExpression: string): Promise<void> {
     // Validate new expression
-    if (!await this.validateCronExpression(newExpression)) {
-      throw new Error('Invalid cron expression');
+    if (!(await this.validateCronExpression(newExpression))) {
+      throw new Error("Invalid cron expression");
     }
 
     // Store new schedule in KV for persistence
-    await this.env.KV.put('monitoring:cron_schedule', newExpression);
-    
+    await this.env.KV.put("monitoring:cron_schedule", newExpression);
+
     // Log schedule update
     console.log(`Monitoring schedule updated to: ${newExpression}`);
   }
@@ -472,6 +497,7 @@ export class MonitoringService {
 ```
 
 **Quality Standards:**
+
 - ✅ Full cron expression parsing (all features)
 - ✅ Comprehensive error handling
 - ✅ Timezone support
@@ -551,7 +577,7 @@ export class ApplicationError extends Error {
  */
 export class ValidationError extends ApplicationError {
   constructor(message: string, metadata?: Record<string, unknown>) {
-    super(message, 'VALIDATION_ERROR', 400, metadata);
+    super(message, "VALIDATION_ERROR", 400, metadata);
   }
 }
 
@@ -560,7 +586,10 @@ export class ValidationError extends ApplicationError {
  */
 export class NotFoundError extends ApplicationError {
   constructor(resource: string, id: string) {
-    super(`${resource} with id '${id}' not found`, 'NOT_FOUND', 404, { resource, id });
+    super(`${resource} with id '${id}' not found`, "NOT_FOUND", 404, {
+      resource,
+      id,
+    });
   }
 }
 
@@ -569,7 +598,7 @@ export class NotFoundError extends ApplicationError {
  */
 export class DatabaseError extends ApplicationError {
   constructor(message: string, originalError?: Error) {
-    super(message, 'DATABASE_ERROR', 500, {
+    super(message, "DATABASE_ERROR", 500, {
       originalError: originalError?.message,
       stack: originalError?.stack,
     });
@@ -581,7 +610,12 @@ export class DatabaseError extends ApplicationError {
  */
 export class ExternalServiceError extends ApplicationError {
   constructor(service: string, message: string, statusCode: number = 502) {
-    super(`${service} error: ${message}`, 'EXTERNAL_SERVICE_ERROR', statusCode, { service });
+    super(
+      `${service} error: ${message}`,
+      "EXTERNAL_SERVICE_ERROR",
+      statusCode,
+      { service }
+    );
   }
 }
 
@@ -590,7 +624,7 @@ export class ExternalServiceError extends ApplicationError {
  */
 export class RateLimitError extends ApplicationError {
   constructor(retryAfter?: number) {
-    super('Rate limit exceeded', 'RATE_LIMIT_EXCEEDED', 429, { retryAfter });
+    super("Rate limit exceeded", "RATE_LIMIT_EXCEEDED", 429, { retryAfter });
   }
 }
 
@@ -601,7 +635,7 @@ export class DuplicateError extends ApplicationError {
   constructor(resource: string, field: string, value: string) {
     super(
       `${resource} with ${field} '${value}' already exists`,
-      'DUPLICATE_RESOURCE',
+      "DUPLICATE_RESOURCE",
       409,
       { resource, field, value }
     );
@@ -616,12 +650,14 @@ Example in `src/domains/sites/services/site-storage.service.ts`:
 ```typescript
 // BEFORE (Lines 88-90):
 if (existingSite) {
-  throw new Error(`A site with the URL '${validatedPayload.base_url}' already exists.`);
+  throw new Error(
+    `A site with the URL '${validatedPayload.base_url}' already exists.`
+  );
 }
 
 // AFTER:
 if (existingSite) {
-  throw new DuplicateError('Site', 'base_url', validatedPayload.base_url);
+  throw new DuplicateError("Site", "base_url", validatedPayload.base_url);
 }
 ```
 
@@ -630,10 +666,13 @@ if (existingSite) {
 ```typescript
 // src/core/middleware/error-handler.ts
 
-export async function errorHandler(error: Error, request: Request): Promise<Response> {
+export async function errorHandler(
+  error: Error,
+  request: Request
+): Promise<Response> {
   // Log error with proper severity
   if (error instanceof ApplicationError) {
-    console.error('[Application Error]', {
+    console.error("[Application Error]", {
       code: error.code,
       message: error.message,
       statusCode: error.statusCode,
@@ -644,12 +683,12 @@ export async function errorHandler(error: Error, request: Request): Promise<Resp
 
     return Response.json(error.toJSON(), {
       status: error.statusCode,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { "Content-Type": "application/json" },
     });
   }
 
   // Log unexpected errors
-  console.error('[Unexpected Error]', {
+  console.error("[Unexpected Error]", {
     message: error.message,
     stack: error.stack,
     url: request.url,
@@ -658,9 +697,9 @@ export async function errorHandler(error: Error, request: Request): Promise<Resp
 
   return Response.json(
     {
-      name: 'InternalServerError',
-      message: 'An unexpected error occurred',
-      code: 'INTERNAL_SERVER_ERROR',
+      name: "InternalServerError",
+      message: "An unexpected error occurred",
+      code: "INTERNAL_SERVER_ERROR",
     },
     { status: 500 }
   );
@@ -703,7 +742,11 @@ export class Logger {
     private minLevel: LogLevel = LogLevel.INFO
   ) {}
 
-  private log(level: LogLevel, message: string, metadata?: Record<string, unknown>): void {
+  private log(
+    level: LogLevel,
+    message: string,
+    metadata?: Record<string, unknown>
+  ): void {
     if (level < this.minLevel) return;
 
     const entry: LogEntry = {
@@ -716,14 +759,14 @@ export class Logger {
 
     // Console output
     const levelName = LogLevel[level];
-    console.log(`[${levelName}] [${this.service}]`, message, metadata || '');
+    console.log(`[${levelName}] [${this.service}]`, message, metadata || "");
 
     // Send to Analytics Engine
     if (this.env.ANALYTICS) {
       this.env.ANALYTICS.writeDataPoint({
         blobs: [this.service, message, levelName],
         doubles: [level],
-        indexes: ['application_logs'],
+        indexes: ["application_logs"],
       });
     }
   }
@@ -740,7 +783,11 @@ export class Logger {
     this.log(LogLevel.WARN, message, metadata);
   }
 
-  error(message: string, error?: Error, metadata?: Record<string, unknown>): void {
+  error(
+    message: string,
+    error?: Error,
+    metadata?: Record<string, unknown>
+  ): void {
     this.log(LogLevel.ERROR, message, {
       ...metadata,
       error: error?.message,
@@ -748,7 +795,11 @@ export class Logger {
     });
   }
 
-  critical(message: string, error?: Error, metadata?: Record<string, unknown>): void {
+  critical(
+    message: string,
+    error?: Error,
+    metadata?: Record<string, unknown>
+  ): void {
     this.log(LogLevel.CRITICAL, message, {
       ...metadata,
       error: error?.message,
@@ -762,9 +813,9 @@ export class Logger {
 
 ```typescript
 // Replace all console.log with structured logging
-const logger = new Logger('SiteStorageService', env);
-logger.info('Creating new site', { base_url: payload.base_url });
-logger.error('Failed to create site', error, { base_url: payload.base_url });
+const logger = new Logger("SiteStorageService", env);
+logger.info("Creating new site", { base_url: payload.base_url });
+logger.error("Failed to create site", error, { base_url: payload.base_url });
 ```
 
 ---
@@ -774,6 +825,7 @@ logger.error('Failed to create site', error, { base_url: payload.base_url });
 After completing all tasks, verify 100% status by checking:
 
 ### **Code Quality Checks:**
+
 - [ ] Run `pnpm exec wrangler types` - No TypeScript errors
 - [ ] Run linter - Zero linting errors
 - [ ] Run prettier - Code properly formatted
@@ -783,6 +835,7 @@ After completing all tasks, verify 100% status by checking:
 - [ ] Search for `simplified` (case-insensitive) - Zero results in code
 
 ### **Production Readiness Checks:**
+
 - [ ] All services have comprehensive error handling
 - [ ] All services use structured logging
 - [ ] All inputs validated with Zod schemas
@@ -793,6 +846,7 @@ After completing all tasks, verify 100% status by checking:
 - [ ] All public methods have JSDoc documentation
 
 ### **Testing Requirements:**
+
 - [ ] Unit tests for cron parser (all edge cases)
 - [ ] Unit tests for email reporting service
 - [ ] Integration tests for monitoring scheduler
@@ -831,6 +885,7 @@ Upon completion, provide:
 ## **⚠️ Non-Negotiable Standards**
 
 **ZERO tolerance for:**
+
 - ❌ Simplified implementations ("good enough for now")
 - ❌ Placeholder functions or TODO comments
 - ❌ Hardcoded values (use environment variables)
@@ -841,8 +896,9 @@ Upon completion, provide:
 - ❌ `any` types (except for external library compatibility)
 
 **This is PRODUCTION CODE. Every line must be:**
+
 - ✅ Professional
-- ✅ Comprehensive  
+- ✅ Comprehensive
 - ✅ Robust
 - ✅ Maintainable
 - ✅ Tested
@@ -855,4 +911,3 @@ Upon completion, provide:
 Once all tasks are complete and all checks pass, the Great Migration will be **100% COMPLETE** and the codebase will be **PRODUCTION-READY** with zero compromises.
 
 **Go forth and build production-grade software. No shortcuts. No excuses.**
-

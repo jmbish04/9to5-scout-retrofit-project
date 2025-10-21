@@ -6,7 +6,7 @@
     "@cloudflare/playwright": "^1.0.0",
     "@cloudflare/workers-types": "^4.20251011.0",
     "@hono/zod-validator": "^0.7.4",
-    "agents": "^0.2.14",
+    "agents-sdk": "^0.0.8",
     "hono": "^4.10.0",
     "html-entities": "^2.6.0",
     "postal-mime": "^2.5.0",

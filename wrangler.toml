@@ -1,5 +1,5 @@
-name = "9to5-scout" # 9to5-scout
-main = "src/index.ts" # src/index.ts
+name = "9to5-scout-retrofit" # 9to5-scout
+main = "src/index.ts"
 compatibility_date = "2024-09-26"  # 2024-09-26
 compatibility_flags = ["nodejs_compat"] # ["nodejs_compat"] -- needed for browser rendering
 
@@ -67,6 +67,11 @@ binding = "R2"
 bucket_name = "job-scraper"
 preview_bucket_name = "job-scraper-preview"
 
+# Queues
+[[queues.producers]]
+binding = "TASK_QUEUE"
+queue = "task-queue"
+
 # Vectorize
 [[vectorize]]
 binding = "VECTORIZE_INDEX"
@@ -90,16 +95,17 @@ destination_address = "justin@126colby.com"
 # Durable Objects
 [durable_objects]
 bindings = [
-  { name = "SITE_CRAWLER", class_name = "SiteCrawler" },
-  { name = "JOB_MONITOR", class_name = "JobMonitor" },
-  { name = "SCRAPE_SOCKET", class_name = "ScrapeSocket" },
-  { name = "GENERIC_AGENT", class_name = "GenericAgent" },
-  { name = "EMAIL_PROCESSOR_AGENT", class_name = "EmailProcessorAgent" },
-  { name = "JOB_MONITOR_AGENT", class_name = "JobMonitorAgent" },
-  { name = "RESUME_OPTIMIZATION_AGENT", class_name = "ResumeOptimizationAgent" },
-  { name = "COMPANY_INTELLIGENCE_AGENT", class_name = "CompanyIntelligenceAgent" },
-  { name = "INTERVIEW_PREPARATION_AGENT", class_name = "InterviewPreparationAgent" },
-  { name = "CAREER_COACH_AGENT", class_name = "CareerCoachAgent" }
+  { name = "SITE_CRAWLER", class_name = "src.domains.scraping.durable-objects.site-crawler.do.SiteCrawler" },
+  { name = "JOB_MONITOR", class_name = "src.domains.jobs.durable-objects.job-monitor.do.JobMonitor" },
+  { name = "SCRAPE_SOCKET", class_name = "src.domains.scraping.durable-objects.scrape-socket.do.ScrapeSocket" },
+  { name = "HEALTH_CHECK_SOCKET", class_name = "src.core.durable-objects.health-check-socket.HealthCheckSocket" },
+  { name = "GENERIC_AGENT", class_name = "src.domains.agents.durable-objects.generic_agent.GenericAgent" },
+  { name = "EMAIL_PROCESSOR_AGENT", class_name = "src.domains.agents.durable-objects.email-processor-agent.EmailProcessorAgent" },
+  { name = "JOB_MONITOR_AGENT", class_name = "src.domains.agents.durable-objects.job-monitor-agent.JobMonitorAgent" },
+  { name = "RESUME_OPTIMIZATION_AGENT", class_name = "src.domains.agents.durable-objects.resume-optimization-agent.ResumeOptimizationAgent" },
+  { name = "COMPANY_INTELLIGENCE_AGENT", class_name = "src.domains.agents.durable-objects.company-intelligence-agent.CompanyIntelligenceAgent" },
+  { name = "INTERVIEW_PREPARATION_AGENT", class_name = "src.domains.agents.durable-objects.interview-preparation-agent.InterviewPreparationAgent" },
+  { name = "CAREER_COACH_AGENT", class_name = "src.domains.agents.durable-objects.career-coach-agent.CareerCoachAgent" }
 ]
 
 # DiscoveryWorkflow

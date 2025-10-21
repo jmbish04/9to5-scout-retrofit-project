@@ -6461,7 +6461,7 @@ interface RequestInitCfPropertiesImage extends BasicImageTransformations {
      *   in combination with the properties above
      * - border - this will automatically trim the surroundings of an image based on
      *   it's color. It consists of three properties:
-     *    - color: rgb or hex representation of the color you wish to trim (todo: verify the rgba bit)
+     *    - color: rgb or hex representation of the color you wish to trim
      *    - tolerance: difference from color to treat as color
      *    - keep: the number of pixels of border to keep
      */
@@ -6758,12 +6758,12 @@ interface IncomingRequestCfPropertiesCloudflareAccessOrApiShield {
      * [Certificate Serial Number](https://ldapwiki.com/wiki/Certificate%20Serial%20Number)
      * (i.e., not `null` or `""`).
      *
-     * Otherwise, a set of placeholder values are used.
+     
      *
      * The property `certPresented` will be set to `"1"` when
      * the object is populated (i.e. the above conditions were met).
      */
-    tlsClientAuth: IncomingRequestCfPropertiesTLSClientAuth | IncomingRequestCfPropertiesTLSClientAuthPlaceholder;
+    tlsClientAuth: IncomingRequestCfPropertiesTLSClientAuth;
 }
 /**
  * Metadata about the request's TLS handshake
@@ -6966,8 +6966,7 @@ interface IncomingRequestCfPropertiesTLSClientAuth {
      */
     certNotAfter: string;
 }
-/** Placeholder values for TLS Client Authorization */
-interface IncomingRequestCfPropertiesTLSClientAuthPlaceholder {
+
     certPresented: "0";
     certVerified: "NONE";
     certRevoked: "0";

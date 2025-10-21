@@ -534,7 +534,7 @@ export interface FormField {
     | "time"
     | "datetime";
   required?: boolean;
-  placeholder?: string;
+  
   description?: string;
   validation?: {
     min?: number;

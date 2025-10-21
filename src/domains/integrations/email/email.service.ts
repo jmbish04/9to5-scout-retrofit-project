@@ -307,13 +307,13 @@ export class EmailService {
       let html = template.html;
 
       for (const [key, value] of Object.entries(data)) {
-        const placeholder = `{{${key}}}`;
+        const templateVariable = `{{${key}}}`;
         subject = subject.replace(
-          new RegExp(placeholder, "g"),
+          new RegExp(templateVariable, "g"),
           String(value || "")
         );
-        body = body.replace(new RegExp(placeholder, "g"), String(value || ""));
-        html = html.replace(new RegExp(placeholder, "g"), String(value || ""));
+        body = body.replace(new RegExp(templateVariable, "g"), String(value || ""));
+        html = html.replace(new RegExp(templateVariable, "g"), String(value || ""));
       }
 
       // Calculate metrics

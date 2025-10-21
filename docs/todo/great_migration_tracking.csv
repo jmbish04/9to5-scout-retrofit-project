@@ -27,7 +27,7 @@ phase,original_file_path,start_line,end_line,function(s) migrated,target_file,st
 "Phase 4: Scraping & Company Intelligence",src/routes/scraper.ts,761,850,"handleScraperIntakePost",src/domains/scraping/services/scrape-queue.service.ts,67,91
 "Phase 4: Scraping & Company Intelligence",src/routes/scraper.ts,852,1024,"handleScrapedJobDetailsPost",src/domains/scraping/services/scrape-queue.service.ts,93,120
 "Phase 4: Scraping & Company Intelligence",src/routes/scraper.ts,1026,1069,"handleScraperMonitoredJobsGet",src/domains/jobs/services/job-storage.service.ts,141,152
-"Phase 5: Core Logic & Final Cleanup",src/lib/durable-objects/site-crawler.ts (git:d732f36),15,38,"fetch",src/domains/scraping/durable-objects/site-crawler.do.ts,32,48
-"Phase 5: Core Logic & Final Cleanup",src/lib/durable-objects/site-crawler.ts (git:d732f36),40,70,"startDiscovery",src/domains/scraping/durable-objects/site-crawler.do.ts,51,69
-"Phase 5: Core Logic & Final Cleanup",src/lib/durable-objects/site-crawler.ts (git:d732f36),72,111,"crawlUrls",src/domains/scraping/durable-objects/site-crawler.do.ts,71,102
-"Phase 5: Core Logic & Final Cleanup",src/lib/durable-objects/site-crawler.ts (git:d732f36),113,127,"getStatus",src/domains/scraping/durable-objects/site-crawler.do.ts,104,111
+"Phase 5: Core Logic & Final Cleanup",src/lib/durable-objects/site-crawler.ts (git:d732f36),15,38,"fetch",src/domains/scraping/durable-objects/site-crawler.do.ts,32,53
+"Phase 5: Core Logic & Final Cleanup",src/lib/durable-objects/site-crawler.ts (git:d732f36),40,70,"startDiscovery",src/domains/scraping/durable-objects/site-crawler.do.ts,55,85
+"Phase 5: Core Logic & Final Cleanup",src/lib/durable-objects/site-crawler.ts (git:d732f36),72,111,"crawlUrls",src/domains/scraping/durable-objects/site-crawler.do.ts,87,128
+"Phase 5: Core Logic & Final Cleanup",src/lib/durable-objects/site-crawler.ts (git:d732f36),113,127,"getStatus",src/domains/scraping/durable-objects/site-crawler.do.ts,130,145

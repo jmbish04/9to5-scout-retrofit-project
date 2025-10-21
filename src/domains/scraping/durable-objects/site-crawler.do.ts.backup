@@ -1,0 +1,112 @@
+/**
+ * @module src/domains/scraping/durable-objects/site-crawler.do.ts
+ * @description
+ * A refactored Durable Object for crawling websites. It is now decoupled
+ * from business logic and relies on injected domain services.
+ */
+
+import { SiteStorageService } from '../../sites/services/site-storage.service';
+import { ScrapeQueueService } from '../services/scrape-queue.service';
+import { discoverJobUrls, crawlJobs } from '../lib/crawl'; // Assuming crawl logic is moved to a lib file
+
+// Define a proper Env type that includes all necessary bindings
+interface CrawlerEnv {
+  DB: D1Database;
+  R2: R2Bucket;
+  // ... other bindings
+}
+
+export class SiteCrawler {
+  private state: DurableObjectState;
+  private env: CrawlerEnv;
+  private siteService: SiteStorageService;
+  private scrapeQueue: ScrapeQueueService;
+
+  constructor(state: DurableObjectState, env: CrawlerEnv) {
+    this.state = state;
+    this.env = env;
+    this.siteService = new SiteStorageService(env);
+    this.scrapeQueue = new ScrapeQueueService(env);
+  }
+
+  async fetch(req: Request): Promise<Response> {
+    const url = new URL(req.url);
+    try {
+      switch (url.pathname) {
+        case '/start-discovery':
+          return await this.startDiscovery(req);
+        case '/crawl-urls':
+          return await this.crawlUrls(req);
+        case '/status':
+          return await this.getStatus();
+        default:
+          return new Response('Not Found', { status: 404 });
+      }
+    } catch (error) {
+      console.error('SiteCrawler DO Error:', error);
+      return new Response(JSON.stringify({ error: 'Internal Server Error' }), { status: 500 });
+    }
+  }
+
+  private async startDiscovery(req: Request): Promise<Response> {
+    const { site_id } = (await req.json()) as { site_id: string };
+    const site = await this.siteService.getSiteById(site_id);
+    if (!site) {
+      return new Response(JSON.stringify({ error: 'Site not found' }), { status: 404 });
+    }
+
+    await this.state.storage.put('status', 'discovering');
+    
+    // This logic would be further refactored into a discovery service in a real scenario
+    const urls = await discoverJobUrls(site.base_url, []); 
+
+    await this.state.storage.put('discovered_urls', urls);
+    await this.state.storage.put('total_discovered', urls.length);
+    await this.state.storage.put('crawled_count', 0);
+    await this.state.storage.put('status', 'discovery_complete');
+
+    return new Response(JSON.stringify({ site_id, discovered_count: urls.length, status: 'discovery_complete' }));
+  }
+
+  private async crawlUrls(req: Request): Promise<Response> {
+    const { batch_size = 5 } = (await req.json()) as { batch_size?: number };
+    const urls = await this.state.storage.get<string[]>('discovered_urls') || [];
+    const crawledCount = await this.state.storage.get<number>('crawled_count') || 0;
+    const siteId = await this.state.storage.get<string>('current_site_id');
+
+    if (!siteId) {
+        return new Response(JSON.stringify({ error: 'Site ID not configured in crawler' }), { status: 500 });
+    }
+
+    if (crawledCount >= urls.length) {
+      await this.state.storage.put('status', 'completed');
+      return new Response(JSON.stringify({ status: 'completed' }));
+    }
+
+    const batchUrls = urls.slice(crawledCount, crawledCount + batch_size);
+    
+    // This logic would be further refactored into a processing service
+    const jobs = await crawlJobs(this.env, batchUrls, siteId); 
+    
+    const newCrawledCount = crawledCount + batchUrls.length;
+    await this.state.storage.put('crawled_count', newCrawledCount);
+    
+    const isComplete = newCrawledCount >= urls.length;
+    await this.state.storage.put('status', isComplete ? 'completed' : 'crawling');
+
+    return new Response(JSON.stringify({
+        crawled_in_batch: jobs.length,
+        total_crawled: newCrawledCount,
+        status: isComplete ? 'completed' : 'crawling',
+    }));
+  }
+
+  private async getStatus(): Promise<Response> {
+    const [status, total_discovered, crawled_count] = await Promise.all([
+        this.state.storage.get('status'),
+        this.state.storage.get('total_discovered'),
+        this.state.storage.get('crawled_count'),
+    ]);
+    return new Response(JSON.stringify({ status: status || 'idle', total_discovered, crawled_count }));
+  }
+}

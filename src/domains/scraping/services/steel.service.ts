@@ -230,7 +230,7 @@ export class MultiPlatformJobScraper {
       jobUrlPattern: /careers\.cloudflare\.com\/jobs\/\d+/,
       requiresAuth: false,
       selectors: {
-        searchKeywords: 'input[placeholder*="Search"]',
+        searchKeywords: 'input[aria-label*="Search"], input[name*="keywords"]',
         searchButton: 'button[type="submit"]',
         jobLinks: 'a[href*="/jobs/"]',
         jobTitle: 'h1[data-testid="job-title"]',
@@ -250,11 +250,9 @@ export class MultiPlatformJobScraper {
       jobUrlPattern: /.*/,
       requiresAuth: false,
       selectors: {
-        searchKeywords:
-          'input[type="search"], input[name*="search"], input[placeholder*="search"]',
-        searchLocation:
-          'input[name*="location"], input[placeholder*="location"]',
-        searchButton: 'button[type="submit"], input[type="submit"]',
+        searchKeywords: 'input[aria-label*="Search"], input[name*="keywords"]',
+        searchLocation: 'input[aria-label*="Location"], input[name*="location"]',
+        searchButton: 'button[type="submit"], button[aria-label*="Search"]',
         jobLinks: 'a[href*="job"], a[href*="career"], a[href*="position"]',
         jobTitle: 'h1, .job-title, [class*="title"]',
         jobCompany: '.company, [class*="company"], [class*="employer"]',

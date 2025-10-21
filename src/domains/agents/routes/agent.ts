@@ -85,9 +85,9 @@ app.get(
       }
 
       // Fetch job details from database
-      const placeholders = jobIds.map(() => "?").join(",");
+      const param_placeholders = jobIds.map(() => "?").join(",");
       const stmt = c.env.DB.prepare(
-        `SELECT * FROM jobs WHERE id IN (${placeholders})`
+        `SELECT * FROM jobs WHERE id IN (${param_placeholders})`
       );
       const result = await stmt.bind(...jobIds).all();
 

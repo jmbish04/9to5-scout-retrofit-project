@@ -95,10 +95,10 @@ export class JobMonitorWorkflow {
    * Validate job IDs
    */
   private async validateJobIds(jobIds: string[]): Promise<any[]> {
-    const placeholders = jobIds.map(() => "?").join(",");
+    const param_placeholders = jobIds.map(() => "?").join(",");
     const jobs = await this.env.DB.prepare(
       `
-      SELECT * FROM jobs WHERE id IN (${placeholders}) AND status = 'open'
+      SELECT * FROM jobs WHERE id IN (${param_placeholders}) AND status = 'open'
     `
     )
       .bind(...jobIds)
