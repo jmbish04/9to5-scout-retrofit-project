@@ -3,7 +3,7 @@
  */
 
 import type { Env } from "../domains/config/env/env.config";
-import { createRun } from "../lib/storage";
+import { createRun } from "../domains/monitoring/services/monitoring-storage.service";
 
 export interface WorkflowConfig {
   id: string;

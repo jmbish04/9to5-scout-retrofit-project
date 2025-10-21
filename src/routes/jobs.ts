@@ -2,7 +2,7 @@
  * Jobs API routes for retrieving and managing job data.
  */
 
-import { getJobs, getJob } from '../lib/storage';
+import { getJobs, getJob } from "../domains/jobs/services/job-storage.service";
 
 export async function handleJobsGet(request: Request, env: any): Promise<Response> {
   try {
