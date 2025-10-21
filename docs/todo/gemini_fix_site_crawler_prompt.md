@@ -35,6 +35,7 @@ git show d732f36:src/lib/durable-objects/site-crawler.ts
 ### **Feature 1: Complete State Management in `startDiscovery`**
 
 **Current (BROKEN):**
+
 ```typescript
 private async startDiscovery(req: Request): Promise<Response> {
   const { site_id } = (await req.json()) as { site_id: string };
@@ -44,7 +45,7 @@ private async startDiscovery(req: Request): Promise<Response> {
   }
 
   await this.state.storage.put('status', 'discovering');
-  const urls = await discoverJobUrls(site.base_url, []); 
+  const urls = await discoverJobUrls(site.base_url, []);
 
   await this.state.storage.put('discovered_urls', urls);
   await this.state.storage.put('total_discovered', urls.length);
@@ -56,6 +57,7 @@ private async startDiscovery(req: Request): Promise<Response> {
 ```
 
 **Required (FIX):**
+
 ```typescript
 private async startDiscovery(req: Request): Promise<Response> {
   const { site_id, base_url, search_terms } = await req.json() as {
@@ -90,6 +92,7 @@ private async startDiscovery(req: Request): Promise<Response> {
 ```
 
 **Changes Required:**
+
 1. ✅ Accept `base_url` parameter (don't fetch from DB - it's passed in)
 2. ✅ Accept `search_terms` parameter for customizable discovery
 3. ✅ Store `current_site_id` in state
@@ -103,6 +106,7 @@ private async startDiscovery(req: Request): Promise<Response> {
 ### **Feature 2: Activity Tracking in `crawlUrls`**
 
 **Current (BROKEN):**
+
 ```typescript
 private async crawlUrls(req: Request): Promise<Response> {
   const { batch_size = 5 } = (await req.json()) as { batch_size?: number };
@@ -120,12 +124,12 @@ private async crawlUrls(req: Request): Promise<Response> {
   }
 
   const batchUrls = urls.slice(crawledCount, crawledCount + batch_size);
-  
-  const jobs = await crawlJobs(this.env, batchUrls, siteId); 
-  
+
+  const jobs = await crawlJobs(this.env, batchUrls, siteId);
+
   const newCrawledCount = crawledCount + batchUrls.length;
   await this.state.storage.put('crawled_count', newCrawledCount);
-  
+
   const isComplete = newCrawledCount >= urls.length;
   await this.state.storage.put('status', isComplete ? 'completed' : 'crawling');
 
@@ -138,6 +142,7 @@ private async crawlUrls(req: Request): Promise<Response> {
 ```
 
 **Required (FIX):**
+
 ```typescript
 private async crawlUrls(req: Request): Promise<Response> {
   const { batch_size = 5 } = await req.json() as { batch_size?: number };
@@ -148,9 +153,9 @@ private async crawlUrls(req: Request): Promise<Response> {
 
   if (crawledCount >= urls.length) {
     await this.state.storage.put('status', 'completed');
-    return new Response(JSON.stringify({ 
-      status: 'completed', 
-      message: 'All URLs crawled' 
+    return new Response(JSON.stringify({
+      status: 'completed',
+      message: 'All URLs crawled'
     }), {
       headers: { 'Content-Type': 'application/json' },
     });
@@ -164,7 +169,7 @@ private async crawlUrls(req: Request): Promise<Response> {
 
   const newCrawledCount = crawledCount + batchUrls.length;
   await this.state.storage.put('crawled_count', newCrawledCount);
-  
+
   // CRITICAL: Track activity for health monitoring
   await this.state.storage.put('last_activity', new Date().toISOString());
 
@@ -186,6 +191,7 @@ private async crawlUrls(req: Request): Promise<Response> {
 ```
 
 **Changes Required:**
+
 1. ✅ Store `last_activity` on every crawl operation
 2. ✅ Include `total_discovered` in response
 3. ✅ Add completion message when done
@@ -198,6 +204,7 @@ private async crawlUrls(req: Request): Promise<Response> {
 ### **Feature 3: Complete Status Response**
 
 **Current (BROKEN):**
+
 ```typescript
 private async getStatus(): Promise<Response> {
   const [status, total_discovered, crawled_count] = await Promise.all([
@@ -205,15 +212,16 @@ private async getStatus(): Promise<Response> {
     this.state.storage.get('total_discovered'),
     this.state.storage.get('crawled_count'),
   ]);
-  return new Response(JSON.stringify({ 
-    status: status || 'idle', 
-    total_discovered, 
-    crawled_count 
+  return new Response(JSON.stringify({
+    status: status || 'idle',
+    total_discovered,
+    crawled_count
   }));
 }
 ```
 
 **Required (FIX):**
+
 ```typescript
 private async getStatus(): Promise<Response> {
   const status = await this.state.storage.get('status') || 'idle';
@@ -235,6 +243,7 @@ private async getStatus(): Promise<Response> {
 ```
 
 **Changes Required:**
+
 1. ✅ Include `site_id` to identify which site this crawler is tracking
 2. ✅ Include `last_activity` for health monitoring
 3. ✅ Add Content-Type header
@@ -245,6 +254,7 @@ private async getStatus(): Promise<Response> {
 ### **Feature 4: HTTP Method Validation in `fetch`**
 
 **Current (BROKEN):**
+
 ```typescript
 async fetch(req: Request): Promise<Response> {
   const url = new URL(req.url);
@@ -267,6 +277,7 @@ async fetch(req: Request): Promise<Response> {
 ```
 
 **Required (FIX):**
+
 ```typescript
 async fetch(req: Request): Promise<Response> {
   const url = new URL(req.url);
@@ -297,6 +308,7 @@ async fetch(req: Request): Promise<Response> {
 ```
 
 **Changes Required:**
+
 1. ✅ Validate HTTP methods (GET vs POST)
 2. ✅ Use `if` statements instead of `switch` for method validation
 3. ✅ Add Content-Type header to error responses
@@ -316,7 +328,7 @@ async fetch(req: Request): Promise<Response> {
  * Restored from modern implementation (git commit d732f36).
  */
 
-import type { Env } from '../../config/env/env.config';
+import type { Env } from "../../config/env/env.config";
 
 interface CrawlerEnv {
   DB: D1Database;
@@ -338,7 +350,7 @@ export class SiteCrawler {
     this.state = state;
     this.env = env;
   }
-  
+
   // ... rest of implementation
 }
 ```
@@ -348,6 +360,7 @@ export class SiteCrawler {
 ### **Step 3: Replace All Methods**
 
 Replace the current implementations of:
+
 - `fetch()` - with HTTP method validation
 - `startDiscovery()` - with complete state management
 - `crawlUrls()` - with activity tracking
@@ -359,12 +372,12 @@ Use the **exact implementations** provided in the "Required (FIX)" sections abov
 
 ```typescript
 // REMOVE these imports (not used in modern version):
-import { SiteStorageService } from '../../sites/services/site-storage.service';
-import { ScrapeQueueService } from '../services/scrape-queue.service';
+import { SiteStorageService } from "../../sites/services/site-storage.service";
+import { ScrapeQueueService } from "../services/scrape-queue.service";
 
 // The modern version uses dynamic imports instead:
-const { discoverJobUrls } = await import('../lib/crawl');
-const { crawlJobs } = await import('../lib/crawl');
+const { discoverJobUrls } = await import("../lib/crawl");
+const { crawlJobs } = await import("../lib/crawl");
 ```
 
 ---
@@ -374,6 +387,7 @@ const { crawlJobs } = await import('../lib/crawl');
 After implementation, verify:
 
 ### **Code Quality:**
+
 - [ ] All methods match modern version exactly
 - [ ] HTTP method validation in place (GET/POST)
 - [ ] All responses include `Content-Type: application/json` header
@@ -381,18 +395,21 @@ After implementation, verify:
 - [ ] No TypeScript errors (`pnpm exec wrangler types`)
 
 ### **State Management:**
+
 - [ ] `current_site_id` stored in `startDiscovery`
 - [ ] `base_url` stored in `startDiscovery`
 - [ ] `last_activity` stored in `startDiscovery` and `crawlUrls`
 - [ ] All state properly retrieved in `getStatus`
 
 ### **API Contract:**
+
 - [ ] `startDiscovery` accepts `{ site_id, base_url, search_terms? }`
 - [ ] `crawlUrls` accepts `{ batch_size? }`
 - [ ] `getStatus` returns `{ site_id, status, total_discovered, crawled_count, last_activity }`
 - [ ] `crawlUrls` response includes `total_discovered`
 
 ### **Production Features:**
+
 - [ ] Health monitoring via `last_activity` timestamp
 - [ ] Search term customization supported
 - [ ] Progress tracking with complete metrics
@@ -416,12 +433,14 @@ After implementation, verify:
 ## **⚠️ Critical Reminders**
 
 **DO:**
+
 - ✅ Use the modern version from `git show d732f36:src/lib/durable-objects/site-crawler.ts`
 - ✅ Maintain production-ready features (activity tracking, complete metrics)
 - ✅ Add all Content-Type headers
 - ✅ Validate HTTP methods
 
 **DO NOT:**
+
 - ❌ Use any code from `original_project_DO_NOT_WORK_HERE/` (it's deleted and outdated)
 - ❌ Remove any features from the modern version
 - ❌ Skip HTTP method validation
@@ -434,11 +453,13 @@ After implementation, verify:
 After completing this fix, update `docs/todo/great_migration_tracking.csv` lines 31-34:
 
 **Change FROM:**
+
 ```csv
 "Phase 5: Core Logic & Final Cleanup",original_project_DO_NOT_WORK_HERE/src/lib/durable-objects/site-crawler.ts,17,43,"fetch",src/domains/scraping/durable-objects/site-crawler.do.ts,32,48
 ```
 
 **Change TO:**
+
 ```csv
 "Phase 5: Core Logic & Final Cleanup",src/lib/durable-objects/site-crawler.ts (git:d732f36),15,38,"fetch",src/domains/scraping/durable-objects/site-crawler.do.ts,32,48
 "Phase 5: Core Logic & Final Cleanup",src/lib/durable-objects/site-crawler.ts (git:d732f36),40,70,"startDiscovery",src/domains/scraping/durable-objects/site-crawler.do.ts,51,69
@@ -453,4 +474,3 @@ After completing this fix, update `docs/todo/great_migration_tracking.csv` lines
 This is a **critical regression** that impacts production functionality. The modern version has been battle-tested and includes essential features for monitoring and debugging.
 
 **Restore the production-ready implementation now.** No shortcuts. No compromises.
-
