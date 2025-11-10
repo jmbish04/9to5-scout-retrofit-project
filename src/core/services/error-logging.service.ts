@@ -6,7 +6,7 @@
  * monitoring and diagnostics.
  */
 
-import { AppError } from '../errors';
+import { ApplicationError } from "../errors";
 
 export interface LoggingEnv {
   DB: D1Database;
@@ -41,12 +41,12 @@ export class ErrorLoggingService {
     const id = crypto.randomUUID();
     const timestamp = new Date().toISOString();
 
-    let severity: 'info' | 'warning' | 'critical' = 'critical';
+    let severity: "info" | "warning" | "critical" = "critical";
     let errorCode: string | undefined;
 
-    if (error instanceof AppError) {
-      severity = error.statusCode >= 500 ? 'critical' : 'warning';
-      errorCode = error.errorCode;
+    if (error instanceof ApplicationError) {
+      severity = error.statusCode >= 500 ? "critical" : "warning";
+      errorCode = error.code;
     } else if ((error as any).severity) {
       severity = (error as any).severity;
     }
@@ -71,7 +71,7 @@ export class ErrorLoggingService {
       console.error("FATAL: Failed to write to error_logs table.", dbError);
       // If logging to DB fails, we're in a bad state. Log to console as a last resort.
       console.error("Original error that failed to log:", error);
-      return '';
+      return "";
     }
   }
 
@@ -81,7 +81,11 @@ export class ErrorLoggingService {
    * @param analysis - The analysis from the AI agent.
    * @param solution - The potential solution from the AI agent.
    */
-  async updateLogWithAnalysis(logId: string, analysis: string, solution: string): Promise<void> {
+  async updateLogWithAnalysis(
+    logId: string,
+    analysis: string,
+    solution: string
+  ): Promise<void> {
     try {
       await this.env.DB.prepare(
         `UPDATE error_logs
@@ -91,7 +95,10 @@ export class ErrorLoggingService {
         .bind(analysis, solution, logId)
         .run();
     } catch (dbError) {
-      console.error(`FATAL: Failed to update error_log ${logId} with AI analysis.`, dbError);
+      console.error(
+        `FATAL: Failed to update error_log ${logId} with AI analysis.`,
+        dbError
+      );
     }
   }
 }

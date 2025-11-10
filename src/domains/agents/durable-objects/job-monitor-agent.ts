@@ -3,8 +3,8 @@
  */
 
 import { Agent } from "agents";
+import { JobProcessingService } from "../../jobs/services/job-processing.service";
 import type { Env } from "../config/env/env.config";
-import { JobProcessingService } from '../jobs/services/job-processing.service';
 
 export class JobMonitorAgent extends Agent<Env, any> {
   private processingService: JobProcessingService;

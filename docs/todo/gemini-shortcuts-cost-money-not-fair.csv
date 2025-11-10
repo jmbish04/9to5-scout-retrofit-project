@@ -1,0 +1,35 @@
+filepath,start_line,end_line,comment,status
+src/index.ts,30,30,"// ... (Env interface and DO export remain the same)",pending
+src/index.ts,45,45,"// ... (error handling logic as implemented before)",pending
+src/index.ts,59,59,"// ... (scheduled handler remains the same)",pending
+src/domains/agents/durable-objects/job-monitor-agent.ts,17,17,"// ... (other agent methods)",pending
+src/domains/agents/durable-objects/interview-preparation-agent.ts,23,23,"// ... (onRequest and other handlers remain the same)",pending
+src/domains/jobs/services/job-storage.service.ts,7,7,"// ... (imports and existing service methods)",pending
+src/domains/jobs/services/job-storage.service.ts,10,10,"// ... (constructor, getJobs, getJob, etc.)",pending
+src/domains/jobs/services/job-processing.service.ts,124,124,"// ... (implementation remains the same)",pending
+src/domains/scraping/services/scrape-queue.service.ts,7,7,"// ... (imports and existing service methods)",pending
+src/domains/scraping/services/scrape-queue.service.ts,10,10,"// ... (constructor, enqueue, claimPending, processIntake)",pending
+src/domains/scraping/durable-objects/scrape-socket.do.ts,36,36,"// ... (sendToClients, broadcastStatus, acknowledgePing, normaliseCommand, dispatchCommand, handlePythonMessage methods remain the same)",pending
+src/domains/scraping/durable-objects/scrape-socket.do.ts,97,97,"// ... (handleObserverMessage, registerClient, and fetch methods remain the same, but I'll paste the full correct class here)",pending
+src/domains/agents/rag_agent.ts,9,9,"// ... (imports and other code)",pending
+src/domains/agents/rag_agent.ts,12,12,"// ... (constructor and other methods)",pending
+src/domains/agents/rag_agent.ts,103,103,"// ... (rest of the method)",pending
+src/domains/agents/rag_agent.ts,110,110,"// ... (other methods)",pending
+src/domains/workflows/workflow-classes/discovery-workflow.ts,5,5,"// ... (imports and other methods)",pending
+src/domains/workflows/workflow-classes/discovery-workflow.ts,8,8,"// ... (constructor, execute, etc.)",pending
+src/domains/workflows/workflow-classes/discovery-workflow.ts,36,36,"// ... (rest of the class)",pending
+src/domains/interview/models/interview.model.ts,5,5,"// ... (computeSessionSummary and other methods)",pending
+src/domains/interview/models/interview.model.ts,12,12,"// ... (existing analytics logic)",pending
+src/domains/interview/models/interview.model.ts,20,20,"// ... (rest of the analytics data)",pending
+src/domains/interview/models/interview.model.ts,55,55,"// ... (getMostCommon, computeDistribution, computeMedian)",pending
+src/domains/monitoring/services/monitoring.service.ts,39,39,"// ... (Full implementation of range, list, and step parsing)",pending
+src/domains/interview/services/interview.service.ts,5,5,"// ... (imports and InterviewSessionService remain the same)",pending
+src/domains/interview/services/interview.service.ts,8,8,"// ... (constructor and generateQuestions methods remain the same)",pending
+src/domains/interview/services/interview.service.ts,44,44,"// ... (generateTips, storeQuestion, getSessionQuestions, getSession methods remain the same)",pending
+src/domains/interview/services/interview.service.ts,52,52,"// ... (constructor and provideCoaching methods remain the same)",pending
+src/domains/interview/services/interview.service.ts,90,90,"// ... (storeFeedback and getSessionFeedback methods remain the same)",pending
+src/domains/interview/services/interview.service.ts,93,93,"// ... (InterviewAnalyticsService remains the same)",pending
+src/domains/applicants/services/applicant-storage.service.ts,192,192,"// ... (create, update, and other write methods would be included here)",pending
+src/core/services/health-check-runner.service.ts,16,16,"// ... (HealthReport and ModuleResult interfaces remain the same)",pending
+src/core/services/health-check-runner.service.ts,86,86,"// ... (saveReport implementation remains the same)",pending
+src/api/routes/health.ts,19,19,"// ... (GET handler remains the same)",pending

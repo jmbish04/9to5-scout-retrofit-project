@@ -1,20 +1,10 @@
-import type { Env } from "../../config/env";
-import { computeSHA256 } from "../../shared/utils/hash";
-
-export interface VectorMetadata {
-  document_id: number;
-  doc_type: "resume" | "cover_letter";
-  user_id: string;
-  job_id?: string | null;
-  content_sha256: string;
-  section: string;
-}
-
-export interface EmbeddingComputation {
-  cleanText: string;
-  embedding: number[];
-  hash: string;
-}
+import type { Env } from "../../../config/env";
+import { computeSHA256 } from "../../../shared/utils/hash";
+import type {
+  EmbeddingComputation,
+  VectorMetadata,
+  VectorSearchResult,
+} from "./vectorize.types";
 
 const DEFAULT_EMBEDDING_MODEL = "@cf/baai/bge-large-en-v1.5";
 
@@ -88,7 +78,7 @@ export async function searchSimilar(
   query: string,
   limit: number = 10,
   filter?: Partial<VectorMetadata>
-): Promise<Array<{ id: string; score: number; metadata: VectorMetadata }>> {
+): Promise<VectorSearchResult[]> {
   const embedding = await computeEmbedding(env, query);
   if (!embedding) {
     return [];
@@ -104,4 +94,59 @@ export async function searchSimilar(
     score: match.score,
     metadata: match.metadata as VectorMetadata,
   }));
+}
+
+/**
+ * @class VectorizeService
+ * @description Service class for Vectorize operations
+ */
+export class VectorizeService {
+  /**
+   * @method computeEmbedding
+   * @description Compute embedding for text
+   */
+  async computeEmbedding(
+    env: Env,
+    text: string
+  ): Promise<EmbeddingComputation | null> {
+    return computeEmbedding(env, text);
+  }
+
+  /**
+   * @method upsertVector
+   * @description Store or update a vector
+   */
+  async upsertVector(
+    env: Env,
+    vectorId: string,
+    embedding: number[],
+    metadata: VectorMetadata
+  ): Promise<void> {
+    return upsertVector(env, vectorId, embedding, metadata);
+  }
+
+  /**
+   * @method shouldReindex
+   * @description Check if vector should be reindexed
+   */
+  async shouldReindex(
+    env: Env,
+    vectorId: string,
+    newHash: string
+  ): Promise<boolean> {
+    return shouldReindex(env, vectorId, newHash);
+  }
+
+  /**
+   * @method searchSimilar
+   * @description Search for similar vectors
+   */
+  async searchSimilar(
+    env: Env,
+    query: string,
+    limit: number = 10,
+    filter?: Partial<VectorMetadata>
+  ): Promise<VectorSearchResult[]> {
+    return searchSimilar(env, query, limit, filter);
+  }
 }

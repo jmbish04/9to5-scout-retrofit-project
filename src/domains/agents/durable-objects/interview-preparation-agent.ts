@@ -3,8 +3,11 @@
  */
 
 import { Agent } from "agents";
+import {
+  InterviewCoachingService,
+  InterviewQuestionService,
+} from "../../interview/services/interview.service";
 import type { Env } from "../config/env/env.config";
-import { InterviewQuestionService, InterviewCoachingService } from '../services/interview.service';
 
 export class InterviewPreparationAgent extends Agent<Env, any> {
   private questionService: InterviewQuestionService;
@@ -29,10 +32,10 @@ export class InterviewPreparationAgent extends Agent<Env, any> {
     count: number = 5
   ): Promise<any[]> {
     return this.questionService.generateQuestions(this.env, {
-        sessionId,
-        questionTypes,
-        difficulty,
-        count,
+      sessionId,
+      questionTypes,
+      difficulty,
+      count,
     });
   }
 
@@ -46,10 +49,10 @@ export class InterviewPreparationAgent extends Agent<Env, any> {
     context?: any
   ): Promise<any> {
     return this.coachingService.provideCoaching(this.env, {
-        sessionId,
-        question,
-        answer,
-        context,
+      sessionId,
+      question,
+      answer,
+      context,
     });
   }
 }

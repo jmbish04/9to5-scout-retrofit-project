@@ -1,14 +1,13 @@
+import { R2Storage } from "../../../core/storage/r2";
 import {
   BrowserRenderingClient,
-  type BrowserRenderingResult,
-  type ScrapeElement,
   type AuthenticationOptions,
-  type ViewportOptions,
-  type ScreenshotOptions,
+  type BrowserRenderingResult,
   type GotoOptions,
-  type BrowserRenderingEnv,
+  type ScrapeElement,
+  type ScreenshotOptions,
+  type ViewportOptions,
 } from "./browser-rendering.service";
-import { R2Storage } from "../../../lib/r2";
 
 /**
  * Comprehensive web scraping with all content types
