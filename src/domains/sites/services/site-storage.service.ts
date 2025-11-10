@@ -8,7 +8,7 @@
 import { z } from 'zod';
 import { DuplicateError, NotFoundError, DatabaseError } from '../../../core/errors';
 import { Logger } from '../../../core/services/logger.service';
-import { Site, SiteSchema } from '../types';
+import { Site, SiteSchema } from '../models/site.schema';
 
 export interface SiteStorageEnv {
   DB: D1Database;
