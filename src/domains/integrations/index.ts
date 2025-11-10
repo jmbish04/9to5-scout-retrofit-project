@@ -60,5 +60,16 @@ export * from "./websocket/websocket.types";
 export { fastapiRoutes } from "./fastapi/fastapi.routes";
 export * from "./fastapi/fastapi.service";
 
+// Re-export Vectorize integration
+export { vectorizeRoutes } from "./vectorize/vectorize.routes";
+export * from "./vectorize/vectorize.service";
+export * from "./vectorize/vectorize.types";
+
+// Re-export RAG integration
+export { ragRoutes } from "./rag/rag.routes";
+
+// Re-export PDF integration
+export { pdfRoutes } from "./pdf/pdf.routes";
+
 // Re-export shared types
 export * from "./types/integration.types";

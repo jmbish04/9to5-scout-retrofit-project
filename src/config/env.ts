@@ -27,6 +27,7 @@ export interface Env {
   ADMIN_TOKEN?: string;
   ENABLE_LLM?: string;
   WORKER_URL: string;
+  WORKER_API_KEY?: string;
   SITE_CRAWLER: any;
   JOB_MONITOR: any;
   DISCOVERY_WORKFLOW: any;
@@ -38,9 +39,11 @@ export interface Env {
   OTP_FORWARD_EMAIL?: string;
   JOB_QUEUE?: any;
   EMAIL_PROCESSOR_AGENT?: any;
+  EMAIL_CLASSIFICATION_AGENT?: any;
   JOB_MONITOR_AGENT?: any;
   RESUME_OPTIMIZATION_AGENT?: any;
   COMPANY_INTELLIGENCE_AGENT?: any;
   INTERVIEW_PREPARATION_AGENT?: any;
   GENERIC_AGENT?: any;
+  HEALTH_CHECK_SOCKET?: any;
 }

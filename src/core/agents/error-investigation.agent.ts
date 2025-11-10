@@ -6,7 +6,7 @@
  * to provide context for its analysis.
  */
 
-import { AppError } from '../errors';
+import { ApplicationError } from '../errors';
 import { ErrorContext } from '../services/error-logging.service';
 // Import metadata from all domain error files
 import { SiteErrorMetadata } from '../../domains/sites/errors';

@@ -69,6 +69,7 @@ export {
 export { ChangeAnalysisWorkflow } from "./workflow-classes/change-analysis-workflow";
 export { DiscoveryWorkflow } from "./workflow-classes/discovery-workflow";
 export { JobMonitorWorkflow } from "./workflow-classes/job-monitor-workflow";
+export { RAGWorkflow } from "./workflow-classes/rag-workflow";
 
 // Export routes
 export { default as workflowRoutes } from "./routes/workflow.routes";

@@ -8,7 +8,8 @@
     "*.sql": "sql",
     "Dockerfile.workers": "dockerfile",
     ".dev.vars": "properties",
-    ".env.example": "properties"
+    ".env.example": "properties",
+    "*.gs": "javascript"
   },
   "typescript.preferences.includePackageJsonAutoImports": "on",
   "editor.defaultFormatter": "esbenp.prettier-vscode",

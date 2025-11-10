@@ -100,12 +100,13 @@ bindings = [
   { name = "SCRAPE_SOCKET", class_name = "ScrapeSocket" },
   { name = "HEALTH_CHECK_SOCKET", class_name = "HealthCheckSocket" },
   { name = "GENERIC_AGENT", class_name = "GenericAgent" },
-  { name = "EMAIL_PROCESSOR_AGENT", class_name = "EmailProcessorAgent" },
+  { name = "EMAIL_CLASSIFICATION_AGENT", class_name = "EmailClassificationAgent" },
   { name = "JOB_MONITOR_AGENT", class_name = "JobMonitorAgent" },
   { name = "RESUME_OPTIMIZATION_AGENT", class_name = "ResumeOptimizationAgent" },
   { name = "COMPANY_INTELLIGENCE_AGENT", class_name = "CompanyIntelligenceAgent" },
   { name = "INTERVIEW_PREPARATION_AGENT", class_name = "InterviewPreparationAgent" },
-  { name = "CAREER_COACH_AGENT", class_name = "CareerCoachAgent" }
+  { name = "CAREER_COACH_AGENT", class_name = "CareerCoachAgent" },
+  { name = "ROOM_DO", class_name = "RoomDO" }
 ]
 
 # DiscoveryWorkflow
@@ -133,13 +134,27 @@ new_sqlite_classes = [
   "SiteCrawler", 
   "JobMonitor", 
   "ScrapeSocket", 
+  "HealthCheckSocket",
   "GenericAgent", 
-  "EmailProcessorAgent", 
   "JobMonitorAgent", 
   "ResumeOptimizationAgent", 
   "CompanyIntelligenceAgent", 
   "InterviewPreparationAgent", 
   "CareerCoachAgent"
+]
+
+# Add EmailClassificationAgent in v2 migration
+[[migrations]]
+tag = "v2"
+new_sqlite_classes = [
+  "EmailClassificationAgent"
+]
+
+# Add RoomDO in v3 migration
+[[migrations]]
+tag = "v3"
+new_sqlite_classes = [
+  "RoomDO"
 ]
 
 # Triggers

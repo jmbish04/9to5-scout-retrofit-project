@@ -1,37 +1,37 @@
 /**
- * JobMonitorAgent - Autonomous job posting monitoring and analysis
- */
+ * JobMonitorAgent - Autonomous job posting monitoring and analysis
+ */
 
 import { Agent } from "agents";
+import { JobProcessingService } from "../../jobs/services/job-processing.service";
 import type { Env } from "../config/env/env.config";
-import { JobProcessingService } from '../../jobs/services/job-processing.service';
 
 export class JobMonitorAgent extends Agent<Env, any> {
-  private processingService: JobProcessingService;
+  private processingService: JobProcessingService;
 
-  constructor(state: any, env: Env) {
-    super(state, env);
-    this.processingService = new JobProcessingService(env);
-  }
+  constructor(state: any, env: Env) {
+     super(state, env);
+    this.processingService = new JobProcessingService(env);
+  }
 
-  // ... (other agent methods)
+  // ... (other agent methods)
 
-  /**
-   * Check job changes by ID
-   */
-  private async checkJobChangesById(jobId: string): Promise<any> {
-    const job = await this.processingService.storage.getJob(jobId);
-    if (!job) {
-      throw new Error(`Job ${jobId} not found`);
-    }
+  /**
+   * Check job changes by ID
+   */
+  private async checkJobChangesById(jobId: string): Promise<any> {
+    const job = await this.processingService.storage.getJob(jobId);
+    if (!job) {
+      throw new Error(`Job ${jobId} not found`);
+    }
 
-    // This now delegates to the service, which contains the real implementation
-    await this.processingService.processSingleJob(job);
+    // This now delegates to the service, which contains the real implementation
+    await this.processingService.processSingleJob(job);
 
-    return {
-      jobId,
-      hasChanges: false, // This would be determined by the processing service
-      lastChecked: new Date().toISOString(),
-    };
-  }
+    return {
+      jobId,
+      hasChanges: false, // This would be determined by the processing service
+      lastChecked: new Date().toISOString(),
+    };
+  }
 }

@@ -6,79 +6,182 @@
  * error handler, WebSocket handling, and cron triggers.
  */
 
-import router from './api/router';
-import { ErrorLoggingService, ErrorContext } from './core/services/error-logging.service';
-import { ErrorInvestigationAgent } from './core/agents/error-investigation.agent';
-import { AppError } from './core/errors';
-import { HealthCheckRunner } from './core/services/health-check-runner.service';
+import PostalMime from "postal-mime";
+import router from "./api/router";
+import healthRouter from "./router";
+import { HealthCheckSocket } from "./core/durable-objects/health-check-socket";
+import { ErrorLoggingService } from "./core/services/error-logging.service";
+import { RoomDO } from "./do/RoomDO";
+import { generateOpenAPIJSON, generateOpenAPIYAML } from "./utils/openapi";
+import { runAllTests } from "./tests/runner";
+import type { Env } from "./types";
 
-// Export all Durable Objects
-export { SiteCrawler } from './domains/scraping/durable-objects/site-crawler.do';
-export { JobMonitor } from './domains/jobs/durable-objects/job-monitor.do';
-export { ScrapeSocket } from './domains/scraping/durable-objects/scrape-socket.do';
-export { HealthCheckSocket } from './core/durable-objects/health-check-socket';
-export { GenericAgent } from './domains/agents/durable-objects/generic_agent';
-export { CareerCoachAgent } from './domains/agents/durable-objects/career-coach-agent';
-export { CompanyIntelligenceAgent } from './domains/agents/durable-objects/company-intelligence-agent';
-export { InterviewPreparationAgent } from './domains/agents/durable-objects/interview-preparation-agent';
-export { JobMonitorAgent } from './domains/agents/durable-objects/job-monitor-agent';
-export { ResumeOptimizationAgent } from './domains/agents/durable-objects/resume-optimization-agent';
+// Import Durable Objects
+import { GenericAgent } from "./domains/agents/durable-objects/generic-agent";
+import { JobMonitor } from "./domains/jobs/durable-objects/job-monitor.do";
+import { ScrapeSocket } from "./domains/scraping/durable-objects/scrape-socket.do";
+import { SiteCrawler } from "./domains/scraping/durable-objects/site-crawler.do";
+// EmailProcessorAgent is deprecated
+import { CareerCoachAgent } from "./domains/agents/durable-objects/career-coach-agent";
+import { CompanyIntelligenceAgent } from "./domains/agents/durable-objects/company-intelligence-agent";
+import { EmailClassificationAgent } from "./domains/agents/durable-objects/email-classification-agent";
+import { InterviewPreparationAgent } from "./domains/agents/durable-objects/interview-preparation-agent";
+import { JobMonitorAgent } from "./domains/agents/durable-objects/job-monitor-agent";
+import { ResumeOptimizationAgent } from "./domains/agents/durable-objects/resume-optimization-agent";
 
-// EmailProcessorAgent is commented out in the source file, so we create a stub export
-// to satisfy the wrangler.toml configuration
-export class EmailProcessorAgent {}
+// Import Workflows
+import { ChangeAnalysisWorkflow } from "./domains/workflows/workflow-classes/change-analysis-workflow";
+import { DiscoveryWorkflow } from "./domains/workflows/workflow-classes/discovery-workflow";
+import { JobMonitorWorkflow } from "./domains/workflows/workflow-classes/job-monitor-workflow";
 
-// Export all Workflows
-export { DiscoveryWorkflow } from './domains/workflows/workflow-classes/discovery-workflow';
-export { JobMonitorWorkflow } from './domains/workflows/workflow-classes/job-monitor-workflow';
-export { ChangeAnalysisWorkflow } from './domains/workflows/workflow-classes/change-analysis-workflow';
+// Export Durable Objects
+export {
+  GenericAgent,
+  HealthCheckSocket,
+  JobMonitor,
+  ScrapeSocket,
+  SiteCrawler,
+  RoomDO,
+};
+// EmailProcessorAgent is deprecated
+export {
+  CareerCoachAgent,
+  CompanyIntelligenceAgent,
+  EmailClassificationAgent,
+  InterviewPreparationAgent,
+  JobMonitorAgent,
+  ResumeOptimizationAgent,
+};
+
+// Export Workflows
+export { ChangeAnalysisWorkflow, DiscoveryWorkflow, JobMonitorWorkflow };
 
 export default {
-  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+  async fetch(
+    request: Request,
+    env: Env,
+    ctx: ExecutionContext
+  ): Promise<Response> {
     const loggingService = new ErrorLoggingService(env);
+    const url = new URL(request.url);
+    
     try {
-      // Delegate all routing to the Hono app
+      // OpenAPI endpoints
+      if (url.pathname === '/openapi.json') {
+        const baseUrl = `${url.protocol}//${url.host}`;
+        const json = generateOpenAPIJSON(baseUrl);
+        return new Response(json, {
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
+
+      if (url.pathname === '/openapi.yaml') {
+        const baseUrl = `${url.protocol}//${url.host}`;
+        const yaml = generateOpenAPIYAML(baseUrl);
+        return new Response(yaml, {
+          headers: { 'Content-Type': 'application/yaml' },
+        });
+      }
+
+      // WebSocket routing
+      if (url.pathname === '/ws' || url.pathname.startsWith('/ws/')) {
+        const roomId = url.searchParams.get('room') || 'default';
+        const id = env.ROOM_DO.idFromName(roomId);
+        const stub = env.ROOM_DO.get(id);
+        return stub.fetch(request);
+      }
+
+      // Health & Test routes
+      if (url.pathname.startsWith('/api/tests') || 
+          url.pathname === '/api/health' ||
+          url.pathname.startsWith('/rpc') ||
+          url.pathname.startsWith('/mcp')) {
+        return healthRouter.fetch(request, env, ctx);
+      }
+
+      // Static assets and health.html convenience route
+      if (url.pathname === '/health' || url.pathname === '/health.html') {
+        if (env.ASSETS) {
+          return env.ASSETS.fetch(new Request(new URL('/health.html', url.origin), request));
+        }
+      }
+
+      // Delegate all other routing to the main Hono app
       return await router.fetch(request, env, ctx);
     } catch (error: unknown) {
       // --- GLOBAL ERROR HANDLING ---
       if (error instanceof Error) {
-        const errorContext: ErrorContext = {
-          timestamp: new Date().toISOString(),
-          url: request.url,
-          method: request.method,
-          userAgent: request.headers.get('user-agent') || 'unknown',
-          errorType: error.name,
-          errorMessage: error.message,
-          stack: error.stack,
-          isAppError: error instanceof AppError,
-        };
-
-        // Log the error
-        await loggingService.logError(errorContext);
-
-        // If it's an AppError, return the appropriate status code
-        if (error instanceof AppError) {
-          return new Response(JSON.stringify(error.toJSON()), {
-            status: error.statusCode,
-            headers: { 'Content-Type': 'application/json' },
-          });
-        }
-
-        // For unknown errors, trigger the Error Investigation Agent
-        try {
-          const agent = new ErrorInvestigationAgent(env);
-          await agent.investigate(errorContext);
-        } catch (agentError) {
-          console.error('Error Investigation Agent failed:', agentError);
-        }
+        console.error("Global error handler caught:", error);
+        // Log error using the logging service
+        await loggingService.logError(error, {
+          request: {
+            url: request.url,
+            method: request.method,
+            headers: Object.fromEntries(Array.from(request.headers as any)),
+          },
+        });
       }
-      return new Response(JSON.stringify({ error: 'An unexpected error occurred' }), { status: 500 });
+      return new Response(
+        JSON.stringify({ error: "An unexpected error occurred" }),
+        { status: 500 }
+      );
     }
   },
 
-  async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
-    // Run health checks
-    const healthCheckRunner = new HealthCheckRunner(env);
-    await healthCheckRunner.runScheduledHealthChecks(ctx);
+  async scheduled(
+    event: ScheduledEvent,
+    env: Env,
+    ctx: ExecutionContext
+  ): Promise<void> {
+    // Run health tests on cron schedule
+    if (event.cron === '*/15 * * * *') {
+      ctx.waitUntil(
+        runAllTests(env).catch((error) => {
+          console.error('Scheduled test run failed:', error);
+        })
+      );
+    }
+  },
+
+  async email(
+    message: EmailMessage,
+    env: Env,
+    ctx: ExecutionContext
+  ): Promise<void> {
+    try {
+      const parser = new (PostalMime as any).default();
+      const arrayBuf = await new Response((message as any).raw).arrayBuffer();
+      const parsed = await parser.parse(arrayBuf);
+
+      const id = crypto.randomUUID();
+      const timestamp = new Date().toISOString();
+
+      ctx.waitUntil(
+        env.DB.prepare(
+          `INSERT INTO worker_request_logs (
+            id, timestamp, endpoint, method, source, request_body, response_code, processing_time_ms
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+        )
+          .bind(
+            id,
+            timestamp,
+            "email",
+            "EMAIL",
+            parsed.from?.address ?? "unknown",
+            JSON.stringify({
+              subject: parsed.subject,
+              to: parsed.to,
+              from: parsed.from,
+              cc: parsed.cc,
+              date: parsed.date,
+            }),
+            202,
+            0
+          )
+          .run()
+      );
+    } catch (err) {
+      console.error("Email handler error:", err);
+    }
   },
 };

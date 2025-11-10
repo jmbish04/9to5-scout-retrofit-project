@@ -21,6 +21,7 @@
     "migrate:local": "pnpm dlx wrangler@latest d1 migrations apply DB --local",
     "migrate:remote": "pnpm dlx wrangler@latest d1 migrations apply DB --remote",
     "deploy": "pnpm build && pnpm migrate:remote && pnpm dlx wrangler@latest deploy",
+    "deploy:dry-run": "pnpm build && pnpm dlx wrangler@latest deploy --dry-run",
     "test": "pnpm exec vitest",
     "test:python": "cd python-node/JobSpy && python -m pytest tests/ -v",
     "test:python:unit": "cd python-node/JobSpy && python -m pytest tests/unit/ -v",
@@ -53,7 +54,11 @@
     "clean": "rm -rf dist/ .wrangler/ node_modules/.cache/",
     "clean:all": "pnpm clean && rm -rf node_modules/ python-node/JobSpy/__pycache__/ python-node/JobSpy/.pytest_cache/",
     "secret:bulk": "pnpm dlx wrangler@latest secret bulk .dev.vars",
-    "pr": "python3 scripts/create_pr.py"
+    "pr": "python3 scripts/create_pr.py",
+    "appscript:push": "cd appsscript_fwd_emails && pnpm dlx @google/clasp push",
+    "appscript:pull": "cd appsscript_fwd_emails && pnpm dlx @google/clasp pull",
+    "appscript:deploy": "cd appsscript_fwd_emails && pnpm dlx @google/clasp deploy",
+    "appscript:open": "cd appsscript_fwd_emails && pnpm dlx @google/clasp open"
   },
   "devDependencies": {
     "@cloudflare/puppeteer": "^1.0.4",
