@@ -4,23 +4,23 @@
  * Defines custom errors and AI diagnostic metadata specific to the 'sites' domain.
  */
 
-import { AppError, NotFoundError } from '../../../core/errors';
+import { DuplicateError, NotFoundError } from '../../../core/errors';
 
 /**
  * Thrown when a site cannot be found in the database.
  */
 export class SiteNotFoundError extends NotFoundError {
   constructor(siteId: string) {
-    super(`Site with ID '${siteId}' was not found.`);
+    super('Site', siteId);
   }
 }
 
 /**
  * Thrown when attempting to create a site that already exists (e.g., same base_url).
  */
-export class DuplicateSiteError extends AppError {
+export class DuplicateSiteError extends DuplicateError {
   constructor(baseUrl: string) {
-    super(`A site with the URL '${baseUrl}' already exists.`, 409, 'DUPLICATE_SITE_ERROR');
+    super('Site', 'base_url', baseUrl);
   }
 }
 
