@@ -345,7 +345,7 @@ T:   	  };
 /**
  * Get all sites with optional filtering.
  */
-export async function getSites(env: SiteStorageEnv, options: any = {}): Promise<Site[]> {
+export async function getSites(env: SiteStorageEnv, options: Parameters<SiteStorageService['getSites']>[0] = {}): Promise<Site[]> {
   const service = new SiteStorageService(env);
   return service.getSites(options);
 }
