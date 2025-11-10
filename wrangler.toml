@@ -105,7 +105,8 @@ bindings = [
   { name = "RESUME_OPTIMIZATION_AGENT", class_name = "ResumeOptimizationAgent" },
   { name = "COMPANY_INTELLIGENCE_AGENT", class_name = "CompanyIntelligenceAgent" },
   { name = "INTERVIEW_PREPARATION_AGENT", class_name = "InterviewPreparationAgent" },
-  { name = "CAREER_COACH_AGENT", class_name = "CareerCoachAgent" }
+  { name = "CAREER_COACH_AGENT", class_name = "CareerCoachAgent" },
+  { name = "ROOM_DO", class_name = "RoomDO" }
 ]
 
 # DiscoveryWorkflow
@@ -147,6 +148,13 @@ new_sqlite_classes = [
 tag = "v2"
 new_sqlite_classes = [
   "EmailClassificationAgent"
+]
+
+# Add RoomDO in v3 migration
+[[migrations]]
+tag = "v3"
+new_sqlite_classes = [
+  "RoomDO"
 ]
 
 # Triggers

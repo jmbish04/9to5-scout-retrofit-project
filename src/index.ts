@@ -8,8 +8,13 @@
 
 import PostalMime from "postal-mime";
 import router from "./api/router";
+import healthRouter from "./router";
 import { HealthCheckSocket } from "./core/durable-objects/health-check-socket";
 import { ErrorLoggingService } from "./core/services/error-logging.service";
+import { RoomDO } from "./do/RoomDO";
+import { generateOpenAPIJSON, generateOpenAPIYAML } from "./utils/openapi";
+import { runAllTests } from "./tests/runner";
+import type { Env } from "./types";
 
 // Import Durable Objects
 import { GenericAgent } from "./domains/agents/durable-objects/generic-agent";
@@ -36,6 +41,7 @@ export {
   JobMonitor,
   ScrapeSocket,
   SiteCrawler,
+  RoomDO,
 };
 // EmailProcessorAgent is deprecated
 export {
@@ -57,8 +63,50 @@ export default {
     ctx: ExecutionContext
   ): Promise<Response> {
     const loggingService = new ErrorLoggingService(env);
+    const url = new URL(request.url);
+    
     try {
-      // Delegate all routing to the Hono app
+      // OpenAPI endpoints
+      if (url.pathname === '/openapi.json') {
+        const baseUrl = `${url.protocol}//${url.host}`;
+        const json = generateOpenAPIJSON(baseUrl);
+        return new Response(json, {
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
+
+      if (url.pathname === '/openapi.yaml') {
+        const baseUrl = `${url.protocol}//${url.host}`;
+        const yaml = generateOpenAPIYAML(baseUrl);
+        return new Response(yaml, {
+          headers: { 'Content-Type': 'application/yaml' },
+        });
+      }
+
+      // WebSocket routing
+      if (url.pathname === '/ws' || url.pathname.startsWith('/ws/')) {
+        const roomId = url.searchParams.get('room') || 'default';
+        const id = env.ROOM_DO.idFromName(roomId);
+        const stub = env.ROOM_DO.get(id);
+        return stub.fetch(request);
+      }
+
+      // Health & Test routes
+      if (url.pathname.startsWith('/api/tests') || 
+          url.pathname === '/api/health' ||
+          url.pathname.startsWith('/rpc') ||
+          url.pathname.startsWith('/mcp')) {
+        return healthRouter.fetch(request, env, ctx);
+      }
+
+      // Static assets and health.html convenience route
+      if (url.pathname === '/health' || url.pathname === '/health.html') {
+        if (env.ASSETS) {
+          return env.ASSETS.fetch(new Request(new URL('/health.html', url.origin), request));
+        }
+      }
+
+      // Delegate all other routing to the main Hono app
       return await router.fetch(request, env, ctx);
     } catch (error: unknown) {
       // --- GLOBAL ERROR HANDLING ---
@@ -85,7 +133,14 @@ export default {
     env: Env,
     ctx: ExecutionContext
   ): Promise<void> {
-    // ... (scheduled handler remains the same)
+    // Run health tests on cron schedule
+    if (event.cron === '*/15 * * * *') {
+      ctx.waitUntil(
+        runAllTests(env).catch((error) => {
+          console.error('Scheduled test run failed:', error);
+        })
+      );
+    }
   },
 
   async email(
