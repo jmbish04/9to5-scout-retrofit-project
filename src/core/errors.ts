@@ -86,3 +86,8 @@ export class DuplicateError extends ApplicationError {
     super(`${resource} with ${field} '${value}' already exists`, "DUPLICATE_RESOURCE", 409, { resource, field, value });
   }
 }
+
+/**
+ * Alias for ApplicationError for backward compatibility.
+ */
+export { ApplicationError as AppError };

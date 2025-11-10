@@ -4,7 +4,7 @@
 
 import { Agent } from "agents";
 import type { Env } from "../config/env/env.config";
-import { InterviewQuestionService, InterviewCoachingService } from '../services/interview.service';
+import { InterviewQuestionService, InterviewCoachingService } from '../../interview/services/interview.service';
 
 export class InterviewPreparationAgent extends Agent<Env, any> {
   private questionService: InterviewQuestionService;
