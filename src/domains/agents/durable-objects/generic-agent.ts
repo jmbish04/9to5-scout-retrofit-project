@@ -241,7 +241,7 @@ export class GenericAgent extends Agent<Env, AgentState> {
     `);
 
     const result = await stmt.bind(agentName).first();
-    return result as AgentConfig | null;
+    return (result as unknown) as AgentConfig | null;
   }
 
   // Get all available agents

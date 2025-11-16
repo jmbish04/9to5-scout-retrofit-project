@@ -15,6 +15,7 @@ import {
 } from "../models/stats.model";
 import type {
   CompanyStats,
+  ParsedSnapshot,
   RollupOptions,
   StatsComputationResult,
   StatsContext,
@@ -104,7 +105,9 @@ export class StatsComputationService {
         continue;
       }
 
-      const stats = StatsComputationModel.computeStats(parsedSnapshots);
+      const stats = StatsComputationModel.computeStats(
+        parsedSnapshots.filter((s): s is ParsedSnapshot => s !== null)
+      );
       processed += 1;
 
       if (options.dryRun) {
@@ -398,7 +401,9 @@ export class StatsReportingService {
    */
   async exportData(
     env: StatsEnv,
-    options: { format: "json" | "csv"; includeRawData?: boolean } = {}
+    options: { format: "json" | "csv"; includeRawData?: boolean } = {
+      format: "json",
+    }
   ): Promise<any> {
     const query = options.includeRawData
       ? `SELECT * FROM benefits_stats ORDER BY computed_at DESC`

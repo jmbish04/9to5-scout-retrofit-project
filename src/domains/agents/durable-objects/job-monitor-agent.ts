@@ -3,8 +3,9 @@
  */
 
 import { Agent } from "agents";
+import type { Env } from "../../../config/env";
 import { JobProcessingService } from "../../jobs/services/job-processing.service";
-import type { Env } from "../config/env/env.config";
+import type { Job } from "../../jobs/types";
 
 export class JobMonitorAgent extends Agent<Env, any> {
   private processingService: JobProcessingService;
@@ -20,18 +21,28 @@ export class JobMonitorAgent extends Agent<Env, any> {
    * Check job changes by ID
    */
   private async checkJobChangesById(jobId: string): Promise<any> {
-    const job = await this.processingService.storage.getJob(jobId);
-    if (!job) {
-      throw new Error(`Job ${jobId} not found`);
+    // Query job directly from database
+    const jobResult = (await this.env.DB.prepare(
+      "SELECT * FROM jobs WHERE id = ?1"
+    )
+      .bind(jobId)
+      .first()) as Job | null;
+
+    if (!jobResult || !jobResult.url) {
+      throw new Error(`Job ${jobId} not found or missing URL`);
     }
 
-    // This now delegates to the service, which contains the real implementation
-    await this.processingService.processSingleJob(job);
+    // Use the public performJobStatusCheck method instead of private processSingleJob
+    const result = await this.processingService.performJobStatusCheck(
+      jobId,
+      jobResult.url
+    );
 
     return {
       jobId,
-      hasChanges: false, // This would be determined by the processing service
-      lastChecked: new Date().toISOString(),
+      hasChanges: result.status !== "job_active", // Determine changes based on status
+      lastChecked: result.last_check,
+      status: result.status,
     };
   }
 }

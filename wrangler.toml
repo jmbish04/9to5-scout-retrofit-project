@@ -105,7 +105,8 @@ bindings = [
   { name = "RESUME_OPTIMIZATION_AGENT", class_name = "ResumeOptimizationAgent" },
   { name = "COMPANY_INTELLIGENCE_AGENT", class_name = "CompanyIntelligenceAgent" },
   { name = "INTERVIEW_PREPARATION_AGENT", class_name = "InterviewPreparationAgent" },
-  { name = "CAREER_COACH_AGENT", class_name = "CareerCoachAgent" }
+  { name = "CAREER_COACH_AGENT", class_name = "CareerCoachAgent" },
+  { name = "ROOM_DO", class_name = "RoomDO" }
 ]
 
 # DiscoveryWorkflow
@@ -125,6 +126,12 @@ class_name = "JobMonitorWorkflow"
 name = "change-analysis-workflow"
 binding = "CHANGE_ANALYSIS_WORKFLOW"
 class_name = "ChangeAnalysisWorkflow"
+
+# CompanyCareersScrapingWorkflow
+[[workflows]]
+name = "company-careers-scraping-workflow"
+binding = "COMPANY_CAREERS_SCRAPING_WORKFLOW"
+class_name = "CompanyCareersScrapingWorkflow"
 
 # All Durable Object classes in a single migration
 [[migrations]]
@@ -147,6 +154,13 @@ new_sqlite_classes = [
 tag = "v2"
 new_sqlite_classes = [
   "EmailClassificationAgent"
+]
+
+# Add RoomDO in v3 migration
+[[migrations]]
+tag = "v3"
+new_sqlite_classes = [
+  "RoomDO"
 ]
 
 # Triggers

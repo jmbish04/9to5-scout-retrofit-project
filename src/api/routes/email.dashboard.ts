@@ -84,7 +84,7 @@ app.get("/dashboard", async (c) => {
       subject: string;
     }> = [];
 
-    for (const log of (allLogs || [])) {
+    for (const log of allLogs || []) {
       try {
         const requestBody = JSON.parse((log.request_body as string) || "{}");
         // Try to parse response body, but handle cases where it might not be stored
@@ -147,7 +147,7 @@ app.get("/dashboard", async (c) => {
         jobRelated: last24HoursJobRelated,
         notJobRelated: last24HoursNotJobRelated,
       },
-      recentRuns: (recentRuns || []).map((run) => ({
+      recentRuns: (recentRuns || []).map((run: any) => ({
         id: run.id as string,
         timestamp: run.timestamp as string,
         script_name: run.script_name as string,
@@ -174,4 +174,3 @@ app.get("/dashboard", async (c) => {
 });
 
 export default app;
-

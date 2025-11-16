@@ -67,8 +67,11 @@ export class EmailReportingService {
 
       // 2. Calculate metrics
       const stats = { submitted: 0, responded: 0, rejected: 0 };
-      (results as any[]).forEach((row) => {
-        stats[row.status] = row.count;
+      (results as any[]).forEach((row: any) => {
+        const status = row.status as keyof typeof stats;
+        if (status in stats) {
+          stats[status] = row.count;
+        }
       });
       const total = stats.submitted + stats.responded + stats.rejected;
       const responseRate = total > 0 ? (stats.responded / total) * 100 : 0;

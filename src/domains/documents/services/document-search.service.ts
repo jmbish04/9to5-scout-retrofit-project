@@ -1,9 +1,9 @@
-import type { Env } from "../../../lib/env";
-import { computeEmbedding } from "../../../lib/vectorize";
+import type { Env } from "../../../config/env";
+import { computeEmbedding } from "../../integrations/vectorize";
 import type {
+  DocumentSearchMatch,
   DocumentSearchResponse,
   VectorSearchRequest,
-  DocumentSearchMatch,
 } from "../types/documents.types";
 
 export async function searchApplicantDocuments(

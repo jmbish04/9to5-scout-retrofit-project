@@ -133,7 +133,7 @@ app.post("/chunk", async (c) => {
 
     return c.json({
       success: true,
-      chunks: chunks.length,
+      chunkCount: chunks.length,
       textLength: text.length,
       chunks: chunks,
     });
@@ -203,4 +203,3 @@ app.get("/health", async (c) => {
 });
 
 export default app;
-

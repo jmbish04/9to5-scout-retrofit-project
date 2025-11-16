@@ -6,10 +6,9 @@
  * to provide context for its analysis.
  */
 
-import { ApplicationError } from '../errors';
-import { ErrorContext } from '../services/error-logging.service';
+import { ErrorContext } from "../services/error-logging.service";
 // Import metadata from all domain error files
-import { SiteErrorMetadata } from '../../domains/sites/errors';
+import { SiteErrorMetadata } from "../../domains/sites/errors";
 // ... import other domain error metadata as they are created
 
 interface AgentEnv {
@@ -32,7 +31,7 @@ export class ErrorInvestigationAgent {
     this.env = env;
     this.agent = new GenericAgent({
       ai: env.AI,
-      model: '@cf/meta/llama-3.1-8b-instruct',
+      model: "@cf/meta/llama-3.1-8b-instruct",
       prompt: this.getSystemPrompt(),
       tools: [this.createGitHubTool()],
     });
@@ -54,28 +53,30 @@ export class ErrorInvestigationAgent {
 
   private createGitHubTool(): Tool {
     return {
-      name: 'getGitHubFileContent',
-      description: 'Reads the content of a file from the GitHub repository.',
+      name: "getGitHubFileContent",
+      description: "Reads the content of a file from the GitHub repository.",
       parameters: {
-        type: 'object',
+        type: "object",
         properties: {
           filePath: {
-            type: 'string',
-            description: 'The full path to the file from the repository root (e.g., "src/new/domains/sites/services/site-storage.service.ts").',
+            type: "string",
+            description:
+              'The full path to the file from the repository root (e.g., "src/new/domains/sites/services/site-storage.service.ts").',
           },
         },
-        required: ['filePath'],
+        required: ["filePath"],
       },
       handler: async ({ filePath }: { filePath: string }) => {
-        const { GITHUB_API_TOKEN, GITHUB_REPO_OWNER, GITHUB_REPO_NAME } = this.env;
+        const { GITHUB_API_TOKEN, GITHUB_REPO_OWNER, GITHUB_REPO_NAME } =
+          this.env;
         const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/contents/${filePath}`;
 
         try {
           const response = await fetch(url, {
             headers: {
-              'Authorization': `Bearer ${GITHUB_API_TOKEN}`,
-              'Accept': 'application/vnd.github.v3.raw',
-              'User-Agent': '9to5-Scout-Error-Agent',
+              Authorization: `Bearer ${GITHUB_API_TOKEN}`,
+              Accept: "application/vnd.github.v3.raw",
+              "User-Agent": "9to5-Scout-Error-Agent",
             },
           });
 
@@ -84,7 +85,9 @@ export class ErrorInvestigationAgent {
           }
           return await response.text();
         } catch (error) {
-          return `Error: Exception while fetching file from GitHub: ${(error as Error).message}`;
+          return `Error: Exception while fetching file from GitHub: ${
+            (error as Error).message
+          }`;
         }
       },
     };
@@ -93,13 +96,17 @@ export class ErrorInvestigationAgent {
   private findErrorMetadata(error: Error): object | null {
     // In a real app, this would be a more sophisticated lookup.
     // For now, we'll just use the SiteErrorMetadata as an example.
-    if (error.message.includes('sites')) { // Simple heuristic
-        return SiteErrorMetadata['DatabaseError: sites'];
+    if (error.message.includes("sites")) {
+      // Simple heuristic
+      return SiteErrorMetadata["DatabaseError: sites"];
     }
     return null;
   }
 
-  async investigate(error: Error, context: ErrorContext): Promise<InvestigationResult> {
+  async investigate(
+    error: Error,
+    context: ErrorContext
+  ): Promise<InvestigationResult> {
     const metadata = this.findErrorMetadata(error);
 
     const userPrompt = `
@@ -127,6 +134,14 @@ export class ErrorInvestigationAgent {
 // Dummy classes for compilation until the actual SDK is integrated
 class GenericAgent {
   constructor(options: any) {}
-  async run(prompt: string): Promise<string> { return this.agent.run(userPrompt); }
+  async run(prompt: string): Promise<string> {
+    // Placeholder implementation - return a simple response
+    return `Processed prompt: ${prompt}`;
+  }
 }
-interface Tool { name: string; description: string; parameters: object; handler: (args: any) => Promise<string>; }
+interface Tool {
+  name: string;
+  description: string;
+  parameters: object;
+  handler: (args: any) => Promise<string>;
+}

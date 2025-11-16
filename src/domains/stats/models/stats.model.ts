@@ -116,7 +116,7 @@ export class StatsComputationModel {
 
     // Check for standout retirement benefits
     const match = latest.retirement?.match_percent;
-    if (Number.isFinite(match) && match >= 6) {
+    if (Number.isFinite(match) && match !== undefined && match >= 6) {
       highlights.standout.push({
         type: "retirement",
         message: "401k match >= 6%",
@@ -126,7 +126,7 @@ export class StatsComputationModel {
 
     // Check for standout parental leave
     const parental = latest.time_off?.parental_leave_weeks;
-    if (Number.isFinite(parental) && parental >= 16) {
+    if (Number.isFinite(parental) && parental !== undefined && parental >= 16) {
       highlights.standout.push({
         type: "family",
         message: "Parental leave 16+ weeks",
@@ -136,7 +136,7 @@ export class StatsComputationModel {
 
     // Check for work-from-anywhere flexibility
     const wfa = latest.work_model?.work_from_anywhere_weeks;
-    if (Number.isFinite(wfa) && wfa >= 4) {
+    if (Number.isFinite(wfa) && wfa !== undefined && wfa >= 4) {
       highlights.standout.push({
         type: "flexibility",
         message: "Work-from-anywhere 4+ weeks",
@@ -146,7 +146,7 @@ export class StatsComputationModel {
 
     // Check for generous PTO
     const pto = latest.time_off?.pto_days;
-    if (Number.isFinite(pto) && pto >= 25) {
+    if (Number.isFinite(pto) && pto !== undefined && pto >= 25) {
       highlights.standout.push({
         type: "time_off",
         message: "25+ PTO days",
@@ -265,8 +265,10 @@ export class StatsComputationModel {
     // Calculate base salary from range
     const baseRange = latest.compensation?.base_range;
     const baseCandidates: number[] = [];
-    if (Number.isFinite(baseRange?.min)) baseCandidates.push(baseRange.min!);
-    if (Number.isFinite(baseRange?.max)) baseCandidates.push(baseRange.max!);
+    if (baseRange && Number.isFinite(baseRange.min))
+      baseCandidates.push(baseRange.min);
+    if (baseRange && Number.isFinite(baseRange.max))
+      baseCandidates.push(baseRange.max);
     const averageBase = this.avg(baseCandidates) || 120000;
     const dailyRate = averageBase / 260;
 

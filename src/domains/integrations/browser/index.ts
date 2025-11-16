@@ -11,10 +11,14 @@
  */
 
 // Basic Browser Rendering Service
-export { BrowserRenderingService } from "./browser-rendering.service";
+export {
+  BrowserRenderingClient,
+  createBrowserRenderingClient,
+} from "./browser-rendering.service";
 export type {
   BrowserRenderingEnv,
   BrowserRenderingResponse,
+  BrowserRenderingResult,
 } from "./browser-rendering.service";
 export type { ViewportOptions } from "./browser.types";
 

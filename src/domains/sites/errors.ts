@@ -4,14 +4,14 @@
  * Defines custom errors and AI diagnostic metadata specific to the 'sites' domain.
  */
 
-import { DuplicateError, NotFoundError } from '../../../core/errors';
+import { DuplicateError, NotFoundError } from "../../../core/errors";
 
 /**
  * Thrown when a site cannot be found in the database.
  */
 export class SiteNotFoundError extends NotFoundError {
   constructor(siteId: string) {
-    super('Site', siteId);
+    super("Site", siteId);
   }
 }
 
@@ -20,7 +20,7 @@ export class SiteNotFoundError extends NotFoundError {
  */
 export class DuplicateSiteError extends DuplicateError {
   constructor(baseUrl: string) {
-    super('Site', 'base_url', baseUrl);
+    super("Site", "base_url", baseUrl);
   }
 }
 
@@ -30,12 +30,11 @@ export class DuplicateSiteError extends DuplicateError {
  * related to the sites domain.
  */
 export const SiteErrorMetadata = {
-  'DatabaseError: sites': {
-    description: 'A critical database error occurred during an operation on the sites table.',
-    severity: 'critical',
-    relevantFiles: [
-      'src/new/domains/sites/services/site-storage.service.ts'
-    ],
-    keywords: ['sites', 'SELECT', 'INSERT', 'UPDATE', 'DELETE', 'D1Database']
-  }
+  "DatabaseError: sites": {
+    description:
+      "A critical database error occurred during an operation on the sites table.",
+    severity: "critical",
+    relevantFiles: ["src/new/domains/sites/services/site-storage.service.ts"],
+    keywords: ["sites", "SELECT", "INSERT", "UPDATE", "DELETE", "D1Database"],
+  },
 };

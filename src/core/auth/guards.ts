@@ -5,7 +5,7 @@ export function isPythonClient(info: { type: string }): boolean {
 export function hasActivePythonClient(clients: Map<WebSocket, { type: string; lastPing: number }>): boolean {
   const now = Date.now();
   const CLIENT_TIMEOUT_MS = 60_000;
-  for (const [, info] of clients) {
+  for (const [, info] of Array.from(clients.entries())) {
     if (isPythonClient(info) && now - info.lastPing < CLIENT_TIMEOUT_MS) {
       return true;
     }

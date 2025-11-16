@@ -44,7 +44,10 @@ export class ValidationError extends ApplicationError {
  */
 export class NotFoundError extends ApplicationError {
   constructor(resource: string, id: string) {
-    super(`${resource} with id '${id}' not found`, "NOT_FOUND", 404, { resource, id });
+    super(`${resource} with id '${id}' not found`, "NOT_FOUND", 404, {
+      resource,
+      id,
+    });
   }
 }
 
@@ -65,7 +68,12 @@ export class DatabaseError extends ApplicationError {
  */
 export class ExternalServiceError extends ApplicationError {
   constructor(service: string, message: string, statusCode: number = 502) {
-    super(`${service} error: ${message}`, "EXTERNAL_SERVICE_ERROR", statusCode, { service });
+    super(
+      `${service} error: ${message}`,
+      "EXTERNAL_SERVICE_ERROR",
+      statusCode,
+      { service }
+    );
   }
 }
 
@@ -83,6 +91,24 @@ export class RateLimitError extends ApplicationError {
  */
 export class DuplicateError extends ApplicationError {
   constructor(resource: string, field: string, value: string) {
-    super(`${resource} with ${field} '${value}' already exists`, "DUPLICATE_RESOURCE", 409, { resource, field, value });
+    super(
+      `${resource} with ${field} '${value}' already exists`,
+      "DUPLICATE_RESOURCE",
+      409,
+      { resource, field, value }
+    );
+  }
+}
+
+/**
+ * For errors during AI-powered data extraction operations (500).
+ */
+export class AIExtractionError extends ApplicationError {
+  constructor(message: string, operation?: string, originalError?: Error) {
+    super(message, "AI_EXTRACTION_ERROR", 500, {
+      operation,
+      originalError: originalError?.message,
+      stack: originalError?.stack,
+    });
   }
 }

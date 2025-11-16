@@ -9,12 +9,6 @@
  * 5. Routes the task based on its classification (e.g., sends job alerts to a queue).
  */
 
-import type { ForwardableEmailMessage } from "@cloudflare/workers-types";
-import { Agent } from "agents";
-import PostalMime from "postal-mime";
-import { v4 as uuidv4 } from "uuid";
-import type { Env } from "../config/env/env.config";
-
 // ====================================================================================
 // TYPE DEFINITIONS
 // ====================================================================================

@@ -19,7 +19,7 @@ import {
   rateLimit,
   validateBody,
 } from "../../../core/validation/hono-validation";
-import { createBrowserRenderingService } from "./browser-rendering.service";
+import { createBrowserRenderingClient } from "./browser-rendering.service";
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -398,7 +398,7 @@ const ComprehensiveScrapeRequestSchema = z.object({
 app.post("/screenshot", validateBody(ScreenshotRequestSchema), async (c) => {
   try {
     const { options } = getValidatedBody(c);
-    const service = createBrowserRenderingService(c.env);
+    const service = createBrowserRenderingClient(c.env);
     const screenshot = await service.takeScreenshot(options as any);
 
     // Convert ArrayBuffer to base64 for JSON response
@@ -431,7 +431,7 @@ app.post("/screenshot", validateBody(ScreenshotRequestSchema), async (c) => {
 app.post("/content", validateBody(ContentRequestSchema), async (c) => {
   try {
     const { options } = getValidatedBody(c);
-    const service = createBrowserRenderingService(c.env);
+    const service = createBrowserRenderingClient(c.env);
     const content = await service.getContent(options as any);
 
     return c.json({
@@ -458,7 +458,7 @@ app.post("/content", validateBody(ContentRequestSchema), async (c) => {
 app.post("/pdf", validateBody(PdfRequestSchema), async (c) => {
   try {
     const { options } = getValidatedBody(c);
-    const service = createBrowserRenderingService(c.env);
+    const service = createBrowserRenderingClient(c.env);
     const pdf = await service.generatePdf(options as any);
 
     // Convert ArrayBuffer to base64 for JSON response
@@ -488,7 +488,7 @@ app.post("/pdf", validateBody(PdfRequestSchema), async (c) => {
 app.post("/scrape", validateBody(ScrapeRequestSchema), async (c) => {
   try {
     const { options, elements } = getValidatedBody(c);
-    const service = createBrowserRenderingService(c.env);
+    const service = createBrowserRenderingClient(c.env);
     const results = await service.scrapeElements({
       ...options,
       elements,
@@ -518,7 +518,7 @@ app.post("/scrape", validateBody(ScrapeRequestSchema), async (c) => {
 app.post("/markdown", validateBody(MarkdownRequestSchema), async (c) => {
   try {
     const { options } = getValidatedBody(c);
-    const service = createBrowserRenderingService(c.env);
+    const service = createBrowserRenderingClient(c.env);
     const markdown = await service.extractMarkdown(options as any);
 
     return c.json({
@@ -545,7 +545,7 @@ app.post("/markdown", validateBody(MarkdownRequestSchema), async (c) => {
 app.post("/json", validateBody(JsonRequestSchema), async (c) => {
   try {
     const { options, prompt, responseFormat } = getValidatedBody(c);
-    const service = createBrowserRenderingService(c.env);
+    const service = createBrowserRenderingClient(c.env);
     const jsonData = await service.extractJson({
       ...options,
       prompt,
@@ -575,7 +575,7 @@ app.post("/json", validateBody(JsonRequestSchema), async (c) => {
 app.post("/links", validateBody(LinksRequestSchema), async (c) => {
   try {
     const { options } = getValidatedBody(c);
-    const service = createBrowserRenderingService(c.env);
+    const service = createBrowserRenderingClient(c.env);
     const links = await service.getLinks(options as any);
 
     return c.json({
@@ -602,7 +602,7 @@ app.post("/links", validateBody(LinksRequestSchema), async (c) => {
 app.post("/snapshot", validateBody(SnapshotRequestSchema), async (c) => {
   try {
     const { options } = getValidatedBody(c);
-    const service = createBrowserRenderingService(c.env);
+    const service = createBrowserRenderingClient(c.env);
     const snapshot = await service.takeSnapshot(options as any);
 
     return c.json({
@@ -655,7 +655,7 @@ app.post(
         siteId,
       } = getValidatedBody(c);
 
-      const service = createBrowserRenderingService(c.env);
+      const service = createBrowserRenderingClient(c.env);
 
       // Perform comprehensive scraping
       const result = await service.scrapeWebpage(url, {

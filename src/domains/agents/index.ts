@@ -12,14 +12,14 @@
  */
 
 // Agent Classes
-export { CareerCoachAgent } from "./career-coach-agent";
-export { CompanyIntelligenceAgent } from "./company-intelligence-agent";
-export { EmailProcessorAgent } from "./email-processor-agent";
-export { GenericAgent } from "./generic_agent";
-export { InterviewPreparationAgent } from "./interview-preparation-agent";
-export { JobMonitorAgent } from "./job-monitor-agent";
-export { RAGAgent } from "./rag_agent";
-export { ResumeOptimizationAgent } from "./resume-optimization-agent";
+export { CareerCoachAgent } from "./durable-objects/career-coach-agent";
+export { CompanyIntelligenceAgent } from "./durable-objects/company-intelligence-agent";
+export { EmailProcessorAgent } from "./durable-objects/email-processor-agent";
+export { GenericAgent } from "./durable-objects/generic_agent";
+export { InterviewPreparationAgent } from "./durable-objects/interview-preparation-agent";
+export { JobMonitorAgent } from "./durable-objects/job-monitor-agent";
+export { RAGAgent } from "./durable-objects/rag_agent";
+export { ResumeOptimizationAgent } from "./durable-objects/resume-optimization-agent";
 
 // Agent Routes
 export { agentRoutes } from "./routes/agent";

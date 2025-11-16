@@ -4,7 +4,7 @@
  * Zod schemas and TypeScript types for the 'documents' domain.
  */
 
-import { z } from 'zod';
+import { z } from "zod";
 
 // Schema for the request body when generating a cover letter
 export const CoverLetterRequestSchema = z.object({
@@ -42,3 +42,28 @@ export const ResumeContentSchema = z.object({
   skills: z.array(z.string()),
 });
 export type ResumeContent = z.infer<typeof ResumeContentSchema>;
+
+// Input for document generation
+export const DocumentGenerationInputSchema = z.object({
+  doc_type: z.enum(["resume", "cover_letter"]),
+  job_id: z.string(),
+  user_id: z.string(),
+});
+export type DocumentGenerationInput = z.infer<
+  typeof DocumentGenerationInputSchema
+>;
+
+// Document with parsed sections
+export const ApplicantDocumentWithSectionsSchema = z.object({
+  id: z.string(),
+  user_id: z.string(),
+  doc_type: z.string(),
+  title: z.string(),
+  content: z.string(),
+  sections: z.any(), // JSON object of parsed sections
+  created_at: z.string(),
+  updated_at: z.string(),
+});
+export type ApplicantDocumentWithSections = z.infer<
+  typeof ApplicantDocumentWithSectionsSchema
+>;

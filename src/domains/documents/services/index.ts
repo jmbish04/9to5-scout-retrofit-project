@@ -6,21 +6,18 @@
 
 export {
   DocumentStorageService,
-  createDocumentStorageService,
+  type DocumentStorageEnv,
 } from "./document-storage.service";
 
-export {
-  DocumentSearchService,
-  createDocumentSearchService,
-} from "./document-search.service";
+export { searchApplicantDocuments } from "./document-search.service";
 
 export {
   DocumentGenerationService,
-  createDocumentGenerationService,
+  type AiEnv,
 } from "./document-generation.service";
 
 export {
   DocumentProcessingService,
-  createDocumentProcessingService,
-  type ApplyPatchResult,
+  type DocumentPatch,
+  type ProcessingEnv,
 } from "./document-processing.service";

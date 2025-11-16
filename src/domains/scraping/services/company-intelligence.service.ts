@@ -4,11 +4,16 @@
  * Service for retrieving and analyzing company data, benefits, and statistics.
  */
 
-import { z } from 'zod';
-import { CompanyWithStats, CompanyWithStatsSchema, BenefitsSnapshot, BenefitsSnapshotSchema } from '../types';
+import { z } from "zod";
+import {
+  BenefitsSnapshot,
+  BenefitsSnapshotSchema,
+  CompanyWithStats,
+  CompanyWithStatsSchema,
+} from "../types";
 
 export interface CompanyEnv {
-  DB: D1Database;
+  DB: any; // D1Database type from Cloudflare Workers
 }
 
 export class CompanyIntelligenceService {
@@ -21,7 +26,11 @@ export class CompanyIntelligenceService {
   /**
    * Get a list of companies with their latest stats.
    */
-  async getCompanies(options: { limit?: number; offset?: number; query?: string }): Promise<CompanyWithStats[]> {
+  async getCompanies(options: {
+    limit?: number;
+    offset?: number;
+    query?: string;
+  }): Promise<CompanyWithStats[]> {
     const { limit = 25, offset = 0, query } = options;
 
     let sql = `SELECT c.*, (SELECT json_group_object(...) FROM benefits_stats s ...) AS latest_stats FROM companies c`;
@@ -34,17 +43,24 @@ export class CompanyIntelligenceService {
     sql += " ORDER BY c.updated_at DESC LIMIT ? OFFSET ?";
     params.push(limit, offset);
 
-    const { results } = await this.env.DB.prepare(sql).bind(...params).all();
+    const { results } = await this.env.DB.prepare(sql)
+      .bind(...params)
+      .all();
     return z.array(CompanyWithStatsSchema).parse(results || []);
   }
 
   /**
    * Get benefits snapshots for a specific company.
    */
-  async getCompanyBenefits(companyId: string, limit: number = 10): Promise<BenefitsSnapshot[]> {
+  async getCompanyBenefits(
+    companyId: string,
+    limit: number = 10
+  ): Promise<BenefitsSnapshot[]> {
     const { results } = await this.env.DB.prepare(
       `SELECT * FROM company_benefits_snapshots WHERE company_id = ? ORDER BY extracted_at DESC LIMIT ?`
-    ).bind(companyId, limit).all();
+    )
+      .bind(companyId, limit)
+      .all();
     return z.array(BenefitsSnapshotSchema).parse(results || []);
   }
 

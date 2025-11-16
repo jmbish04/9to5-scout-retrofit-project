@@ -21,7 +21,7 @@ export class ChangeAnalysisWorkflow {
     const startTime = Date.now();
     const steps = [];
     const errors = [];
-    const warnings = [];
+    const warnings: string[] = [];
 
     try {
       // Step 1: Validate job and content
@@ -98,7 +98,7 @@ export class ChangeAnalysisWorkflow {
           resources_used: {
             content_length_old: config.old_content.length,
             content_length_new: config.new_content.length,
-            analysis_depth: config.analysis_depth,
+            analysis_depth: config.analysis_depth || 1,
           },
         },
       };
@@ -234,7 +234,7 @@ export class ChangeAnalysisWorkflow {
 
     for (const pattern of patterns) {
       const match = content.match(pattern);
-      if (match) {
+      if (match && match[1]) {
         return match[1].trim();
       }
     }
@@ -254,7 +254,7 @@ export class ChangeAnalysisWorkflow {
 
     for (const pattern of patterns) {
       const match = content.match(pattern);
-      if (match) {
+      if (match && match[1]) {
         return match[1].trim();
       }
     }
@@ -274,7 +274,7 @@ export class ChangeAnalysisWorkflow {
 
     for (const pattern of patterns) {
       const match = content.match(pattern);
-      if (match) {
+      if (match && match[1]) {
         return match[1].trim();
       }
     }
@@ -294,7 +294,7 @@ export class ChangeAnalysisWorkflow {
 
     for (const pattern of patterns) {
       const match = content.match(pattern);
-      if (match) {
+      if (match && match[1]) {
         return match[1].trim();
       }
     }
@@ -344,7 +344,7 @@ export class ChangeAnalysisWorkflow {
 
     for (const pattern of patterns) {
       const match = content.match(pattern);
-      if (match) {
+      if (match && match[1]) {
         return match[1].trim();
       }
     }

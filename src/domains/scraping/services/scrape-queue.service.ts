@@ -6,8 +6,43 @@
 
 // ... (imports and existing service methods)
 
+export interface ScrapeQueueEnv {
+  DB: any; // D1Database type from Cloudflare Workers
+}
+
 export class ScrapeQueueService {
-  // ... (constructor, enqueue, claimPending, processIntake)
+  private env: ScrapeQueueEnv;
+
+  constructor(env: ScrapeQueueEnv) {
+    this.env = env;
+  }
+
+  /**
+   * Add a job to the scraping queue.
+   */
+  async enqueue(jobData: any): Promise<any> {
+    const { job_url, source, source_id, metadata } = jobData;
+
+    const { meta } = await this.env.DB.prepare(
+      `INSERT INTO scrape_queue (url, site_id, status, priority, created_at, source)
+       VALUES (?, ?, ?, ?, ?, ?)`
+    )
+      .bind(
+        job_url,
+        source_id || "unknown",
+        "pending",
+        0,
+        new Date().toISOString(),
+        source || "unknown"
+      )
+      .run();
+
+    return {
+      id: meta.last_row_id,
+      url: job_url,
+      status: "queued",
+    };
+  }
 
   /**
    * Records the details of a scraped job and updates the queue status.
@@ -19,25 +54,34 @@ export class ScrapeQueueService {
     const { meta } = await this.env.DB.prepare(
       `INSERT INTO scraped_job_details (queue_id, job_url, source, company, title, raw_payload)
        VALUES (?, ?, ?, ?, ?, ?)`
-    ).bind(
-      queueId,
-      details.job_url,
-      details.source,
-      details.company,
-      details.title,
-      JSON.stringify(details)
-    ).run();
+    )
+      .bind(
+        queueId,
+        details.job_url,
+        details.source,
+        details.company,
+        details.title,
+        JSON.stringify(details)
+      )
+      .run();
 
     const insertedId = meta.last_row_id;
 
     if (queueId) {
-      const nextStatus = (status === 'failed' || status === 'error') ? 'failed' : 'completed';
+      const nextStatus =
+        status === "failed" || status === "error" ? "failed" : "completed";
       await this.env.DB.prepare(
         `UPDATE scrape_queue SET status = ?, error_message = ? WHERE id = ?`
-      ).bind(nextStatus, errorMessage, queueId).run();
+      )
+        .bind(nextStatus, errorMessage, queueId)
+        .run();
     }
 
-    return await this.env.DB.prepare("SELECT * FROM scraped_job_details WHERE id = ?").bind(insertedId).first();
+    return await this.env.DB.prepare(
+      "SELECT * FROM scraped_job_details WHERE id = ?"
+    )
+      .bind(insertedId)
+      .first();
   }
 
   async submitUrlsForScraping(submission: {
@@ -60,10 +104,14 @@ export class ScrapeQueueService {
           metadata: JSON.stringify(metadata),
         });
         processedCount++;
-        results.push({ url, status: 'success' });
+        results.push({ url, status: "success" });
       } catch (error) {
         failedCount++;
-        results.push({ url, status: 'failed', error: error.message });
+        results.push({
+          url,
+          status: "failed",
+          error: error instanceof Error ? error.message : String(error),
+        });
       }
     }
 

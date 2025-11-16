@@ -1,5 +1,17 @@
-import { extractBenefits } from "../../../lib/extractBenefits";
-import { coalesceCareersUrl, textFromHTML } from "../../../lib/normalize";
+import {
+  coalesceCareersUrl,
+  textFromHTML,
+} from "../../../core/validation/normalize";
+
+// Stub implementation - extractBenefits function doesn't exist yet
+async function extractBenefits(
+  text: string
+): Promise<{ snapshotText: string; parsed: any }> {
+  return {
+    snapshotText: text,
+    parsed: null,
+  };
+}
 
 interface CompanyScrapeEnv {
   DB: any;

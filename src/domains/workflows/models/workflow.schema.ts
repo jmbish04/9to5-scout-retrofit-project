@@ -56,7 +56,7 @@ export const WorkflowMetricsSchema = z.object({
 // Workflow result schema
 export const WorkflowResultSchema = z.object({
   success: z.boolean(),
-  data: z.record(z.unknown()).optional(),
+  data: z.record(z.string(), z.unknown()).optional(),
   errors: z.array(z.string()).optional(),
   warnings: z.array(z.string()).optional(),
   metrics: WorkflowMetricsSchema.optional(),
@@ -70,7 +70,7 @@ export const WorkflowStepSchema = z.object({
   started_at: z.string().datetime().optional(),
   completed_at: z.string().datetime().optional(),
   error: z.string().optional(),
-  result: z.record(z.unknown()).optional(),
+  result: z.record(z.string(), z.unknown()).optional(),
   retry_count: z.number().int().min(0),
   max_retries: z.number().int().min(0),
 });
@@ -100,7 +100,7 @@ export const DiscoveryWorkflowConfigSchema = WorkflowConfigSchema.extend({
   max_pages: z.number().int().min(1).max(10000).optional(),
   delay_between_requests_ms: z.number().int().min(0).max(10000).optional(),
   respect_robots_txt: z.boolean().optional(),
-  custom_selectors: z.record(z.string()).optional(),
+  custom_selectors: z.record(z.string(), z.unknown()).optional(),
 });
 
 // Job monitor workflow config schema
@@ -131,7 +131,7 @@ export const WorkflowExecutionSchema = z.object({
   started_at: z.string().datetime(),
   completed_at: z.string().datetime().optional(),
   error: z.string().optional(),
-  result: z.record(z.unknown()).optional(),
+  result: z.record(z.string(), z.unknown()).optional(),
   retry_count: z.number().int().min(0),
   execution_time_ms: z.number().int().min(0).optional(),
 });
@@ -143,7 +143,7 @@ export const WorkflowLogSchema = z.object({
   step_id: z.string().uuid().optional(),
   level: z.enum(["debug", "info", "warn", "error"]),
   message: z.string().min(1),
-  data: z.record(z.unknown()).optional(),
+  data: z.record(z.string(), z.unknown()).optional(),
   timestamp: z.string().datetime(),
 });
 
@@ -191,7 +191,7 @@ export const UpdateWorkflowRequestSchema = z.object({
 export const WorkflowStepRequestSchema = z.object({
   workflow_instance_id: z.string().uuid(),
   step_name: z.string().min(1),
-  config: z.record(z.unknown()).optional(),
+  config: z.record(z.string(), z.unknown()).optional(),
 });
 
 export const WorkflowLogRequestSchema = z.object({

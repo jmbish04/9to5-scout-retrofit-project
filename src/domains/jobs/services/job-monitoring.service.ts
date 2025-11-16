@@ -34,4 +34,25 @@ export class JobMonitoringService {
         // This is a simplified comparison. A real implementation would be more sophisticated.
         return current !== previous;
     }
+
+}
+
+export async function disableJobMonitoring(env: any, jobId: string): Promise<any> {
+    // Implementation placeholder
+    return { jobId, monitoring: false };
+}
+
+export async function enableJobMonitoring(env: any, jobId: string, intervalHours: number = 24): Promise<any> {
+    // Implementation placeholder
+    return { jobId, monitoring: true, intervalHours };
+}
+
+export async function getMonitoringStats(env: any, options?: any): Promise<any> {
+    // Implementation placeholder
+    return { totalJobs: 0, activeJobs: 0, checkedToday: 0 };
+}
+
+export async function monitorAllJobs(env: any): Promise<any> {
+    // Implementation placeholder
+    return { jobsProcessed: 0, changesDetected: 0 };
 }

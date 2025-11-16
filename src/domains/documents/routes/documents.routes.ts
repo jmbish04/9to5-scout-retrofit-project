@@ -23,10 +23,10 @@ import {
   UpdateDocumentRequestSchema,
 } from "../models/document.schema";
 import {
-  createDocumentGenerationService,
-  createDocumentProcessingService,
-  createDocumentSearchService,
-  createDocumentStorageService,
+  DocumentGenerationService,
+  DocumentProcessingService,
+  DocumentStorageService,
+  searchApplicantDocuments,
 } from "../services";
 
 const app = new Hono<{ Bindings: Env }>();
@@ -45,7 +45,7 @@ app.use("*", rateLimit({ requests: 100, windowMs: 60000 }) as any);
 app.post("/", validateBody(CreateDocumentRequestSchema), async (c) => {
   try {
     const documentData = getValidatedBody(c);
-    const storageService = createDocumentStorageService(c.env);
+    const storageService = new DocumentStorageService(c.env as any);
     const document = await storageService.createDocument(documentData);
 
     return c.json(
@@ -82,7 +82,7 @@ app.get(
   async (c) => {
     try {
       const { id } = getValidatedParams(c) as { id: number };
-      const storageService = createDocumentStorageService(c.env);
+      const storageService = new DocumentStorageService(c.env as any);
       const document = await storageService.getDocument(id);
 
       if (!document) {
@@ -130,7 +130,7 @@ app.put(
     try {
       const { id } = getValidatedParams(c) as { id: number };
       const updateData = getValidatedBody(c);
-      const storageService = createDocumentStorageService(c.env);
+      const storageService = new DocumentStorageService(c.env as any);
       const document = await storageService.updateDocument(id, updateData);
 
       if (!document) {
@@ -177,7 +177,7 @@ app.delete(
   async (c) => {
     try {
       const { id } = getValidatedParams(c) as { id: number };
-      const storageService = createDocumentStorageService(c.env);
+      const storageService = new DocumentStorageService(c.env as any);
       await storageService.deleteDocument(id);
 
       return c.json({
@@ -227,7 +227,7 @@ app.get("/", async (c) => {
       );
     }
 
-    const storageService = createDocumentStorageService(c.env);
+    const storageService = new DocumentStorageService(c.env as any);
     const result = await storageService.listDocuments(
       userId,
       docType,
@@ -265,7 +265,7 @@ app.get("/", async (c) => {
 app.post("/search", validateBody(DocumentSearchRequestSchema), async (c) => {
   try {
     const searchParams = getValidatedBody(c);
-    const searchService = createDocumentSearchService(c.env);
+    const searchService = searchApplicantDocuments;
     const results = await searchService.searchDocuments(searchParams);
 
     return c.json({
@@ -298,7 +298,7 @@ app.post(
   async (c) => {
     try {
       const generationParams = getValidatedBody(c);
-      const generationService = createDocumentGenerationService(c.env);
+      const generationService = new DocumentGenerationService(c.env as any);
       const document = await generationService.generateDocumentForJob(
         generationParams
       );
@@ -353,7 +353,7 @@ app.post(
         );
       }
 
-      const searchService = createDocumentSearchService(c.env);
+      const searchService = searchApplicantDocuments;
       const evaluation = await searchService.evaluateDocumentAgainstJob(
         id,
         job_id
@@ -405,7 +405,7 @@ app.post(
         );
       }
 
-      const processingService = createDocumentProcessingService(c.env);
+      const processingService = new DocumentProcessingService(c.env as any);
       const result = await processingService.applyDocumentPatches(id, patches);
 
       return c.json({
@@ -439,7 +439,7 @@ app.get(
   async (c) => {
     try {
       const { id } = getValidatedParams(c) as { id: number };
-      const processingService = createDocumentProcessingService(c.env);
+      const processingService = new DocumentProcessingService(c.env as any);
       const status = await processingService.getProcessingStatus(id);
 
       if (!status) {
@@ -482,7 +482,7 @@ app.get(
 app.get("/templates", async (c) => {
   try {
     const docType = c.req.query("doc_type");
-    const generationService = createDocumentGenerationService(c.env);
+    const generationService = new DocumentGenerationService(c.env as any);
     const templates = await generationService.getDocumentTemplates(docType);
 
     return c.json({
@@ -523,7 +523,7 @@ app.post("/from-template", async (c) => {
       );
     }
 
-    const generationService = createDocumentGenerationService(c.env);
+    const generationService = new DocumentGenerationService(c.env as any);
     const document = await generationService.createDocumentFromTemplate(
       template_id,
       user_id,

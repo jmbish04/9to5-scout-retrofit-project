@@ -14,10 +14,13 @@
  * WebSocket service environment interface
  */
 export interface WebSocketServiceEnv {
-  DB: D1Database;
-  SCRAPE_QUEUE: Queue;
-  USAGE_TRACKER: KVNamespace;
+  DB: any; // D1Database
+  SCRAPE_QUEUE: any; // Queue
+  USAGE_TRACKER: any; // KVNamespace
 }
+
+// Cloudflare Workers type declarations
+declare const WebSocketPair: any;
 
 /**
  * WebSocket message types
@@ -153,7 +156,8 @@ export class WebSocketService {
 
       // Create WebSocket pair
       const webSocketPair = new WebSocketPair();
-      const [client, server] = Object.values(webSocketPair);
+      const client = webSocketPair[0];
+      const server = webSocketPair[1];
 
       // Accept WebSocket connection
       server.accept();
@@ -202,7 +206,7 @@ export class WebSocketService {
       return new Response(null, {
         status: 101,
         webSocket: client,
-      });
+      } as any);
     } catch (error) {
       console.error("Error handling WebSocket upgrade:", error);
       return new Response("WebSocket upgrade failed", { status: 500 });
@@ -441,7 +445,7 @@ export class WebSocketService {
    * @param userId Optional user ID filter
    */
   broadcastMessage(message: WebSocketMessage, userId?: string): void {
-    for (const [connectionId, connection] of this.connections) {
+    for (const [connectionId, connection] of Array.from(this.connections)) {
       if (!userId || connection.user_id === userId) {
         this.sendMessage(connectionId, message);
       }
@@ -486,7 +490,7 @@ export class WebSocketService {
    * Close all connections
    */
   closeAllConnections(): void {
-    for (const [connectionId, connection] of this.connections) {
+    for (const [connectionId, connection] of Array.from(this.connections)) {
       try {
         connection.socket.close();
       } catch (error) {
