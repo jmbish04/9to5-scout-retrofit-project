@@ -76,7 +76,7 @@ You must provide either `url` or `html`:
 If you have raw HTML you want to generate a PDF from, use the `html` option. You can still apply custom styles using the `addStyleTag` parameter.
 
 ```bash
-curl -X POST https://api.cloudflare.com/client/v4/accounts/<acccountID>/browser-rendering/pdf \
+curl -X POST https://api.cloudflare.com/client/v4/accounts/<accountID>/browser-rendering/pdf \
   -H 'Authorization: Bearer <apiToken>' \
   -H 'Content-Type: application/json' \
   -d '{
