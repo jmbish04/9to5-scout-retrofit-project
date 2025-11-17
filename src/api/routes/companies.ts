@@ -12,7 +12,7 @@ const companies = new Hono();
 // Company CRUD operations
 companies.get("/", async (c) => {
   try {
-    const service = new CompanyService(c.env as any);
+    const service = new CompanyService(c.env);
     const { limit, offset, query } = c.req.query();
     const result = await service.getCompanies({
       limit: limit ? parseInt(limit) : 25,
