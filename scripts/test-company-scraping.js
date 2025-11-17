@@ -5,7 +5,7 @@
  * Usage: node scripts/test-company-scraping.js
  */
 
-const BASE_URL = process.env.WORKER_URL || 'https://9to5-scout.hacolby.workers.dev';
+const BASE_URL = process.env.BASE_URL || 'http://localhost:8787';
 
 async function testCompanyAPI() {
   console.log('🧪 Testing Company API endpoints...\n');
