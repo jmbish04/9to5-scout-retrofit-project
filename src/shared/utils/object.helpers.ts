@@ -101,7 +101,7 @@ export class ObjectUtils {
     if (!this.isObject(obj) || !path) return defaultValue;
 
     const keys = path.split(".");
-    let current = obj;
+    let current: any = obj;
 
     for (const key of keys) {
       if (
@@ -111,7 +111,11 @@ export class ObjectUtils {
       ) {
         return defaultValue;
       }
-      current = current[key];
+      const next = (current as Record<string, any>)[key];
+      if (next === undefined) {
+        return defaultValue;
+      }
+      current = next;
     }
 
     return current !== undefined ? current : defaultValue;
@@ -128,19 +132,24 @@ export class ObjectUtils {
     if (!this.isObject(obj) || !path) return obj;
 
     const keys = path.split(".");
-    const result = { ...obj };
-    let current = result;
+    const result = { ...obj } as any;
+    let current: any = result;
 
     for (let i = 0; i < keys.length - 1; i++) {
       const key = keys[i];
-      if (!this.isObject(current[key])) {
-        current[key] = {};
+      if (key) {
+        if (!this.isObject(current[key])) {
+          current[key] = {};
+        }
+        current = current[key];
       }
-      current = current[key];
     }
 
-    current[keys[keys.length - 1]] = value;
-    return result;
+    const lastKey = keys[keys.length - 1];
+    if (lastKey) {
+      current[lastKey] = value;
+    }
+    return result as T;
   }
 
   /**
@@ -153,13 +162,17 @@ export class ObjectUtils {
     if (!this.isObject(obj) || !path) return false;
 
     const keys = path.split(".");
-    let current = obj;
+    let current: any = obj;
 
     for (const key of keys) {
       if (!this.isObject(current) || !(key in current)) {
         return false;
       }
-      current = current[key];
+      const next = (current as Record<string, any>)[key];
+      if (next === undefined) {
+        return false;
+      }
+      current = next;
     }
 
     return true;

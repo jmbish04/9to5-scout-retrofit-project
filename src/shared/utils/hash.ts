@@ -26,12 +26,15 @@ export interface HashOptions {
  * @param data - The input data.
  * @returns A Uint8Array representation of the data.
  */
-function normalizeInput(data: InputData): Uint8Array {
+function normalizeInput(data: InputData): Uint8Array<ArrayBuffer> {
   if (typeof data === "string") {
     return new TextEncoder().encode(data);
   }
-  // If it's an ArrayBuffer, convert it. If it's already a Uint8Array, this is a no-op.
-  return new Uint8Array(data);
+  // If it's already a Uint8Array, return it as is. Otherwise, create one from ArrayBuffer.
+  if (data instanceof Uint8Array) {
+    return data as Uint8Array<ArrayBuffer>;
+  }
+  return new Uint8Array(data) as Uint8Array<ArrayBuffer>;
 }
 
 /**
@@ -39,8 +42,9 @@ function normalizeInput(data: InputData): Uint8Array {
  * @param buffer - The buffer to convert.
  * @returns A hex string.
  */
-function bufferToHex(buffer: ArrayBuffer): string {
-  return [...new Uint8Array(buffer)]
+function bufferToHex(buffer: ArrayBuffer | Uint8Array): string {
+  const bytes = buffer instanceof Uint8Array ? buffer : new Uint8Array(buffer);
+  return [...bytes]
     .map((b) => b.toString(16).padStart(2, "0"))
     .join("");
 }
@@ -141,6 +145,32 @@ export function generateSecureRandomString(length: number = 32): string {
 }
 
 /**
+ * Timing-safe comparison of two buffers.
+ * @param a - First buffer.
+ * @param b - Second buffer.
+ * @returns True if buffers are equal.
+ */
+function timingSafeEqual(a: ArrayBuffer, b: ArrayBuffer): boolean {
+  const aBytes = new Uint8Array(a);
+  const bBytes = new Uint8Array(b);
+  
+  if (aBytes.length !== bBytes.length) {
+    return false;
+  }
+  
+  let result = 0;
+  for (let i = 0; i < aBytes.length; i++) {
+    const aByte = aBytes[i];
+    const bByte = bBytes[i];
+    if (aByte !== undefined && bByte !== undefined) {
+      result |= aByte ^ bByte;
+    }
+  }
+  
+  return result === 0;
+}
+
+/**
  * Securely verifies data integrity using a timing-safe hash comparison.
  *
  * @param data - The data to verify.
@@ -148,7 +178,7 @@ export function generateSecureRandomString(length: number = 32): string {
  * @param algorithm - The hash algorithm to use (default: 'SHA-256').
  * @returns Promise that resolves to true if the hash matches.
  *
- * @description Protects against timing attacks by using `crypto.subtle.timingSafeEqual`.
+ * @description Protects against timing attacks by using a timing-safe comparison.
  *
  * @example
  * ```typescript
@@ -172,7 +202,7 @@ export async function verifyHash(
       return false;
     }
 
-    return crypto.subtle.timingSafeEqual(
+    return timingSafeEqual(
       computedHashBuffer,
       expectedHashBuffer
     );
