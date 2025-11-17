@@ -12,7 +12,7 @@
 import { Hono } from "hono";
 import { z } from "zod";
 import { ResponseUtils } from "../../shared/utils/response.utils";
-import type { CareerCoachAgentEnv } from "./career-coach-agent";
+import type { CareerCoachAgentEnv } from "./durable-objects/career-coach-agent";
 
 /**
  * Request validation schemas

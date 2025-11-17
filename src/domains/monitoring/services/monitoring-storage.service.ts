@@ -1,4 +1,14 @@
-import type { Run, SearchConfig } from "../../../lib/types";
+import type { SearchConfig } from "../../../shared/types/common.types";
+
+// Define Run interface based on usage in the file
+export interface Run {
+  id: string;
+  status: string;
+  started_at: string;
+  finished_at?: string;
+  duration_ms?: number;
+  results?: any[];
+}
 
 export interface StorageEnv {
   DB: D1Database;

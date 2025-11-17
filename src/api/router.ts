@@ -8,6 +8,7 @@
 import { Hono } from "hono";
 import type { Env } from "../config/env";
 import appscript from "./routes/appscript.routes";
+import companies from "./routes/companies";
 import documents from "./routes/documents";
 import email from "./routes/email";
 import { handleHealthGet, handleHealthPost } from "./routes/health";
@@ -22,6 +23,7 @@ app.get("/api/health", (c) => handleHealthGet(c.env as any));
 app.post("/api/health", (c) => handleHealthPost(c.env as any));
 
 // --- Domain Routes ---
+app.route("/api/companies", companies);
 app.route("/api/sites", sites);
 app.route("/api/jobs", jobs);
 app.route("/api/documents", documents);

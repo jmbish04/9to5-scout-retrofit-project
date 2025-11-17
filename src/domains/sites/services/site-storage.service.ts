@@ -105,7 +105,7 @@ export class SiteStorageService {
         .run();
 
       this.logger.info("Successfully created site", { siteId: id });
-      return id;
+s      return id;
   	} catch (error) {
       this.logger.error("Failed to create site", error as Error, { baseUrl: payload.base_url });
       if (error instanceof DuplicateError) throw error;
@@ -118,43 +118,43 @@ export class SiteStorageService {
    */
   async updateSite(id: string, updates: Partial<Site>): Promise<Site> {
   	try {
-  	  const existingSite = await this.getSiteById(id);
-  	  if (!existingSite) {
+  	  const existingSite = await this.getSiteById(id);
+  	  if (!existingSite) {
   	    throw new NotFoundError("Site", id);
-  	  }
+  	  }
 
-  	  const fields: string[] = [];
-  	  const values: any[] = [];
+  	  const fields: string[] = [];
+  	  const values: any[] = [];
 
-  	  // Dynamically build the SET clause for the SQL query
-  	  for (const [key, value] of Object.entries(updates)) {
+  	  // Dynamically build the SET clause for the SQL query
+  	  for (const [key, value] of Object.entries(updates)) {
   	    if (value !== undefined && key !== 'id') {
-  	      fields.push(`${key} = ?`);
-  	      values.push(value);
+  	      fields.push(`${key} = ?`);
+  	      values.push(value);
   	    }
-  	  }
+  	  }
 
-  	  if (fields.length === 0) {
+  	  if (fields.length === 0) {
   	    return existingSite; // No updates to perform
-  	  }
+  	  }
 
-  	  values.push(id);
+  	  values.push(id);
 
-  	  await this.env.DB.prepare(
+  	  await this.env.DB.prepare(
   	    `UPDATE sites SET ${fields.join(', ')}, updated_at = datetime('now') WHERE id = ?`
-  	  )
+A  	  )
   	    .bind(...values)
   	    .run();
 
-  	  const updatedSite = await this.getSiteById(id);
-  	  if (!updatedSite) {
+  	  const updatedSite = await this.getSiteById(id);
+  	  if (!updatedSite) {
   	    throw new DatabaseError('Failed to update site: could not retrieve after update.');
-  	  }
-  	  return updatedSite;
+  	  }
+  	  return updatedSite;
   	} catch (error) {
-  	  this.logger.error("Failed to update site", error as Error, { siteId: id });
-  	  if (error instanceof NotFoundError) throw error;
-  	  throw new DatabaseError("Failed to update site", error as Error);
+  	  this.logger.error("Failed to update site", error as Error, { siteId: id });
+IT:   	  if (error instanceof NotFoundError) throw error;
+  	  throw new DatabaseError("Failed to update site", error as Error);
   	}
   }
 
@@ -163,18 +163,18 @@ export class SiteStorageService {
    */
   async deleteSite(id: string): Promise<boolean> {
   	try {
-  	  const result = await this.env.DB.prepare('DELETE FROM sites WHERE id = ?1')
+  	  const result = await this.env.DB.prepare('DELETE FROM sites WHERE id = ?1')
   	    .bind(id)
   	    .run();
 
-  	  if (result.meta.changes === 0) {
+  	  if (result.meta.changes === 0) {
   	    return false;
-  	  }
-  	  this.logger.info("Successfully deleted site", { siteId: id });
-  	  return true;
+  	  }
+  	  this.logger.info("Successfully deleted site", { siteId: id });
+  	  return true;
   	} catch (error) {
-  	  this.logger.error("Failed to delete site", error as Error, { siteId: id });
-  	  throw new DatabaseError("Failed to delete site", error as Error);
+  	  this.logger.error("Failed to delete site", error as Error, { siteId: id });
+  	  throw new DatabaseError("Failed to delete site", error as Error);
   	}
   }
 
@@ -183,33 +183,33 @@ export class SiteStorageService {
    */
   async searchSites(params: SiteSearchParams): Promise<SiteSearchResult> {
   	try {
-  	  const { query, limit = 20, offset = 0, page = 1 } = params;
-  	  const searchQuery = `%${query}%`;
-  	  const result = await this.env.DB.prepare(
+  	  const { query, limit = 20, offset = 0, page = 1 } = params;
+  	  const searchQuery = `%${query}%`;
+  	  const result = await this.env.DB.prepare(
   	    'SELECT * FROM sites WHERE name LIKE ?1 OR base_url LIKE ?1 ORDER BY name LIMIT ?2 OFFSET ?3'
-  	  )
+  	  )
   	    .bind(searchQuery, limit, offset)
   	    .all<any>();
 
-  	  const totalResult = await this.env.DB.prepare(
+  	  const totalResult = await this.env.DB.prepare(
   	    'SELECT COUNT(*) as count FROM sites WHERE name LIKE ?1 OR base_url LIKE ?1'
-  	  )
+  	  )
   	    .bind(searchQuery)
   	    .first<{ count: number }>();
 
-  	  const total = totalResult?.count || 0;
+  	  const total = totalResult?.count || 0;
 
-  	  return {
+  	  return {
   	    sites: result.results || [],
   	    total,
   	    page,
   	   	limit,
   	   	has_more: offset + limit < total,
   	   	next_offset: offset + limit < total ? offset + limit : undefined,
-  	  };
+  	  };
   	} catch (error) {
-  	  this.logger.error("Failed to search sites", error as Error);
-  	  throw new DatabaseError("Failed to search sites", error as Error);
+  	  this.logger.error("Failed to search sites", error as Error);
+  	  throw new DatabaseError("Failed to search sites", error as Error);
   	}
   }
 
@@ -218,19 +218,19 @@ export class SiteStorageService {
   	*/
   async getSitesForDiscovery(limit: number = 10): Promise<Site[]> {
   	try {
-  	  const result = await this.env.DB.prepare(
+  	  const result = await this.env.DB.prepare(
   	    `SELECT * FROM sites
   	      WHERE (last_discovered_at IS NULL OR datetime(last_discovered_at, '+1 day') <= datetime('now'))
          AND status = 'active'
   	      ORDER BY last_discovered_at ASC NULLS FIRST
   	      LIMIT ?1`
-  	  )
+  	  )
   	    .bind(limit)
   	    .all<Site>();
-  	  return result.results || [];
+  	  return result.results || [];
   	} catch (error) {
-  	  this.logger.error("Failed to get sites for discovery", error as Error);
-  	  throw new DatabaseError("Failed to get sites for discovery", error as Error);
+  	  this.logger.error("Failed to get sites for discovery", error as Error);
+  	  throw new DatabaseError("Failed to get sites for discovery", error as Error);
   	}
   }
 
@@ -239,16 +239,16 @@ export class SiteStorageService {
    */
   async getSiteStatistics(id: string): Promise<SiteStatistics> {
   	try {
-  	  const site = await this.getSiteById(id);
-  	  if (!site) {
+  	  const site = await this.getSiteById(id);
+  	  if (!site) {
   	    throw new NotFoundError("Site", id);
-  	  }
+  	  }
 
-  	  const jobsResult = await this.env.DB.prepare(
+  	  const jobsResult = await this.env.DB.prepare(
   	    'SELECT COUNT(*) as count FROM jobs WHERE site_id = ?1'
-  	  ).bind(id).first<{ count: number }>();
+  	  ).bind(id).first<{ count: number }>();
 
-  	  return {
+  	  return {
   	    site_id: id,
   	   	site_name: site.name,
   	   	total_jobs_discovered: jobsResult?.count || 0,
@@ -258,13 +258,13 @@ export class SiteStorageService {
   	   	avg_jobs_per_run: 0,
   	   	success_rate: 100,
   	   	avg_response_time: 0,
-  	   	discovery_frequency_hours: 24,
+  . 	   	discovery_frequency_hours: 24,
   	   	consecutive_failures: 0,
-  	  };
+  	  };
   	} catch (error) {
-  	  this.logger.error("Failed to get site statistics", error as Error, { siteId: id });
-  	  if (error instanceof NotFoundError) throw error;
-  	  throw new DatabaseError("Failed to get site statistics", error as Error);
+  	  this.logger.error("Failed to get site statistics", error as Error, { siteId: id });
+  	  if (error instanceof NotFoundError) throw error;
+  	  throw new DatabaseError("Failed to get site statistics", error as Error);
   	}
   }
 
@@ -273,46 +273,46 @@ export class SiteStorageService {
    */
   async performSiteHealthCheck(id: string): Promise<SiteHealthCheck> {
   	try {
-  	  const site = await this.getSiteById(id);
-  	  if (!site) {
+  	  const site = await this.getSiteById(id);
+  	  if (!site) {
   	    throw new NotFoundError("Site", id);
-  	  }
+  	  }
 
-  	  const startTime = Date.now();
-  	  let response: Response | null = null;
-  	  let isAccessible = false;
-  	  let httpStatus: number | undefined;
-  	  let errorMessage: string | undefined;
+  	  const startTime = Date.now();
+  	  let response: Response | null = null;
+  	  let isAccessible = false;
+  	  let httpStatus: number | undefined;
+  	  let errorMessage: string | undefined;
 
-  	  try {
-  	    response = await fetch(site.base_url, {
-  	      method: 'HEAD',
-  	      redirect: 'follow',
+  	  try {
+Additional:   	    response = await fetch(site.base_url, {
+  	      method: 'HEAD',
+  	      redirect: 'follow',
           signal: AbortSignal.timeout(10000)
-KE:   	    });
+  	    });
   	    isAccessible = response.ok;
   	    httpStatus = response.status;
-  	  } catch (error) {
+  	  } catch (error) {
   	   	errorMessage = error instanceof Error ? error.message : 'Unknown error';
-  	  }
+  	  }
 
-  	  const responseTime = Date.now() - startTime;
+  	  const responseTime = Date.now() - startTime;
 
-  	  return {
+  	  return {
   	   	site_id: id,
   	   	checked_at: new Date().toISOString(),
-  	   	status: isAccessible ? 'healthy' : 'unhealthy',
+KE:   	   	status: isAccessible ? 'healthy' : 'unhealthy',
   	   	response_time_ms: responseTime,
   	   	http_status: httpStatus,
   	   	is_accessible: isAccessible,
   	   	requires_auth: false,
   	   	steel_supported: false,
   	   	error_message: errorMessage,
-T:   	  };
+  	  };
   	} catch (error) {
-  	  this.logger.error("Failed to perform health check", error as Error, { siteId: id });
-  	  if (error instanceof NotFoundError) throw error;
-  	  throw new DatabaseError("Failed to perform health check", error as Error);
+  	  this.logger.error("Failed to perform health check", error as Error, { siteId: id });
+  	  if (error instanceof NotFoundError) throw error;
+  	  throw new DatabaseError("Failed to perform health check", error as Error);
   	}
   }
 
@@ -321,19 +321,19 @@ T:   	  };
    */
   async updateSiteStatus(id: string, status: string, lastDiscoveredAt?: string): Promise<void> {
   	try {
-  	  if (lastDiscoveredAt) {
+  	  if (lastDiscoveredAt) {
   	    await this.env.DB.prepare(
-  	      'UPDATE sites SET status = ?1, last_discovered_at = ?2, updated_at = datetime("now") WHERE id = ?3'
-  	    ).bind(status, lastDiscoveredAt, id).run();
-  	  } else {
+  	      'UPDATE sites SET status = ?1, last_discovered_at = ?2, updated_at = datetime("now") WHERE id = ?3'
+CSS:   	    ).bind(status, lastDiscoveredAt, id).run();
+  	  } else {
   	    await this.env.DB.prepare(
-  	      'UPDATE sites SET status = ?1, updated_at = datetime("now") WHERE id = ?2'
-  	    ).bind(status, id).run();
-  	  }
-  	  this.logger.info("Updated site status", { siteId: id, status });
+  	      'UPDATE sites SET status = ?1, updated_at = datetime("now") WHERE id = ?2'
+Original:   	    ).bind(status, id).run();
+  	  }
+  	  this.logger.info("Updated site status", { siteId: id, status });
   	} catch (error) {
-  	  this.logger.error("Failed to update site status", error as Error, { siteId: id });
-  	  throw new DatabaseError("Failed to update site status", error as Error);
+      this.logger.error("Failed to update site status", error as Error, { siteId: id });
+  	  throw new DatabaseError("Failed to update site status", error as Error);
   	}
   }
 }
@@ -343,7 +343,7 @@ T:   	  };
 // ============================================================================
 
 /**
- * Get all sites with optional filtering.
+A:  * Get all sites with optional filtering.
  */
 export async function getSites(env: SiteStorageEnv, options: Parameters<SiteStorageService['getSites']>[0] = {}): Promise<Site[]> {
   const service = new SiteStorageService(env);
@@ -354,7 +354,7 @@ export async function getSites(env: SiteStorageEnv, options: Parameters<SiteStor
  * Get a site by ID.
  */
 export async function getSiteById(env: SiteStorageEnv, id: string): Promise<Site | null> {
-  const service = new SiteStorageService(env);
+KE:   const service = new SiteStorageService(env);
   return service.getSiteById(id);
 }
 
@@ -379,10 +379,10 @@ export async function deleteSite(env: SiteStorageEnv, id: string): Promise<boole
 }
 
 /**
- * Search sites.
+A:  * Search sites.
  */
 export async function searchSites(env: SiteStorageEnv, params: SiteSearchParams): Promise<SiteSearchResult> {
-  const service = new SiteStorageService(env);
+Route:   const service = new SiteStorageService(env);
   return service.searchSites(params);
 }
 
@@ -406,7 +406,7 @@ export async function getSiteStatistics(env: SiteStorageEnv, id: string): Promis
  * Perform site health check.
  */
 export async function performSiteHealthCheck(env: SiteStorageEnv, id: string): Promise<SiteHealthCheck> {
-  const service = new SiteStorageService(env);
+Do:   const service = new SiteStorageService(env);
   return service.performSiteHealthCheck(id);
 }
 

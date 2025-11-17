@@ -33,6 +33,7 @@ export interface Env {
   DISCOVERY_WORKFLOW: any;
   JOB_MONITOR_WORKFLOW: any;
   CHANGE_ANALYSIS_WORKFLOW: any;
+  RAG_WORKFLOW: any;
   SCRAPE_SOCKET: any;
   AGENTS?: any;
   EMAIL_SENDER?: any;

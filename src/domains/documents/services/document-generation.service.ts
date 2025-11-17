@@ -4,22 +4,15 @@
  * Service for generating AI-powered documents like cover letters and resumes.
  */
 
-import {
-  CoverLetterRequest,
-  CoverLetterContent,
-  CoverLetterContentSchema,
-  ResumeRequest,
-  ResumeContent,
-  ResumeContentSchema,
-  DocumentGenerationInput, // Assuming this type is defined
-} from '../types';
-import { DocumentParsingService } from './document-parsing.service';
-import { DocumentStorageService } from './document-storage.service';
-import type { ApplicantDocumentWithSections } from '../types'; // Assuming this type
+import type { DocumentGenerationInput } from "../types";
+import { DocumentParsingService } from "./document-parsing.service";
+import { DocumentStorageService } from "./document-storage.service";
 
 export interface AiEnv {
-  AI: Ai;
-  DB: D1Database; // For fetching job/profile data
+  AI: any; // Ai type from Cloudflare Workers
+  DB: any; // D1Database type from Cloudflare Workers
+  R2: any; // R2Bucket type from Cloudflare Workers
+  DEFAULT_MODEL_WEB_BROWSER: string;
 }
 
 export class DocumentGenerationService {
@@ -40,9 +33,10 @@ export class DocumentGenerationService {
    * parses it into sections, and saves it to the database.
    * This replaces the old monolithic function.
    */
-  async generateDocumentForJob(input: DocumentGenerationInput): Promise<ApplicantDocumentWithSections> {
-    const documentTypeLabel = input.doc_type === "resume" ? "resume" : "cover letter";
-    
+  async generateDocumentForJob(input: DocumentGenerationInput): Promise<any> {
+    const documentTypeLabel =
+      input.doc_type === "resume" ? "resume" : "cover letter";
+
     // Step 1: Fetch context data (job and user profile)
     const jobMarkdown = await this.fetchJobMarkdown(input.job_id);
     const profileSummary = await this.buildUserProfileSummary(input.user_id);
@@ -69,35 +63,96 @@ export class DocumentGenerationService {
   }
 
   private async fetchJobMarkdown(jobId: string): Promise<string> {
-    const job: { description_md: string; requirements_md: string; title: string; company: string; } | null = 
-      await this.env.DB.prepare("SELECT description_md, requirements_md, title, company FROM jobs WHERE id = ?1")
-        .bind(jobId)
-        .first();
+    const job: {
+      description_md: string;
+      requirements_md: string;
+      title: string;
+      company: string;
+    } | null = await this.env.DB.prepare(
+      "SELECT description_md, requirements_md, title, company FROM jobs WHERE id = ?1"
+    )
+      .bind(jobId)
+      .first();
     if (!job) throw new Error("Job not found");
-    return [job.title && `# ${job.title}`, job.company && `**Company:** ${job.company}`, job.description_md, job.requirements_md]
-      .filter(Boolean).join('\n\n');
+    return [
+      job.title && `# ${job.title}`,
+      job.company && `**Company:** ${job.company}`,
+      job.description_md,
+      job.requirements_md,
+    ]
+      .filter(Boolean)
+      .join("\n\n");
   }
 
   private async buildUserProfileSummary(userId: string): Promise<string> {
-    const profile: { name: string; current_title: string; target_roles: string; skills: string; } | null = 
-      await this.env.DB.prepare("SELECT name, current_title, target_roles, skills FROM applicant_profiles WHERE user_id = ?1")
-        .bind(userId)
-        .first();
+    const profile: {
+      name: string;
+      current_title: string;
+      target_roles: string;
+      skills: string;
+    } | null = await this.env.DB.prepare(
+      "SELECT name, current_title, target_roles, skills FROM applicant_profiles WHERE user_id = ?1"
+    )
+      .bind(userId)
+      .first();
     const lines: string[] = [];
     if (profile?.name) lines.push(`Name: ${profile.name}`);
-    if (profile?.current_title) lines.push(`Current Title: ${profile.current_title}`);
-    if (profile?.target_roles) lines.push(`Target Roles: ${profile.target_roles}`);
+    if (profile?.current_title)
+      lines.push(`Current Title: ${profile.current_title}`);
+    if (profile?.target_roles)
+      lines.push(`Target Roles: ${profile.target_roles}`);
     if (profile?.skills) lines.push(`Skills: ${profile.skills}`);
-    return lines.join('\n');
+    return lines.join("\n");
   }
 
   private async callDocumentGenerator(prompt: string): Promise<string> {
-    const response = await this.env.AI.run("@cf/meta/llama-3.1-8b-instruct", {
-      messages: [
-        { role: "system", content: "You craft ATS-friendly professional documents using Markdown formatting." },
-        { role: "user", content: prompt },
-      ],
-    });
+    const response = await this.env.AI.run(
+      this.env.DEFAULT_MODEL_WEB_BROWSER as any,
+      {
+        messages: [
+          {
+            role: "system",
+            content:
+              "You craft ATS-friendly professional documents using Markdown formatting.",
+          },
+          { role: "user", content: prompt },
+        ],
+      }
+    );
     return (response as any)?.response || "";
+  }
+
+  /**
+   * Generate a resume for a job application
+   */
+  async generateResume(job: any, applicant: any): Promise<any> {
+    // This is a simplified version - in a real implementation you'd want more structured input
+    const input = {
+      doc_type: "resume" as const,
+      job_id: job.id || "unknown",
+      user_id: applicant.id || "unknown",
+      // Add other required fields from DocumentGenerationInput
+    };
+
+    return this.generateDocumentForJob(input as any);
+  }
+
+  /**
+   * Generate a cover letter for a job application
+   */
+  async generateCoverLetter(
+    job: any,
+    applicant: any,
+    style?: string
+  ): Promise<any> {
+    // This is a simplified version - in a real implementation you'd want more structured input
+    const input = {
+      doc_type: "cover_letter" as const,
+      job_id: job.id || "unknown",
+      user_id: applicant.id || "unknown",
+      // Add other required fields from DocumentGenerationInput
+    };
+
+    return this.generateDocumentForJob(input as any);
   }
 }

@@ -58,6 +58,6 @@ export {
 export { default as scrapingRoutes } from "./routes/scraping.routes";
 
 // Export durable objects
-export { JobMonitor } from "./durable-objects/job-monitor";
-export { ScrapeSocket } from "./durable-objects/scrape-socket";
-export { SiteCrawler } from "./durable-objects/site-crawler";
+export { JobMonitor } from "../jobs/durable-objects/job-monitor.do";
+export { ScrapeSocket } from "./durable-objects/scrape-socket.do";
+export { SiteCrawler } from "./durable-objects/site-crawler.do";

@@ -5,9 +5,9 @@
  * documents, particularly AI-generated Markdown resumes.
  */
 
-// ============================================================================ 
+// ============================================================================
 // Types
-// ============================================================================ 
+// ============================================================================
 
 export interface ResumeSections {
   summary: string | null;
@@ -16,9 +16,9 @@ export interface ResumeSections {
   [key: string]: string | null; // Allow for other potential sections
 }
 
-// ============================================================================ 
+// ============================================================================
 // Service Class
-// ============================================================================ 
+// ============================================================================
 
 export class DocumentParsingService {
   /**
@@ -26,10 +26,13 @@ export class DocumentParsingService {
    * Keys are the canonical section names.
    * Values are arrays of possible header texts (case-insensitive).
    */
-  private static readonly SECTION_KEYWORDS: Record<keyof Omit<ResumeSections, 'other'>, string[]> = {
-    summary: ['summary', 'objective', 'profile'],
-    experience: ['experience', 'work history', 'employment history'],
-    skills: ['skills', 'technical skills', 'proficiencies'],
+  private static readonly SECTION_KEYWORDS: Record<
+    keyof Omit<ResumeSections, "other">,
+    string[]
+  > = {
+    summary: ["summary", "objective", "profile"],
+    experience: ["experience", "work history", "employment history"],
+    skills: ["skills", "technical skills", "proficiencies"],
   };
 
   /**
@@ -40,14 +43,14 @@ export class DocumentParsingService {
    * @returns A structured ResumeSections object.
    */
   public parseResumeSections(markdownContent: string): ResumeSections {
-    const lines = markdownContent.split('\n');
+    const lines = markdownContent.split("\n");
     const sections: ResumeSections = {
       summary: null,
       experience: null,
       skills: null,
     };
 
-    let currentSection: keyof ResumeSections | 'other' = 'summary'; // Default to summary for content before first header
+    let currentSection: keyof ResumeSections | "other" = "summary"; // Default to summary for content before first header
     let currentContent: string[] = [];
 
     for (const line of lines) {
@@ -58,12 +61,14 @@ export class DocumentParsingService {
       const headerMatch = trimmedLine.match(/^(#+\s*)?(.+)/);
       if (!headerMatch) continue;
 
-      const potentialHeaderText = headerMatch[2].trim().toLowerCase();
+      const potentialHeaderText = headerMatch[2]?.trim().toLowerCase() || "";
       let matchedSection: keyof ResumeSections | null = null;
 
       // Find which section this header corresponds to
-      for (const [section, keywords] of Object.entries(DocumentParsingService.SECTION_KEYWORDS)) {
-        if (keywords.some(keyword => potentialHeaderText.includes(keyword))) {
+      for (const [section, keywords] of Object.entries(
+        DocumentParsingService.SECTION_KEYWORDS
+      )) {
+        if (keywords.some((keyword) => potentialHeaderText.includes(keyword))) {
           matchedSection = section as keyof ResumeSections;
           break;
         }
@@ -72,7 +77,8 @@ export class DocumentParsingService {
       if (matchedSection) {
         // Save the content of the previous section
         if (currentContent.length > 0) {
-          sections[currentSection] = (sections[currentSection] || '') + currentContent.join('\n').trim();
+          sections[currentSection] =
+            (sections[currentSection] || "") + currentContent.join("\n").trim();
         }
         // Start a new section
         currentSection = matchedSection;
@@ -85,14 +91,15 @@ export class DocumentParsingService {
 
     // Add the last section's content
     if (currentContent.length > 0) {
-      sections[currentSection] = (sections[currentSection] || '') + currentContent.join('\n').trim();
+      sections[currentSection] =
+        (sections[currentSection] || "") + currentContent.join("\n").trim();
     }
-    
+
     // Clean up nullish or empty string values
-    for(const key in sections){
-        if(sections[key] === '' || sections[key] === null){
-            sections[key] = null;
-        }
+    for (const key in sections) {
+      if (sections[key] === "" || sections[key] === null) {
+        sections[key] = null;
+      }
     }
 
     return sections;

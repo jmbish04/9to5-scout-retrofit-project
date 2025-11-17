@@ -17,13 +17,13 @@ import type {
 import { AgentType } from "../types/agent.types";
 
 // Import agent classes
-import { CompanyIntelligenceAgent } from "../company-intelligence-agent";
-import { EmailProcessorAgent } from "../email-processor-agent";
-import { GenericAgent } from "../generic_agent";
-import { InterviewPreparationAgent } from "../interview-preparation-agent";
-import { JobMonitorAgent } from "../job-monitor-agent";
-import { RAGAgent } from "../rag_agent";
-import { ResumeOptimizationAgent } from "../resume-optimization-agent";
+import { CompanyIntelligenceAgent } from "../durable-objects/company-intelligence-agent";
+import { EmailProcessorAgent } from "../durable-objects/email-processor-agent";
+import { GenericAgent } from "../durable-objects/generic_agent";
+import { InterviewPreparationAgent } from "../durable-objects/interview-preparation-agent";
+import { JobMonitorAgent } from "../durable-objects/job-monitor-agent";
+import { RAGAgent } from "../durable-objects/rag_agent";
+import { ResumeOptimizationAgent } from "../durable-objects/resume-optimization-agent";
 
 /**
  * Agent Factory

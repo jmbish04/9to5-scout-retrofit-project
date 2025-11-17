@@ -22,7 +22,7 @@ This directory contains the business logic of the application, organized by doma
 *   **Jobs:** Manages the storage and processing of job data.
 *   **Documents:** Handles the generation and storage of AI-powered documents like resumes and cover letters.
 *   **Email:** Manages the ingestion and processing of inbound emails.
-*   **Scraping:** Contains all logic related to web scraping, crawling, and company intelligence.
+*   **Scraping:** Contains all logic related to web scraping, crawling, and company intelligence including automated company career page scraping.
 *   **Agents:** Contains the various AI agent implementations.
 
 ## Getting Started
@@ -30,6 +30,38 @@ This directory contains the business logic of the application, organized by doma
 1.  Install dependencies: `pnpm install`
 2.  Run the development server: `pnpm dev`
 3.  Run tests: `pnpm test`
+
+## Company Career Page Scraping
+
+The worker includes automated scraping of company career pages using the Cloudflare Browser Rendering API. This feature provides:
+
+### API Endpoints
+
+- `GET/POST/PUT/DELETE /api/companies` - Company management
+- `POST /api/companies/{id}/scrape` - Scrape individual company careers
+- `POST /api/companies/scrape-all` - Scrape all configured companies
+
+### Key Features
+
+- **Universal Scraping**: Works with any career page format using AI-powered extraction
+- **Structured Data**: Extracts job details using JSON schema validation
+- **Scheduled Workflows**: Automated periodic scraping via Cloudflare Workflows
+- **Job Queue Integration**: Scraped jobs automatically enter the processing pipeline
+- **Error Handling**: Comprehensive error tracking and recovery
+
+### Usage Example
+
+```bash
+# Create a company
+curl -X POST '/api/companies' \
+  -H 'Content-Type: application/json' \
+  -d '{"name":"Cloudflare","normalized_domain":"cloudflare.com","careers_url":"https://cloudflare.com/careers"}'
+
+# Scrape company careers
+curl -X POST '/api/companies/{company-id}/scrape'
+```
+
+See `docs/company-career-scraping.md` for detailed documentation.
 
 ## Deployment
 

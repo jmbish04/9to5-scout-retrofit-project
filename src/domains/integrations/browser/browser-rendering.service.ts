@@ -6,7 +6,7 @@
  * PDF generation, and structured data extraction with authentication support.
  */
 
-import { R2Storage } from "../../../core/storage/r2";
+import { R2Storage } from "../../../core/storage/r2-client";
 
 // Environment interface for Browser Rendering
 export interface BrowserRenderingEnv {
@@ -122,6 +122,53 @@ export interface ContentResult {
 
 export interface PdfResult {
   pdf: ArrayBuffer;
+}
+
+export interface BrowserRenderingResult {
+  id: string;
+  url: string;
+  timestamp: string;
+  html?: {
+    r2Key: string;
+    r2Url: string;
+    contentLength: number;
+  };
+  screenshot?: {
+    r2Key: string;
+    r2Url: string;
+    width: number;
+    height: number;
+  };
+  pdf?: {
+    r2Key: string;
+    r2Url: string;
+    size: number;
+  };
+  markdown?: {
+    r2Key: string;
+    r2Url: string;
+    contentLength: number;
+  };
+  json?: {
+    r2Key: string;
+    r2Url: string;
+    data: any;
+  };
+  links?: {
+    r2Key: string;
+    r2Url: string;
+    count: number;
+  };
+  snapshot?: {
+    r2Key: string;
+    r2Url: string;
+    contentLength: number;
+  };
+  scraped?: {
+    r2Key: string;
+    r2Url: string;
+    elements: any[];
+  };
 }
 
 export class BrowserRenderingClient {

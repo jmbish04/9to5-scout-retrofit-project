@@ -68,13 +68,11 @@ export {
 export {
   DocumentGenerationService,
   DocumentProcessingService,
-  DocumentSearchService,
   DocumentStorageService,
-  createDocumentGenerationService,
-  createDocumentProcessingService,
-  createDocumentSearchService,
-  createDocumentStorageService,
-  type ApplyPatchResult,
+  searchApplicantDocuments,
+  type AiEnv,
+  type DocumentStorageEnv,
+  type ProcessingEnv,
 } from "./services";
 
 // Export routes

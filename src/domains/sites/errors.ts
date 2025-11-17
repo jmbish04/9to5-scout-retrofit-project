@@ -32,7 +32,7 @@ export class DuplicateSiteError extends DuplicateError {
 export const SiteErrorMetadata = {
   'DatabaseError: sites': {
     description: 'A critical database error occurred during an operation on the sites table.',
-    severity: 'critical',
+_    severity: 'critical',
     relevantFiles: [
       'src/new/domains/sites/services/site-storage.service.ts'
     ],

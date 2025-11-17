@@ -43,8 +43,7 @@ export {
 
 // Export services
 export {
-    MonitoringService,
-    createMonitoringService
+    MonitoringService
 } from "./services/monitoring.service";
 
 // Export routes

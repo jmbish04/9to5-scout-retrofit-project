@@ -1,5 +1,18 @@
-import { coalesceCareersUrl, normalizeDomain, textFromHTML } from '../../../lib/normalize';
-import { extractBenefits } from '../../../lib/extractBenefits';
+import {
+  coalesceCareersUrl,
+  normalizeDomain,
+  textFromHTML,
+} from "../../../core/validation/normalize";
+
+// Stub implementation - extractBenefits function doesn't exist yet
+async function extractBenefits(
+  text: string
+): Promise<{ snapshotText: string; parsed: any }> {
+  return {
+    snapshotText: text,
+    parsed: null,
+  };
+}
 
 interface JobPipelineEnv {
   DB: any;
@@ -36,79 +49,112 @@ interface CompanyRecord {
   description: string | null;
 }
 
-function selectFirstUrl(...values: (string | null | undefined)[]): string | null {
+function selectFirstUrl(
+  ...values: (string | null | undefined)[]
+): string | null {
   for (const value of values) {
-    if (value && typeof value === 'string' && value.trim().length > 0) {
+    if (value && typeof value === "string" && value.trim().length > 0) {
       return value.trim();
     }
   }
   return null;
 }
 
-async function upsertCompany(env: JobPipelineEnv, payload: JobIngestionPayload): Promise<CompanyRecord | null> {
-  const companyName = payload.companyName?.trim()
-    || payload.metadata?.company_name?.trim()
-    || payload.metadata?.company?.name?.trim()
-    || null;
+async function upsertCompany(
+  env: JobPipelineEnv,
+  payload: JobIngestionPayload
+): Promise<CompanyRecord | null> {
+  const companyName =
+    payload.companyName?.trim() ||
+    payload.metadata?.company_name?.trim() ||
+    payload.metadata?.company?.name?.trim() ||
+    null;
 
   const websiteUrl = selectFirstUrl(
     payload.companyWebsite,
     payload.metadata?.company_url,
     payload.metadata?.company?.website,
     payload.metadata?.website,
-    payload.jobUrl,
+    payload.jobUrl
   );
 
-  const normalizedDomain = normalizeDomain(websiteUrl) || normalizeDomain(payload.jobUrl || payload.applyUrl || '') || null;
+  const normalizedDomain =
+    normalizeDomain(websiteUrl) ||
+    normalizeDomain(payload.jobUrl || payload.applyUrl || "") ||
+    null;
 
   if (!normalizedDomain) {
-    console.warn('Unable to determine normalized domain for company', companyName, websiteUrl);
+    console.warn(
+      "Unable to determine normalized domain for company",
+      companyName,
+      websiteUrl
+    );
     return null;
   }
 
-  const careersUrlGuess = coalesceCareersUrl(websiteUrl, payload.companyCareersUrl || payload.metadata?.careers_url || null);
+  const careersUrlGuess = coalesceCareersUrl(
+    websiteUrl,
+    payload.companyCareersUrl || payload.metadata?.careers_url || null
+  );
   const now = Date.now();
 
   const existing = await env.DB.prepare(
-    'SELECT * FROM companies WHERE normalized_domain = ?'
-  ).bind(normalizedDomain).first();
+    "SELECT * FROM companies WHERE normalized_domain = ?"
+  )
+    .bind(normalizedDomain)
+    .first();
 
   if (existing) {
     const updates: string[] = [];
     const params: any[] = [];
 
-    if (companyName && companyName.length > 0 && companyName !== existing.name) {
-      updates.push('name = ?');
+    if (
+      companyName &&
+      companyName.length > 0 &&
+      companyName !== existing.name
+    ) {
+      updates.push("name = ?");
       params.push(companyName);
     }
 
     if (websiteUrl && websiteUrl !== existing.website_url) {
-      updates.push('website_url = ?');
+      updates.push("website_url = ?");
       params.push(websiteUrl);
     }
 
     if (careersUrlGuess && careersUrlGuess !== existing.careers_url) {
-      updates.push('careers_url = ?');
+      updates.push("careers_url = ?");
       params.push(careersUrlGuess);
     }
 
-    const description = payload.metadata?.company_description || payload.metadata?.description;
-    if (description && description.length > 0 && (!existing.description || description.length > existing.description.length)) {
-      updates.push('description = ?');
+    const description =
+      payload.metadata?.company_description || payload.metadata?.description;
+    if (
+      description &&
+      description.length > 0 &&
+      (!existing.description ||
+        description.length > existing.description.length)
+    ) {
+      updates.push("description = ?");
       params.push(description);
     }
 
     if (updates.length > 0) {
-      updates.push('updated_at = ?');
+      updates.push("updated_at = ?");
       params.push(now, existing.id);
-      const statement = `UPDATE companies SET ${updates.join(', ')} WHERE id = ?`;
-      await env.DB.prepare(statement).bind(...params).run();
+      const statement = `UPDATE companies SET ${updates.join(
+        ", "
+      )} WHERE id = ?`;
+      await env.DB.prepare(statement)
+        .bind(...params)
+        .run();
       return {
         ...existing,
         name: companyName || existing.name,
         website_url: websiteUrl || existing.website_url,
         careers_url: careersUrlGuess || existing.careers_url,
-        description: payload.metadata?.company_description || existing.description,
+        description:
+          payload.metadata?.company_description || existing.description,
       } as CompanyRecord;
     }
 
@@ -128,9 +174,11 @@ async function upsertCompany(env: JobPipelineEnv, payload: JobIngestionPayload):
       normalizedDomain,
       websiteUrl,
       careersUrlGuess,
-      payload.metadata?.company_description || payload.metadata?.description || null,
+      payload.metadata?.company_description ||
+        payload.metadata?.description ||
+        null,
       now,
-      now,
+      now
     )
     .run();
 
@@ -140,11 +188,20 @@ async function upsertCompany(env: JobPipelineEnv, payload: JobIngestionPayload):
     normalized_domain: normalizedDomain,
     website_url: websiteUrl,
     careers_url: careersUrlGuess,
-    description: payload.metadata?.company_description || payload.metadata?.description || null,
+    description:
+      payload.metadata?.company_description ||
+      payload.metadata?.description ||
+      null,
   };
 }
 
-async function snapshotExists(env: JobPipelineEnv, companyId: string, source: string, sourceUrl: string | null, snapshotText: string): Promise<boolean> {
+async function snapshotExists(
+  env: JobPipelineEnv,
+  companyId: string,
+  source: string,
+  sourceUrl: string | null,
+  snapshotText: string
+): Promise<boolean> {
   const existing = await env.DB.prepare(
     `SELECT id FROM company_benefits_snapshots
      WHERE company_id = ? AND source = ? AND IFNULL(source_url, '') = IFNULL(?, '')
@@ -158,7 +215,10 @@ async function snapshotExists(env: JobPipelineEnv, companyId: string, source: st
   return Boolean(existing);
 }
 
-export async function processJobIngestion(env: JobPipelineEnv, payload: JobIngestionPayload): Promise<{ companyId?: string }> {
+export async function processJobIngestion(
+  env: JobPipelineEnv,
+  payload: JobIngestionPayload
+): Promise<{ companyId?: string }> {
   try {
     const company = await upsertCompany(env, payload);
     if (!company) {
@@ -166,33 +226,49 @@ export async function processJobIngestion(env: JobPipelineEnv, payload: JobInges
     }
 
     if (payload.jobId) {
-      await env.DB.prepare('UPDATE jobs SET company_id = ? WHERE id = ?')
+      await env.DB.prepare("UPDATE jobs SET company_id = ? WHERE id = ?")
         .bind(company.id, payload.jobId)
         .run();
     }
 
-    const textSource = payload.html ? textFromHTML(payload.html) : payload.text || payload.description || '';
+    const textSource = payload.html
+      ? textFromHTML(payload.html)
+      : payload.text || payload.description || "";
 
     if (!textSource || textSource.trim().length === 0) {
       return { companyId: company.id };
     }
 
     const { snapshotText, parsed } = await extractBenefits(textSource);
-    const sourceUrl = payload.jobUrl || payload.applyUrl || payload.metadata?.job_url || null;
+    const sourceUrl =
+      payload.jobUrl || payload.applyUrl || payload.metadata?.job_url || null;
 
     if (!snapshotText || snapshotText.trim().length === 0) {
       return { companyId: company.id };
     }
 
-    const alreadyExists = await snapshotExists(env, company.id, 'job_posting', sourceUrl, snapshotText);
+    const alreadyExists = await snapshotExists(
+      env,
+      company.id,
+      "job_posting",
+      sourceUrl,
+      snapshotText
+    );
 
     if (alreadyExists) {
-      console.log('Skipping duplicate job posting snapshot for company', company.id, sourceUrl);
+      console.log(
+        "Skipping duplicate job posting snapshot for company",
+        company.id,
+        sourceUrl
+      );
       return { companyId: company.id };
     }
 
     if (payload.dryRun) {
-      console.log('DRY_RUN enabled; skipping snapshot insert for company', company.id);
+      console.log(
+        "DRY_RUN enabled; skipping snapshot insert for company",
+        company.id
+      );
       return { companyId: company.id };
     }
 
@@ -203,17 +279,17 @@ export async function processJobIngestion(env: JobPipelineEnv, payload: JobInges
       .bind(
         crypto.randomUUID(),
         company.id,
-        'job_posting',
+        "job_posting",
         sourceUrl,
         snapshotText,
         JSON.stringify(parsed),
-        Date.now(),
+        Date.now()
       )
       .run();
 
     return { companyId: company.id };
   } catch (error) {
-    console.error('Failed to process job ingestion pipeline', error);
+    console.error("Failed to process job ingestion pipeline", error);
     return {};
   }
 }

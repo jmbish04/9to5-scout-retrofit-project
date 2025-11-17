@@ -8,7 +8,7 @@
  * for the frontend interface of the job scraping and management system.
  */
 
-import type { Env } from "../../config/env";
+import type { Env } from "../../../config/env";
 
 /**
  * Normalizes a pathname to ensure consistent routing

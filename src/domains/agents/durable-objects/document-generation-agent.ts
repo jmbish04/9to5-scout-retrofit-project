@@ -3,7 +3,7 @@
  * @description Document generation agent for creating resumes and cover letters
  */
 
-import { DurableObject } from "cloudflare:workers";
+import { Agent } from "agents";
 import type { Env } from "../../../config/env";
 import { createPDFRenderingTool, createRAGTool } from "../../../shared/tools";
 
@@ -18,12 +18,17 @@ export interface DocumentGenerationAgentState {
   templates: Record<string, any>;
 }
 
-export class DocumentGenerationAgent extends DurableObject {
+export class DocumentGenerationAgent extends Agent<
+  Env,
+  DocumentGenerationAgentState
+> {
+  private env: Env;
   private pdfTool: any;
   private ragTool: any;
 
   constructor(ctx: DurableObjectState, env: Env) {
     super(ctx, env);
+    this.env = env;
     this.pdfTool = createPDFRenderingTool(env);
     this.ragTool = createRAGTool(env);
   }
@@ -425,4 +430,3 @@ Return the cover letter data in the following JSON format:
     return state.generatedDocuments.find((doc) => doc.id === documentId);
   }
 }
-

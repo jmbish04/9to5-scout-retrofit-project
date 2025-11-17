@@ -4,8 +4,12 @@
  * Handles file upload, download, and management operations using the centralized R2 module.
  */
 
-import type { Env } from "../../config/env/env.config";
-import { FileType, createFileMetadata, createR2Storage } from "../../../core/storage/r2-client";
+import type { Env } from "../../../config/env";
+import {
+  FileType,
+  createFileMetadata,
+  createR2Storage,
+} from "../../../core/storage/r2-client";
 
 /**
  * Handle file upload requests
@@ -28,7 +32,10 @@ export async function handleFileUpload(
       });
     }
 
-    const r2Storage = createR2Storage(env);
+    const r2Storage = createR2Storage({
+      R2: env.R2!,
+      BUCKET_BASE_URL: env.BUCKET_BASE_URL || "https://files.example.com",
+    });
     const metadata = createFileMetadata(fileType, request, {
       userId,
       jobId: jobId || undefined,
@@ -75,7 +82,10 @@ export async function handleFileDownload(
       });
     }
 
-    const r2Storage = createR2Storage(env);
+    const r2Storage = createR2Storage({
+      R2: env.R2!,
+      BUCKET_BASE_URL: env.BUCKET_BASE_URL || "https://files.example.com",
+    });
     const file = await r2Storage.getFile(key);
 
     if (!file) {
@@ -130,7 +140,10 @@ export async function handleFileList(
     const userId = url.searchParams.get("userId");
     const limit = parseInt(url.searchParams.get("limit") || "100", 10);
 
-    const r2Storage = createR2Storage(env);
+    const r2Storage = createR2Storage({
+      R2: env.R2!,
+      BUCKET_BASE_URL: env.BUCKET_BASE_URL || "https://files.example.com",
+    });
     const files = await r2Storage.listFiles(type, userId || undefined, limit);
 
     return new Response(
@@ -171,7 +184,10 @@ export async function handleFileDelete(
       });
     }
 
-    const r2Storage = createR2Storage(env);
+    const r2Storage = createR2Storage({
+      R2: env.R2!,
+      BUCKET_BASE_URL: env.BUCKET_BASE_URL || "https://files.example.com",
+    });
     await r2Storage.deleteFile(key);
 
     return new Response(
@@ -208,7 +224,10 @@ export async function handleBulkFileDelete(
     };
     const { type, userId, olderThan } = body;
 
-    const r2Storage = createR2Storage(env);
+    const r2Storage = createR2Storage({
+      R2: env.R2!,
+      BUCKET_BASE_URL: env.BUCKET_BASE_URL || "https://files.example.com",
+    });
     const deletedCount = await r2Storage.deleteFiles(
       type,
       userId,
@@ -243,7 +262,10 @@ export async function handleStorageStats(
   env: Env
 ): Promise<Response> {
   try {
-    const r2Storage = createR2Storage(env);
+    const r2Storage = createR2Storage({
+      R2: env.R2!,
+      BUCKET_BASE_URL: env.BUCKET_BASE_URL || "https://files.example.com",
+    });
     const stats = await r2Storage.getStorageStats();
 
     return new Response(
@@ -283,7 +305,10 @@ export async function handleFileMetadata(
       });
     }
 
-    const r2Storage = createR2Storage(env);
+    const r2Storage = createR2Storage({
+      R2: env.R2!,
+      BUCKET_BASE_URL: env.BUCKET_BASE_URL || "https://files.example.com",
+    });
     const metadata = await r2Storage.getFileMetadata(key);
 
     if (!metadata) {

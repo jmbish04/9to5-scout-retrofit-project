@@ -2,20 +2,19 @@
  * InterviewPreparationAgent - Comprehensive interview preparation and coaching
  */
 
-import { Agent } from "agents";
+import { Agent, type AgentContext } from "agents";
+import type { Env } from "../../../config/env";
 import {
   InterviewCoachingService,
   InterviewQuestionService,
 } from "../../interview/services/interview.service";
-import type { Env } from "../config/env/env.config";
 
-export class InterviewPreparationAgent extends Agent<Env, any> {
+export class InterviewPreparationAgent extends Agent<Env, unknown, Record<string, unknown>> {
   private questionService: InterviewQuestionService;
   private coachingService: InterviewCoachingService;
 
-  constructor(state: any, env: Env) {
-    super(state, env);
-    // Assuming a default config for now
+  constructor(ctx: AgentContext, env: Env) {
+    super(ctx, env);
     this.questionService = new InterviewQuestionService({});
     this.coachingService = new InterviewCoachingService({});
   }

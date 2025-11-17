@@ -1,4 +1,4 @@
-import { R2Storage } from "../../../core/storage/r2";
+import { R2Storage } from "../../../core/storage/r2-client";
 import {
   BrowserRenderingClient,
   type AuthenticationOptions,

@@ -127,6 +127,12 @@ name = "change-analysis-workflow"
 binding = "CHANGE_ANALYSIS_WORKFLOW"
 class_name = "ChangeAnalysisWorkflow"
 
+# CompanyCareersScrapingWorkflow
+[[workflows]]
+name = "company-careers-scraping-workflow"
+binding = "COMPANY_CAREERS_SCRAPING_WORKFLOW"
+class_name = "CompanyCareersScrapingWorkflow"
+
 # All Durable Object classes in a single migration
 [[migrations]]
 tag = "v1"

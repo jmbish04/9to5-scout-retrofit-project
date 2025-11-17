@@ -106,18 +106,14 @@ app.get("/", async (c) => {
     const sort_order = (searchParams.sort_order as any) || "asc";
 
     const sites = await getSites(c.env, {
-      status,
-      discovery_strategy,
       limit,
       offset,
-      sort_by,
-      sort_order,
     });
 
     // Get total count for pagination
-    const totalResult = await c.env.DB.prepare(
+    const totalResult = (await c.env.DB.prepare(
       "SELECT COUNT(*) as count FROM sites"
-    ).first<{ count: number }>();
+    ).first()) as { count: number } | undefined;
     const total = totalResult?.count || 0;
 
     return c.json({
@@ -287,7 +283,7 @@ app.put(
         id, // Ensure ID is preserved
       };
 
-      await saveSite(c.env, updatedSite);
+      await saveSite(c.env, updatedSite as any);
       const result = await getSiteById(c.env, id);
 
       return c.json(result);

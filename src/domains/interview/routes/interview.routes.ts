@@ -320,8 +320,13 @@ export async function handleGenerateQuestions(
       feedbackDelay: 2000,
     };
 
-    const service = new InterviewQuestionService(config);
-    const questions = await service.generateQuestions(env, body);
+    const service = new InterviewQuestionService();
+    const questions = await service.generateQuestions(env, {
+      sessionId: body.sessionId,
+      questionTypes: body.questionTypes || [],
+      difficulty: body.difficulty || "medium",
+      count: body.count || 5,
+    });
 
     return new Response(
       JSON.stringify({
@@ -398,7 +403,7 @@ export async function handleCoaching(
       feedbackDelay: 2000,
     };
 
-    const service = new InterviewCoachingService(config);
+    const service = new InterviewCoachingService();
     const feedback = await service.provideCoaching(env, body);
 
     return new Response(
@@ -579,7 +584,7 @@ export async function handleGetSessionQuestions(
       feedbackDelay: 2000,
     };
 
-    const service = new InterviewQuestionService(config);
+    const service = new InterviewQuestionService();
     const questions = await service.getSessionQuestions(env, sessionId);
 
     return new Response(
@@ -643,7 +648,7 @@ export async function handleGetSessionFeedback(
       feedbackDelay: 2000,
     };
 
-    const service = new InterviewCoachingService(config);
+    const service = new InterviewCoachingService();
     const feedback = await service.getSessionFeedback(env, sessionId);
 
     return new Response(

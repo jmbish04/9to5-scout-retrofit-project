@@ -31,6 +31,7 @@ import { ResumeOptimizationAgent } from "./domains/agents/durable-objects/resume
 
 // Import Workflows
 import { ChangeAnalysisWorkflow } from "./domains/workflows/workflow-classes/change-analysis-workflow";
+import { CompanyCareersScrapingWorkflow } from "./domains/workflows/workflow-classes/company-careers-scraping-workflow";
 import { DiscoveryWorkflow } from "./domains/workflows/workflow-classes/discovery-workflow";
 import { JobMonitorWorkflow } from "./domains/workflows/workflow-classes/job-monitor-workflow";
 
@@ -54,7 +55,7 @@ export {
 };
 
 // Export Workflows
-export { ChangeAnalysisWorkflow, DiscoveryWorkflow, JobMonitorWorkflow };
+export { ChangeAnalysisWorkflow, CompanyCareersScrapingWorkflow, DiscoveryWorkflow, JobMonitorWorkflow };
 
 export default {
   async fetch(

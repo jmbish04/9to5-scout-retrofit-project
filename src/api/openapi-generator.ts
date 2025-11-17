@@ -17,20 +17,20 @@ export class OpenAPIGenerator {
 
   // **Refactored:** A scalable mapping for URL prefixes to OpenAPI tags.
   private static readonly TAG_MAPPING: Map<string, string> = new Map([
-    ['/api/jobs', 'Jobs'],
-    ['/api/sites', 'Sites'],
-    ['/api/files', 'Files'],
-    ['/api/email', 'Email'],
-    ['/api/agents', 'Agents'],
-    ['/api/tasks', 'Tasks'],
-    ['/api/workflows', 'Workflows'],
-    ['/api/monitoring', 'Monitoring'],
-    ['/api/scrape', 'Scraping'],
-    ['/api/runs', 'Runs'],
-    ['/api/configs', 'Configuration'],
-    ['/api/applicant', 'Applicant'],
-    ['/api/docs', 'Documents'],
-    ['/api/companies', 'Company Intelligence'],
+    ["/api/jobs", "Jobs"],
+    ["/api/sites", "Sites"],
+    ["/api/files", "Files"],
+    ["/api/email", "Email"],
+    ["/api/agents", "Agents"],
+    ["/api/tasks", "Tasks"],
+    ["/api/workflows", "Workflows"],
+    ["/api/monitoring", "Monitoring"],
+    ["/api/scrape", "Scraping"],
+    ["/api/runs", "Runs"],
+    ["/api/configs", "Configuration"],
+    ["/api/applicant", "Applicant"],
+    ["/api/docs", "Documents"],
+    ["/api/companies", "Company Intelligence"],
   ]);
 
   constructor(
@@ -55,7 +55,8 @@ export class OpenAPIGenerator {
    * This is more maintainable than a long if-chain.
    */
   private getDefaultTags(path: string): string[] {
-    for (const [prefix, tag] of OpenAPIGenerator.TAG_MAPPING.entries()) {
+    const entries = Array.from(OpenAPIGenerator.TAG_MAPPING.entries());
+    for (const [prefix, tag] of entries) {
       if (path.startsWith(prefix)) {
         return [tag];
       }
@@ -71,7 +72,8 @@ export class OpenAPIGenerator {
         paths[route.path] = {};
       }
       paths[route.path]![route.method.toLowerCase()] = {
-        summary: route.description || `${route.method.toUpperCase()} ${route.path}`,
+        summary:
+          route.description || `${route.method.toUpperCase()} ${route.path}`,
         tags: route.tags || this.getDefaultTags(route.path),
         // ... other properties like parameters, responses, etc.
       };
@@ -84,9 +86,14 @@ export class OpenAPIGenerator {
         version: this.version,
         description: this.description,
       },
-      servers: [{ url: this.baseUrl }],
+      servers: [{ url: this.baseUrl, description: "API Server" }],
       paths,
-      // ... other spec components
+      components: {
+        schemas: {},
+        securitySchemes: {},
+      },
+      security: [],
+      tags: [],
     };
   }
 

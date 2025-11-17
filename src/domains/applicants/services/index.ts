@@ -4,10 +4,7 @@
  * Barrel file for exporting all applicant services.
  */
 
-export {
-  ApplicantStorageService,
-  createApplicantStorageService,
-} from "./applicant-storage.service";
+export { ApplicantStorageService } from "./applicant-storage.service";
 
 export {
   ApplicantMatchingService,

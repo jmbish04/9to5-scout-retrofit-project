@@ -17,7 +17,7 @@ import {
   validateParams,
 } from "../../../core/validation/hono-validation";
 import { CreateJobMonitoringRequestSchema } from "../models/monitoring.schema";
-import { createMonitoringService } from "../services/monitoring.service";
+import { MonitoringService } from "../services/monitoring.service";
 
 // Parameter validation schemas
 const JobIdParamsSchema = z.object({
@@ -42,7 +42,7 @@ app.use("*", rateLimit({ requests: 50, windowMs: 60000 }));
  */
 app.post("/daily-run", async (c) => {
   try {
-    const monitoringService = createMonitoringService(c.env);
+    const monitoringService = new MonitoringService(c.env as any);
     const result = await monitoringService.runDailyJobMonitoring();
 
     return c.json({
@@ -72,7 +72,7 @@ app.post("/daily-run", async (c) => {
  */
 app.get("/stats", async (c) => {
   try {
-    const monitoringService = createMonitoringService(c.env);
+    const monitoringService = new MonitoringService(c.env as any);
     const stats = await monitoringService.getMonitoringStats();
 
     return c.json({
@@ -102,7 +102,7 @@ app.get("/stats", async (c) => {
  */
 app.get("/dashboard", async (c) => {
   try {
-    const monitoringService = createMonitoringService(c.env);
+    const monitoringService = new MonitoringService(c.env as any);
     const stats = await monitoringService.getMonitoringStats();
 
     // Get recent activity (last 10 job changes)

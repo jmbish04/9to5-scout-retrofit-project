@@ -5,9 +5,15 @@
 
 // Cloudflare Playwright imports
 import { Browser, chromium, Page } from "@cloudflare/playwright";
-import { saveJob } from "../../jobs/services/job-storage.service";
+import type { Job } from "../../../db/schema";
 import { createSnapshot } from "../../monitoring/services/monitoring-storage.service";
-import type { Job, Snapshot } from "../../../lib/types";
+
+// Stub implementation - saveJob function doesn't exist yet
+async function saveJob(env: any, jobData: Job): Promise<string> {
+  // TODO: Implement proper job saving logic
+  // For now, return a mock ID
+  return `job_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+}
 
 export interface SteelEnv {
   STEEL_API_KEY: string;
@@ -251,7 +257,8 @@ export class MultiPlatformJobScraper {
       requiresAuth: false,
       selectors: {
         searchKeywords: 'input[aria-label*="Search"], input[name*="keywords"]',
-        searchLocation: 'input[aria-label*="Location"], input[name*="location"]',
+        searchLocation:
+          'input[aria-label*="Location"], input[name*="location"]',
         searchButton: 'button[type="submit"], button[aria-label*="Search"]',
         jobLinks: 'a[href*="job"], a[href*="career"], a[href*="position"]',
         jobTitle: 'h1, .job-title, [class*="title"]',

@@ -10,7 +10,7 @@
  */
 
 import { Agent } from "agents";
-import type { Env } from "../config/env/env.config";
+import type { Env } from "../../../config/env";
 
 export interface ResumeOptimizationState {
   status: "idle" | "processing" | "error" | "completed";

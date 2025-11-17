@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Health Dashboard - 9to5 Scout</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="icon" href="/assets/icon.png" type="image/png" />
+  <script src="https://unpkg.com/@headlessui/react@1.7.17/dist/index.umd.js"></script>
+</head>
+<body class="bg-slate-100 dark:from-gray-900 dark:to-gray-800 min-h-screen">
+  <div id="navbar-placeholder"></div>
+
+  <main class="container mx-auto px-4 py-8 max-w-7xl">
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">
+        Health Dashboard
+      </h1>
+      <p class="text-gray-600 dark:text-gray-300">
+        Monitor system health, run tests, and view diagnostic results
+      </p>
+    </div>
+
+    <!-- Run Tests Button -->
+    <div class="mb-6">
+      <button
+        id="run-tests-btn"
+        class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        <span id="run-tests-text">Run Health Tests</span>
+        <span id="run-tests-spinner" class="hidden ml-2">⏳ Running...</span>
+      </button>
+    </div>
+
+    <!-- Active Tests List -->
+    <div class="bg-gradient-to-br from-indigo-50 to-purple-50 dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
+        Active Tests
+      </h2>
+      <div id="tests-list" class="space-y-3">
+        <div class="text-gray-500 dark:text-gray-400">Loading tests...</div>
+      </div>
+    </div>
+
+    <!-- Latest Session Results -->
+    <div class="bg-gradient-to-br from-emerald-50 to-teal-50 dark:bg-gray-800 rounded-lg shadow-lg p-6">
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
+        Latest Test Session
+      </h2>
+      <div id="session-results">
+        <div class="text-gray-500 dark:text-gray-400">No test sessions yet</div>
+      </div>
+    </div>
+  </main>
+
+  <script type="module" src="/js/nav.js"></script>
+  <script type="module" src="/js/client.js"></script>
+  <script type="module">
+    import { runTests, loadTestDefs, loadLatestSession } from '/js/client.js';
+
+    // Load initial data
+    loadTestDefs();
+    loadLatestSession();
+
+    // Run tests button handler
+    document.getElementById('run-tests-btn')?.addEventListener('click', async () => {
+      const btn = document.getElementById('run-tests-btn');
+      const text = document.getElementById('run-tests-text');
+      const spinner = document.getElementById('run-tests-spinner');
+      
+      if (btn) btn.disabled = true;
+      if (text) text.textContent = 'Running Tests...';
+      if (spinner) spinner.classList.remove('hidden');
+
+      try {
+        const sessionUuid = await runTests();
+        if (sessionUuid) {
+          // Poll for results
+          setTimeout(() => {
+            loadLatestSession();
+            loadTestDefs();
+          }, 2000);
+        }
+      } catch (error) {
+        console.error('Failed to run tests:', error);
+        alert('Failed to run tests. Check console for details.');
+      } finally {
+        if (btn) btn.disabled = false;
+        if (text) text.textContent = 'Run Health Tests';
+        if (spinner) spinner.classList.add('hidden');
+      }
+    });
+
+    // Auto-refresh every 30 seconds
+    setInterval(() => {
+      loadLatestSession();
+    }, 30000);
+  </script>
+</body>
+</html>
+
