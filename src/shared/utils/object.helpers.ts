@@ -122,6 +122,15 @@ export class ObjectUtils {
   }
 
   /**
+   * Checks if a key is safe to use (not a prototype pollution vector)
+   * @param key Key to check
+   * @returns True if key is safe
+   */
+  private static isSafeKey(key: string): boolean {
+    return key !== "__proto__" && key !== "constructor" && key !== "prototype";
+  }
+
+  /**
    * Sets a nested property value in an object
    * @param obj Object to set property in
    * @param path Path to the property (e.g., "user.profile.name")
@@ -137,7 +146,7 @@ export class ObjectUtils {
 
     for (let i = 0; i < keys.length - 1; i++) {
       const key = keys[i];
-      if (key) {
+      if (key && this.isSafeKey(key)) {
         if (!this.isObject(current[key])) {
           current[key] = {};
         }
@@ -146,7 +155,7 @@ export class ObjectUtils {
     }
 
     const lastKey = keys[keys.length - 1];
-    if (lastKey) {
+    if (lastKey && this.isSafeKey(lastKey)) {
       current[lastKey] = value;
     }
     return result as T;
