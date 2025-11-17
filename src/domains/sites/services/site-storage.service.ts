@@ -355,7 +355,7 @@ export async function updateSiteStatus(
   const service = new SiteStorageService(env);
   const updates: any = { status };
   if (last_discovered_at) {
-    updates.last_scraped_at = last_discovered_at;
+    updates.lastDiscoveredAt = last_discovered_at;
   }
   await service.updateSite(id, updates);
 }
