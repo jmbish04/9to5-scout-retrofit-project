@@ -20,7 +20,7 @@ export interface WebSocketServiceEnv {
 }
 
 // Cloudflare Workers type declarations
-declare const WebSocketPair: any;
+import type { WebSocketPair } from '@cloudflare/workers-types';
 
 /**
  * WebSocket message types
