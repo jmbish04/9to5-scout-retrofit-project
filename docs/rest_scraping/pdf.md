@@ -192,7 +192,7 @@ curl -X POST 'https://api.cloudflare.com/client/v4/accounts/<accountId>/browser-
         "left": "30px"
       },
       "timeout": 30000
-    }`
+    }}'
 ```
 
 ### Set a custom user agent
